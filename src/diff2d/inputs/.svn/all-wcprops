@@ -1,0 +1,71 @@
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/!svn/ver/138/trunk/serment/src/diff2d/inputs
+END
+koeberg.inp
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/!svn/ver/138/trunk/serment/src/diff2d/inputs/koeberg.inp
+END
+test.inp
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/!svn/ver/138/trunk/serment/src/diff2d/inputs/test.inp
+END
+koeberg_fine.inp
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/!svn/ver/138/trunk/serment/src/diff2d/inputs/koeberg_fine.inp
+END
+iaea.inp
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/!svn/ver/138/trunk/serment/src/diff2d/inputs/iaea.inp
+END
+iaea_fine.inp
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/!svn/ver/138/trunk/serment/src/diff2d/inputs/iaea_fine.inp
+END
+testFS1g.inp
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/!svn/ver/138/trunk/serment/src/diff2d/inputs/testFS1g.inp
+END
+test_simple2g.inp
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/!svn/ver/138/trunk/serment/src/diff2d/inputs/test_simple2g.inp
+END
+biblis.inp
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/!svn/ver/138/trunk/serment/src/diff2d/inputs/biblis.inp
+END
+biblis_fine.inp
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/!svn/ver/138/trunk/serment/src/diff2d/inputs/biblis_fine.inp
+END
+testFS.inp
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/!svn/ver/138/trunk/serment/src/diff2d/inputs/testFS.inp
+END
+test_simple.inp
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/!svn/ver/138/trunk/serment/src/diff2d/inputs/test_simple.inp
+END

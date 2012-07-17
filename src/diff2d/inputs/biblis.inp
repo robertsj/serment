@@ -1,0 +1,87 @@
+%--------------------------------------------------------------------------
+% TEST INPUT for diff2d 
+%
+% $Rev:: 19                                            $:Rev of last commit
+% $Author:: bert                                       $:Author of last commit
+% $Date:: 2010-10-26 10:18:35 -0400 (Tue, 26 Oct 2010) $:Date of last commit
+%
+% note: the complete input picture will have essentially the "main" stuff
+% on top and then several individual element sections below.  I imagine
+% having some form of "element" class will facilitate the rf generation
+% organization.
+%--------------------------------------------------------------------------
+
+%--------------------------------------------------------------------------
+% CONTROL
+%--------------------------------------------------------------------------
+ptype= 1              % 0-fixed, 1-eigenvalue, 2-response
+epsk= 1e-8            % k convergence criteria
+epss= 1e-10           % source convergence criteria
+maxit= 100            % maximum number of outer iterations
+numel= 1              % just one problem
+
+%--------------------------------------------------------------------------
+% OUTPUT
+%--------------------------------------------------------------------------
+printout= 1           % 1-print output, 0-don't
+plotout= 1            % 1-create silo fluxes for plot, 0-don't
+outfile= biblis.out   % where to put text out
+fluxfile= biblis.silo % where to put fluxes 
+
+%--------------------------------------------------------------------------
+% MATS
+%--------------------------------------------------------------------------
+numg= 2               % number of groups
+numm= 8               % number of materials
+
+% cross-section data D SR nSF xi SC1->1,2->1,etc by group/material  
+    1.4360000  0.0272582  0.0058708  1.0000000  0.0000000  0.0000000
+    0.3635000  0.0750580  0.0960670  0.0000000  0.0177540  0.0000000
+    1.4366000  0.0272995  0.0061908  1.0000000  0.0000000  0.0000000
+    0.3636000  0.0784360  0.1035800  0.0000000  0.0176210  0.0000000
+    1.3200000  0.0257622  0.0000000  0.0000000  0.0000000  0.0000000
+    0.2772000  0.0715960  0.0000000  0.0000000  0.0231060  0.0000000
+    1.4389000  0.0274640  0.0074527  1.0000000  0.0000000  0.0000000
+    0.3638000  0.0914080  0.1323600  0.0000000  0.0171010  0.0000000
+    1.4381000  0.0272930  0.0061908  1.0000000  0.0000000  0.0000000
+    0.3665000  0.0848280  0.1035800  0.0000000  0.0172900  0.0000000
+    1.4385000  0.0273240  0.0064285  1.0000000  0.0000000  0.0000000
+    0.3665000  0.0873140  0.1091100  0.0000000  0.0171920  0.0000000
+    1.4389000  0.0272900  0.0061908  1.0000000  0.0000000  0.0000000
+    0.3679000  0.0880240  0.1035800  0.0000000  0.0171250  0.0000000
+    1.4393000  0.0273210  0.0064285  1.0000000  0.0000000  0.0000000
+    0.3680000  0.0905100  0.1091100  0.0000000  0.0170270  0.0000000
+
+
+%--------------------------------------------------------------------------
+% GEOM STUFF
+%--------------------------------------------------------------------------
+%
+desc= biblis          % description
+nxcm= 9               % number of x course meshes
+nxfm= 170             % number of x fine meshes
+nycm= 9               % number of y course meshes
+nyfm= 170             % number of y fine meshes
+bcl= 1                % left global boundary condition
+bcr= 0                % left global boundary condition
+bcb= 1                % left global boundary condition
+bct= 0                % left global boundary condition
+% x coarse mesh boundary here
+ 0   11.5613   34.6839   57.8065   80.9291  104.0517  127.1743  150.2969  173.4195  196.5421
+% x fine mesh counts here
+ 10    20    20    20    20    20    20    20    20
+% y coarse mesh boundary here
+ 0   11.5613   34.6839   57.8065   80.9291  104.0517  127.1743  150.2969  173.4195  196.5421
+% y fine mesh counts here
+ 10    20    20    20    20    20    20    20    20
+% material placement  
+         1  8  2  6  1  7  1  4  3  
+         8  1  8  2  8  1  1  4  3
+         2  8  1  8  2  7  1  4  3
+         6  2  8  2  8  1  8  4  3 
+         1  8  2  8  2  5  4  3  3
+         7  1  7  1  5  4  4  3  3
+         1  1  1  8  4  4  3  3  3
+         4  4  4  4  3  3  3  3  3
+         3  3  3  3  3  3  3  3  3
+

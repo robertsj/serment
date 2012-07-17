@@ -1,0 +1,11 @@
+This directory contains several CMake utilities that are not included
+in the standard Modules directory.  
+
+The following are from Jed Brown's collection hosted at 
+  https://github.com/jedbrown/cmake-modules
+and licensed under CMake's BSD-style license:
+    -- FindPETSc.cmake
+    -- FindPackageMultipass.cmake  
+    -- ResolveCompilerPaths.cmake
+
+

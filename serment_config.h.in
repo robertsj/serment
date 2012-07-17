@@ -1,0 +1,44 @@
+/*-----------------------------------*-C-*-----------------------------------//
+/*!
+ * \file   serment_config.h.in
+ * \author Jeremy Roberts 
+ * \date   Sep 15, 2011
+ * \brief  Definitions for SERMENT packages.
+ * \note   Copyright (C) 2011 Jeremy Roberts
+ */
+//---------------------------------------------------------------------------//
+// $Rev:: 126                                           $:Rev of last commit
+// $Author:: j.alyn.roberts@gmail.com                   $:Author of last commit
+// $Date:: 2011-09-04 19:13:48 -0400 (Sun, 04 Sep 2011) $:Date of last commit
+//---------------------------------------------------------------------------//
+
+#ifndef SERMENT_CONFIG_H_
+#define SERMENT_CONFIG_H_
+
+// design by contract level 
+#cmakedefine SERMENT_ENABLE_DBC
+
+// debug output
+#cmakedefine SERMENT_ENABLE_DEBUG
+
+// testing
+#cmakedefine SERMENT_ENABLE_TEST
+
+// serment packages
+#cmakedefine SERMENT_BUILD_ERME
+#cmakedefine SERMENT_BUILD_DIFF2D
+#cmakedefine SERMENT_BUILD_SLABTRAN
+
+// external libraries
+#cmakedefine SERMENT_ENABLE_PETSC
+#cmakedefine SERMENT_ENABLE_SLEPC
+#cmakedefine SERMENT_ENABLE_SILO
+#cmakedefine SERMENT_ENABLE_MPI
+#cmakedefine SERMENT_ENABLE_OPENMP
+#cmakedefine SERMENT_ENABLE_XML
+
+#endif // SERMENT_CONFIG_H_ 
+
+//---------------------------------------------------------------------------//
+//              end of serment_config.h.in
+//---------------------------------------------------------------------------//

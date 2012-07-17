@@ -1,0 +1,23 @@
+set(CTEST_PROJECT_NAME "serment")
+## Where to submit CTest results
+#if (SUBMIT_LOCAL)
+#  set(CTEST_DROP_METHOD "scp")
+#  set(CTEST_TRIGGER_SITE "")
+#  set(CTEST_DROP_SITE_USER "")
+#  set(CTEST_DROP_SITE "/home/robertsj/Research/serment/sermentbuild/slabtran/POODIR/N")
+#  set(CTEST_DROP_LOCATION "T")
+#  # CTest does "scp file ${CTEST_DROP_SITE}:${CTEST_DROP_LOCATION}" so for
+#  # local copy w/o needing sshd on localhost we arrange to have : in the
+#  # absolute filepath (when absolute, scp interprets as local even if : later)
+#  if (NOT EXISTS "${CTEST_DROP_SITE}:${CTEST_DROP_LOCATION}")
+#    message(FATAL_ERROR "Must set ${CTEST_DROP_SITE}:${CTEST_DROP_LOCATION} to an existing directory")
+#  endif (NOT EXISTS "${CTEST_DROP_SITE}:${CTEST_DROP_LOCATION}")
+#  message("Local submit seems to be set correctly...")
+#else (SUBMIT_LOCAL)
+	set(CTEST_NIGHTLY_START_TIME "00:00:00 EST")
+	set(CTEST_DROP_METHOD "http")
+	set(CTEST_DROP_SITE "ilmarinen.chickenkiller.com:8080/")
+	set(CTEST_DROP_LOCATION "/cdash/submit.php?project=serment")
+	set(CTEST_DROP_SITE_CDASH TRUE)
+    message(" putting to CDash ")
+#endif (SUBMIT_LOCAL)

@@ -1,0 +1,79 @@
+%--------------------------------------------------------------------------
+% IAEA BENCHMARK INPUT 
+%
+% $Rev:: 19                                            $:Rev of last commit
+% $Author:: bert                                       $:Author of last commit
+% $Date:: 2010-10-26 10:18:35 -0400 (Tue, 26 Oct 2010) $:Date of last commit
+%
+% Note: best times observed when using the following runtime parameters:
+% -pc_type ilu -pc_factor_reuse_ordering -pc_factor_levels 3 
+%     -pc_factor_fill 2.57931 -pc_factor_reuse_fill
+% (GMRES(30) is the default solver, and seems to work well)
+%--------------------------------------------------------------------------
+
+%--------------------------------------------------------------------------
+% CONTROL
+%--------------------------------------------------------------------------
+ptype= 1              % 0-fixed, 1-eigenvalue, 2-response
+epsk= 1e-8            % k convergence criteria
+epss= 1e-10           % source convergence criteria
+maxit= 1000            % maximum number of outer iterations
+numel= 1              % just one problem
+
+%--------------------------------------------------------------------------
+% OUTPUT
+%--------------------------------------------------------------------------
+printout= 1           % 1-print output, 0-don't
+plotout= 1            % 1-create silo fluxes for plot, 0-don't
+outfile= iaea.out     % where to put text out
+fluxfile= iaea.silo   % where to put fluxes 
+
+%--------------------------------------------------------------------------
+% MATS
+%--------------------------------------------------------------------------
+numg= 2               % number of groups
+numm= 4               % number of materials
+
+% cross-section data D SR nSF xi SC1->1,2->1,etc by group/material  
+  1.500   0.030120   0.000  1.000  0.000  0.000  
+  0.400   0.080032   0.135  0.000  0.020  0.000
+  1.500   0.030120   0.000  1.000  0.000  0.000
+  0.400   0.085032   0.135  0.000  0.020  0.000
+  1.500   0.030120   0.000  1.000  0.000  0.000  
+  0.400   0.130032   0.135  0.000  0.020  0.000 
+  2.000   0.040160   0.000  0.000  0.000  0.000
+  0.300   0.010024   0.000  0.000  0.040  0.000
+
+
+%--------------------------------------------------------------------------
+% GEOM STUFF
+%--------------------------------------------------------------------------
+%
+desc= iaea            % description
+nxcm= 9               % number of x course meshes
+nxfm= 340             % number of x fine meshes
+nycm= 9               % number of y course meshes
+nyfm= 340             % number of y fine meshes
+bcl= 1                % left global boundary condition
+bcr= 0                % left global boundary condition
+bcb= 1                % left global boundary condition
+bct= 0                % left global boundary condition
+% x coarse mesh boundary here
+  0.0  10.0  30.0  50.0  70.0  90.0  110.0  130.0  150.0   170.0
+% x fine mesh counts here
+     20    40    40    40    40    40     40    40    40
+% y coarse mesh boundary here
+  0.0  10.0  30.0  50.0  70.0  90.0  110.0  130.0  150.0   170.0
+% y fine mesh counts here
+     20    40    40    40    40    40     40    40    40
+% material placement  
+          3  2  2  2  3  2  2  1  4  
+          2  2  2  2  2  2  2  1  4
+          2  2  2  2  2  2  1  1  4
+          2  2  2  2  2  2  1  4  4 
+          3  2  2  2  3  1  1  4  4
+          2  2  2  2  1  1  4  4  4
+          2  2  1  1  1  4  4  4  4
+          1  1  1  4  4  4  4  4  4
+          4  4  4  4  4  4  4  4  4 
+

@@ -1,0 +1,12 @@
+# Includes
+INCLUDE_DIRECTORIES( linalg )
+INCLUDE_DIRECTORIES( utilities )
+INCLUDE_DIRECTORIES( diff2d )
+
+# Source subdirectories.
+ADD_SUBDIRECTORY(diff2d)
+ADD_SUBDIRECTORY(erme)
+ADD_SUBDIRECTORY(linalg)
+ADD_SUBDIRECTORY(utilities)
+
+
