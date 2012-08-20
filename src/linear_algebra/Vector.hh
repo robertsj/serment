@@ -21,26 +21,36 @@ namespace linear_algebra
 
 /*!
  *  \class Vector
- *  \brief Lightweight wrapper for PETSc Vec
+ *  \brief Lightweight wrapper for PETSc Vec.
  *
+ *  Use of Vector and the corresponding \ref Matrix class should, in
+ *  theory, eliminate a lot of PETSc code from the rest of Serment.
+ *
+ */
+/*!
+ *  \example linear_algebra/test/test_Vector.cc
+ *
+ *  Test of Vector class.
  */
 class Vector
 {
 
 public:
 
+  typedef unsigned int size_type;
+
   /*!
    *  \brief Constructor
-   *  \param m    Number of rows
+   *  \param m  Local number of rows
    */
-  Vector(const unsigned int m);
+  Vector(const size_type m);
 
   /// Destructor
   ~Vector();
 
-
-  /// \name Setters
-  /// \{
+  //---------------------------------------------------------------------------//
+  // SETTERS
+  //---------------------------------------------------------------------------//
 
   /*!
    *  \brief Insert values
@@ -56,10 +66,9 @@ public:
   /// Assemble the vector.
   void assemble();
 
-  /// \}
-
-  /// \name Vector Operators
-  /// \{
+  //---------------------------------------------------------------------------//
+  // VECTOR OPERATIONS
+  //---------------------------------------------------------------------------//
 
   /// Dot product of another Vector with me
   double dot(Vector &x);
@@ -67,56 +76,93 @@ public:
   /// Scale the Vector
   void scale(const double factor);
 
-  /// \}
+  //---------------------------------------------------------------------------//
+  // ACCESSORS
+  //---------------------------------------------------------------------------//
+
+  /*
+   *  \brief Const access to local array
+   *  \param i  Local index
+   */
+  const double& operator[](const size_type i) const;
+
+  /*
+   *  \brief Mutable access to local array
+   *  \param i  Local index
+   */
+  double& operator[](const size_type i);
 
   /// Return the PETSc vector
-  Vec V()
+  Vec V() const
   {
     return d_V;
   }
 
-  /// Return the global size
+  //---------------------------------------------------------------------------//
+  // GETTERS
+  //---------------------------------------------------------------------------//
+
+  /// Return the global size.
   int global_size() const
   {
     return d_global_size;
   }
 
-  /// Return the local size
+  /// Return the local size.
   int local_size() const
   {
     return d_local_size;
   }
 
-  /// View via standard or binary output
-  void display() const;
+  /// Return the lower bound.
+  int lower_bound() const
+  {
+    return d_lower_bound;
+  }
 
-  /// Return assembled flag
+  /// Return the upper bound.
+  int upper_bound() const
+  {
+    return d_upper_bound;
+  }
+
+  /// Return assembled flag.
   bool is_assembled() const
   {
     return d_is_assembled;
   }
 
+  /// View via standard output.
+  void display() const;
+
 private:
 
-  /// \name Private Data
-  /// \{
+  //---------------------------------------------------------------------------//
+  // PRIVATE DATA
+  //---------------------------------------------------------------------------//
 
   /// PETSc vector
   Vec d_V;
 
+  /// Pointer to underlying local array.  Be *careful* when using.
+  double* d_array;
+
   /// Global size
-  unsigned int d_global_size;
+  size_type d_global_size;
 
   /// Local size
-  unsigned int d_local_size;
+  size_type d_local_size;
+
+  /// Local lower bound
+  size_type d_lower_bound;
+
+  /// Local upper bound
+  size_type d_upper_bound;
 
   /// Am I assembled?
   bool d_is_assembled;
 
-  /// \}
-
 };
-
 
 } // end namespace linear_algebra
 

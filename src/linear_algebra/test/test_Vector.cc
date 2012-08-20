@@ -23,6 +23,8 @@
 
 using namespace linear_algebra;
 using namespace detran_test;
+using std::cout;
+using std::endl;
 
 int main(int argc, char *argv[])
 {
@@ -55,18 +57,20 @@ int test_Vector_actual()
 {
   // Create vector
   Vector X(10);
-  TEST(X.global_size() == 10);
+  TEST(X.local_size() == 10);
 
   double value = 1.0;
   int count = 1;
-  for (int i = 0; i < 10; i++)
-  {
+  for (int i = X.lower_bound(); i < X.upper_bound(); i++)
     X.insert_values(count, &i, &value);
-  }
   X.assemble();
 
   value = X.dot(X);
-  TEST(detran::soft_equiv(value, 10.0));
+  TEST(detran::soft_equiv(value, 1.0*X.global_size()));
+
+  X.scale(2.0);
+  for (int i = 0; i < X.local_size(); i++)
+    TEST(detran::soft_equiv(X[i], 2.0));
 
   X.display();
 

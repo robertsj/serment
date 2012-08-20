@@ -12,17 +12,40 @@
 namespace linear_algebra
 {
 
-Vector::Vector(const unsigned int m)
-  : d_is_assembled(false)
-  , d_global_size(m)
-  , d_local_size(m)
+Vector::Vector(const size_type m)
+  : d_local_size(m)
+  , d_is_assembled(false)
 {
   // Preconditions
   Require(m > 0);
 
+  // Create the vector
   PetscErrorCode ierr;
-  ierr = VecCreateSeq(PETSC_COMM_SELF, m, &d_V);
-  Insist(!ierr, "Error creating Vec");
+  ierr = VecCreateMPI(PETSC_COMM_WORLD, m, PETSC_DETERMINE, &d_V);
+
+  // Get the global size.
+  int gs;
+  ierr = VecGetSize(d_V, &gs);
+  Assert(gs > 0);
+  d_global_size = gs;
+
+  // Get the global ranges.
+  int lb, ub;
+  ierr = VecGetOwnershipRange(d_V, &lb, &ub);
+  Assert(lb >= 0 and ub > 0);
+  d_lower_bound = lb;
+  d_upper_bound = ub;
+
+  // Get acces to and then "restore" the array, but not actually.
+  // PETSc requires the restore call to ensure
+  // safe coding, but by passing null, we get to keep it.
+  // We'll code safely...
+  ierr = VecGetArray(d_V, &d_array);
+  ierr = VecRestoreArray(d_V, PETSC_NULL);
+
+  // Postconditions
+  Ensure(!ierr);
+  Ensure(d_upper_bound - d_lower_bound == d_local_size);
 }
 
 Vector::~Vector()

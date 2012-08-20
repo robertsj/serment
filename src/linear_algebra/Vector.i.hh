@@ -10,13 +10,12 @@
 #ifndef VECTOR_I_HH_
 #define VECTOR_I_HH_
 
-
 namespace linear_algebra
 {
 
 // Value Setting
 
-inline void Vector::insert_values(const unsigned int number,
+inline void Vector::insert_values(const size_type number,
                                   const int *rows,
                                   const double *values)
 {
@@ -24,7 +23,9 @@ inline void Vector::insert_values(const unsigned int number,
   d_is_assembled = false;
 }
 
-// Operations
+//---------------------------------------------------------------------------//
+// Vector Operations
+//---------------------------------------------------------------------------//
 
 inline double Vector::dot(Vector &x)
 {
@@ -51,7 +52,30 @@ inline void Vector::scale(const double factor)
   ierr = VecScale(d_V, factor);
 
   // Postconditions
-  Ensure(ierr);
+  Ensure(!ierr);
+}
+
+//---------------------------------------------------------------------------//
+// Accessors
+//---------------------------------------------------------------------------//
+
+inline const double&
+Vector::operator[](const size_type i) const
+{
+  Require(i >= d_lower_bound);
+  Require(i < d_upper_bound);
+  return d_array[i];
+}
+
+inline double&
+Vector::operator[](const size_type i)
+{
+  // Cast away return type
+  return const_cast<double&>
+  (
+    // Add const to *this's type and call const version
+    static_cast<const Vector&>(*this)[i]
+  );
 }
 
 } // end namespace linear_algebra

@@ -15,11 +15,11 @@ namespace linear_algebra
 
 // Insertion
 
-inline void MatrixBase::insert_values(const double *values,
-                                      const size_type number_rows,
+inline void MatrixBase::insert_values(const size_type number_rows,
                                       const int *rows,
                                       const size_type number_columns,
-                                      const int *columns)
+                                      const int *columns,
+                                      const double *values)
 {
   // Preconditions
   Require(number_rows > 0);
