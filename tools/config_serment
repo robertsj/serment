@@ -1,0 +1,11 @@
+# Configure SERMENT on ilmarinen
+cmake                                              \
+-G "Eclipse CDT4 - Unix Makefiles"                 \
+-D CMAKE_BUILD_TYPE=Debug                          \
+-D Silo_DIR=/home/robertsj/opt/silo/silo-4.7.2/    \
+-D SERMENT_ENABLE_DBC=YES                          \
+-D PETSC_DIR=/home/robertsj/opt/petsc/petsc-3.1-p6 \
+-D SLEPC_DIR=/home/robertsj/opt/slepc/slepc-3.1-p6 \
+-D SLEPC_ARCH=gcc-4.5.2-amcl-4.4.0-release         \
+-D ARPACK_DIR=/home/robertsj/opt/arpack/ARPACK     \
+/home/robertsj/Research/serment/serment

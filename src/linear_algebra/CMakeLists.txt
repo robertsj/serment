@@ -1,0 +1,39 @@
+#-------------------------------------------------------------------------------
+# serment/src/linear_algebra/CMakeLists.txt
+#-------------------------------------------------------------------------------
+
+SET(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+
+#-------------------------------------#
+# SOURCE
+#-------------------------------------#
+
+SET(SRC
+    Vector.cc
+)
+
+#-------------------------------------#
+# SHARED LIBRARY
+#-------------------------------------#
+
+ADD_LIBRARY(linear_algebra
+            SHARED
+            ${SRC} 
+)
+TARGET_LINK_LIBRARIES( linear_algebra
+                       ${Detran_LIBRARIES}
+                       ${PETSC_LIBRARIES}                     
+)
+
+INSTALL_FILES(/include .hh)
+INSTALL_TARGETS(/lib linear_algebra)
+
+#-------------------------------------#
+# TESTING
+#-------------------------------------#
+
+if( SERMENT_ENABLE_TEST )
+    include_directories(${SRC_DIR}/test)
+    add_subdirectory(${SRC_DIR}/test)
+endif()
+

@@ -1,15 +1,8 @@
 #-------------------------------------------------------------------------------
-# SERMENT: Solving Eigenvalue Response Matrix Equations using Newton's Technique
-#
 # serment/CMakeLists.txt
 #
 # Note, this file was based in part on S. Johnson's PyTRT's CMake-based build
 # system, which, like the rest of the code, is quite nicely written.
-#
-# $Rev:: 103                                           $:Rev of last commit
-# $Author:: j.alyn.roberts@gma                         $:Author of last commit
-# $Date:: 2011-06-14 22:22:46 -0400 (Tue, 14 Jun 2011) $:Date of last commit  
-#
 #-------------------------------------------------------------------------------
 
 
@@ -87,12 +80,19 @@ endif()
 ## EXTERNAL LIBRARIES                                                        ##
 ##===========================================================================##
 
+# Detran
+find_package(Detran REQUIRED)
+include_directories(${Detran_INCLUDE_DIR})
+message("Detran library = ${Detran_LIBRARIES}")
+
+# PETSc
 if(SERMENT_ENABLE_PETSC)
     find_package(PETSc REQUIRED)
     include_directories(${PETSC_INCLUDES})
     add_definitions(${PETSC_DEFINITIONS})
 endif()
 
+# SLEPc (optional)
 if(SERMENT_ENABLE_SLEPC)
     find_package(SLEPc REQUIRED)
     if(HAVE_SLEPC)
@@ -181,8 +181,8 @@ if ( SERMENT_ENABLE_TEST )
        FORCE
     ) 
     enable_testing()
-    add_subdirectory(test)
     include(CTest)
+    include_directories(src/linear_algebra/test)
 endif()
 
 
