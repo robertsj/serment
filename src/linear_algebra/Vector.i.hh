@@ -62,8 +62,7 @@ inline void Vector::scale(const double factor)
 inline const double&
 Vector::operator[](const size_type i) const
 {
-  Require(i >= d_lower_bound);
-  Require(i < d_upper_bound);
+  Require(i < d_local_size);
   return d_array[i];
 }
 

@@ -62,24 +62,34 @@ public:
   /// Assemble the matrix.
   virtual void assemble();
 
-  /// \name Matrix Operations
-  /// \{
+  //---------------------------------------------------------------------------//
+  // MATRIX OPERATIONS
+  //---------------------------------------------------------------------------//
 
   /*!
    *  \brief Matrix-vector multiplication
    *  \param x  Input vector
    *  \param y  Output vector
    */
-  virtual void multiply(Vector &x, Vector &y);
+  void multiply(Vector &x, Vector &y);
 
   /*!
    *  \brief Matrix-vector multiplication using matrix transpose.
    *  \param x  Input vector
    *  \param y  Output vector
    */
-  virtual void multiply_transpose(Vector &x, Vector &y);
+  void multiply_transpose(Vector &x, Vector &y);
 
-  /// \}
+
+  //---------------------------------------------------------------------------//
+  // GETTERS
+  //---------------------------------------------------------------------------//
+
+  /// Get PETSc Mat object.
+  Mat A()
+  {
+    return d_A;
+  }
 
   size_type number_global_rows() const
   {
@@ -143,6 +153,8 @@ protected:
   bool d_is_assembled;
 
   /// \}
+
+  void set_sizes_and_bounds();
 
 
 };

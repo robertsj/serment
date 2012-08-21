@@ -65,7 +65,7 @@ void Vector::assemble()
 
 void Vector::display() const
 {
-  VecView(d_V, PETSC_VIEWER_STDOUT_SELF);
+  VecView(d_V, PETSC_VIEWER_STDOUT_WORLD);
 }
 
 } // end namespace linear_algebra

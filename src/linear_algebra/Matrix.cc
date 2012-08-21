@@ -9,7 +9,7 @@
 //---------------------------------------------------------------------------//
 
 #include "Matrix.hh"
-
+#include <iostream>
 namespace linear_algebra
 {
 
@@ -23,6 +23,7 @@ Matrix::Matrix(const size_type m,
   Require(number_nonzeros.size() > 0);
   Require(number_nonzeros_off.size() > 0);
 
+  // Create appropriate matrix type.
   PetscErrorCode ierr;
   int size;
   ierr = MPI_Comm_size(PETSC_COMM_WORLD, &size);
@@ -38,6 +39,9 @@ Matrix::Matrix(const size_type m,
     ierr = MatSetType(d_A, MATSEQAIJ);
     ierr = MatSeqAIJSetPreallocation(d_A, PETSC_NULL, &number_nonzeros[0]);
   }
+
+  // Set the local/global size along with row bounds.
+  set_sizes_and_bounds();
 
   // Postconditions
   Ensure(!ierr);

@@ -51,7 +51,6 @@ inline void MatrixBase::multiply(Vector &x, Vector &y)
   Ensure(!ierr);
 }
 
-
 inline void MatrixBase::multiply_transpose(Vector &x, Vector &y)
 {
   // Preconditions

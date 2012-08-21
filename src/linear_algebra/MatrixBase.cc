@@ -31,24 +31,8 @@ MatrixBase::MatrixBase(const size_type m,
   ierr = MatCreate(PETSC_COMM_WORLD, &d_A);
   ierr = MatSetSizes(d_A, m, n, PETSC_DETERMINE, PETSC_DETERMINE);
 
-  // Get ranges
-  int lb, ub;
-  ierr = MatGetOwnershipRange(d_A, &lb, &ub);
-  Assert(lb >= 0 and ub > 0);
-  d_lower_bound = lb;
-  d_upper_bound = ub;
-
-  // Get global sizes.
-  int ngr, ngc;
-  ierr = MatGetSize(d_A, &ngr, &ngc);
-  Assert(ngr > 0);
-  Assert(ngc > 0);
-  d_number_global_rows = ngr;
-  d_number_global_columns = ngc;
-  cout << " ngr = " << ngr << " ngc = " << ngc << endl;
   // Postconditions
   Require(!ierr);
-  Ensure(d_upper_bound - d_lower_bound == d_number_local_rows);
 }
 
 MatrixBase::~MatrixBase()
@@ -69,7 +53,34 @@ void MatrixBase::assemble()
 // Default implementation.  Note, shell matrices have to do something else!
 void MatrixBase::display() const
 {
-  MatView(d_A, PETSC_VIEWER_STDOUT_SELF);
+  MatView(d_A, PETSC_VIEWER_STDOUT_WORLD);
+}
+
+//---------------------------------------------------------------------------//
+// IMPLEMENTATION
+//---------------------------------------------------------------------------//
+
+void MatrixBase::set_sizes_and_bounds()
+{
+  // Get ranges
+  PetscErrorCode ierr;
+  int lb, ub;
+  ierr = MatGetOwnershipRange(d_A, &lb, &ub);
+  Assert(lb >= 0 and ub > 0);
+  d_lower_bound = lb;
+  d_upper_bound = ub;
+
+  // Get global sizes.
+  int ngr, ngc;
+  ierr = MatGetSize(d_A, &ngr, &ngc);
+  Assert(ngr > 0);
+  Assert(ngc > 0);
+  d_number_global_rows = ngr;
+  d_number_global_columns = ngc;
+
+  // Postconditions
+  Require(!ierr);
+  Ensure(d_upper_bound - d_lower_bound == d_number_local_rows);
 }
 
 } // end namespace linear_algebra
