@@ -15,4 +15,6 @@ TARGET_LINK_LIBRARIES(test_PingPong         serment_comm)
 # Define tests
 #------------------------------------------------------------------------------#
 
-ADD_TEST(test_PingPong test_PingPong 0)
+ADD_TEST(test_PingPong_sendreceive 	test_PingPong 0)
+ADD_TEST(test_PingPong_bandwidth 	test_PingPong 0)
+ADD_TEST(test_PingPong_latency	 	test_PingPong 0)

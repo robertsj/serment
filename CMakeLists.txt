@@ -122,6 +122,7 @@ endif()
 
 if(SERMENT_ENABLE_MPI)
   find_package(MPI REQUIRED)
+  include_directories(${MPI_INCLUDE_PATH})
 endif()
 
 if(SERMENT_ENABLE_OPENMP)

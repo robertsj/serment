@@ -1,6 +1,6 @@
 //----------------------------------*-C++-*----------------------------------//
 /*!
- * \file   test_Vector.cc
+ * \file   test_Comm.cc
  * \author Jeremy Roberts
  * \date   Aug 19, 2012
  * \brief  Test of Vector class.
@@ -9,8 +9,9 @@
 //---------------------------------------------------------------------------//
 
 // LIST OF TEST FUNCTIONS
-#define TEST_LIST                   \
-        FUNC(test_PingPong)         \
+#define TEST_LIST                       \
+        FUNC(test_PingPong_sendreceive) \
+        FUNC(test_PingPong_bandwidth)   \
         FUNC(test_PingPong_latency)
 
 // Detran test
@@ -18,6 +19,7 @@
 
 #include "Comm.hh"
 
+#include <cstdio>
 #include <cmath>
 #include <iostream>
 #include <vector>
@@ -39,7 +41,7 @@ int main(int argc, char *argv[])
 //----------------------------------------------//
 
 // Test of send and receive
-int test_PingPong(int argc, char *argv[])
+int test_PingPong_sendreceive(int argc, char *argv[])
 {
 
   // Initialize Comm
@@ -126,7 +128,7 @@ int test_PingPong(int argc, char *argv[])
 // This tests the latency of the system.  The user must
 // know how to setup the run to get processes on the
 // nodes of interest.
-int test_PingPong_latency(int argc, char *argv[])
+int test_PingPong_bandwidth(int argc, char *argv[])
 {
 
   // Initialize Comm
@@ -186,11 +188,82 @@ int test_PingPong_latency(int argc, char *argv[])
     {
       double etime = Comm::toc();
       // 2 way * 64 bit/double * 1.0e6 bit/MB
-      double tmp = (double) number_trials * 128.0 * (double)count / 1.0e6;
-      cout << 128 * count / 1.0e6 << ", " << tmp << endl;
+      double ms = (double) count * 128 / 1.0e6;
+      double bw = (double) number_trials * ms / etime;
+      cout << ms << "  " << bw << endl;
     }
 
   } // end sizes
+
+  // Finalize Comm
+  Comm::finalize();
+  return 0;
+}
+
+
+// This tests the latency of the system.  The user must
+// know how to setup the run to get processes on the
+// nodes of interest.
+int test_PingPong_latency(int argc, char *argv[])
+{
+
+  // Initialize Comm
+  Comm::initialize(argc, argv);
+
+  // Test is valid for two processes only
+  if (Comm::size() != 2) return 0;
+  Comm::global_barrier();
+
+  unsigned char msg = 'x';
+  int reps = 500;
+
+  if (Comm::rank() == 0)
+  {
+     // round-trip latency timing test
+     std::printf("task %d has started...\n", Comm::rank());
+     std::printf("Beginning latency timing test. Number of reps = %d.\n", reps);
+     std::printf("***************************************************\n");
+     std::printf("Rep#       T1               T2            deltaT\n");
+
+     double time = 0.0;
+     int average_time = 0.0;
+     double total_time = 0.0;
+
+     for (int n = 1; n <= reps; n++)
+     {
+
+       // Start timer
+       Comm::tic();
+
+       // Send message to worker
+       Comm::send(&msg, 1, 1);
+
+       // Wait to receive the echo reply from the worker
+       Comm::receive(&msg, 1, 1);
+
+       // Get elapsed time and add to total
+       time = Comm::toc();
+       if (n % 10 == 0) std::printf("%4d  %2.8f\n", n, time);
+       total_time += time;
+
+     }
+
+     average_time = (total_time * 1.0e6) / reps;
+     std::printf("***************************************************\n");
+     std::printf("\n*** Avg round trip time = %d microseconds\n", average_time);
+     std::printf("*** Avg one way latency = %d microseconds\n", average_time/2);
+
+  }
+
+  else if (Comm::rank() == 1)
+  {
+    std::printf("task %d has started...\n", Comm::rank());
+    for (int n = 1; n <= reps; n++)
+    {
+       Comm::receive(&msg, 1, 0);
+       Comm::send(&msg, 1, 0);
+    }
+  }
 
   // Finalize Comm
   Comm::finalize();
