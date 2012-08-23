@@ -10,8 +10,10 @@
 #ifndef NODEFACTORY_HH_
 #define NODEFACTORY_HH_
 
-#include "InputDB.hh"
 #include "Node.hh"
+#include "InputDB.hh"
+#include "detran_material.hh"
+#include "detran_geometry.hh"
 
 namespace erme_geometry
 {
@@ -25,8 +27,11 @@ class NodeFactory
 
 public:
 
-  typedef detran::InputDB::SP_input SP_db;
-  typedef Node::SP_node SP_node;
+  /// Useful typedefs
+  typedef detran::InputDB::SP_input         SP_db;
+  typedef detran::Material::SP_material     SP_material;
+  typedef detran::Mesh::SP_mesh             SP_mesh;
+  typedef Node::SP_node                     SP_node;
 
   /// Constructor
   NodeFactory(){}
@@ -38,11 +43,14 @@ public:
    *  \brief Create a node
    *
    *  Everything needed to build the node must
-   *  exit in the database.
+   *  exist in the database.
    *
    *  \param db   Parameter database.
+   *  \param db
    */
-  virtual SP_node create_node(SP_db db) = 0;
+  virtual SP_node create_node(SP_db db,
+                              SP_material material = SP_material(),
+                              SP_mesh mesh = SP_mesh()) = 0;
 
 private:
 

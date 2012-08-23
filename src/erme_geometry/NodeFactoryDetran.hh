@@ -19,13 +19,10 @@ namespace erme_geometry
  *  \class NodeFactoryDetran
  *  \brief Build Detran-based nodes
  */
-class NodeFactoryDetran
+class NodeFactoryDetran: public NodeFactory
 {
 
 public:
-
-  typedef detran::InputDB::SP_input SP_db;
-  typedef Node::SP_node SP_node;
 
   /// Constructor
   NodeFactoryDetran(){}
@@ -37,7 +34,9 @@ public:
    *  \brief Create a node
    *  \param db   Parameter database.
    */
-  SP_node create_node(SP_db db);
+  SP_node create_node(SP_db db,
+                      SP_material material,
+                      SP_mesh mesh);
 
 private:
 

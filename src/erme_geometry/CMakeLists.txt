@@ -12,6 +12,7 @@ SET(SRC
     Node.cc
     CartesianNode.cc
     CartesianNodeDetran.cc
+    NodeFactoryDetran.cc
 )
 
 #-------------------------------------#
