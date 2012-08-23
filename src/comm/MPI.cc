@@ -9,6 +9,8 @@
 
 #include "Comm.hh"
 
+#ifdef SERMENT_ENABLE_MPI
+
 namespace serment_comm
 {
 
@@ -60,6 +62,8 @@ int Comm::size()
 }
 
 } // end namespace serment_comm
+
+#endif
 
 //---------------------------------------------------------------------------//
 //              end of file MPI.cc

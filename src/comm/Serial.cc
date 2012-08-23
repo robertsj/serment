@@ -1,17 +1,15 @@
 //----------------------------------*-C++-*----------------------------------//
 /*!
  * \file   Serial.cc
- * \brief  Serial 
+ * \brief  Serial comm implementation member definitions.
  * \author Jeremy Roberts
  * \date   Aug 21, 2012
  */
 //---------------------------------------------------------------------------//
 
-#include "serment_config.h"
+#include "Comm.hh"
 
 #ifndef SERMENT_ENABLE_MPI
-
-#include "Serial.hh"
 
 namespace serment_comm
 {

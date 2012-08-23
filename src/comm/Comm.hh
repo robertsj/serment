@@ -10,8 +10,10 @@
 #ifndef COMM_HH_
 #define COMM_HH_
 
+// Configuration
 #include "serment_config.h"
 
+// Serment Comm
 #include "Comm_Traits.hh"
 
 namespace serment_comm

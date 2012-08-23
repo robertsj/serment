@@ -1,7 +1,7 @@
 //----------------------------------*-C++-*----------------------------------//
 /*!
  * \file   Serial.hh
- * \brief  Serial communications interface
+ * \brief  Serial comm implementation inline member definitions.
  * \author Jeremy Roberts
  * \date   Aug 21, 2012
  */
@@ -9,9 +9,6 @@
 
 #ifndef SERIAL_HH_
 #define SERIAL_HH_
-
-// Serment Comm
-#include "Functions.hh"
 
 // Detran utilities
 #include "DBC.hh"

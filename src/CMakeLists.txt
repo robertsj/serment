@@ -1,15 +1,10 @@
 # Includes
-#INCLUDE_DIRECTORIES( linalg )
-#INCLUDE_DIRECTORIES( utilities )
-#INCLUDE_DIRECTORIES( diff2d )
 INCLUDE_DIRECTORIES(linear_algebra)
 INCLUDE_DIRECTORIES(comm)
+INCLUDE_DIRECTORIES(erme_geometry)
+
 # Source subdirectories.
-#ADD_SUBDIRECTORY(diff2d)
-#ADD_SUBDIRECTORY(erme)
-#ADD_SUBDIRECTORY(linalg)
-#ADD_SUBDIRECTORY(utilities)
 ADD_SUBDIRECTORY(linear_algebra)
 ADD_SUBDIRECTORY(comm)
-
+ADD_SUBDIRECTORY(erme_geometry)
 

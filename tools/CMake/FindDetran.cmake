@@ -21,7 +21,7 @@ find_path(Detran_INCLUDE_DIR
 )
 
 find_library(Detran_LIBRARY
-             NAMES utilities 
+             NAMES detran 
              PATHS ${Detran_DIR}/lib
                    ${Detran_LIB}
 )
@@ -38,7 +38,7 @@ if(DETRAN_FOUND)
   set(Detran_LIBRARIES ${Detran_LIBRARY})
   message("Detran IS FOUND")
 else(DETRAN_FOUND)
-message("Detran NOT FOUND")
+  message("Detran NOT FOUND")
 endif(DETRAN_FOUND)
 
 
