@@ -11,7 +11,6 @@
 #define MPI_HH_
 
 // Serment Comm
-//#include "Functions.hh"
 #include "MPI_Traits.hh"
 
 // Detran utilities
@@ -19,6 +18,7 @@
 
 // System
 #include <mpi.h>
+#include <vector>
 
 namespace serment_comm
 {
@@ -82,6 +82,94 @@ inline int Comm::broadcast(T  *buffer,
 }
 
 //---------------------------------------------------------------------------//
+// GLOBAL REDUCTIONS
+//---------------------------------------------------------------------------//
+
+template<class T>
+inline void global_sum(T &x)
+{
+  // Copy data into send buffer
+  T y = x;
+  // Do global MPI reduction (result is on all processors) into x
+  MPI_Allreduce(&y, &x, 1, MPI_Traits<T>::element_type(),
+                MPI_SUM, communicator);
+}
+
+template<class T>
+inline void global_prod(T &x)
+{
+  // copy data into send buffer
+  T y = x;
+  // Do global MPI reduction (result is on all processors) into x
+  MPI_Allreduce(&y, &x, 1, MPI_Traits<T>::element_type(),
+                MPI_PROD, communicator);
+}
+
+template<class T>
+inline void global_min(T &x)
+{
+  // copy data into send buffer
+  T y = x;
+  // Do global MPI reduction (result is on all processors) into x
+  MPI_Allreduce(&y, &x, 1, MPI_Traits<T>::element_type(),
+                MPI_MIN, communicator);
+}
+
+template<class T>
+inline void global_max(T &x)
+{
+  // copy data into send buffer
+  T y = x;
+  // Do global MPI reduction (result is on all processors) into x
+  MPI_Allreduce(&y, &x, 1, MPI_Traits<T>::element_type(),
+                MPI_MAX, communicator);
+}
+
+template<class T>
+inline void global_sum(T *x, int n)
+{
+  Require (x);
+  // Copy data into a send buffer
+  std::vector<T> send_buffer(x, x + n);
+  // Element-wise global reduction (result is on all processors) into x
+  MPI_Allreduce(&send_buffer[0], x, n, MPI_Traits<T>::element_type(),
+                MPI_SUM, communicator);
+}
+
+template<class T>
+inline void global_prod(T  *x, int n)
+{
+  Require (x);
+  // Copy data into a send buffer
+  std::vector<T> send_buffer(x, x + n);
+  // Element-wise global reduction (result is on all processors) into x
+  MPI_Allreduce(&send_buffer[0], x, n, MPI_Traits<T>::element_type(),
+                MPI_PROD, communicator);
+}
+
+template<class T>
+inline void global_min(T *x, int n)
+{
+  Require (x);
+  // Copy data into a send buffer
+  std::vector<T> send_buffer(x, x + n);
+  // Element-wise global reduction (result is on all processors) into x
+  MPI_Allreduce(&send_buffer[0], x, n, MPI_Traits<T>::element_type(),
+                MPI_MIN, communicator);
+}
+
+template<class T>
+void global_max(T *x, int n)
+{
+  Require (x);
+  // Copy data into a send buffer
+  std::vector<T> send_buffer(x, x + n);
+  // Element-wise global reduction (result is on all processors) into x
+  MPI_Allreduce(&send_buffer[0], x, n, MPI_Traits<T>::element_type(),
+                MPI_MAX, communicator);
+}
+
+//---------------------------------------------------------------------------//
 // BARRIER
 //---------------------------------------------------------------------------//
 
@@ -89,6 +177,7 @@ inline void Comm::global_barrier()
 {
   MPI_Barrier(communicator);
 }
+
 
 //---------------------------------------------------------------------------//
 // TIMING

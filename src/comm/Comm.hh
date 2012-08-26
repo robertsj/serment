@@ -36,17 +36,11 @@ public:
   // SETUP FUNCTIONS
   //---------------------------------------------------------------------------//
 
-  /*!
-   * \brief Initialize a parallel job.
-   */
+  /// Initialize a parallel job.
   static void initialize(int &argc, char **&argv);
 
-  //---------------------------------------------------------------------------//
-  /*!
-   * \brief Finish a parallel job.
-   */
+  /// Finish a parallel job.
   static void finalize();
-
 
   //---------------------------------------------------------------------------//
   // QUERY FUNCTIONS
@@ -106,6 +100,42 @@ public:
   static int broadcast(T *buffer, int size, int root);
 
   //---------------------------------------------------------------------------//
+  // GLOBAL REDUCTIONS
+  //---------------------------------------------------------------------------//
+
+  /// Global sum of a scalar variable.
+  template <class T>
+  static void global_sum(T &x);
+
+  /// Global product of a scalar variable.
+  template <class T>
+  static void global_prod(T &x);
+
+  /// Global minimum of a scalar variable.
+  template <class T>
+  static void global_min(T &x);
+
+  /// Global maximum of a scalar variable.
+  template <class T>
+  static void global_max(T &x);
+
+  /// Element-wise, global sum of an array.
+  template <class T>
+  static void global_sum(T *x, int n);
+
+  /// Element-wise, global product of an array.
+  template <class T>
+  static void global_prod(T *x, int n);
+
+  /// Element-wise, global minimum of an array.
+  template <class T>
+  static void global_min(T *x, int n);
+
+  /// Element-wise, global maximum of an array.
+  template <class T>
+  static void global_max(T *x, int n);
+
+  //---------------------------------------------------------------------------//
   // BARRIER FUNCTIONS
   //---------------------------------------------------------------------------//
 
@@ -121,8 +151,6 @@ public:
 
   /// Return time elapsed after tic() call.
   static double toc();
-
-//private:
 
   /// Stored time information
   static double d_time;

@@ -37,19 +37,19 @@ struct Comm_Traits
 template<>
 struct Comm_Traits<char>
 {
-    static const int tag = 431;
+  static const int tag = 431;
 };
 
 template<>
 struct Comm_Traits<unsigned char>
 {
-    static const int tag = 432;
+  static const int tag = 432;
 };
 
 template<>
 struct Comm_Traits<short>
 {
-    static const int tag = 433;
+  static const int tag = 433;
 };
 
 template<>

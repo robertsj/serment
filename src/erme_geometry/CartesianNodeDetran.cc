@@ -47,6 +47,10 @@ double CartesianNodeDetran::color(Point point)
 
 } // end namespace erme_geometry
 
+#ifdef SERMENT_ENABLE_BOOST
+BOOST_CLASS_EXPORT_IMPLEMENT(erme_geometry::CartesianNodeDetran)
+#endif
+
 //---------------------------------------------------------------------------//
 //              end of file CartesianNodeDetran.cc
 //---------------------------------------------------------------------------//

@@ -4,6 +4,14 @@
  * \brief  Fixtures for various node types.
  * \author Jeremy Roberts
  * \date   Aug 22, 2012
+ *
+ * Ideally, fixtures for all available node types should be added to this
+ * file.  Doing so greatly facilitates testing of each node within the
+ * erme_geometry subsystem and Serment as a whole.
+ *
+ * Each node should be as simple to compute as possible
+ * (i.e. small, few group, low orders) without limiting the scope of testing.
+ *
  */
 //---------------------------------------------------------------------------//
 
@@ -12,10 +20,8 @@
 
 #include "CartesianNodeDetran.hh"
 
-namespace serment_test
+namespace erme_geometry
 {
-
-typedef erme_geometry::Node::SP_node SP_node;
 
 /*!
  *  The Detran Cartesian nodes are all 10 cm in extent
@@ -23,7 +29,7 @@ typedef erme_geometry::Node::SP_node SP_node;
  *  responses are first order.
  */
 
-SP_node cartesian_node_detran(const int dim)
+Node::SP_node cartesian_node_detran(const int dim)
 {
   Require(dim > 0 and dim <= 3);
 
@@ -70,7 +76,7 @@ SP_node cartesian_node_detran(const int dim)
 }
 
 
-} // end namespace serment_test
+} // end namespace erme_geometry
 
 #endif // NODE_FIXTURE_HH_ 
 

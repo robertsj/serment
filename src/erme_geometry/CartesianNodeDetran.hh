@@ -37,6 +37,7 @@ class CartesianNodeDetran: public CartesianNode
 public:
 
   /// Useful typedefs
+  typedef CartesianNode                   Base;
   typedef detran::InputDB::SP_input       SP_db;
   typedef detran::Material::SP_material   SP_material;
   typedef detran::Mesh::SP_mesh           SP_mesh;
@@ -99,9 +100,32 @@ private:
   /// Detran mesh
   SP_mesh d_mesh;
 
+  //-------------------------------------------------------------------------//
+  // IMPLEMENTATION
+  //-------------------------------------------------------------------------//
+
+  /// Default constructor is needed for serialization.
+  CartesianNodeDetran(){}
+
+#ifdef SERMENT_ENABLE_BOOST
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version)
+  {
+    ar & boost::serialization::base_object<Base>(*this);
+    ar & d_db;
+    ar & d_material;
+    ar & d_mesh;
+  }
+#endif
+
 };
 
 } // end namespace erme_geometry
+
+#ifdef SERMENT_ENABLE_BOOST
+BOOST_CLASS_EXPORT_KEY(erme_geometry::CartesianNodeDetran)
+#endif
 
 #endif // CARTESIANNODEDETRAN_HH_ 
 

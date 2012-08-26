@@ -37,7 +37,8 @@ public:
     NORTH
   };
 
-  typedef std::vector<double> vec_dbl;
+  typedef Node                    Base;
+  typedef std::vector<double>     vec_dbl;
 
   CartesianNode(const size_type  d,
                 const size_type  n,
@@ -77,7 +78,6 @@ public:
   /// Return the color associated with the spatial coordinate.
   virtual double color(Point point) = 0;
 
-
 private:
 
   //-------------------------------------------------------------------------//
@@ -87,10 +87,37 @@ private:
   /// Width in each dimension
   vec_dbl d_width;
 
+  //-------------------------------------------------------------------------//
+  // IMPLEMENTATION
+  //-------------------------------------------------------------------------//
+
+protected:
+
+  /// Default constructor needed for serialization
+  CartesianNode(){}
+
+private:
+
+#ifdef SERMENT_ENABLE_BOOST
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version)
+  {
+    ar & boost::serialization::base_object<Base>(*this);
+    ar & d_width;
+  }
+#endif
+
 };
 
-
 } // end namespace erme_geometry
+
+#ifdef SERMENT_ENABLE_BOOST
+BOOST_CLASS_EXPORT_KEY(erme_geometry::CartesianNode)
+BOOST_SERIALIZATION_ASSUME_ABSTRACT(erme_geometry::CartesianNode)
+#endif
+
+
 
 #endif // CARTESIANNODE_HH_ 
 

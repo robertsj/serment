@@ -44,7 +44,7 @@ public:
   typedef std::vector<vec_int>  vec2_int;
 
   /// Constructor
-  NodeList() : d_is_finalized(false) {}
+  NodeList() : d_is_finalized(false), d_global_offset(0) {}
 
   void add_node(SP_node n, vec_int neighbors)
   {
@@ -53,6 +53,13 @@ public:
     Require(neighbors.size() == n->number_surfaces());
     d_nodes.push_back(n);
     d_neighbors.push_back(neighbors);
+  }
+
+  void resize(const size_type n)
+  {
+    d_nodes.resize(n);
+    d_neighbors.resize(n);
+    d_is_finalized = false;
   }
 
   SP_node node(const int n)
@@ -73,12 +80,28 @@ public:
    *  \param n  Node index
    *  \param s  Node surface
    */
-  int neighbor(const int n, const int s)
+  int neighbor(const size_type n, const size_type s)
   {
     Require(is_finalized());
     Require(n < number_nodes());
     Require(s < d_nodes[n]->number_surfaces());
     return d_neighbors[n][s];
+  }
+
+  vec_int& neighbor(const size_type n)
+  {
+    Require(is_finalized());
+    Require(n < number_nodes());
+    return d_neighbors[n];
+  }
+
+  /*!
+   *  \brief Get the global index of a node
+   *  \param n local node index
+   */
+  size_type global_index(const size_type n)
+  {
+    return n + d_global_offset;
   }
 
   void finalize()
@@ -101,6 +124,9 @@ private:
 
   /// Finalized?
   bool d_is_finalized;
+
+  /// Difference between local node index and its global index
+  size_type d_global_offset;
 
 };
 

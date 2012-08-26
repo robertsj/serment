@@ -53,6 +53,58 @@ int broadcast(T  *buffer,
 }
 
 //---------------------------------------------------------------------------//
+// GLOBAL REDUCTIONS
+//---------------------------------------------------------------------------//
+
+template<class T>
+inline void global_sum(T &x)
+{
+  return x;
+}
+
+template<class T>
+inline void global_prod(T &x)
+{
+  return x;
+}
+
+template<class T>
+inline void global_min(T &x)
+{
+  /* ... */
+}
+
+template<class T>
+inline void global_max(T &x)
+{
+  /* ... */
+}
+
+template<class T>
+inline void global_sum(T *x, int n)
+{
+  Require(x);
+}
+
+template<class T>
+inline void global_prod(T  *x, int n)
+{
+  Require(x);
+}
+
+template<class T>
+inline void global_min(T *x, int n)
+{
+  Require(x);
+}
+
+template<class T>
+void global_max(T *x, int n)
+{
+  Require(x);
+}
+
+//---------------------------------------------------------------------------//
 // BARRIER FUNCTIONS
 //---------------------------------------------------------------------------//
 

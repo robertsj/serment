@@ -21,9 +21,10 @@ ADD_LIBRARY(serment_comm
             SHARED
             ${SRC} 
 )
-TARGET_LINK_LIBRARIES( serment_comm
-                       ${Detran_LIBRARIES}
-                       ${MPI_LIBRARIES}                     
+TARGET_LINK_LIBRARIES(serment_comm
+                      ${Detran_LIBRARIES}
+                      ${MPI_LIBRARIES}    
+                      ${Boost_LIBRARIES}                 
 )
 
 INSTALL_FILES(/include .hh)

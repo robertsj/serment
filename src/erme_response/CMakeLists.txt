@@ -1,5 +1,5 @@
 #-------------------------------------------------------------------------------
-# serment/src/erme/CMakeLists.txt
+# serment/src/erme_response/CMakeLists.txt
 #-------------------------------------------------------------------------------
 
 SET(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR})
@@ -9,26 +9,25 @@ SET(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 #-------------------------------------#
 
 SET(SRC
-    StateERME.cc
+    ResponseIndexer.cc
 )
 
 #-------------------------------------#
 # SHARED LIBRARY
 #-------------------------------------#
 
-ADD_LIBRARY(erme
+ADD_LIBRARY(erme_response
             SHARED
             ${SRC} 
 )
-TARGET_LINK_LIBRARIES( erme
+TARGET_LINK_LIBRARIES( erme_response
                        erme_geometry
-                       linear_algebra
                        serment_comm
                        ${Detran_LIBRARIES}                    
 )
 
 INSTALL_FILES(/include .hh)
-INSTALL_TARGETS(/lib erme)
+INSTALL_TARGETS(/lib erme_response)
 
 #-------------------------------------#
 # TESTING

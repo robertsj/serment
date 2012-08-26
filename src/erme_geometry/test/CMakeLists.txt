@@ -14,10 +14,14 @@ TARGET_LINK_LIBRARIES(test_CartesianNodeDetran 	erme_geometry)
 ADD_EXECUTABLE(test_NodeList			test_NodeList.cc)
 TARGET_LINK_LIBRARIES(test_NodeList 	erme_geometry)
 
+ADD_EXECUTABLE(test_NodePartitioner			test_NodePartitioner.cc)
+TARGET_LINK_LIBRARIES(test_NodePartitioner 	erme_geometry)
+
 #------------------------------------------------------------------------------#
 # Define tests
 #------------------------------------------------------------------------------#
 
 ADD_TEST(test_CartesianNodeDetran test_CartesianNodeDetran 0)
-
 ADD_TEST(test_NodeList test_NodeList 0)
+ADD_TEST(test_NodePartitioner test_NodePartitioner 0)
+

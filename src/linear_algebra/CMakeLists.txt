@@ -23,9 +23,10 @@ ADD_LIBRARY(linear_algebra
             SHARED
             ${SRC} 
 )
-TARGET_LINK_LIBRARIES( linear_algebra
-                       ${Detran_LIBRARIES}
-                       ${PETSC_LIBRARIES}                     
+TARGET_LINK_LIBRARIES(linear_algebra
+                      ${Detran_LIBRARIES}
+                      ${PETSC_LIBRARIES}
+                      ${Boost_LIBRARIES}
 )
 
 INSTALL_FILES(/include .hh)

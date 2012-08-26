@@ -34,7 +34,11 @@ CartesianNode::CartesianNode(const size_type  d,
   if (dimension() < 2) d_width[1] = 1.0;
 }
 
-} // end namespace detran
+} // end namespace erme_geometry
+
+#ifdef SERMENT_ENABLE_BOOST
+BOOST_CLASS_EXPORT_IMPLEMENT(erme_geometry::CartesianNode)
+#endif
 
 //---------------------------------------------------------------------------//
 //              end of file CartesianNode.cc

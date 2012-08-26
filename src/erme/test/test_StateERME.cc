@@ -1,32 +1,33 @@
 //----------------------------------*-C++-*----------------------------------//
 /*!
- * \file   test_NodeList.cc
+ * \file   test_StateERME.cc
  * \author Jeremy Roberts
  * \date   Aug 19, 2012
- * \brief  Test of NodeList class.
+ * \brief  Test of StateERME class.
  * \note   Copyright (C) 2012 Jeremy Roberts. 
  */
 //---------------------------------------------------------------------------//
 
 // LIST OF TEST FUNCTIONS
-#define TEST_LIST         \
-        FUNC(test_NodeList)
+#define TEST_LIST           \
+        FUNC(test_StateERME)
 
 #include "TestDriver.hh"
-#include "erme_geometry/NodeList.hh"
-#include "erme_geometry/test/nodelist_fixture.hh"
+#include "StateERME.hh"
 #include <iostream>
 
 // Setup
 
-using namespace erme_geometry;
+using namespace erme;
 using namespace detran_test;
 using std::cout;
 using std::endl;
 
 int main(int argc, char *argv[])
 {
+  PetscInitialize(&argc, &argv, PETSC_NULL, PETSC_NULL);
   RUN(argc, argv);
+  PetscFinalize();
 }
 
 //----------------------------------------------//
@@ -34,16 +35,21 @@ int main(int argc, char *argv[])
 //----------------------------------------------//
 
 // Test of basic public interface
-int test_NodeList(int argc, char *argv[])
+int test_StateERME(int argc, char *argv[])
 {
-  NodeList nodes = cartesian_node_detran_list_2d();
-  TEST(nodes.number_nodes() == 4);
-  TEST(nodes.neighbor(0, CartesianNode::TOP)   == 2);
-  TEST(nodes.neighbor(1, CartesianNode::RIGHT) == Node::VACUUM);
-  TEST(nodes.node(2)->dimension() == 2);
+
+  // Create node list
+  StateERME state(10);
+
+  state.set_k(1.12);
+  state.set_lambda(1.13);
+  TEST(detran::soft_equiv(state.k(),      1.12));
+  TEST(detran::soft_equiv(state.lambda(), 1.13));
+
   return 0;
+
 }
 
 //---------------------------------------------------------------------------//
-//              end of test_NodeList.cc
+//              end of test_StateERME.cc
 //---------------------------------------------------------------------------//
