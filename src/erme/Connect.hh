@@ -17,6 +17,17 @@
 namespace erme
 {
 
+/*!
+ *  \class Connect
+ *  \brief Defines the geometric relationship between nodes
+ *
+ *  In the simplest case of one unknown per node surface, the connectivity
+ *  matrix is simply an adjacency matrix in which a 1 is placed at any
+ *  row and column location representing the surface of one node adjoining
+ *  the surface of another node.
+ *
+ *  Boundary conditions are built into
+ */
 class Connect: public linear_algebra::Matrix
 {
 
@@ -25,14 +36,13 @@ public:
   typedef erme_geometry::NodeList         NodeList;
   typedef erme_response::ResponseIndexer  ResponseIndexer;
 
-  Connect(const erme_geometry::NodeList &list,
-          const erme_response::ResponseIndexer &indexer);
+  Connect(erme_geometry::NodeList &list,
+          erme_response::ResponseIndexer &indexer);
 
 private:
-
-  const NodeList&         d_nodes;
-  const ResponseIndexer&  d_indexer;
-
+//
+//  const NodeList&         d_nodes;
+//  const ResponseIndexer&  d_indexer;
 
 };
 

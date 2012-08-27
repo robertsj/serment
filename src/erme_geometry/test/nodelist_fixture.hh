@@ -19,6 +19,8 @@ namespace erme_geometry
 // Get a list of Detran nodes
 NodeList cartesian_node_detran_list_2d()
 {
+  typedef NodeList::NeighborSurface  Neighbor_T;
+
   // Create node list
   NodeList nodes;
 
@@ -29,23 +31,23 @@ NodeList cartesian_node_detran_list_2d()
   NodeList::SP_node node3 = cartesian_node_detran(2);
 
   // Create neighbor lists.
-  NodeList::vec_int neigh0(4, Node::VACUUM);
-  NodeList::vec_int neigh1(4, Node::VACUUM);
-  NodeList::vec_int neigh2(4, Node::VACUUM);
-  NodeList::vec_int neigh3(4, Node::VACUUM);
+  NodeList::vec_neighbor neigh0(4, Neighbor_T(Node::VACUUM, 0));
+  NodeList::vec_neighbor neigh1(4, Neighbor_T(Node::VACUUM, 0));
+  NodeList::vec_neighbor neigh2(4, Neighbor_T(Node::VACUUM, 0));
+  NodeList::vec_neighbor neigh3(4, Neighbor_T(Node::VACUUM, 0));
   //  --- ---
   // | 2 | 3 |
   //  --- ---
   // | 0 | 1 |   with vacuum everywhere else
   //  --- ---
-  neigh0[CartesianNode::TOP]    = 2;
-  neigh0[CartesianNode::RIGHT]  = 1;
-  neigh1[CartesianNode::LEFT]   = 0;
-  neigh1[CartesianNode::TOP]    = 3;
-  neigh2[CartesianNode::BOTTOM] = 0;
-  neigh2[CartesianNode::RIGHT]  = 3;
-  neigh3[CartesianNode::BOTTOM] = 1;
-  neigh3[CartesianNode::LEFT]   = 2;
+  neigh0[CartesianNode::TOP]    = Neighbor_T(2, CartesianNode::BOTTOM);
+  neigh0[CartesianNode::RIGHT]  = Neighbor_T(1, CartesianNode::LEFT);
+  neigh1[CartesianNode::LEFT]   = Neighbor_T(0, CartesianNode::RIGHT);
+  neigh1[CartesianNode::TOP]    = Neighbor_T(3, CartesianNode::BOTTOM);
+  neigh2[CartesianNode::BOTTOM] = Neighbor_T(0, CartesianNode::TOP);
+  neigh2[CartesianNode::RIGHT]  = Neighbor_T(3, CartesianNode::RIGHT);
+  neigh3[CartesianNode::BOTTOM] = Neighbor_T(1, CartesianNode::TOP);
+  neigh3[CartesianNode::LEFT]   = Neighbor_T(2, CartesianNode::RIGHT);
 
   // Add nodes
   nodes.add_node(node0, neigh0);

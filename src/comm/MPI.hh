@@ -73,8 +73,8 @@ inline int Comm::receive(T   *buffer,
 
 template<class T>
 inline int Comm::broadcast(T  *buffer,
-              int size,
-              int root)
+                           int size,
+                           int root)
 {
   int r = MPI_Bcast(buffer, size, MPI_Traits<T>::element_type(),
                     root, communicator);
@@ -86,7 +86,7 @@ inline int Comm::broadcast(T  *buffer,
 //---------------------------------------------------------------------------//
 
 template<class T>
-inline void global_sum(T &x)
+inline void Comm::global_sum(T &x)
 {
   // Copy data into send buffer
   T y = x;
@@ -96,7 +96,7 @@ inline void global_sum(T &x)
 }
 
 template<class T>
-inline void global_prod(T &x)
+inline void Comm::global_prod(T &x)
 {
   // copy data into send buffer
   T y = x;
@@ -106,7 +106,7 @@ inline void global_prod(T &x)
 }
 
 template<class T>
-inline void global_min(T &x)
+inline void Comm::global_min(T &x)
 {
   // copy data into send buffer
   T y = x;
@@ -116,7 +116,7 @@ inline void global_min(T &x)
 }
 
 template<class T>
-inline void global_max(T &x)
+inline void Comm::global_max(T &x)
 {
   // copy data into send buffer
   T y = x;
@@ -126,7 +126,7 @@ inline void global_max(T &x)
 }
 
 template<class T>
-inline void global_sum(T *x, int n)
+inline void Comm::global_sum(T *x, int n)
 {
   Require (x);
   // Copy data into a send buffer
@@ -137,7 +137,7 @@ inline void global_sum(T *x, int n)
 }
 
 template<class T>
-inline void global_prod(T  *x, int n)
+inline void Comm::global_prod(T  *x, int n)
 {
   Require (x);
   // Copy data into a send buffer
@@ -148,7 +148,7 @@ inline void global_prod(T  *x, int n)
 }
 
 template<class T>
-inline void global_min(T *x, int n)
+inline void Comm::global_min(T *x, int n)
 {
   Require (x);
   // Copy data into a send buffer
@@ -159,7 +159,7 @@ inline void global_min(T *x, int n)
 }
 
 template<class T>
-void global_max(T *x, int n)
+inline void Comm::global_max(T *x, int n)
 {
   Require (x);
   // Copy data into a send buffer

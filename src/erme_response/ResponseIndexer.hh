@@ -31,6 +31,9 @@ namespace erme_response
  *  user can limit the order of cross terms by setting the
  *  appropriate parameters in the database.
  *
+ *  Relevant database entries:
+ *    - dimension
+ *    - erme_order_reduction
  */
 class ResponseIndexer
 {
@@ -61,6 +64,9 @@ public:
 
   /// Get moment indices from cardinal index within node
   ResponseIndex index(const size_type cindex, const size_type node) const;
+
+  /// Display the indices in a nice format
+  void display() const;
 
 private:
 
@@ -118,7 +124,6 @@ private:
   size_type build_1D(SP_node node, const size_type n);
   size_type build_2D(SP_node node, const size_type n);
   size_type build_3D(SP_node node, const size_type n);
-
 
 };
 

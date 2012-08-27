@@ -68,9 +68,11 @@ Node::SP_node cartesian_node_detran(const int dim)
   // Create node
   Node_T::SP_node
     node(new Node_T(dim, 2*dim, 123, "testnode", Node_T::Point(0, 0, 0),
-         Node_T::vec2_size_type(2*dim, Node_T::vec_size_type(dim-1, 1)),
-         Node_T::vec_size_type(2*dim, 1), Node_T::vec_size_type(2*dim, 0),
-         Node_T::vec_size_type(2*dim, 0), widths, db, mat, mesh));
+         Node_T::vec2_size_type(2*dim, Node_T::vec_size_type(dim-1, 4)),  // space
+         Node_T::vec_size_type(2*dim, 2),                                 // polar
+         Node_T::vec_size_type(2*dim, 2),                                 // azimuth
+         Node_T::vec_size_type(2*dim, 0),                                 // energy
+         widths, db, mat, mesh));
   Ensure(node);
   return node;
 }

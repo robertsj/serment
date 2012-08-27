@@ -37,16 +37,25 @@ class NodeList
 
 public:
 
-  typedef unsigned int          size_type;
-  typedef Node::SP_node         SP_node;
-  typedef std::vector<SP_node>  vec_node;
-  typedef std::vector<int>      vec_int;
-  typedef std::vector<vec_int>  vec2_int;
+  struct NeighborSurface
+  {
+    NeighborSurface(int n, int s) : neighbor(n), surface(s) {}
+    unsigned int neighbor;
+    unsigned int surface;
+  };
+
+  typedef unsigned int              size_type;
+  typedef Node::SP_node             SP_node;
+  typedef std::vector<SP_node>      vec_node;
+  typedef std::vector<int>          vec_int;
+  typedef std::vector<vec_int>      vec2_int;
+  typedef std::vector<NeighborSurface>  vec_neighbor;
+  typedef std::vector<vec_neighbor>     vec2_neighbor;
 
   /// Constructor
   NodeList() : d_is_finalized(false), d_global_offset(0) {}
 
-  void add_node(SP_node n, vec_int neighbors)
+  void add_node(SP_node n, vec_neighbor neighbors)
   {
     Require(!is_finalized());
     Require(n);
@@ -80,7 +89,7 @@ public:
    *  \param n  Node index
    *  \param s  Node surface
    */
-  int neighbor(const size_type n, const size_type s)
+  NeighborSurface neighbor(const size_type n, const size_type s)
   {
     Require(is_finalized());
     Require(n < number_nodes());
@@ -88,7 +97,7 @@ public:
     return d_neighbors[n][s];
   }
 
-  vec_int& neighbor(const size_type n)
+  vec_neighbor& neighbor(const size_type n)
   {
     Require(is_finalized());
     Require(n < number_nodes());
@@ -119,8 +128,8 @@ private:
   /// List of nodes
   vec_node d_nodes;
 
-  /// List of node neighbor vectors
-  vec2_int d_neighbors;
+  /// List of node neighbor vectors [node]->neighbor,surface
+  vec2_neighbor d_neighbors;
 
   /// Finalized?
   bool d_is_finalized;

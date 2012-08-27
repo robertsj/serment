@@ -138,24 +138,31 @@ protected:
   /// PETSc matrix
   Mat d_A;
 
+  /// Number of matrix rows
   size_type d_number_global_rows;
 
+  /// Number of matrix columns
   size_type d_number_global_columns;
 
+  /// Number of matrix rows on this process
   const size_type d_number_local_rows;
 
+  /// Number of matrix columns on this process
   const size_type d_number_local_columns;
 
+  /// Starting (global) index of rows on this process
   size_type d_lower_bound;
 
+  /// Bounding index from above for rows on this process
   size_type d_upper_bound;
 
+  /// Flag for whether the matrix is assembled
   bool d_is_assembled;
 
   /// \}
 
+  /// Set the global sizes and local row and column bounds
   void set_sizes_and_bounds();
-
 
 };
 

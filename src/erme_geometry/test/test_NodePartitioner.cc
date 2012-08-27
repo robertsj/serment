@@ -72,7 +72,16 @@ int test_NodePartitioner(int argc, char *argv[])
   }
   else
   {
-    TEST(nodes.number_nodes() == 1);
+    if (Comm::rank() < 4)
+    {
+      cout << " proc " << Comm::rank() << " nodes = " << nodes.number_nodes() << endl;
+      TEST(nodes.number_nodes() == 1);
+    }
+    else
+    {
+      cout << " proc " << Comm::rank() << " nodes = " << nodes.number_nodes() << endl;
+      TEST(nodes.number_nodes() == 0);
+    }
   }
 
   // Finalize Comm

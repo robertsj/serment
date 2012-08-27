@@ -19,6 +19,9 @@
 namespace linear_algebra
 {
 
+// Forward declare the wrapper
+PetscErrorCode multiply_wrapper(Mat A, Vec x, Vec y);
+
 /*!
  *  \class MatrixShell
  *  \brief Shell matrix class for user storage and operator scheme
@@ -53,9 +56,18 @@ public:
     THROW("Can't assemble a shell matrix.");
   }
 
+private:
+
   //---------------------------------------------------------------------------//
   // SHELL MATRIX OPERATIONS
   //---------------------------------------------------------------------------//
+
+  /*!
+   *  PETSc calls this function when applying the operator.  The function
+   *  then calls the shell multiply function, when must be implemented
+   *  by the derived class.
+   */
+  friend PetscErrorCode multiply_wrapper(Mat A, Vec x, Vec y);
 
   /*!
    *  \brief Matrix-vector multiplication
@@ -72,9 +84,10 @@ public:
   virtual PetscErrorCode shell_multiply_transpose(Vec x, Vec y) = 0;
 
 
-protected:
-
-  /// This must be called
+  /*!
+   *  This must be called during construction of the base class.  It
+   *  gives PETSc the wrapper functions.
+   */
   PetscErrorCode set_operation();
 
 };

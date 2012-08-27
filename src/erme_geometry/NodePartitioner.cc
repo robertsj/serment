@@ -9,6 +9,8 @@
 
 #include "NodePartitioner.hh"
 
+#include <iostream>
+
 namespace erme_geometry
 {
 
@@ -68,9 +70,19 @@ void NodePartitioner::partition(NodeList &nodes)
     int remainder = number_nodes - npp * Comm::size();
 
     // Assign the number per process, putting the extras on
-    // the processes in reverse
-    for (int i = 0; i < Comm::size(); i++)
+    // the processes in reverse.  If there are more processes
+    // than nodes, put the nodes on the first processes.
+    int bound = Comm::size();
+    if (!npp)
+    {
+      bound = number_nodes;
+      npp   = 1;
+      remainder = 0;
+    }
+
+    for (int i = 0; i < bound; i++)
       number_per_process[i] = npp;
+
     for (int i = 1; i <= remainder; i++)
       number_per_process[Comm::size()-i] += 1;
   }
