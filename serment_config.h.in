@@ -36,6 +36,7 @@
 #cmakedefine SERMENT_ENABLE_MPI
 #cmakedefine SERMENT_ENABLE_OPENMP
 #cmakedefine SERMENT_ENABLE_XML
+#cmakedefine SERMENT_ENABLE_BOOST
 
 #endif // SERMENT_CONFIG_H_ 
 
