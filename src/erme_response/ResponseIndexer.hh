@@ -71,7 +71,12 @@ public:
   /// Return the number of moments of all nodes
   size_type number_global_moments() const;
 
-  /// Get moment indices from cardinal index within node
+  /*!
+   *  \brief Get moment indices from cardinal index within node
+   *  \param node     Global index of node
+   *  \param surface  Surface index of node
+   *  \param index    Moment index on surface of node
+   */
   ResponseIndex node_index(const size_type node,
                            const size_type surface,
                            const size_type index) const;

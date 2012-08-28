@@ -53,11 +53,21 @@ namespace erme_geometry
  *  Geometrically, nodes are rather flexible.  In 1D, they can
  *  represent slab slices, cylindrical shells, or spherical shells.
  *  In 2D, any closed shape can be well-defined.  In 3D, arbitrary
- *  right cylinders can be defined.  For 3D, south and north surfaces
+ *  right cylinders can be defined.  For 3D, bottom and top surfaces
  *  (in the xy plane) are enforced to simplify polarity shifts
  *  in the polar angle upon reflection at global boundaries.  The
- *  south and north surface must be the last two surfaces, respectively,
+ *  bottom and top surface must be the last two surfaces, respectively,
  *  in any 3D node.
+ *
+ *  Because visualization of a node (or the set of connected nodes)
+ *  is extremely useful, a Node must implement a \ref color function
+ *  that returns some useful information about the node.  Because
+ *  all nodes are assigned an origin, the implementation can determine
+ *  whether a queried point is within the node, and if so, return a
+ *  color.  By default, the south-west-bottom corner of the global
+ *  domain is the global origin, and the s-w-b corner of nodes
+ *  should be the local origin---different nodes might need to be
+ *  flexible with that notion.
  *
  */
 class Node
@@ -65,7 +75,8 @@ class Node
 
 public:
 
-  /// Boundary condition identifiers
+  /// Boundary condition identifiers.  Note, periodic is not listed, since
+  /// nodes can be explicitly linked in a periodic fashion.
   const static int REFLECT = -1;
   const static int VACUUM  = -2;
 
@@ -80,12 +91,21 @@ public:
 
   /*!
    *  \brief Constructor
+   *  \param dimension        Dimension of the node
+   *  \param number_surfaces  Number of surfaces
+   *  \param id               Identifier
+   *  \param name             Name
+   *  \param origin           Node origin relative to global origin
+   *  \param so               Spatial orders [surface][axis]
+   *  \param po               Polar orders [surface]
+   *  \param ao               Azimuth orders [surface]
+   *  \param eo               Energy orders [surface]
    */
-  Node(const size_type  dim,
-       const size_type  num_surface,
-       const int        nodeid,
-       std::string      nodename,
-       const Point      nodeorigin,
+  Node(const size_type  dimension,
+       const size_type  number_surfaces,
+       const int        id,
+       std::string      name,
+       const Point      origin,
        vec2_size_type   so,
        vec_size_type    po,
        vec_size_type    ao,

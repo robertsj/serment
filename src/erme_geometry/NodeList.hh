@@ -36,6 +36,11 @@ namespace erme_geometry
  *  Once the user adds all nodes, finalize() must be
  *  called.
  */
+/*!
+ *  \example erme_geometry/test/test_NodeList.cc
+ *
+ *  Example of the NodeList class.
+ */
 
 class NodeList
 {
@@ -53,7 +58,16 @@ public:
   /// Constructor
   NodeList();
 
-  /// Set the bounds
+  /*!
+   *  \brief Set the local node array bounds
+   *
+   *  The entire vector of nodes lives on all process.  The
+   *  partitioner must set the bounds corresponding to a
+   *  particular node.
+   *
+   *  \param lb   Lower bound
+   *  \param ub   Upper bound
+   */
   void set_bounds(const size_type lb, const size_type ub)
   {
     d_lower_bound = lb;
@@ -73,15 +87,11 @@ public:
    */
   SP_node node(const int n);
 
-  size_type lower_bound() const
-  {
-    return d_lower_bound;
-  }
+  /// Return local lower bound
+  size_type lower_bound() const;
 
-  size_type upper_bound() const
-  {
-    return d_upper_bound;
-  }
+  /// Return local upper bound
+  size_type upper_bound() const;
 
   /// Number of global nodes
   size_type number_global_nodes() const;
@@ -94,14 +104,14 @@ public:
    *  \param n  Global node index
    *  \param s  Node surface
    */
-  NeighborSurface neighbor(const size_type n, const size_type s);
+  const NeighborSurface& neighbor(const size_type n, const size_type s) const;
 
 
   /*!
    *  \brief Get the global index of a local node
    *  \param n  Local node index
    */
-  size_type global_index(const size_type n);
+  size_type global_index(const size_type n) const;
 
   /*!
    *  \brief Get the local index of a global node
@@ -110,7 +120,7 @@ public:
    *  Returns a negative value if the global index
    *  is not within the local range.
    */
-  int local_index(const size_type n);
+  int local_index(const size_type n) const;
 
   void finalize()
   {
@@ -123,6 +133,10 @@ public:
   }
 
 private:
+
+  //-------------------------------------------------------------------------//
+  // DATA
+  //-------------------------------------------------------------------------//
 
   /// Vector of nodes
   vec_node d_nodes;
@@ -159,7 +173,10 @@ private:
 
 } // end namespace erme_geometry
 
-// Inline member definitions
+//-------------------------------------------------------------------------//
+// INLINE MEMBER DEFINITIONS
+//-------------------------------------------------------------------------//
+
 #include "NodeList.i.hh"
 
 #endif // NODELIST_HH_ 

@@ -27,9 +27,7 @@ using std::endl;
 
 int main(int argc, char *argv[])
 {
-  PetscInitialize(&argc, &argv, PETSC_NULL, PETSC_NULL);
   RUN(argc, argv);
-  PetscFinalize();
 }
 
 //----------------------------------------------//
@@ -40,6 +38,9 @@ int main(int argc, char *argv[])
 int test_Connect(int argc, char *argv[])
 {
   typedef serment_comm::Comm Comm;
+
+  Comm::initialize(argc, argv);
+  PetscInitialize(&argc, &argv, PETSC_NULL, PETSC_NULL);
 
   // Get the node list
   erme_geometry::NodeList nodes;
@@ -53,13 +54,21 @@ int test_Connect(int argc, char *argv[])
   // Create parameter database
   erme_response::ResponseIndexer::SP_db db(new detran::InputDB());
   db->put<int>("dimension", 2);
+  db->put<int>("erme_order_reduction", 3);
 
-  db->put<int>("erme_order_reduction", 0);
+  // Create indexer
   erme_response::ResponseIndexer indexer(db, nodes);
 
-  // Connect
-  Connect(nodes, indexer);
+  {
+    // Connect
+    Connect M(nodes, indexer);
 
+    M.display(Connect::BINARY, "binary.out");
+    M.display(Connect::MATLAB, "matlab.out");
+  }
+
+  PetscFinalize();
+  Comm::finalize();
   return 0;
 
 }

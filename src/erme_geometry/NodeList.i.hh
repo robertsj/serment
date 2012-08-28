@@ -25,8 +25,17 @@ inline void NodeList::add_node(SP_node n, vec_neighbor neighbors)
 inline NodeList::SP_node NodeList::node(const int n)
 {
   Require(is_finalized());
-  Require(local_index(n) >= 0);
   return d_nodes[n];
+}
+
+inline NodeList::size_type NodeList::lower_bound() const
+{
+  return d_lower_bound;
+}
+
+inline NodeList::size_type NodeList::upper_bound() const
+{
+  return d_upper_bound;
 }
 
 inline NodeList::size_type NodeList::number_global_nodes() const
@@ -39,15 +48,15 @@ inline NodeList::size_type NodeList::number_local_nodes() const
   return d_upper_bound - d_lower_bound;
 }
 
-inline NeighborSurface NodeList::neighbor(const size_type n, const size_type s)
+inline const NeighborSurface&
+NodeList::neighbor(const size_type n, const size_type s) const
 {
-  Require(local_index(n) >= 0);
   Require(s < d_nodes[n]->number_surfaces());
   return d_neighbors[n][s];
 }
 
 // L-to-G
-inline NodeList::size_type NodeList::global_index(const size_type li)
+inline NodeList::size_type NodeList::global_index(const size_type li) const
 {
   Require(li < d_upper_bound);
   size_type gi = li + d_lower_bound;
@@ -56,7 +65,7 @@ inline NodeList::size_type NodeList::global_index(const size_type li)
 }
 
 // G-to-L
-inline int NodeList::local_index(const size_type gi)
+inline int NodeList::local_index(const size_type gi) const
 {
   Require(gi < d_nodes.size());
   int li = gi - d_lower_bound;

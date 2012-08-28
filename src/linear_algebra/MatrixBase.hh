@@ -19,6 +19,7 @@
 // System
 #include "petsc.h"
 #include <vector>
+#include <string>
 
 namespace linear_algebra
 {
@@ -27,6 +28,12 @@ class MatrixBase
 {
 
 public:
+
+  /// Output flag options for matrix viewer
+  enum MATOUT
+  {
+    STDOUT, ASCII, BINARY, MATLAB
+  };
 
   typedef unsigned int size_type;
   typedef std::vector<int> vec_int;
@@ -128,7 +135,13 @@ public:
     return d_is_assembled;
   }
 
-  virtual void display() const;
+  /*!
+   *  \brief Display the matrix to screen (or to output)
+   *  \param  output    Flag indicating (stdout=0, ascii=1, binary=2)
+   *  \param  name      File name for ascii or binary file
+   */
+  virtual void display(const int output = 0,
+                       const std::string name = "matrix.out") const;
 
 protected:
 

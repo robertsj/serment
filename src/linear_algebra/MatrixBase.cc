@@ -51,9 +51,24 @@ void MatrixBase::assemble()
 }
 
 // Default implementation.  Note, shell matrices have to do something else!
-void MatrixBase::display() const
+void MatrixBase::display(const int output, const std::string name) const
 {
-  MatView(d_A, PETSC_VIEWER_STDOUT_WORLD);
+  if (output == STDOUT)
+  {
+    MatView(d_A, PETSC_VIEWER_STDOUT_WORLD);
+    return;
+  }
+  PetscViewer viewer;
+  if (output == BINARY)
+    PetscViewerBinaryOpen(PETSC_COMM_WORLD, name.c_str(), FILE_MODE_WRITE, &viewer);
+  else if (output == ASCII)
+    PetscViewerASCIIOpen(PETSC_COMM_WORLD, name.c_str(), &viewer);
+  else if (output == MATLAB)
+    PetscViewerBinaryMatlabOpen(PETSC_COMM_WORLD, name.c_str(), &viewer);
+  else
+    THROW("Invalid output switch for Matrix display");
+  MatView(d_A, viewer);
+  PetscViewerDestroy(&viewer);
 }
 
 //---------------------------------------------------------------------------//

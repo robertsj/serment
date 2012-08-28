@@ -15,7 +15,7 @@ namespace erme
 
 // Note, connectivity matrices have at most one nonzero value
 // per row.
-Connect::Connect(erme_geometry::NodeList &list,
+Connect::Connect(erme_geometry::NodeList &nodes,
                  erme_response::ResponseIndexer &indexer)
   : linear_algebra::Matrix(indexer.number_local_moments(),
                            indexer.number_local_moments(),
@@ -25,54 +25,54 @@ Connect::Connect(erme_geometry::NodeList &list,
   using std::cout;
   using std::endl;
 
-  Require(list.number_global_nodes() == indexer.number_nodes());
+  Require(nodes.number_global_nodes() == indexer.number_nodes());
 
   // All nodes
-  for (int n = list.lower_bound(); n < list.upper_bound(); n++)
+  for (int n = nodes.lower_bound(); n < nodes.upper_bound(); n++)
   {
-    cout << "n = " << n << endl;
-    int idx = 0;
+    int n_index = 0;
+
     // All surfaces
-    for (int s = 0; s < list.node(n)->number_surfaces(); s++)
+    for (int s = 0; s < nodes.node(n)->number_surfaces(); s++)
     {
-      cout << "  s = " << s << endl;
 
       // Get the neighbor node and surface
-      int neigh_n = list.neighbor(n, s).neighbor();
-      int neigh_s = list.neighbor(n, s).surface();
+      int neigh_n = nodes.neighbor(n, s).neighbor();
+      int neigh_s = nodes.neighbor(n, s).surface();
 
-
-      // Nodes should have consistent expansions on shared surfaces
+      // Nodes should have consistent expansions on shared surfaces.  This
+      // is a light check, since order counts can be the same with different
+      // expansions.  A geometry preprocessor would be useful.
       if (neigh_n >= 0)
       {
         Assert(indexer.number_surface_moments(neigh_n, neigh_s)
                == indexer.number_surface_moments(n, s));
       }
-      // All moments
-      for (int m = 0; m < indexer.number_surface_moments(n, s); m++, idx++)
+
+      // All moments on a surface
+      for (int m = 0; m < indexer.number_surface_moments(n, s); m++, n_index++)
       {
-        cout << "    m = " << m << endl;
-
         // Set the row, column, and value
-        int row    = indexer.global_index(n, idx);
-        int column = indexer.global_index(n, idx);
-
-        cout << "      row = " << row << endl;
+        int row      = indexer.global_index(n, n_index);
+        int column   = indexer.global_index(n, n_index);
         double value = 0.0;
-        if (list.neighbor(n, s).neighbor() >= 0)
+
+        if (nodes.neighbor(n, s).neighbor() >= 0)
         {
-          // Connect my row to their column
-          row    = indexer.global_index(n, idx);
-          column = indexer.global_index(n, idx);
-          value  = 2.0;
+          // Get neighbor node moment index
+          int neigh_n_index = indexer.node_index(neigh_n, neigh_s, m).local;
+
+          // My row connects to their column.
+          column = indexer.global_index(neigh_n, neigh_n_index);
+          value  = 1.0;
         }
-        else if (list.neighbor(n, s).neighbor() == erme_geometry::Node::REFLECT)
+        else if (nodes.neighbor(n, s).neighbor() == erme_geometry::Node::REFLECT)
         {
           indexer.node_index(n, s, m).even_odd == 0 ? value = 1.0 : value = -1.0;
         }
-        else if (list.neighbor(n, s).neighbor() == erme_geometry::Node::VACUUM)
+        else if (nodes.neighbor(n, s).neighbor() == erme_geometry::Node::VACUUM)
         {
-          // vacuum gets zero
+          // Nothing for vacuum
         }
         else
         {
@@ -86,7 +86,8 @@ Connect::Connect(erme_geometry::NodeList &list,
     } // end surfaces
   } // end nodes
 
-
+  // Assemble the matrix.
+  assemble();
 }
 
 } // end namespace detran

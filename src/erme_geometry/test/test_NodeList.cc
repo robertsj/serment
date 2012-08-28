@@ -38,9 +38,9 @@ int test_NodeList(int argc, char *argv[])
 {
   NodeList nodes = cartesian_node_detran_list_2d();
   TEST(nodes.number_global_nodes() == 4);
-  TEST(nodes.neighbor(0, CartesianNode::TOP).neighbor()   == 2);
-  TEST(nodes.neighbor(0, CartesianNode::TOP).surface()    == CartesianNode::BOTTOM);
-  TEST(nodes.neighbor(1, CartesianNode::RIGHT).neighbor() == Node::VACUUM);
+  TEST(nodes.neighbor(0, CartesianNode::NORTH).neighbor() == 2);
+  TEST(nodes.neighbor(0, CartesianNode::NORTH).surface()  == CartesianNode::SOUTH);
+  TEST(nodes.neighbor(1, CartesianNode::EAST).neighbor()  == Node::VACUUM);
   TEST(nodes.node(2)->dimension() == 2);
   return 0;
 }

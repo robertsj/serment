@@ -1,14 +1,14 @@
 //----------------------------------*-C++-*----------------------------------//
 /*!
- * \file   CartesianNode.hh
- * \brief  CartesianNode 
+ * \file   HexagonalNode.hh
+ * \brief  HexagonalNode 
  * \author Jeremy Roberts
- * \date   Aug 22, 2012
+ * \date   Aug 28, 2012
  */
 //---------------------------------------------------------------------------//
 
-#ifndef CARTESIANNODE_HH_
-#define CARTESIANNODE_HH_
+#ifndef HEXAGONALNODE_HH_
+#define HEXAGONALNODE_HH_
 
 #include "Node.hh"
 
@@ -16,11 +16,11 @@ namespace erme_geometry
 {
 
 /*!
- *  \class CartesianNode
- *  \brief Base Cartesian node class
+ *  \class HexagonalNode
+ *  \brief Base Hexagonal node class
  *
  */
-class CartesianNode: public Node
+class HexagonalNode: public Node
 {
 
 public:
@@ -28,8 +28,10 @@ public:
   // Face identifiers
   enum FACE
   {
-    WEST,
-    EAST,
+    SOUTHWEST,
+    NORTHEAST,
+    NORTHWEST,
+    SOUTHEAST,
     SOUTH,
     NORTH,
     BOTTOM,
@@ -39,7 +41,7 @@ public:
   typedef Node                    Base;
   typedef std::vector<double>     vec_dbl;
 
-  CartesianNode(const size_type  d,
+  HexagonalNode(const size_type  d,
                 const size_type  n,
                 const int        nodeid,
                 std::string      nodename,
@@ -48,7 +50,8 @@ public:
                 vec_size_type    po,
                 vec_size_type    ao,
                 vec_size_type    eo,
-                vec_dbl          nodewidth);
+                const double     face_width,
+                const double     height = 1.0);
 
   //-------------------------------------------------------------------------//
   // ABSTRACT INTERFACE
@@ -61,17 +64,16 @@ public:
   double area(const size_type surface) const
   {
     Require(surface < number_surfaces());
-    if (surface == 0 or surface == 1)
-      return d_width[1] * d_width[2];
-    if (surface == 2 or surface == 3)
-      return d_width[0] * d_width[2];
-    return d_width[0] * d_width[1];
+    if (surface < 6)
+      return d_face_width * d_height;
+    // area of xy faces = 3*sqrt(3)/2 * face_width^2
+    return 2.59807621135332 * d_face_width * d_face_width;
   }
 
   /// Return the volume of the node
   double volume() const
   {
-    return d_width[0] * d_width[1] * d_width[2];
+    return 2.59807621135332 * d_face_width * d_face_width * d_height;
   }
 
   /// Return the color associated with the spatial coordinate.
@@ -83,8 +85,12 @@ private:
   // DATA
   //-------------------------------------------------------------------------//
 
-  /// Width in each dimension
-  vec_dbl d_width;
+  /// Width of a face
+  const double d_face_width;
+
+  /// Height of cell (defaults to 1.0 for 2D)
+  const double d_height;
+
 
   //-------------------------------------------------------------------------//
   // IMPLEMENTATION
@@ -93,33 +99,29 @@ private:
 protected:
 
   /// Default constructor needed for serialization
-  CartesianNode(){}
+  HexagonalNode() : d_face_width(0.0), d_height(0.0) {}
 
 private:
 
-#ifdef SERMENT_ENABLE_BOOST
   friend class boost::serialization::access;
+
   template<class Archive>
   void serialize(Archive & ar, const unsigned int version)
   {
     ar & boost::serialization::base_object<Base>(*this);
-    ar & d_width;
+    ar & d_face_width;
+    ar & d_height;
   }
-#endif
 
 };
 
 } // end namespace erme_geometry
 
-#ifdef SERMENT_ENABLE_BOOST
 BOOST_CLASS_EXPORT_KEY(erme_geometry::CartesianNode)
 BOOST_SERIALIZATION_ASSUME_ABSTRACT(erme_geometry::CartesianNode)
-#endif
 
-
-
-#endif // CARTESIANNODE_HH_ 
+#endif // HEXAGONALNODE_HH_ 
 
 //---------------------------------------------------------------------------//
-//              end of file CartesianNode.hh
+//              end of file HexagonalNode.hh
 //---------------------------------------------------------------------------//

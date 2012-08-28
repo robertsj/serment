@@ -148,7 +148,7 @@ ResponseIndexer::build_3D(SP_node node, const size_type n)
                 south_north ? (a + s0 + s1) % 2 : (a + p + s0 + s1) % 2;
 
               // Add the index
-              ResponseIndex tmp(s, e, p, a, s0, s1, polarity);
+              ResponseIndex tmp(s, e, p, a, s0, s1, polarity, local_index);
               moment_indices.push_back(tmp);
 
               // Update the local index
@@ -218,7 +218,7 @@ ResponseIndexer::build_2D(SP_node node, const size_type n)
             bool polarity = (a + s0) % 2;
 
             // Add the index
-            moment_indices.push_back(ResponseIndex(s, e, p, a, s0, 0, polarity));
+            moment_indices.push_back(ResponseIndex(s, e, p, a, s0, 0, polarity, local_index));
 
             // Update the local index
             local_index++;
@@ -253,7 +253,7 @@ ResponseIndexer::build_1D(SP_node node, const size_type n)
       {
 
         // Add the index
-        moment_indices.push_back(ResponseIndex(s, e, p, 0, 0, 0, false));
+        moment_indices.push_back(ResponseIndex(s, e, p, 0, 0, 0, false, local_index));
 
         // Update the local index
         local_index++;

@@ -23,7 +23,7 @@ NodeList cartesian_node_detran_list_2d()
   // Create node list
   NodeList nodes;
 
-  // Get 4 test nodes
+  // Get four, two-dimensional Cartesian test nodes
   NodeList::SP_node node0 = cartesian_node_detran(2);
   NodeList::SP_node node1 = cartesian_node_detran(2);
   NodeList::SP_node node2 = cartesian_node_detran(2);
@@ -37,16 +37,16 @@ NodeList cartesian_node_detran_list_2d()
   //  --- ---
   // | 2 | 3 |
   //  --- ---
-  // | 0 | 1 |   with vacuum everywhere else
+  // | 0 | 1 |   with vacuum on all global surfaces
   //  --- ---
-  neigh0[CartesianNode::TOP]    = NeighborSurface(2, CartesianNode::BOTTOM);
-  neigh0[CartesianNode::RIGHT]  = NeighborSurface(1, CartesianNode::LEFT);
-  neigh1[CartesianNode::LEFT]   = NeighborSurface(0, CartesianNode::RIGHT);
-  neigh1[CartesianNode::TOP]    = NeighborSurface(3, CartesianNode::BOTTOM);
-  neigh2[CartesianNode::BOTTOM] = NeighborSurface(0, CartesianNode::TOP);
-  neigh2[CartesianNode::RIGHT]  = NeighborSurface(3, CartesianNode::RIGHT);
-  neigh3[CartesianNode::BOTTOM] = NeighborSurface(1, CartesianNode::TOP);
-  neigh3[CartesianNode::LEFT]   = NeighborSurface(2, CartesianNode::RIGHT);
+  neigh0[CartesianNode::NORTH]  = NeighborSurface(2, CartesianNode::SOUTH);
+  neigh0[CartesianNode::EAST]   = NeighborSurface(1, CartesianNode::WEST);
+  neigh1[CartesianNode::WEST]   = NeighborSurface(0, CartesianNode::EAST);
+  neigh1[CartesianNode::NORTH]  = NeighborSurface(3, CartesianNode::SOUTH);
+  neigh2[CartesianNode::SOUTH]  = NeighborSurface(0, CartesianNode::NORTH);
+  neigh2[CartesianNode::EAST]   = NeighborSurface(3, CartesianNode::WEST);
+  neigh3[CartesianNode::SOUTH]  = NeighborSurface(1, CartesianNode::NORTH);
+  neigh3[CartesianNode::WEST]   = NeighborSurface(2, CartesianNode::EAST);
 
   // Add nodes
   nodes.add_node(node0, neigh0);
