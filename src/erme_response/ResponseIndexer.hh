@@ -31,6 +31,9 @@ namespace erme_response
  *  user can limit the order of cross terms by setting the
  *  appropriate parameters in the database.
  *
+ *  Note, the indexer is constructed by all processes and
+ *  applies to the entire node list.
+ *
  *  Relevant database entries:
  *    - dimension
  *    - erme_order_reduction
@@ -43,7 +46,9 @@ public:
   typedef detran::InputDB::SP_input SP_db;
   typedef erme_geometry::NodeList::SP_node SP_node;
   typedef unsigned int size_type;
-
+  typedef std::vector<ResponseIndex> vec_index;
+  typedef std::vector<vec_index>     vec2_index;
+  typedef std::vector<vec2_index>    vec3_index;
   /*!
    *  \brief Constructor
    *  \param node   Node to index
@@ -53,17 +58,35 @@ public:
   /// Number of nodes indexed
   size_type number_nodes() const;
 
-  /// Return the total number of moments of all local nodes
-  size_type number_moments() const;
-
   /// Return the number of moments of a node
-  size_type number_moments(const size_type node) const;
+  size_type number_node_moments(const size_type node) const;
 
-  /// Return the number of moments globally
-  size_type global_number_moments() const;
+  /// Return the number of moments of a node surface
+  size_type number_surface_moments(const size_type node,
+                                   const size_type surface) const;
+
+  /// Return the number of moments of all local nodes
+  size_type number_local_moments() const;
+
+  /// Return the number of moments of all nodes
+  size_type number_global_moments() const;
 
   /// Get moment indices from cardinal index within node
-  ResponseIndex index(const size_type cindex, const size_type node) const;
+  ResponseIndex node_index(const size_type node,
+                           const size_type surface,
+                           const size_type index) const;
+
+  /// Get local moment index from a cardinal index within node
+  size_type local_index(const size_type node, const size_type index) const
+  {
+    return index + d_offsets[node];
+  }
+
+  /// Get global moment index from a cardinal index within node
+  size_type global_index(const size_type node, const size_type index) const
+  {
+    return index + d_offsets[node] + d_global_offset;
+  }
 
   /// Display the indices in a nice format
   void display() const;
@@ -74,13 +97,13 @@ private:
   // PRIVATE DATA
   //---------------------------------------------------------------------------//
 
-  /// List of indices for all local nodes
-  std::vector<ResponseIndex> d_indices;
+  /// List of indices for all nodes [nodes][surface][moments]
+  vec3_index d_indices;
 
   /// Vector of moment sizes per node
   std::vector<size_type> d_sizes;
 
-  /// Vector of moment sizes per node
+  /// Offset of node indices (within local set)
   std::vector<size_type> d_offsets;
 
   /// Local size of moments vector

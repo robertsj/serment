@@ -14,8 +14,8 @@ namespace erme_response
 {
 
 ResponseIndexer::ResponseIndexer(SP_db db, erme_geometry::NodeList &nodes)
-  : d_sizes(nodes.number_nodes(), 0)
-  , d_offsets(nodes.number_nodes(), 0)
+  : d_sizes(nodes.number_global_nodes(), 0)
+  , d_offsets(nodes.number_global_nodes(), 0)
   , d_order_reduction(0)
   , d_local_size(0)
   , d_global_offset(0)
@@ -32,8 +32,9 @@ ResponseIndexer::ResponseIndexer(SP_db db, erme_geometry::NodeList &nodes)
     d_order_reduction = db->get<int>("erme_order_reduction");
 
   // Loop over all nodes
-  for (size_type n = 0; n < nodes.number_nodes(); n++)
+  for (size_type n = 0; n < nodes.number_global_nodes(); n++)
   {
+    // Moments size for the node
     size_type size = 0;
     if (dimension == 1)
       size = build_1D(nodes.node(n), n);
@@ -68,17 +69,20 @@ void ResponseIndexer::display() const
   using std::endl;
   for (int n = 0; n < number_nodes(); n++)
   {
-    cout << "LOCAL NODE " << n << endl;
-    for (int m = 0; m < number_moments(n); m++)
+    cout << "GLOBAL NODE " << n << endl;
+    for (int s = 0; s < d_indices[n].size(); s++)
     {
-      cout << "    " << m << " | "
-           << index(m, n).surface << " | "
-           << index(m, n).energy << " | "
-           << index(m, n).polar << " "
-           << index(m, n).azimuth << " | "
-           << index(m, n).space0 << " "
-           << index(m, n).space1 << " | "
-           << index(m, n).even_odd << " |" << endl;
+      for (int m = 0; m < d_indices[n][s].size(); m++)
+      {
+        cout << "    " << m << " | "
+             << node_index(n, m, s).surface  << " | "
+             << node_index(n, m, s).energy   << " | "
+             << node_index(n, m, s).polar    << " "
+             << node_index(n, m, s).azimuth  << " | "
+             << node_index(n, m, s).space0   << " "
+             << node_index(n, m, s).space1   << " | "
+             << node_index(n, m, s).even_odd << " |" << endl;
+      }
     }
   }
 }
@@ -97,6 +101,7 @@ ResponseIndexer::build_3D(SP_node node, const size_type n)
   for (size_type i = 0; i < n; i++)
     offset += d_sizes[i];
 
+  vec2_index surface_indices;
   for (size_type s = 0; s < node->number_surfaces(); s++)
   {
     // Max space order
@@ -114,6 +119,7 @@ ResponseIndexer::build_3D(SP_node node, const size_type n)
     // Is this a south or north surface?
     bool south_north = (node->number_surfaces() - s > 2) ? false : true;
 
+    vec_index moment_indices;
     for (size_type e = 0; e <= node->energy_order(s); e++)
     {
       for (size_type p = 0; p <= node->polar_order(s); p++)
@@ -143,7 +149,7 @@ ResponseIndexer::build_3D(SP_node node, const size_type n)
 
               // Add the index
               ResponseIndex tmp(s, e, p, a, s0, s1, polarity);
-              d_indices.push_back(tmp);
+              moment_indices.push_back(tmp);
 
               // Update the local index
               local_index++;
@@ -153,8 +159,10 @@ ResponseIndexer::build_3D(SP_node node, const size_type n)
         } // end azimuth
       } // end polar
     } // end energy
+    surface_indices.push_back(moment_indices);
   } // end surface
 
+  d_indices.push_back(surface_indices);
   return local_index;
 }
 
@@ -171,6 +179,7 @@ ResponseIndexer::build_2D(SP_node node, const size_type n)
   for (size_type i = 0; i < n; i++)
     offset += d_sizes[i];
 
+  vec2_index surface_indices;
   for (size_type s = 0; s < node->number_surfaces(); s++)
   {
     //cout << "SURFACE " << s << endl;
@@ -183,6 +192,7 @@ ResponseIndexer::build_2D(SP_node node, const size_type n)
     size_type msao = node->spatial_order(s, 0);
     if (mao > msao) msao = mao;
 
+    vec_index moment_indices;
     for (size_type e = 0; e <= node->energy_order(s); e++)
     {
       //cout << "  energy order " << e << endl;
@@ -208,9 +218,7 @@ ResponseIndexer::build_2D(SP_node node, const size_type n)
             bool polarity = (a + s0) % 2;
 
             // Add the index
-            ResponseIndex tmp(s, e, p, a, s0, 0, polarity);
-            d_indices.push_back(tmp);
-            // ResponseIndex(s, e, p, a, s0, 0, polarity);
+            moment_indices.push_back(ResponseIndex(s, e, p, a, s0, 0, polarity));
 
             // Update the local index
             local_index++;
@@ -219,7 +227,9 @@ ResponseIndexer::build_2D(SP_node node, const size_type n)
         } // end azimuth
       } // end polar
     } // end energy
+    surface_indices.push_back(moment_indices);
   } // end surface
+  d_indices.push_back(surface_indices);
 
   return local_index;
 }
@@ -233,23 +243,27 @@ ResponseIndexer::build_1D(SP_node node, const size_type n)
   for (size_type i = 0; i < n; i++)
     offset += d_sizes[i];
 
+  vec2_index surface_indices;
   for (size_type s = 0; s <= node->number_surfaces(); s++)
   {
+    vec_index moment_indices;
     for (size_type e = 0; e <= node->energy_order(s); e++)
     {
       for (size_type p = 0; p <= node->polar_order(s); p++)
       {
 
         // Add the index
-        ResponseIndex tmp(s, e, p, 0, 0, 0, false);
-        d_indices.push_back(tmp);
+        moment_indices.push_back(ResponseIndex(s, e, p, 0, 0, 0, false));
 
         // Update the local index
         local_index++;
 
       } // end polar
     } // end energy
+    surface_indices.push_back(moment_indices);
   } // end surface
+
+  d_indices.push_back(surface_indices);
 
   return local_index;
 }

@@ -80,24 +80,24 @@ int test_ResponseIndexer(int argc, char *argv[])
     db->put<int>("erme_order_reduction", 0);
     ResponseIndexer indexer(db, nodes);
 
-    TEST(indexer.number_nodes()         == num_nodes);
-    TEST(indexer.number_moments(0)      == 180);
-    TEST(indexer.index(0, 0).azimuth    == 0);
-    TEST(indexer.index(179, 0).polar    == 2);
-    TEST(indexer.index(179, 0).azimuth  == 2);
-    TEST(indexer.index(179, 0).space0   == 4);
+    TEST(indexer.number_nodes()               == 4);
+    TEST(indexer.number_node_moments(0)       == 180);
+    TEST(indexer.node_index(0, 0, 0).azimuth  == 0);
+    TEST(indexer.node_index(0, 3, 59).polar   == 2);
+    TEST(indexer.node_index(0, 3, 59).azimuth == 2);
+    TEST(indexer.node_index(0, 3, 59).space0  == 4);
   }
 
   // space-angle reduction
   {
     db->put<int>("erme_order_reduction", 3);
     ResponseIndexer indexer(db, nodes);
-    TEST(indexer.number_nodes()         == num_nodes);
-    TEST(indexer.number_moments(0)      == 108);
-    TEST(indexer.index(0, 0).azimuth    == 0);
-    TEST(indexer.index(107, 0).polar    == 2);
-    TEST(indexer.index(107, 0).azimuth  == 2);
-    TEST(indexer.index(107, 0).space0   == 0);
+    TEST(indexer.number_nodes()                 == 4);
+    TEST(indexer.number_node_moments(0)         == 108);
+    TEST(indexer.node_index(0, 0, 0).azimuth    == 0);
+    TEST(indexer.node_index(0, 0, 32).polar     == 2);
+    TEST(indexer.node_index(0, 0, 32).azimuth   == 2);
+    TEST(indexer.node_index(0, 0, 32).space0    == 0);
   }
 
   Comm::finalize();

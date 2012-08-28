@@ -36,7 +36,7 @@ public:
   typedef erme_geometry::NodeList         NodeList;
   typedef erme_response::ResponseIndexer  ResponseIndexer;
 
-  Connect(erme_geometry::NodeList &list,
+  Connect(erme_geometry::NodeList &nodes,
           erme_response::ResponseIndexer &indexer);
 
 private:

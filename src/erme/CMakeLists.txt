@@ -22,6 +22,7 @@ ADD_LIBRARY(erme
             ${SRC} 
 )
 TARGET_LINK_LIBRARIES( erme
+                       erme_response
                        erme_geometry
                        linear_algebra
                        serment_comm

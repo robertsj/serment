@@ -10,6 +10,7 @@ SET(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
 SET(SRC
     Node.cc
+    NodeList.cc
     CartesianNode.cc
     CartesianNodeDetran.cc
     NodeFactoryDetran.cc

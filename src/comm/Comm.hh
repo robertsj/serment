@@ -97,7 +97,7 @@ public:
    * \param root
    */
   template<class T>
-  static int broadcast(T *buffer, int size, int root);
+  static int broadcast(T *buffer, int size, int root = 0);
 
   //---------------------------------------------------------------------------//
   // GLOBAL REDUCTIONS

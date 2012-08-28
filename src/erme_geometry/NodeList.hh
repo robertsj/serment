@@ -11,7 +11,12 @@
 #define NODELIST_HH_
 
 #include "Node.hh"
+#include "NeighborSurface.hh"
+
+// System
 #include <vector>
+#include <boost/serialization/vector.hpp>
+#include <boost/serialization/access.hpp>
 
 namespace erme_geometry
 {
@@ -37,81 +42,75 @@ class NodeList
 
 public:
 
-  struct NeighborSurface
-  {
-    NeighborSurface(int n, int s) : neighbor(n), surface(s) {}
-    unsigned int neighbor;
-    unsigned int surface;
-  };
-
-  typedef unsigned int              size_type;
-  typedef Node::SP_node             SP_node;
-  typedef std::vector<SP_node>      vec_node;
-  typedef std::vector<int>          vec_int;
-  typedef std::vector<vec_int>      vec2_int;
+  typedef unsigned int                  size_type;
+  typedef Node::SP_node                 SP_node;
+  typedef std::vector<SP_node>          vec_node;
+  typedef std::vector<int>              vec_int;
+  typedef std::vector<vec_int>          vec2_int;
   typedef std::vector<NeighborSurface>  vec_neighbor;
   typedef std::vector<vec_neighbor>     vec2_neighbor;
 
   /// Constructor
-  NodeList() : d_is_finalized(false), d_global_offset(0) {}
+  NodeList();
 
-  void add_node(SP_node n, vec_neighbor neighbors)
+  /// Set the bounds
+  void set_bounds(const size_type lb, const size_type ub)
   {
-    Require(!is_finalized());
-    Require(n);
-    Require(neighbors.size() == n->number_surfaces());
-    d_nodes.push_back(n);
-    d_neighbors.push_back(neighbors);
+    d_lower_bound = lb;
+    d_upper_bound = ub;
   }
 
-  void resize(const size_type n)
+  /*!
+   *  \brief Add a node and a vector of (neighbor, surface) indices
+   *  \param n          Node to be added
+   *  \param neighbors  Vector of neighbor/surface indices
+   */
+  void add_node(SP_node n, vec_neighbor neighbors);
+
+  /*!
+   *  \brief Get a node
+   *  \param n  Local node index
+   */
+  SP_node node(const int n);
+
+  size_type lower_bound() const
   {
-    d_nodes.resize(n);
-    d_neighbors.resize(n);
-    d_is_finalized = false;
+    return d_lower_bound;
   }
 
-  SP_node node(const int n)
+  size_type upper_bound() const
   {
-    Require(is_finalized());
-    Require(n < number_nodes());
-    return d_nodes[n];
+    return d_upper_bound;
   }
 
-  size_type number_nodes() const
-  {
-    Require(is_finalized());
-    return d_nodes.size();
-  }
+  /// Number of global nodes
+  size_type number_global_nodes() const;
+
+  /// Number of local nodes
+  size_type number_local_nodes() const;
 
   /*!
    *  \brief Get the neighbor index for a node surface
-   *  \param n  Node index
+   *  \param n  Global node index
    *  \param s  Node surface
    */
-  NeighborSurface neighbor(const size_type n, const size_type s)
-  {
-    Require(is_finalized());
-    Require(n < number_nodes());
-    Require(s < d_nodes[n]->number_surfaces());
-    return d_neighbors[n][s];
-  }
+  NeighborSurface neighbor(const size_type n, const size_type s);
 
-  vec_neighbor& neighbor(const size_type n)
-  {
-    Require(is_finalized());
-    Require(n < number_nodes());
-    return d_neighbors[n];
-  }
 
   /*!
-   *  \brief Get the global index of a node
-   *  \param n local node index
+   *  \brief Get the global index of a local node
+   *  \param n  Local node index
    */
-  size_type global_index(const size_type n)
-  {
-    return n + d_global_offset;
-  }
+  size_type global_index(const size_type n);
+
+  /*!
+   *  \brief Get the local index of a global node
+   *  \param n  Global node index
+   *
+   *  Returns a negative value if the global index
+   *  is not within the local range.
+   */
+  int local_index(const size_type n);
 
   void finalize()
   {
@@ -125,21 +124,43 @@ public:
 
 private:
 
-  /// List of nodes
+  /// Vector of nodes
   vec_node d_nodes;
 
-  /// List of node neighbor vectors [node]->neighbor,surface
+  /// Vector of vectors of node (neighbor, surface) index pairs
   vec2_neighbor d_neighbors;
 
-  /// Finalized?
+  /// Starting index of local nodes
+  size_type d_lower_bound;
+
+  /// Upper bound of local nodes
+  size_type d_upper_bound;
+
+  /// Flag indicating ready to use
   bool d_is_finalized;
 
-  /// Difference between local node index and its global index
-  size_type d_global_offset;
+  //-------------------------------------------------------------------------//
+  // SERIALIZATION
+  //-------------------------------------------------------------------------//
+
+  friend class boost::serialization::access;
+
+  template <class Archive>
+  void serialize(Archive & ar, const unsigned int version)
+  {
+    ar & d_nodes;
+    ar & d_neighbors;
+    ar & d_lower_bound;
+    ar & d_upper_bound;
+    ar & d_is_finalized;
+  }
 
 };
 
 } // end namespace erme_geometry
+
+// Inline member definitions
+#include "NodeList.i.hh"
 
 #endif // NODELIST_HH_ 
 

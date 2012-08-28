@@ -13,23 +13,17 @@
 #include "comm/Comm.hh"
 #include "NodeList.hh"
 #include <string>
-// Serialization to string
-#include <boost/iostreams/stream.hpp>
-#include <boost/iostreams/device/back_inserter.hpp>
-#include <boost/iostreams/device/array.hpp>
-// Serialization
-#include <boost/archive/binary_iarchive.hpp>
-#include <boost/archive/binary_oarchive.hpp>
-#include <boost/serialization/map.hpp>
-#include <boost/serialization/vector.hpp>
-#include <boost/serialization/string.hpp>
 
 namespace erme_geometry
 {
 
 /*!
  *  \class NodePartitioner
- *  \brief Partition nodes across level 1 process groups
+ *  \brief Partition nodes one level 1 communicator
+ *
+ *  This is a very light weight partitioning that simply broadcasts
+ *  the list of nodes and assigns array bounds for each receiving
+ *  process.
  */
 class NodePartitioner
 {
@@ -65,10 +59,7 @@ private:
   //-------------------------------------------------------------------------//
 
   /// Send a node from master to another process
-  void send_node(SP_node node, int destination);
-
-  /// Receive a node from master
-  void receive_node(SP_node &node);
+  void broadcast_nodes(NodeList &nodes);
 
 };
 
