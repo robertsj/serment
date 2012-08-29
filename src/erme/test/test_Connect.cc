@@ -59,12 +59,13 @@ int test_Connect(int argc, char *argv[])
   // Create indexer
   erme_response::ResponseIndexer indexer(db, nodes);
 
+  // Create new scope for M, since M must be destructed before finalization.
   {
     // Connect
     Connect M(nodes, indexer);
 
+    // Write to binary for inspection in MATLAB
     M.display(Connect::BINARY, "binary.out");
-    M.display(Connect::MATLAB, "matlab.out");
   }
 
   PetscFinalize();

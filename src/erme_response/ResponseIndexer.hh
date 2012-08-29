@@ -38,6 +38,11 @@ namespace erme_response
  *    - dimension
  *    - erme_order_reduction
  */
+/*!
+ *  \example erme_response/test/test_ResponseIndexer.cc
+ *
+ *  Test of ResponseIndexer class.
+ */
 class ResponseIndexer
 {
 

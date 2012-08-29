@@ -26,7 +26,10 @@ namespace erme
  *  row and column location representing the surface of one node adjoining
  *  the surface of another node.
  *
- *  Boundary conditions are built into
+ *  Vacuum or reflective boundary conditions are built into the connectivity
+ *  matrix.  Reflective conditions require a polarity shift for odd
+ *  moments; this applies to some combinations of space and angle basis
+ *  functions.
  */
 class Connect: public linear_algebra::Matrix
 {

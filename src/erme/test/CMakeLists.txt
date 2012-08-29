@@ -20,3 +20,4 @@ TARGET_LINK_LIBRARIES(test_Connect  	erme)
 #------------------------------------------------------------------------------#
 
 ADD_TEST(test_StateERME test_StateERME 0)
+ADD_TEST(test_Connect   test_Connect 0)
