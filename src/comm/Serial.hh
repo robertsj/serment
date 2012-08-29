@@ -16,7 +16,50 @@
 namespace serment_comm
 {
 
+//---------------------------------------------------------------------------//
+// MPI Communicator
+//---------------------------------------------------------------------------//
+
 typedef int Communicator_t;
+
+/*!
+ *  All processes, i.e. MPI_COMM_WORLD
+ */
+extern Communicator_t world;
+
+/*!
+ *  Subset of world that includes processes solving global problem
+ */
+extern Communicator_t global;
+
+/*!
+ *  Partitioning of world such that each local root is part of
+ *  global.  Processes in local participate as response sources, and
+ *  the root process participates as a response server for the global
+ *  solve.
+ */
+extern Communicator_t local;
+
+/// Current communicator
+extern Communicator_t communicator;
+
+//---------------------------------------------------------------------------//
+// COMMUNICATORS
+//---------------------------------------------------------------------------//
+
+/// Set the communicator
+template<class C>
+void Comm::set(const C &new_communicator)
+{
+  /* ... */
+}
+
+/// Free a communicator
+template<class C>
+void Comm::free(C &new_communicator)
+{
+  /* ... */
+}
 
 //---------------------------------------------------------------------------//
 // BLOCKING SEND/RECEIVE OPERATIONS

@@ -20,6 +20,49 @@ namespace serment_comm
 {
 
 /*!
+ *  \page Serment Parallel Structure
+ *
+ *  Serment employs a flexible parallel decomposition that should adapt
+ *  well to just about any architecture.  The decomposition largely
+ *  follows the physical decomposition implied by the method in which
+ *  a global domain (e.g. a reactor core) is separated into distinct
+ *  nodes (e.g. assemblies) that are linked via approximate boundary
+ *  conditions.
+ *
+ *  Suppose we have a compute cluster with \f$ N \f$ processes
+ *  available.  The set of all these processes constitutes the
+ *  \e world communicator.
+ *
+ *  Since the bulk of the computation occurs during computation of
+ *  the nodal boundary conditions, the number of processes that need
+ *  to participate in the global solution might be a small subset of
+ *  the total number of process available.  Consequently, we split
+ *  \e world into \f$ M \f$ new communicators denoted \e local.
+ *
+ *  The root process of each \e local communicator is then included
+ *  in a \e global communicator.  Processes in \e global participate
+ *  in the global problem solution, i.e. they solve the response
+ *  matrix equations.
+ *
+ *  Within a \e local communicator, the root process acts as the
+ *  response server (to the global problem), and all processes
+ *  serve as response sources (i.e. they generate response functions
+ *  as needed by the server).
+ *
+ *  It should be noted an implicit third level of decomposition
+ *  exists on systems with many core architectures.  Each process
+ *  in a \e local communicator might reside on a physical compute
+ *  node with several CPU cores or a GP-GPU accelerator.  In this
+ *  case, the computation of a single response can also be
+ *  parallelized via threading.
+ *
+ *  This scheme is flexible, and so it should allow a user to tailor
+ *  a decomposition for maximizing a particular system's capabilities.
+ *
+ */
+
+
+/*!
  *  \class Comm
  *  \brief Parallel communication interface
  *
@@ -41,6 +84,29 @@ public:
 
   /// Finish a parallel job.
   static void finalize();
+
+  //---------------------------------------------------------------------------//
+  // COMMUNICATORS
+  //---------------------------------------------------------------------------//
+
+  /*!
+   *  \brief Create communicators
+   *  \param N  Number of local groups to create
+   */
+  static void setup_communicators(const unsigned int N);
+
+  /// Set the communicator
+  template<class C>
+  static void set(const C &new_communicator);
+
+  /// Free a communicator
+  static void free();
+
+  /// Am I part of the global communicator?
+  static bool is_global()
+  {
+    return d_is_global;
+  }
 
   //---------------------------------------------------------------------------//
   // QUERY FUNCTIONS
@@ -151,6 +217,15 @@ public:
 
   /// Return time elapsed after tic() call.
   static double toc();
+
+
+private:
+
+  /// Are the communicators built?
+  static bool d_is_comm_built;
+
+  /// Am I on the global comm?
+  static bool d_is_global;
 
   /// Stored time information
   static double d_time;

@@ -14,21 +14,39 @@
 namespace serment_comm
 {
 
+// Initialize private static variables
+bool   Comm::d_global = false;
+bool   Comm::d_local  = false;
+double Comm::d_time   = 0.0;
+
 //---------------------------------------------------------------------------//
 // SETUP FUNCTIONS
 //---------------------------------------------------------------------------//
 
-void initialize(int &argc, char **&argv)
+void Comm::initialize(int &argc, char **&argv)
+{
+  /* ... */
+}
+
+void Comm::finalize()
 {
   /* ... */
 }
 
 //---------------------------------------------------------------------------//
+// COMMUNICATORS
+//---------------------------------------------------------------------------//
 
-void finalize()
+/*!
+ *  \brief Create communicators
+ *  \param N  Number of local groups to create
+ */
+void Comm::setup_communicators(const unsigned int N)
 {
   /* ... */
 }
+
+static bool Comm::is_global = true;
 
 //---------------------------------------------------------------------------//
 // QUERY FUNCTIONS
