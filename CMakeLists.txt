@@ -78,23 +78,23 @@ if(NOT SERMENT_ENABLE_PETSC)
 endif()
 
 
-##===========================================================================##
-## EXTERNAL LIBRARIES                                                        ##
-##===========================================================================##
+#------------------------------------------------------------------------------#
+# EXTERNAL LIBRARIES
+#------------------------------------------------------------------------------#
 
 # Detran (required)
 find_package(Detran REQUIRED)
 include_directories(${Detran_INCLUDE_DIR})
 message("Detran library = ${Detran_LIBRARIES}")
 
-# PETSc (required)
+# PETSc (required, for now; other linalg packages would be great)
 if(SERMENT_ENABLE_PETSC)
   find_package(PETSc REQUIRED)
   include_directories(${PETSC_INCLUDES})
   add_definitions(${PETSC_DEFINITIONS})
 endif()
 
-# SLEPc (optional)
+# SLEPc (optional, but precludes use of nice eigensolvers)
 if(SERMENT_ENABLE_SLEPC)
   find_package(SLEPc REQUIRED)
   if(HAVE_SLEPC)
