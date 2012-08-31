@@ -32,10 +32,10 @@ ResponseIndexer::ResponseIndexer(SP_db db, erme_geometry::NodeList &nodes)
     d_order_reduction = db->get<int>("erme_order_reduction");
 
   // Loop over all nodes
-  for (size_type n = 0; n < nodes.number_global_nodes(); n++)
+  for (size_t n = 0; n < nodes.number_global_nodes(); n++)
   {
     // Moments size for the node
-    size_type size = 0;
+    size_t size = 0;
     if (dimension == 1)
       size = build_1D(nodes.node(n), n);
     else if (dimension == 2)
@@ -59,6 +59,22 @@ ResponseIndexer::ResponseIndexer(SP_db db, erme_geometry::NodeList &nodes)
   // Compute the global size
   for (int i = 0; i < all_sizes.size(); i++)
     d_global_size += all_sizes[i];
+
+  // Compute the local moment to (node, surface, moment) index
+  d_local_indices.resize(d_local_size, vec_size_t(3, 0));
+  size_t local_index = 0;
+  for (int n = nodes.lower_bound(); n < nodes.upper_bound(); n++)
+  {
+    for (int s = 0; s < d_indices[n].size(); s++)
+    {
+      for (int m = 0; m < d_indices[n][s].size(); m++, local_index++)
+      {
+         d_local_indices[local_index][0] = n;
+         d_local_indices[local_index][0] = s;
+         d_local_indices[local_index][0] = m;
+      }
+    }
+  }
 
 }
 
@@ -92,52 +108,52 @@ void ResponseIndexer::display() const
 // IMPLEMENTATION
 //---------------------------------------------------------------------------//
 
-ResponseIndexer::size_type
-ResponseIndexer::build_3D(SP_node node, const size_type n)
+ResponseIndexer::size_t
+ResponseIndexer::build_3D(SP_node node, const size_t n)
 {
 
-  size_type local_index = 0;
-  size_type offset;
-  for (size_type i = 0; i < n; i++)
+  size_t local_index = 0;
+  size_t offset;
+  for (size_t i = 0; i < n; i++)
     offset += d_sizes[i];
 
   vec2_index surface_indices;
-  for (size_type s = 0; s < node->number_surfaces(); s++)
+  for (size_t s = 0; s < node->number_surfaces(); s++)
   {
     // Max space order
-    size_type mso = node->spatial_order(s, 0);
+    size_t mso = node->spatial_order(s, 0);
     if (node->spatial_order(s, 1) > mso) mso = node->spatial_order(s, 1);
 
     // Max angle order
-    size_type mao = node->azimuthal_order(s);
+    size_t mao = node->azimuthal_order(s);
     if (node->polar_order(s) > mao) mao = node->polar_order(s);
 
     // Max space-angle order
-    size_type msao = mao;
+    size_t msao = mao;
     if (mso > mao) msao = mso;
 
     // Is this a south or north surface?
     bool south_north = (node->number_surfaces() - s > 2) ? false : true;
 
     vec_index moment_indices;
-    for (size_type e = 0; e <= node->energy_order(s); e++)
+    for (size_t e = 0; e <= node->energy_order(s); e++)
     {
-      for (size_type p = 0; p <= node->polar_order(s); p++)
+      for (size_t p = 0; p <= node->polar_order(s); p++)
       {
-        for (size_type a = 0; a <= node->azimuthal_order(s); a++)
+        for (size_t a = 0; a <= node->azimuthal_order(s); a++)
         {
 
           // Break if angle order too high
-          size_type ao = p + a;
+          size_t ao = p + a;
           if (d_order_reduction == 2 and ao > mao) break;
 
-          for (size_type s0 = 0; s0 <= node->spatial_order(s, 0); s0++)
+          for (size_t s0 = 0; s0 <= node->spatial_order(s, 0); s0++)
           {
-            for (size_type s1 = 0; s1 <= node->spatial_order(s, 1); s1++)
+            for (size_t s1 = 0; s1 <= node->spatial_order(s, 1); s1++)
             {
 
               // Break if space or space-angle order is too high
-              size_type so = s0 + s1;
+              size_t so = s0 + s1;
               if (d_order_reduction == 1 and so > mso) break;
               if (d_order_reduction == 3 and so + ao > msao) break;
 
@@ -166,47 +182,47 @@ ResponseIndexer::build_3D(SP_node node, const size_type n)
   return local_index;
 }
 
-ResponseIndexer::size_type
-ResponseIndexer::build_2D(SP_node node, const size_type n)
+ResponseIndexer::size_t
+ResponseIndexer::build_2D(SP_node node, const size_t n)
 {
   using std::cout;
   using std::endl;
 
   // Moment index local to a node
-  size_type local_index = 0;
+  size_t local_index = 0;
   // Number of moments on preceding nodes
-  size_type offset = 0;
-  for (size_type i = 0; i < n; i++)
+  size_t offset = 0;
+  for (size_t i = 0; i < n; i++)
     offset += d_sizes[i];
 
   vec2_index surface_indices;
-  for (size_type s = 0; s < node->number_surfaces(); s++)
+  for (size_t s = 0; s < node->number_surfaces(); s++)
   {
     //cout << "SURFACE " << s << endl;
 
     // Max angle order
-    size_type mao = node->azimuthal_order(s);
+    size_t mao = node->azimuthal_order(s);
     if (node->polar_order(s) > mao) mao = node->polar_order(s);
 
     // Max space-angle order
-    size_type msao = node->spatial_order(s, 0);
+    size_t msao = node->spatial_order(s, 0);
     if (mao > msao) msao = mao;
 
     vec_index moment_indices;
-    for (size_type e = 0; e <= node->energy_order(s); e++)
+    for (size_t e = 0; e <= node->energy_order(s); e++)
     {
       //cout << "  energy order " << e << endl;
-      for (size_type p = 0; p <= node->polar_order(s); p++)
+      for (size_t p = 0; p <= node->polar_order(s); p++)
       {
         //cout << "    polar order " << p << endl;
-        for (size_type a = 0; a <= node->azimuthal_order(s); a++)
+        for (size_t a = 0; a <= node->azimuthal_order(s); a++)
         {
           //cout << "      azimuth order " << a << endl;
           // Break if angle order too high
-          size_type ao = p + a;
+          size_t ao = p + a;
           if (d_order_reduction == 2 and ao > mao) break;
 
-          for (size_type s0 = 0; s0 <= node->spatial_order(s, 0); s0++)
+          for (size_t s0 = 0; s0 <= node->spatial_order(s, 0); s0++)
           {
             //cout << "        space order " << s0 << endl;
             // Break if space or space-angle order is too high
@@ -234,22 +250,22 @@ ResponseIndexer::build_2D(SP_node node, const size_type n)
   return local_index;
 }
 
-ResponseIndexer::size_type
-ResponseIndexer::build_1D(SP_node node, const size_type n)
+ResponseIndexer::size_t
+ResponseIndexer::build_1D(SP_node node, const size_t n)
 {
 
-  size_type local_index = 0;
-  size_type offset;
-  for (size_type i = 0; i < n; i++)
+  size_t local_index = 0;
+  size_t offset;
+  for (size_t i = 0; i < n; i++)
     offset += d_sizes[i];
 
   vec2_index surface_indices;
-  for (size_type s = 0; s <= node->number_surfaces(); s++)
+  for (size_t s = 0; s <= node->number_surfaces(); s++)
   {
     vec_index moment_indices;
-    for (size_type e = 0; e <= node->energy_order(s); e++)
+    for (size_t e = 0; e <= node->energy_order(s); e++)
     {
-      for (size_type p = 0; p <= node->polar_order(s); p++)
+      for (size_t p = 0; p <= node->polar_order(s); p++)
       {
 
         // Add the index

@@ -48,9 +48,11 @@ class ResponseIndexer
 
 public:
 
-  typedef detran::InputDB::SP_input SP_db;
-  typedef erme_geometry::NodeList::SP_node SP_node;
-  typedef unsigned int size_type;
+  typedef detran::InputDB::SP_input         SP_db;
+  typedef erme_geometry::NodeList::SP_node  SP_node;
+  typedef unsigned int                      size_t;
+  typedef std::vector<size_t>               vec_size_t;
+  typedef std::vector<vec_size_t>           vec2_size_t;
   typedef std::vector<ResponseIndex> vec_index;
   typedef std::vector<vec_index>     vec2_index;
   typedef std::vector<vec2_index>    vec3_index;
@@ -61,20 +63,20 @@ public:
   ResponseIndexer(SP_db db, erme_geometry::NodeList &nodes);
 
   /// Number of nodes indexed
-  size_type number_nodes() const;
+  size_t number_nodes() const;
 
   /// Return the number of moments of a node
-  size_type number_node_moments(const size_type node) const;
+  size_t number_node_moments(const size_t node) const;
 
   /// Return the number of moments of a node surface
-  size_type number_surface_moments(const size_type node,
-                                   const size_type surface) const;
+  size_t number_surface_moments(const size_t node,
+                                   const size_t surface) const;
 
   /// Return the number of moments of all local nodes
-  size_type number_local_moments() const;
+  size_t number_local_moments() const;
 
   /// Return the number of moments of all nodes
-  size_type number_global_moments() const;
+  size_t number_global_moments() const;
 
   /*!
    *  \brief Get moment indices from cardinal index within node
@@ -82,18 +84,24 @@ public:
    *  \param surface  Surface index of node
    *  \param index    Moment index on surface of node
    */
-  ResponseIndex node_index(const size_type node,
-                           const size_type surface,
-                           const size_type index) const;
+  ResponseIndex node_index(const size_t node,
+                           const size_t surface,
+                           const size_t index) const;
+
+  /*!
+   *  \brief Get moment indices from local cardinal index
+   *  \param index    Moment index within local nodes
+   */
+  ResponseIndex node_index(const size_t index) const;
 
   /// Get local moment index from a cardinal index within node
-  size_type local_index(const size_type node, const size_type index) const
+  size_t local_index(const size_t node, const size_t index) const
   {
     return index + d_offsets[node];
   }
 
   /// Get global moment index from a cardinal index within node
-  size_type global_index(const size_type node, const size_type index) const
+  size_t global_index(const size_t node, const size_t index) const
   {
     return index + d_offsets[node] + d_global_offset;
   }
@@ -103,27 +111,30 @@ public:
 
 private:
 
-  //---------------------------------------------------------------------------//
+  //-------------------------------------------------------------------------//
   // PRIVATE DATA
-  //---------------------------------------------------------------------------//
+  //-------------------------------------------------------------------------//
 
   /// List of indices for all nodes [nodes][surface][moments]
   vec3_index d_indices;
 
+  /// Map a local cardinal index to the [node, surface, moment]
+  vec2_size_t d_local_indices;
+
   /// Vector of moment sizes per node
-  std::vector<size_type> d_sizes;
+  std::vector<size_t> d_sizes;
 
   /// Offset of node indices (within local set)
-  std::vector<size_type> d_offsets;
+  std::vector<size_t> d_offsets;
 
   /// Local size of moments vector
-  size_type d_local_size;
+  size_t d_local_size;
 
   /// Global offset (i.e. the number of moments before me)
-  size_type d_global_offset;
+  size_t d_global_offset;
 
   /// Global size
-  size_type d_global_size;
+  size_t d_global_size;
 
   /*!
    *  \brief Order reduction selector
@@ -149,20 +160,23 @@ private:
    */
   int d_order_reduction;
 
-  //---------------------------------------------------------------------------//
+  //-------------------------------------------------------------------------//
   // IMPLEMENTATION
-  //---------------------------------------------------------------------------//
+  //-------------------------------------------------------------------------//
 
   // Build the indices for a node and return the number of moments
-  size_type build_1D(SP_node node, const size_type n);
-  size_type build_2D(SP_node node, const size_type n);
-  size_type build_3D(SP_node node, const size_type n);
+  size_t build_1D(SP_node node, const size_t n);
+  size_t build_2D(SP_node node, const size_t n);
+  size_t build_3D(SP_node node, const size_t n);
 
 };
 
 } // end namespace erme_response
 
-// Inline member definitions
+//---------------------------------------------------------------------------//
+// INLINE MEMBER DEFINITIONS
+//---------------------------------------------------------------------------//
+
 #include "ResponseIndexer.i.hh"
 
 #endif // RESPONSEINDEXER_HH_ 

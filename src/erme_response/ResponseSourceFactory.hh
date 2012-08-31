@@ -1,33 +1,26 @@
 //----------------------------------*-C++-*----------------------------------//
 /*!
- * \file   ResponseServer.hh
- * \brief  ResponseServer class definition
+ * \file   ResponseSourceFactory.hh
+ * \brief  ResponseSourceFactory 
  * \author Jeremy Roberts
- * \date   Aug 28, 2012
+ * \date   Aug 29, 2012
  */
 //---------------------------------------------------------------------------//
 
-#ifndef RESPONSESERVER_HH_
-#define RESPONSESERVER_HH_
+#ifndef RESPONSESOURCEFACTORY_HH_
+#define RESPONSESOURCEFACTORY_HH_
 
-#include "NodeResponse.hh"
-#include "DBC.hh"
-#include "SP.hh"
-#include <vector>
+#include "ResponseSource.hh"
 
 namespace erme_response
 {
 
 /*!
- *  \class ResponseServer
- *  \brief Serve nodal responses to clients
- *
- *  A ResponseServer lives on a local communicator.  A server is in charge
- *  of one or more Node objects.  The nodal responses are produced by a
- *  ResponseSource that solves the local problems.
+ *  \class ResponseSourceFactory
+ *  \brief Constructs response
  *
  */
-class ResponseServer
+class ResponseSourceFactory
 {
 
 public:
@@ -36,29 +29,21 @@ public:
   // TYPEDEFS
   //-------------------------------------------------------------------------//
 
-  typedef detran::SP<ResponseServer>  SP_server;
-  typedef NodeResponse::SP_response   SP_response;
-  typedef std::vector<SP_response>    vec_response;
-  typedef unsigned int                size_t;
+  typedef ResponseSource::SP_source SP_source;
 
   //-------------------------------------------------------------------------//
   // PUBLIC INTERFACE
   //-------------------------------------------------------------------------//
 
-  /*!
-   *  \brief Constructor
-   */
-  ResponseServer();
+  /// Build a node.
+  template <typename NODE>
+  SP_source build(detran::SP<NODE> node);
 
 private:
 
   //-------------------------------------------------------------------------//
   // DATA
   //-------------------------------------------------------------------------//
-
-  /// Node response functions
-  vec_response d_responses;
-
 
   //-------------------------------------------------------------------------//
   // IMPLEMENTATION
@@ -67,11 +52,10 @@ private:
 };
 
 
-
 } // end namespace erme_response
 
-#endif // RESPONSESERVER_HH_ 
+#endif // RESPONSESOURCEFACTORY_HH_ 
 
 //---------------------------------------------------------------------------//
-//              end of file ResponseServer.hh
+//              end of file ResponseSourceFactory.hh
 //---------------------------------------------------------------------------//

@@ -16,7 +16,7 @@
 #include "Point.hh"
 
 // Serment Comm
-#include "Comm.hh"
+#include "comm/Comm.hh"
 
 // Detran
 #include "DBC.hh"

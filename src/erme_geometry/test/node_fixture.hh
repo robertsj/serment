@@ -18,7 +18,7 @@
 #ifndef NODE_FIXTURE_HH_
 #define NODE_FIXTURE_HH_
 
-#include "CartesianNodeDetran.hh"
+#include "erme_geometry/CartesianNodeDetran.hh"
 
 namespace erme_geometry
 {
