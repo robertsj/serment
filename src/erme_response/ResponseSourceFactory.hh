@@ -37,7 +37,10 @@ public:
 
   /// Build a node.
   template <typename NODE>
-  SP_source build(detran::SP<NODE> node);
+  SP_source build(detran::SP<NODE> node)
+  {
+    THROW("The source factory build method must be specialized.");
+  }
 
 private:
 
@@ -51,8 +54,16 @@ private:
 
 };
 
-
 } // end namespace erme_response
+
+
+//---------------------------------------------------------------------------//
+// FACTORY METHOD SPECIALIZATIONS
+//---------------------------------------------------------------------------//
+
+#include "ResponseSourceFactoryDummy.hh"
+//#include "ResponseSourceFactoryDetran.hh"
+//#include "ResponseSourceFactoryOpenMC.hh"
 
 #endif // RESPONSESOURCEFACTORY_HH_ 
 

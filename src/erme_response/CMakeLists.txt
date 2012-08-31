@@ -11,6 +11,7 @@ SET(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 SET(SRC
     ResponseIndexer.cc
     NodeResponse.cc
+    ResponseServer.cc
 )
 
 #-------------------------------------#

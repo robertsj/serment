@@ -67,7 +67,7 @@ int test_ResponseIndexer(int argc, char *argv[])
   server.update(1.0);
 
   // Switch to global and get responses for each node.
-  Comm::set(global);
+  Comm::set(serment_comm::global);
   for (int n = nodes.lower_bound(); n < nodes.upper_bound(); n++)
   {
     SP_response r = server.response(n);
@@ -86,7 +86,7 @@ int test_ResponseIndexer(int argc, char *argv[])
       TEST(detran::soft_equiv(r->leakage_response(3, m), 7.0 * n));
     }
   }
-  Comm::set(world);
+  Comm::set(serment_comm::world);
 
   Comm::finalize();
   return 0;

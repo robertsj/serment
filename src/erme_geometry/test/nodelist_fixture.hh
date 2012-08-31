@@ -15,8 +15,8 @@
 #define NODELIST_FIXTURE_HH_
 
 #include "erme_geometry/NodeList.hh"
+#include "erme_geometry/DummyNode.hh"
 #include "erme_geometry/test/node_fixture.hh"
-#include "erme_geometry/test/DummyNode.hh"
 
 namespace erme_geometry
 {

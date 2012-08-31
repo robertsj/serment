@@ -44,10 +44,18 @@ public:
 
   /*!
    *  \brief Constructor
-   *  \param d
+   *  \param dimension        Dimension of the node
+   *  \param number_surfaces  Number of surfaces
+   *  \param id               Identifier
+   *  \param name             Name
+   *  \param origin           Node origin relative to global origin
+   *  \param so               Spatial orders [surface][axis]
+   *  \param po               Polar orders [surface]
+   *  \param ao               Azimuth orders [surface]
+   *  \param eo               Energy orders [surface]
    */
-  CartesianNodeDetran(const size_type  d,
-                      const size_type  n,
+  CartesianNodeDetran(const size_type  dimension,
+                      const size_type  number_surfaces,
                       const int        nodeid,
                       std::string      nodename,
                       const Point      nodeorigin,
