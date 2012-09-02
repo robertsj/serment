@@ -12,7 +12,7 @@
 namespace erme_response
 {
 
-NodeResponse::NodeResponse(const size_type N, const size_type number_surfaces)
+NodeResponse::NodeResponse(const size_t N, const size_t number_surfaces)
   : d_N(N)
   , d_number_surfaces(number_surfaces)
   , d_boundary_response(N, vec_dbl(N, 0.0))

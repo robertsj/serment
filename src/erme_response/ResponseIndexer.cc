@@ -70,8 +70,8 @@ ResponseIndexer::ResponseIndexer(SP_db db, erme_geometry::NodeList &nodes)
       for (int m = 0; m < d_indices[n][s].size(); m++, local_index++)
       {
          d_local_indices[local_index][0] = n;
-         d_local_indices[local_index][0] = s;
-         d_local_indices[local_index][0] = m;
+         d_local_indices[local_index][1] = s;
+         d_local_indices[local_index][2] = m;
       }
     }
   }
@@ -88,16 +88,18 @@ void ResponseIndexer::display() const
     cout << "GLOBAL NODE " << n << endl;
     for (int s = 0; s < d_indices[n].size(); s++)
     {
+
       for (int m = 0; m < d_indices[n][s].size(); m++)
       {
         cout << "    " << m << " | "
-             << node_index(n, m, s).surface  << " | "
-             << node_index(n, m, s).energy   << " | "
-             << node_index(n, m, s).polar    << " "
-             << node_index(n, m, s).azimuth  << " | "
-             << node_index(n, m, s).space0   << " "
-             << node_index(n, m, s).space1   << " | "
-             << node_index(n, m, s).even_odd << " |" << endl;
+             << node_index(n, s, m).node  << " "
+             << node_index(n, s, m).surface  << " | "
+             << node_index(n, s, m).energy   << " | "
+             << node_index(n, s, m).polar    << " "
+             << node_index(n, s, m).azimuth  << " | "
+             << node_index(n, s, m).space0   << " "
+             << node_index(n, s, m).space1   << " | "
+             << node_index(n, s, m).even_odd << " |" << endl;
       }
     }
   }
@@ -164,8 +166,8 @@ ResponseIndexer::build_3D(SP_node node, const size_t n)
                 south_north ? (a + s0 + s1) % 2 : (a + p + s0 + s1) % 2;
 
               // Add the index
-              ResponseIndex tmp(s, e, p, a, s0, s1, polarity, local_index);
-              moment_indices.push_back(tmp);
+              moment_indices.push_back(
+                ResponseIndex(n, s, e, p, a, s0, s1, polarity, local_index));
 
               // Update the local index
               local_index++;
@@ -234,7 +236,8 @@ ResponseIndexer::build_2D(SP_node node, const size_t n)
             bool polarity = (a + s0) % 2;
 
             // Add the index
-            moment_indices.push_back(ResponseIndex(s, e, p, a, s0, 0, polarity, local_index));
+            moment_indices.push_back(
+              ResponseIndex(n, s, e, p, a, s0, 0, polarity, local_index));
 
             // Update the local index
             local_index++;
@@ -269,7 +272,8 @@ ResponseIndexer::build_1D(SP_node node, const size_t n)
       {
 
         // Add the index
-        moment_indices.push_back(ResponseIndex(s, e, p, 0, 0, 0, false, local_index));
+        moment_indices.push_back(
+          ResponseIndex(n, s, e, p, 0, 0, 0, false, local_index));
 
         // Update the local index
         local_index++;

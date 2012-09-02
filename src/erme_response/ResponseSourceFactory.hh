@@ -11,6 +11,9 @@
 #define RESPONSESOURCEFACTORY_HH_
 
 #include "ResponseSource.hh"
+// Concrete source types
+#include "ResponseSourceDummy.hh"
+#include "ResponseSourceDetran.hh"
 
 namespace erme_response
 {
@@ -30,16 +33,39 @@ public:
   //-------------------------------------------------------------------------//
 
   typedef ResponseSource::SP_source SP_source;
+  typedef ResponseSource::SP_node   SP_node;
 
   //-------------------------------------------------------------------------//
   // PUBLIC INTERFACE
   //-------------------------------------------------------------------------//
 
-  /// Build a node.
-  template <typename NODE>
-  SP_source build(detran::SP<NODE> node)
+  /*!
+   *  \brief Build a response source
+   *
+   *  This is a factory method that must be implemented for each
+   *  type of node to be constructed.
+   *
+   *  \param node   Smart pointer to node
+   */
+  template <typename SP_NODE>
+  SP_source build(SP_NODE node)
   {
-    THROW("The source factory build method must be specialized.");
+    // Preconditions
+    Require(node);
+
+    SP_source s;
+
+    // Try to dynamic to all the node types available
+    if (dynamic_cast<erme_geometry::CartesianNodeDummy*>(node.bp()))
+      s = build_dummy(node);
+    else if(dynamic_cast<erme_geometry::CartesianNodeDetran*>(node.bp()))
+      s = build_detran(node);
+    else
+      THROW("Unsupported response source type");
+
+    // Postconditions
+    Ensure(s);
+    return s;
   }
 
 private:
@@ -52,6 +78,10 @@ private:
   // IMPLEMENTATION
   //-------------------------------------------------------------------------//
 
+  SP_source build_detran(SP_node node);
+  SP_source build_dummy(SP_node node);
+  //void build_openmc(SP_node node);
+
 };
 
 } // end namespace erme_response
@@ -62,7 +92,7 @@ private:
 //---------------------------------------------------------------------------//
 
 #include "ResponseSourceFactoryDummy.hh"
-//#include "ResponseSourceFactoryDetran.hh"
+#include "ResponseSourceFactoryDetran.hh"
 //#include "ResponseSourceFactoryOpenMC.hh"
 
 #endif // RESPONSESOURCEFACTORY_HH_ 

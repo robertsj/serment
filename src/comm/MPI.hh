@@ -126,6 +126,94 @@ inline int Comm::broadcast(T  *buffer,
 }
 
 //---------------------------------------------------------------------------//
+// REDUCTIONS
+//---------------------------------------------------------------------------//
+
+template<class T>
+inline void Comm::sum(T &x, int to_node)
+{
+  // Copy data into send buffer
+  T y = x;
+  // Do global MPI reduction (result is on all processors) into x
+  MPI_Reduce(&y, &x, 1, MPI_Traits<T>::element_type(),
+             MPI_SUM, to_node, communicator);
+}
+
+template<class T>
+inline void Comm::prod(T &x, int to_node)
+{
+  // copy data into send buffer
+  T y = x;
+  // Do global MPI reduction (result is on all processors) into x
+  MPI_Reduce(&y, &x, 1, MPI_Traits<T>::element_type(),
+             MPI_PROD, to_node, communicator);
+}
+
+template<class T>
+inline void Comm::min(T &x, int to_node)
+{
+  // copy data into send buffer
+  T y = x;
+  // Do global MPI reduction (result is on all processors) into x
+  MPI_Reduce(&y, &x, 1, MPI_Traits<T>::element_type(),
+             MPI_MIN, to_node, communicator);
+}
+
+template<class T>
+inline void Comm::max(T &x, int to_node)
+{
+  // copy data into send buffer
+  T y = x;
+  // Do global MPI reduction (result is on all processors) into x
+  MPI_Reduce(&y, &x, 1, MPI_Traits<T>::element_type(),
+             MPI_MAX, to_node, communicator);
+}
+
+template<class T>
+inline void Comm::sum(T *x, int n, int to_node)
+{
+  Require (x);
+  // Copy data into a send buffer
+  std::vector<T> send_buffer(x, x + n);
+  // Element-wise global reduction (result is on all processors) into x
+  MPI_Reduce(&send_buffer[0], x, n, MPI_Traits<T>::element_type(),
+             MPI_SUM, to_node, communicator);
+}
+
+template<class T>
+inline void Comm::prod(T  *x, int n, int to_node)
+{
+  Require (x);
+  // Copy data into a send buffer
+  std::vector<T> send_buffer(x, x + n);
+  // Element-wise global reduction (result is on all processors) into x
+  MPI_Reduce(&send_buffer[0], x, n, MPI_Traits<T>::element_type(),
+             MPI_PROD, to_node, communicator);
+}
+
+template<class T>
+inline void Comm::min(T *x, int n, int to_node)
+{
+  Require (x);
+  // Copy data into a send buffer
+  std::vector<T> send_buffer(x, x + n);
+  // Element-wise global reduction (result is on all processors) into x
+  MPI_Reduce(&send_buffer[0], x, n, MPI_Traits<T>::element_type(),
+             MPI_MIN, to_node, communicator);
+}
+
+template<class T>
+inline void Comm::max(T *x, int n, int to_node)
+{
+  Require (x);
+  // Copy data into a send buffer
+  std::vector<T> send_buffer(x, x + n);
+  // Element-wise global reduction (result is on all processors) into x
+  MPI_Reduce(&send_buffer[0], x, n, MPI_Traits<T>::element_type(),
+             MPI_MAX, to_node, communicator);
+}
+
+//---------------------------------------------------------------------------//
 // GLOBAL REDUCTIONS
 //---------------------------------------------------------------------------//
 

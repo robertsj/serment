@@ -79,10 +79,10 @@ NodeList cartesian_node_dummy_list_1d()
   NodeList nodes;
 
   // Get four, two-dimensional Cartesian test nodes
-  NodeList::SP_node node0(new CartesianNodeDummy(1, 0, 2, 0, 0));
-  NodeList::SP_node node1(new CartesianNodeDummy(1, 0, 2, 0, 0));
-  NodeList::SP_node node2(new CartesianNodeDummy(1, 0, 2, 0, 0));
-  NodeList::SP_node node3(new CartesianNodeDummy(1, 0, 2, 0, 0));
+  NodeList::SP_node node0(new CartesianNodeDummy(1, 0, 0, 2, 0, 0));
+  NodeList::SP_node node1(new CartesianNodeDummy(1, 1, 0, 2, 0, 0));
+  NodeList::SP_node node2(new CartesianNodeDummy(1, 2, 0, 2, 0, 0));
+  NodeList::SP_node node3(new CartesianNodeDummy(1, 3, 0, 2, 0, 0));
 
   // Create neighbor lists.
   NodeList::vec_neighbor neigh0(4, NeighborSurface(Node::VACUUM, 0));
@@ -119,10 +119,10 @@ NodeList cartesian_node_dummy_list_2d()
   NodeList nodes;
 
   // Get four, two-dimensional Cartesian test nodes
-  NodeList::SP_node node0(new CartesianNodeDummy(2, 4, 2, 2, 0));
-  NodeList::SP_node node1(new CartesianNodeDummy(2, 4, 2, 2, 0));
-  NodeList::SP_node node2(new CartesianNodeDummy(2, 4, 2, 2, 0));
-  NodeList::SP_node node3(new CartesianNodeDummy(2, 4, 2, 2, 0));
+  NodeList::SP_node node0(new CartesianNodeDummy(2, 0, 4, 2, 2, 0));
+  NodeList::SP_node node1(new CartesianNodeDummy(2, 1, 4, 2, 2, 0));
+  NodeList::SP_node node2(new CartesianNodeDummy(2, 2, 4, 2, 2, 0));
+  NodeList::SP_node node3(new CartesianNodeDummy(2, 3, 4, 2, 2, 0));
 
   // Create neighbor lists.
   NodeList::vec_neighbor neigh0(4, NeighborSurface(Node::VACUUM, 0));
@@ -161,10 +161,10 @@ NodeList cartesian_node_dummy_list_3d()
   NodeList nodes;
 
   // Get four, two-dimensional Cartesian test nodes
-  NodeList::SP_node node0(new CartesianNodeDummy(3, 4, 2, 2, 0));
-  NodeList::SP_node node1(new CartesianNodeDummy(3, 4, 2, 2, 0));
-  NodeList::SP_node node2(new CartesianNodeDummy(3, 4, 2, 2, 0));
-  NodeList::SP_node node3(new CartesianNodeDummy(3, 4, 2, 2, 0));
+  NodeList::SP_node node0(new CartesianNodeDummy(3, 0, 4, 2, 2, 0));
+  NodeList::SP_node node1(new CartesianNodeDummy(3, 1, 4, 2, 2, 0));
+  NodeList::SP_node node2(new CartesianNodeDummy(3, 2, 4, 2, 2, 0));
+  NodeList::SP_node node3(new CartesianNodeDummy(3, 3, 4, 2, 2, 0));
 
   // Create neighbor lists.
   NodeList::vec_neighbor neigh0(4, NeighborSurface(Node::VACUUM, 0));

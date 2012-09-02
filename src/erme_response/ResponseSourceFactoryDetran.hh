@@ -12,14 +12,13 @@
 #define RESPONSESOURCEFACTORYDETRAN_HH_
 
 #include "erme_geometry/CartesianNodeDetran.hh"
-#include "ResponseSourceDetran.hh"
+//#include "ResponseSourceDetran.hh"
 
 namespace erme_response
 {
 
-template <>
-ResponseSourceFactory::SP_source
-ResponseSourceFactory::build(detran::SP<erme_geometry::CartesianNodeDetran> node)
+inline ResponseSourceFactory::SP_source
+ResponseSourceFactory::build_detran(SP_node node)
 {
   SP_source s;
   return s;

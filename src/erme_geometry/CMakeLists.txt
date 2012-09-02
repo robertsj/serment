@@ -15,6 +15,7 @@ SET(SRC
     CartesianNodeDetran.cc
     NodeFactoryDetran.cc
     NodePartitioner.cc
+    DummyNode.cc
 )
 
 #-------------------------------------#

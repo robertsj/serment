@@ -65,8 +65,8 @@ public:
   //-------------------------------------------------------------------------//
 
   typedef detran::SP<NodeResponse>    SP_response;
-  typedef unsigned int                size_type;
-  typedef std::vector<size_type>      vec_size_type;
+  typedef unsigned int                size_t;
+  typedef std::vector<size_t>      vec_size_t;
   typedef std::vector<double>         vec_dbl;
   typedef std::vector<vec_dbl>        vec2_dbl;
 
@@ -78,39 +78,51 @@ public:
    *  \brief Constructor
    *  \param moments_size   Size of node moments vector for each surface
    */
-  NodeResponse(const size_type N, const size_type number_surfaces);
+  NodeResponse(const size_t N, const size_t number_surfaces);
 
   //-------------------------------------------------------------------------//
   // ACCESS
   //-------------------------------------------------------------------------//
 
   /// Const access to boundary response
-  const double& boundary_response(const size_type out,
-                                  const size_type in) const;
+  const double& boundary_response(const size_t out,
+                                  const size_t in) const;
 
   /// Mutable access to boundary response
-  double& boundary_response(const size_type out,
-                            const size_type in);
+  double& boundary_response(const size_t out,
+                            const size_t in);
 
   /// Const access to fission response
-  const double& fission_response(const size_type in) const;
+  const double& fission_response(const size_t in) const;
 
   /// Mutable access to fission response
-  double& fission_response(const size_type in);
+  double& fission_response(const size_t in);
 
   /// Const access to absorption response
-  const double& absorption_response(const size_type in) const;
+  const double& absorption_response(const size_t in) const;
 
   /// Mutable access to absorption response
-  double& absorption_response(const size_type in);
+  double& absorption_response(const size_t in);
 
   /// Const access to leakage response
-  const double& leakage_response(const size_type surface,
-                                 const size_type in) const;
+  const double& leakage_response(const size_t surface,
+                                 const size_t in) const;
 
   /// Mutable access to leakage response
-  double& leakage_response(const size_type surface,
-                           const size_type in);
+  double& leakage_response(const size_t surface,
+                           const size_t in);
+
+  /// Return moment size
+  size_t size() const
+  {
+    return d_N;
+  }
+
+  /// Return number of surfaces
+  size_t number_surfaces() const
+  {
+    return d_number_surfaces;
+  }
 
 private:
 
@@ -119,10 +131,10 @@ private:
   //-------------------------------------------------------------------------//
 
   /// Moment size
-  const size_type d_N;
+  const size_t d_N;
 
   /// Number of surfaces
-  const size_type d_number_surfaces;
+  const size_t d_number_surfaces;
 
   /// Boundary function moments [N][N]
   vec2_dbl d_boundary_response;
@@ -133,7 +145,7 @@ private:
   /// Absorption response [N]
   vec_dbl d_absorption_response;
 
-  /// Leakage response [N]
+  /// Leakage response [nsurface][N]
   vec2_dbl d_leakage_response;
 
   /// Pin fission responses [Npins][N]

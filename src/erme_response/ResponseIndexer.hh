@@ -70,7 +70,7 @@ public:
 
   /// Return the number of moments of a node surface
   size_t number_surface_moments(const size_t node,
-                                   const size_t surface) const;
+                                const size_t surface) const;
 
   /// Return the number of moments of all local nodes
   size_t number_local_moments() const;

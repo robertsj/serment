@@ -23,33 +23,41 @@ class CartesianNodeDummy: public CartesianNode
 
 public:
 
+  typedef CartesianNode Base;
+
   CartesianNodeDummy(const size_type dim,
+                     const size_type id = 0,
                      const size_type so = 0,
                      const size_type po = 0,
                      const size_type ao = 0,
-                     const size_type eo = 0)
-    : CartesianNode(dim,
-                    2*dim,
-                    1234,
-                    "dummy_cartesian",
-                    Point(0, 0, 0),
-                    vec2_size_type(2*dim, vec_size_type(dim-1, so)),
-                    vec_size_type(2*dim, po),
-                    vec_size_type(2*dim, ao),
-                    vec_size_type(2*dim, eo),
-                    vec_dbl(dim, 1.0))
-  {
-    /* ... */
-  }
+                     const size_type eo = 0);
 
-  double color(Point ppint)
+  double color(Point point)
   {
     return 0.0;
   }
 
+private:
+
+  /// Default constructor needed for serialization
+  CartesianNodeDummy(){}
+
+#ifdef SERMENT_ENABLE_BOOST
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version)
+  {
+    ar & boost::serialization::base_object<Base>(*this);
+  }
+#endif
+
 };
 
 } // end namespace erme_geometry
+
+#ifdef SERMENT_ENABLE_BOOST
+BOOST_CLASS_EXPORT_KEY(erme_geometry::CartesianNodeDummy)
+#endif
 
 #endif // DUMMYNODE_HH_ 
 

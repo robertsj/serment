@@ -12,6 +12,7 @@ SET(SRC
     ResponseIndexer.cc
     NodeResponse.cc
     ResponseServer.cc
+    ResponseSourceDummy.cc
 )
 
 #-------------------------------------#

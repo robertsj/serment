@@ -17,11 +17,10 @@
 namespace erme_response
 {
 
-template <>
-ResponseSourceFactory::SP_source
-ResponseSourceFactory::build(detran::SP<erme_geometry::CartesianNodeDummy> node)
+inline ResponseSourceFactory::SP_source
+ResponseSourceFactory::build_dummy(SP_node node)
 {
-  SP_source s(new ResponseSourceDummy);
+  SP_source s(new ResponseSourceDummy(node));
   return s;
 }
 

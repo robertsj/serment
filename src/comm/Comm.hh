@@ -166,6 +166,42 @@ public:
   static int broadcast(T *buffer, int size, int root = 0);
 
   //---------------------------------------------------------------------------//
+  // REDUCTIONS
+  //---------------------------------------------------------------------------//
+
+  /// Sum of a scalar variable.
+  template <class T>
+  static void sum(T &x, int to_node);
+
+  /// Global product of a scalar variable.
+  template <class T>
+  static void prod(T &x, int to_node);
+
+  /// Global minimum of a scalar variable.
+  template <class T>
+  static void min(T &x, int to_node);
+
+  /// Global maximum of a scalar variable.
+  template <class T>
+  static void max(T &x, int to_node);
+
+  /// Element-wise, global sum of an array.
+  template <class T>
+  static void sum(T *x, int n, int to_node);
+
+  /// Element-wise, global product of an array.
+  template <class T>
+  static void prod(T *x, int n, int to_node);
+
+  /// Element-wise, global minimum of an array.
+  template <class T>
+  static void min(T *x, int n, int to_node);
+
+  /// Element-wise, global maximum of an array.
+  template <class T>
+  static void max(T *x, int n, int to_node);
+
+  //---------------------------------------------------------------------------//
   // GLOBAL REDUCTIONS
   //---------------------------------------------------------------------------//
 

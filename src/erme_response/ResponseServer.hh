@@ -55,7 +55,7 @@ public:
    */
   ResponseServer(erme_geometry::NodeList &nodes, ResponseIndexer &indexer);
 
-  /// Update the eigenvalue
+  /// Update the eigenvalue and compute the new responses
   void update(const double keff);
 
   /// Return a nodal response
@@ -67,9 +67,6 @@ private:
   // DATA
   //-------------------------------------------------------------------------//
 
-  /// Node response functions
-  vec_response d_responses;
-
   /// Nodes
   erme_geometry::NodeList& d_nodes;
 
@@ -79,9 +76,33 @@ private:
   /// Sources
   vec_source d_sources;
 
+  /// Node response functions
+  vec_response d_responses;
+
+
   //-------------------------------------------------------------------------//
   // IMPLEMENTATION
   //-------------------------------------------------------------------------//
+
+  /*!
+   *  \brief Compute responses by dividing work explicitly among processes
+   *
+   *  Each response is treated the same, when in fact some responses (or
+   *  nodes) might be inherently expensive.  A reduction is used to get
+   *  the data, which probably is inefficient for lots of nodes and/or
+   *  lots of response data.
+   *
+   */
+  void update_explicit_work_share();
+
+  /*!
+   *  \brief Compute responses by using a self-scheduling master-slave
+   *         approach
+   */
+  void update_master_slave()
+  {
+    THROW("not yet done");
+  }
 
 };
 

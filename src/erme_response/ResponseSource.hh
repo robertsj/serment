@@ -13,6 +13,8 @@
 #include "DBC.hh"
 #include "SP.hh"
 #include "NodeResponse.hh"
+#include "ResponseIndex.hh"
+#include "erme_geometry/Node.hh"
 
 namespace erme_response
 {
@@ -42,6 +44,7 @@ public:
   typedef detran::SP<ResponseSource>    SP_source;
   typedef unsigned int                  size_t;
   typedef NodeResponse::SP_response     SP_response;
+  typedef erme_geometry::Node::SP_node  SP_node;
 
   //-------------------------------------------------------------------------//
   // PUBLIC INTERFACE
@@ -49,12 +52,21 @@ public:
 
   /*!
    *  \brief Constructor
+   *  \param node   Pointer to node object for which this source generates
+   *                responses
    */
-  ResponseSource(){};
+  ResponseSource(SP_node node)
+    : d_node(node)
+    , d_keff(1.0)
+  {
+    // Preconditions
+    Require(node);
+  }
 
   /// Virtual destructor
   virtual ~ResponseSource(){}
 
+  /// Update the k-eigenvalue
   void update(const double keff)
   {
     d_keff = keff;
@@ -64,14 +76,26 @@ public:
   // ABSTRACT INTERFACE
   //-------------------------------------------------------------------------//
 
-  /// Compute a response for the requested incident index
+  /*!
+   *  \brief Compute a response for the requested incident index
+   *
+   *  The client passes the response to be updated and the index of
+   *  the corresponding incident condition.  The client is then
+   *  responsible for moving data from the sources to the server.
+   *
+   *  \param response   Pointer to response object to be updated
+   *  \param index      Response indices
+   */
   virtual void compute(SP_response response, ResponseIndex index) = 0;
 
-private:
+protected:
 
   //-------------------------------------------------------------------------//
   // DATA
   //-------------------------------------------------------------------------//
+
+  /// Node
+  SP_node d_node;
 
   /// K-eigenvalue
   double d_keff;
@@ -79,7 +103,6 @@ private:
   //-------------------------------------------------------------------------//
   // IMPLEMENTATION
   //-------------------------------------------------------------------------//
-
 
 };
 

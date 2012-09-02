@@ -96,6 +96,58 @@ int broadcast(T  *buffer,
 }
 
 //---------------------------------------------------------------------------//
+// REDUCTIONS
+//---------------------------------------------------------------------------//
+
+template<class T>
+inline void sum(T &x, int to_node)
+{
+  return x;
+}
+
+template<class T>
+inline void prod(T &x, int to_node)
+{
+  return x;
+}
+
+template<class T>
+inline void min(T &x, int to_node)
+{
+  /* ... */
+}
+
+template<class T>
+inline void max(T &x, int to_node)
+{
+  /* ... */
+}
+
+template<class T>
+inline void sum(T *x, int n, int to_node)
+{
+  Require(x);
+}
+
+template<class T>
+inline void prod(T  *x, int n, int to_node)
+{
+  Require(x);
+}
+
+template<class T>
+inline void min(T *x, int n, int to_node)
+{
+  Require(x);
+}
+
+template<class T>
+inline void max(T *x, int n, int to_node)
+{
+  Require(x);
+}
+
+//---------------------------------------------------------------------------//
 // GLOBAL REDUCTIONS
 //---------------------------------------------------------------------------//
 
@@ -142,7 +194,7 @@ inline void global_min(T *x, int n)
 }
 
 template<class T>
-void global_max(T *x, int n)
+inline void global_max(T *x, int n)
 {
   Require(x);
 }

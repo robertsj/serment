@@ -3,7 +3,7 @@
  * \file   test_ResponseServer.cc
  * \author Jeremy Roberts
  * \date   Aug 19, 2012
- * \brief  Test of ResponseIndexer class.
+ * \brief  Test of ResponseServer class.
  * \note   Copyright (C) 2012 Jeremy Roberts. 
  */
 //---------------------------------------------------------------------------//
@@ -35,13 +35,34 @@ int main(int argc, char *argv[])
 // TEST DEFINITIONS
 //----------------------------------------------//
 
-// Test of basic public interface
-int test_ResponseIndexer(int argc, char *argv[])
+/*
+ *  This tests how the response server is used within
+ *  response operators.  In general, the program flow is as
+ *  follows:
+ *
+ *    world   setup problem
+ *            partition nodes
+ *            setup indexer
+ *            setup problem
+ *            broadcast initial keff guess
+ *            server->update(initial_guess)
+ *    local   compute responses
+ *    global  do petsc stuff
+ *    world   broadcast keff and so on
+ */
+
+int test_ResponseServer(int argc, char *argv[])
 {
   typedef serment_comm::Comm Comm;
   typedef NodeResponse::SP_response SP_response;
 
+  using detran::soft_equiv;
+
   Comm::initialize(argc, argv);
+
+  //-------------------------------------------------------------------------//
+  // WORLD
+  //-------------------------------------------------------------------------//
 
   // Get the node list
   erme_geometry::NodeList nodes;
@@ -66,26 +87,51 @@ int test_ResponseIndexer(int argc, char *argv[])
   // Update
   server.update(1.0);
 
+  //-------------------------------------------------------------------------//
+  // LOCAL
+  //-------------------------------------------------------------------------//
+
   // Switch to global and get responses for each node.
-  Comm::set(serment_comm::global);
+  Comm::set(serment_comm::local);
   for (int n = nodes.lower_bound(); n < nodes.upper_bound(); n++)
   {
-    SP_response r = server.response(n);
+    // Response for this node
+    SP_response r = server.response(nodes.local_index(n));
 
-    // Test the response.  Our access as used here is the same
-    // as used to fill global matrices.
-    for (int m = 0; m < indexer.number_node_moments(n); m++)
+    // Loop over surfaces
+    for (int s = 0; s < nodes.node(n)->number_surfaces(); s++)
     {
-      for (int mm = 0; mm < indexer.number_node_moments(n); mm++)
-        TEST(detran::soft_equiv(r->boundary_response(m, mm), 1.0 * n));
-      TEST(detran::soft_equiv(r->fission_response(m),    2.0 * n));
-      TEST(detran::soft_equiv(r->absorption_response(m), 3.0 * n));
-      TEST(detran::soft_equiv(r->leakage_response(0, m), 4.0 * n));
-      TEST(detran::soft_equiv(r->leakage_response(1, m), 5.0 * n));
-      TEST(detran::soft_equiv(r->leakage_response(2, m), 6.0 * n));
-      TEST(detran::soft_equiv(r->leakage_response(3, m), 7.0 * n));
+      // Loop over surface moments
+      for (int m = 0; m < indexer.number_surface_moments(n, s); m++)
+      {
+        ResponseIndex index = indexer.node_index(n, s, m);
+        unsigned int in = index.local;
+        double value = 1000000.0 * index.node +
+                        100000.0 * index.surface +
+                         10000.0 * index.polar +
+                          1000.0 * index.azimuth +
+                           100.0 * index.space0 +
+                            10.0 * index.space1 +
+                             1.0 * index.energy;
+        for (int out = 0; out < r->size(); out++)
+        {
+          TEST(soft_equiv(r->boundary_response(out, in), value + 0.1));
+        }
+        TEST(soft_equiv(r->fission_response(in),    value + 0.2));
+        TEST(soft_equiv(r->absorption_response(in), value + 0.3));
+        for (int s = 0; s < r->number_surfaces(); s++)
+        {
+          TEST(soft_equiv(r->leakage_response(s, in), value + 0.4 + 0.01 * s));
+        }
+      }
     }
+
   }
+
+  //-------------------------------------------------------------------------//
+  // WORLD
+  //-------------------------------------------------------------------------//
+
   Comm::set(serment_comm::world);
 
   Comm::finalize();
