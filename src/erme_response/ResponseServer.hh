@@ -30,6 +30,11 @@ namespace erme_response
  *  ResponseSource that solves the local problems.
  *
  */
+/*!
+ *  \example erme_response/test/test_ResponseServer.cc
+ *
+ *  Test of ResponseServer class
+ */
 class ResponseServer
 {
 
@@ -52,6 +57,8 @@ public:
 
   /*!
    *  \brief Constructor
+   *  \param nodes    Reference to node list
+   *  \param indexer  Reference to indexer
    */
   ResponseServer(erme_geometry::NodeList &nodes, ResponseIndexer &indexer);
 
@@ -78,7 +85,6 @@ private:
 
   /// Node response functions
   vec_response d_responses;
-
 
   //-------------------------------------------------------------------------//
   // IMPLEMENTATION

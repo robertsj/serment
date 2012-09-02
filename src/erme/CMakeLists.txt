@@ -11,6 +11,7 @@ SET(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 SET(SRC
     StateERME.cc
     Connect.cc
+    ResponseMatrix.cc
 )
 
 #-------------------------------------#

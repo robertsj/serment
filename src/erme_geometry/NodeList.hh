@@ -12,7 +12,7 @@
 
 #include "Node.hh"
 #include "NeighborSurface.hh"
-
+#include "SP.hh"
 // System
 #include <vector>
 #include <boost/serialization/vector.hpp>
@@ -47,6 +47,7 @@ class NodeList
 
 public:
 
+  typedef detran::SP<NodeList>          SP_nodelist;
   typedef unsigned int                  size_type;
   typedef Node::SP_node                 SP_node;
   typedef std::vector<SP_node>          vec_node;

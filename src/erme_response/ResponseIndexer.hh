@@ -10,9 +10,10 @@
 #ifndef RESPONSEINDEXER_HH_
 #define RESPONSEINDEXER_HH_
 
-#include "InputDB.hh"
-#include "erme_geometry/NodeList.hh"
 #include "ResponseIndex.hh"
+#include "erme_geometry/NodeList.hh"
+#include "InputDB.hh"
+#include "SP.hh"
 #include <vector>
 
 namespace erme_response
@@ -48,6 +49,7 @@ class ResponseIndexer
 
 public:
 
+  typedef detran::SP<ResponseIndexer>       SP_indexer;
   typedef detran::InputDB::SP_input         SP_db;
   typedef erme_geometry::NodeList::SP_node  SP_node;
   typedef unsigned int                      size_t;
