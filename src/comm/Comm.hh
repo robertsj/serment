@@ -254,6 +254,19 @@ public:
   /// Return time elapsed after tic() call.
   static double toc();
 
+  //---------------------------------------------------------------------------//
+  // UTILITY
+  //---------------------------------------------------------------------------//
+
+  /*!
+   *  \brief Partition a number represented an amount of work, etc.
+   *  \param global_count   Total number of things to be partitioned
+   *  \param local_start    My local index in array of things
+   *  \param local_count    Number of local things I own
+   */
+  static void partition(unsigned int &global_count,
+                        unsigned int &local_start,
+                        unsigned int &local_count);
 
 private:
 

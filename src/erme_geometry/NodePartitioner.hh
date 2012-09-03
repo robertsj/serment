@@ -34,19 +34,31 @@ public:
   // TYPEDEFS
   //-------------------------------------------------------------------------//
 
-  typedef serment_comm::Comm Comm;
-  typedef Node::SP_node      SP_node;
+  typedef serment_comm::Comm      Comm;
+  typedef Node::SP_node           SP_node;
+  typedef NodeList::SP_nodelist   SP_nodelist;
+  typedef unsigned int            size_t;
+
+  //-------------------------------------------------------------------------//
+  // PUBLIC INTERFACE
+  //-------------------------------------------------------------------------//
 
   /*!
    *  \brief Constructor
-   *  \param nodes  List of problem nodes
    */
   NodePartitioner();
 
-  /// Partition the nodes
+  /*!
+   *  \brief Partition a list of nodes
+   *  \param nodes  Node list
+   */
   void partition(NodeList &nodes);
 
 private:
+
+  //-------------------------------------------------------------------------//
+  // DATA
+  //-------------------------------------------------------------------------//
 
   /// Buffer for sending nodes
   std::string d_buffer;

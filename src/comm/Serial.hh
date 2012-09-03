@@ -200,12 +200,38 @@ inline void global_max(T *x, int n)
 }
 
 //---------------------------------------------------------------------------//
-// BARRIER FUNCTIONS
+// BARRIER
 //---------------------------------------------------------------------------//
 
 void global_barrier()
 {
   /* ... */
+}
+
+//---------------------------------------------------------------------------//
+// TIMING \todo Need serial timer
+//---------------------------------------------------------------------------//
+
+inline void Comm::tic()
+{
+
+}
+
+inline double Comm::toc()
+{
+  return 0.0;
+}
+
+//---------------------------------------------------------------------------//
+// UTILITIES
+//---------------------------------------------------------------------------//
+
+inline void Comm::partition(int &global_count,
+                            int &local_start,
+                            int &local_count)
+{
+  local_start = 0;
+  local_count = global_count;
 }
 
 } // end namespace serment_comm

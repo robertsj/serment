@@ -43,54 +43,18 @@ void NodePartitioner::partition(NodeList &nodes)
 
   // \todo Make sure we set the proper communicator!
 
-  int number_nodes = 0;
-  std::vector<int> number_per_process(Comm::size(), 0);
+  // Partition the nodes using Comm's default partitioner
+  size_t number_nodes = 0;
+  size_t local_number_nodes = 0;
+  size_t lower_bound = 0;
+  if (Comm::rank() == 0) number_nodes = nodes.number_global_nodes();
+  Comm::partition(number_nodes, lower_bound, local_number_nodes);
 
-  // Master
-  if (Comm::rank() == 0)
-  {
-    // Preconditions
-    Insist(nodes.number_global_nodes() > 0,
-           "Node list must contain nodes to partition.");
-
-    number_nodes = nodes.number_global_nodes();
-
-    // Initial guess for nodes per process and the remainder.
-    int npp = number_nodes / Comm::size();
-    int remainder = number_nodes - npp * Comm::size();
-
-    // Assign the number per process, putting the extras on
-    // the processes in reverse.  If there are more processes
-    // than nodes, put the nodes on the first processes.
-    int bound = Comm::size();
-    if (!npp)
-    {
-      bound = number_nodes;
-      npp   = 1;
-      remainder = 0;
-    }
-
-    for (int i = 0; i < bound; i++)
-      number_per_process[i] = npp;
-
-    for (int i = 1; i <= remainder; i++)
-      number_per_process[Comm::size()-i] += 1;
-  }
-
-  // Broadcast the number of nodes in the problem
-  Comm::broadcast(&number_nodes, 1, 0);
-
-  // Broadcast the number of nodes per process.
-  Comm::broadcast(&number_per_process[0], number_per_process.size(), 0);
-
-  // Broadcast the nodes
+  // Broadcast the nodes.
   broadcast_nodes(nodes);
 
-  // Set the appropriate bounds and finalize
-  int lb = 0;
-  for (int i = 0; i < Comm::rank(); i++)
-    lb += number_per_process[i];
-  nodes.set_bounds(lb, lb + number_per_process[Comm::rank()]);
+  // Set node bounds and finalize.
+  nodes.set_bounds(lower_bound, lower_bound + local_number_nodes);
   nodes.finalize();
 
 }

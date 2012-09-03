@@ -47,6 +47,10 @@ class NodeList
 
 public:
 
+  //-------------------------------------------------------------------------//
+  // TYPEDEFS
+  //-------------------------------------------------------------------------//
+
   typedef detran::SP<NodeList>          SP_nodelist;
   typedef unsigned int                  size_type;
   typedef Node::SP_node                 SP_node;
@@ -55,6 +59,10 @@ public:
   typedef std::vector<vec_int>          vec2_int;
   typedef std::vector<NeighborSurface>  vec_neighbor;
   typedef std::vector<vec_neighbor>     vec2_neighbor;
+
+  //-------------------------------------------------------------------------//
+  // PUBLIC INTERFACE
+  //-------------------------------------------------------------------------//
 
   /// Constructor
   NodeList();

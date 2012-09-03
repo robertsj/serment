@@ -46,6 +46,7 @@ void ResponseMatrix::update(const double keff)
     for (size_type i = 0; i < indices.size(); i++)
       indices[i] += i;
 
+    // Insert each column (corresponding to an incident moment)
     for (int in = 0; in < r->size(); in++)
     {
       insert_values(r->size(), &indices[0], 1, &in,

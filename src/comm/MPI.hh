@@ -310,7 +310,6 @@ inline void Comm::global_barrier()
   MPI_Barrier(communicator);
 }
 
-
 //---------------------------------------------------------------------------//
 // TIMING
 //---------------------------------------------------------------------------//
@@ -323,6 +322,67 @@ inline void Comm::tic()
 inline double Comm::toc()
 {
   return MPI_Wtime() - d_time;
+}
+
+//---------------------------------------------------------------------------//
+// UTILITIES
+//---------------------------------------------------------------------------//
+
+/*
+ *  This implementation assigns each process an equal size chunk of the
+ *  total count.  Extra counts are assigned one-per-process starting with
+ *  the last process in the communicator.
+ *
+ */
+inline void Comm::partition(unsigned int &global_count,
+                            unsigned int &local_start,
+                            unsigned int &local_count)
+{
+
+  // Number of things per process
+  std::vector<unsigned int> number_per_process(Comm::size(), 0);
+
+  // Master
+  if (Comm::rank() == 0)
+  {
+    // Preconditions
+    Insist(global_count > 0,
+      "Global count must be a positive in order to partition it");
+
+    // Initial guess for count per process and the remainder.
+    int number_per_process_guess = global_count / Comm::size();
+    int remainder = global_count - number_per_process_guess * Comm::size();
+
+    // Assign the number per process, putting the extras on
+    // the processes in reverse.  If there are more processes
+    // than nodes, put the things on the first processes.
+    int number_processes = Comm::size();
+    if (!number_per_process_guess)
+    {
+      number_processes = global_count;
+      number_per_process_guess = 1;
+      remainder = 0;
+    }
+
+    for (int i = 0; i < number_processes; i++)
+      number_per_process[i] = number_per_process_guess;
+
+    for (int i = 1; i <= remainder; i++)
+      number_per_process[Comm::size() - i] += 1;
+  }
+
+  // Broadcast the total number of things
+  Comm::broadcast(&global_count, 1, 0);
+
+  // Broadcast the number of nodes per process.
+  Comm::broadcast(&number_per_process[0], number_per_process.size(), 0);
+
+  // Local start and size
+  local_start = 0;
+  for (int i = 0; i < Comm::rank(); i++)
+    local_start += number_per_process[i];
+  local_count = number_per_process[Comm::rank()];
+
 }
 
 } // end namespace serment_comm
