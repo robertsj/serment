@@ -82,10 +82,10 @@ private:
   /// Indexer
   SP_indexer d_indexer;
 
-  /// Sources
+  /// Sources [size = local number of nodes]
   vec_source d_sources;
 
-  /// Node response functions
+  /// Node response functions [size = local number of nodes]
   vec_response d_responses;
 
   //-------------------------------------------------------------------------//

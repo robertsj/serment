@@ -23,6 +23,11 @@ namespace erme
  *  \class ResponseMatrix
  *  \brief Response matrix operator
  */
+/*!
+ *  \example erme/test/test_ResponseMatrix
+ *
+ *  Test of ResponseMatrixClass
+ */
 class ResponseMatrix: public linear_algebra::Matrix,
                       public ResponseOperator
 {

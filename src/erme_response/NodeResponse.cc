@@ -8,6 +8,7 @@
 //---------------------------------------------------------------------------//
 
 #include "NodeResponse.hh"
+#include <cstdio>
 
 namespace erme_response
 {
@@ -23,6 +24,24 @@ NodeResponse::NodeResponse(const size_t N, const size_t number_surfaces)
   Require(d_N > 1); // At least 2 surfaces, each with at least 1 moment
   Require(d_number_surfaces > 1);
 }
+
+
+void NodeResponse::display() const
+{
+  printf("\n");
+  printf("Boundary Responses \n");
+  printf("------------------ \n");
+  for (int out = 0; out < d_N; out++)
+  {
+    for (int in = 0; in < d_N; in++)
+    {
+      printf("%12.8e ", d_boundary_response[in][out]);
+    }
+    printf("\n");
+  }
+  printf("\n\n");
+}
+
 
 } // end namespace erme_response
 

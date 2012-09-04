@@ -58,13 +58,14 @@ int test_ResponseServer(int argc, char *argv[])
 
   using detran::soft_equiv;
 
+  //-------------------------------------------------------------------------//
+  // SETUP COMM
+  //-------------------------------------------------------------------------//
+
   // Initialize comm
   Comm::initialize(argc, argv);
 
-  // Set the number of local communicators, equivalent to the number
-  // of processes that participate in the global problem.  For testing,
-  // we'll keep one group for 1 and 2 processes, and two groups
-  // for anything more.
+  // Setup local and global communicators.
   int number_local_comm = 1;
   if (Comm::size() > 2) number_local_comm = 2;
   Comm::setup_communicators(number_local_comm);
@@ -95,8 +96,7 @@ int test_ResponseServer(int argc, char *argv[])
 
   // Update
   server.update(1.0);
-
-  return 0;
+  Comm::global_barrier();
 
   //-------------------------------------------------------------------------//
   // LOCAL
@@ -105,11 +105,8 @@ int test_ResponseServer(int argc, char *argv[])
   // Switch to local
   Comm::set(serment_comm::local);
 
-  if (Comm::rank() == 0) cout << " zero " << endl;
-  return 0;
-
   // Only root process has data at this point
-  if (Comm::rank() == 0)
+  if (Comm::world_rank() == 0)
   {
 
   for (int n = nodes->lower_bound(); n < nodes->upper_bound(); n++)
@@ -134,6 +131,7 @@ int test_ResponseServer(int argc, char *argv[])
                              1.0 * index.energy;
         for (int out = 0; out < r->size(); out++)
         {
+          //cout << " out = " << out << " br =  " << r->boundary_response(out, in) << " ref = " << value + 0.1 << endl;
           TEST(soft_equiv(r->boundary_response(out, in), value + 0.1));
         }
         TEST(soft_equiv(r->fission_response(in),    value + 0.2));

@@ -124,6 +124,9 @@ public:
     return d_number_surfaces;
   }
 
+  /// Display the response data
+  void display() const;
+
 private:
 
   //-------------------------------------------------------------------------//
@@ -136,7 +139,12 @@ private:
   /// Number of surfaces
   const size_t d_number_surfaces;
 
-  /// Boundary function moments [N][N]
+  /*!
+   *  \brief Boundary function moments [N][N]
+   *
+   *  Stored [incoming][outgoing] so that for an incident condition,
+   *  all outgoing values are contiguous in memory.
+   */
   vec2_dbl d_boundary_response;
 
   /// Fission response [N]

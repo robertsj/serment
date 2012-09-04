@@ -49,12 +49,15 @@ ResponseServer::ResponseServer(SP_nodelist nodes,
  */
 void ResponseServer::update(const double keff)
 {
+  // Preconditions
+  Require(serment_comm::communicator == serment_comm::world);
+
   using std::cout;
   using std::endl;
 
   typedef serment_comm::Comm Comm;
 
-  // Must be coming in from world.
+  // Switch to local communicator.
   Comm::set(serment_comm::local);
   double k = keff;
 
@@ -89,13 +92,16 @@ void ResponseServer::update(const double keff)
  */
 void ResponseServer::update_explicit_work_share()
 {
+  using std::cout;
+  using std::endl;
+
   typedef serment_comm::Comm Comm;
 
   // total number
   size_t number_responses = 0;
   std::vector<size_t> number_per_process(Comm::size(), 0);
 
-  // Local root
+  // Local root \todo use Comm::partition
   if (Comm::rank() == 0)
   {
     number_responses = d_indexer->number_local_moments();
@@ -120,6 +126,7 @@ void ResponseServer::update_explicit_work_share()
 
     for (int i = 1; i <= remainder; i++)
       number_per_process[Comm::size() - i] += 1;
+
   }
 
  // Broadcast the number of nodes in the problem
@@ -128,23 +135,14 @@ void ResponseServer::update_explicit_work_share()
  // Broadcast the number of nodes per process.
  Comm::broadcast(&number_per_process[0], number_per_process.size(), 0);
 
- // Find my starting index
+ // Find my start and finish
  size_t start = 0;
  for (int i = 0; i < Comm::rank(); i++)
    start += number_per_process[i];
-
- if (Comm::g_rank == 2)
- {
-   std::cout << " gs = " << d_indexer->number_global_moments()
-             << " ls = " << d_indexer->number_local_moments()
-             << " g_start " << d_indexer->local_to_global(start)
-             << " l_start " << start
-             << std::endl;
-   d_indexer->display();
- }
+ size_t finish = start + number_per_process[Comm::rank()];
 
  // Loop over all of my local moments
- for (size_t index_l = start; index_l < number_per_process[Comm::rank()]; index_l++)
+ for (size_t index_l = start; index_l < finish; index_l++)
  {
    const ResponseIndex index_r = d_indexer->response_index(index_l);
 
@@ -152,25 +150,13 @@ void ResponseServer::update_explicit_work_share()
    int node_l = d_nodes->local_index(index_r.node);
 
    // Compute responses
-   if (node_l >= d_responses.size() or node_l < 0)
-   {
-     std::cout << " start = " << start << " finish = "
-                << start + number_per_process[Comm::rank()] << std::endl;
-
-     std::cout << " node = " << index_r.node
-               << " l_node = " << node_l
-               << " lb = " << d_nodes->lower_bound()
-               << " proc = " << Comm::g_rank << std::endl
-               << index_r
-               << std::endl;
-   }
    Assert(node_l < d_responses.size());
    Assert(node_l < d_sources.size());
-   //d_sources[node_l]->compute(d_responses[node_l], r_index);
+
+   d_sources[node_l]->compute(d_responses[node_l], index_r);
 
  }
  Comm::global_barrier();
- return;
 
  // A simple way to gather the results on 0 is to reduce on the
  // arrays of each nodal response.  Note, this probably makes the
@@ -181,8 +167,18 @@ void ResponseServer::update_explicit_work_share()
    int number_surfaces = d_responses[n]->number_surfaces();
    for (size_t in = 0; in < number_moments; in++)
    {
+//     if (Comm::world_rank() == 0)
+//     {
+//       cout << " was " << d_responses[n]->boundary_response(0, in) << endl;
+//     }
+
      Comm::sum(&d_responses[n]->boundary_response(0, in), number_moments,  0);
      Comm::sum(&d_responses[n]->leakage_response(0, in),  number_surfaces, 0);
+
+//     if (Comm::world_rank() == 0)
+//     {
+//       cout << " now " << d_responses[n]->boundary_response(0, in) << endl;
+//     }
    }
    Comm::sum(&d_responses[n]->fission_response(0),    number_moments, 0);
    Comm::sum(&d_responses[n]->absorption_response(0), number_moments, 0);

@@ -50,7 +50,7 @@ public:
   void compute(SP_response response, ResponseIndex index)
   {
     Require(response);
-    return;
+
     size_t in = index.local;
 
     // Easy value to recreate.
@@ -72,6 +72,7 @@ public:
     {
       response->leakage_response(s, in) = value + 0.4 + 0.01 * s;
     }
+
   }
 
 private:

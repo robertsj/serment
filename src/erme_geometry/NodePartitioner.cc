@@ -41,20 +41,30 @@ NodePartitioner::NodePartitioner()
 void NodePartitioner::partition(SP_nodelist &nodes)
 {
 
-  // \todo Make sure we set the proper communicator!
-
-  // Partition the nodes using Comm's default partitioner
   size_t number_nodes = 0;
   size_t local_number_nodes = 0;
   size_t lower_bound = 0;
-  if (Comm::rank() == 0) number_nodes = nodes->number_global_nodes();
-  Comm::partition(number_nodes, lower_bound, local_number_nodes);
 
-  // Broadcast the nodes.
+  // Switch to global communicator
+  if (Comm::is_global())
+  {
+    Comm::set(serment_comm::global);
+    // Partition the nodes using Comm's default partitioner
+    if (Comm::rank() == 0)
+    {
+      number_nodes = nodes->number_global_nodes();
+    }
+    Comm::partition(number_nodes, lower_bound, local_number_nodes);
+  }
+
+  // Switch to local and broadcast local bound and size
+  Comm::set(serment_comm::local);
+  Comm::broadcast(&lower_bound, 1, 0);
+  Comm::broadcast(&local_number_nodes, 1, 0);
+
+  // Switch to world, broadcast nodes to everyone, and finalize.
+  Comm::set(serment_comm::world);
   broadcast_nodes(nodes);
-  Assert(nodes);
-
-  // Set node bounds and finalize.
   nodes->set_bounds(lower_bound, lower_bound + local_number_nodes);
   nodes->finalize();
 
@@ -62,6 +72,12 @@ void NodePartitioner::partition(SP_nodelist &nodes)
 
 void NodePartitioner::broadcast_nodes(SP_nodelist &nodes)
 {
+  // Preconditions
+  if (Comm::rank() == 0)
+  {
+    Require(nodes);
+  }
+  Require(serment_comm::communicator == serment_comm::world);
 
   // Clear the buffer.  This wipes the contents, but keeps the
   // memory allocated.
@@ -100,6 +116,8 @@ void NodePartitioner::broadcast_nodes(SP_nodelist &nodes)
     input_archive >> nodes;
   }
 
+  // Postconditions
+  Ensure(nodes);
 }
 
 } // end namespace erme_geometry

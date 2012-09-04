@@ -99,9 +99,11 @@ void ResponseIndexer::display() const
 {
   using std::cout;
   using std::endl;
+  cout << endl << "RESPONSE INDICES" << endl << endl;
+
   for (int n = 0; n < number_nodes(); n++)
   {
-    cout << "GLOBAL NODE " << n << endl;
+    cout << "  global node " << n << endl;
     for (int s = 0; s < d_indices[n].size(); s++)
     {
 
@@ -116,9 +118,10 @@ void ResponseIndexer::display() const
              << response_index(n, s, m).space0   << " "
              << response_index(n, s, m).space1   << " | "
              << response_index(n, s, m).even_odd << " |" << endl;
-      }
-    }
-  }
+      } // end surface moment
+    } // end surface
+  } // end node
+  cout << endl;
 }
 
 

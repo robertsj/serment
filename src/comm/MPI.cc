@@ -26,7 +26,8 @@ Communicator_t communicator   = world;
 bool   Comm::d_is_comm_built = false;
 bool   Comm::d_is_global     = true;
 double Comm::d_time = 0.0;
-int    Comm::g_rank = 0;
+int    Comm::d_world_rank = 0;
+int    Comm::d_local_group = 0;
 //---------------------------------------------------------------------------//
 // SETUP FUNCTIONS
 //---------------------------------------------------------------------------//
@@ -35,7 +36,7 @@ void Comm::initialize(int &argc, char **&argv)
 {
   int result = MPI_Init(&argc, &argv);
   d_time = 0.0;
-  g_rank = Comm::rank();
+  d_world_rank = Comm::rank();
   Ensure(result == MPI_SUCCESS);
 }
 
@@ -102,11 +103,10 @@ void Comm::setup_communicators(const unsigned int N)
       }
     }
   }
-
-  int ierr;
+  d_local_group = color;
 
   // Create the local communicator
-  ierr = MPI_Comm_split(world, color, color, &local);
+  int ierr = MPI_Comm_split(world, color, color, &local);
 
   // Create the global communicator
   MPI_Group world_g, global_g;

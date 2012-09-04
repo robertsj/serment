@@ -87,8 +87,6 @@ public:
   /// Finish a parallel job.
   static void finalize();
 
-  static int g_rank;
-
   //---------------------------------------------------------------------------//
   // COMMUNICATORS
   //---------------------------------------------------------------------------//
@@ -136,6 +134,18 @@ public:
    * The number of processes is determined by the current communicator.
    */
   static int size();
+
+  /// Return the rank of a process within the world communicator
+  static int world_rank()
+  {
+    return d_world_rank;
+  }
+
+  /// Return the local group of a process
+  static int local_group()
+  {
+    return d_local_group;
+  }
 
   //---------------------------------------------------------------------------//
   // BLOCKING SEND/RECEIVE OPERATIONS
@@ -289,6 +299,12 @@ private:
 
   /// Stored time information
   static double d_time;
+
+  /// Rank in world
+  static int d_world_rank;
+
+  /// Local group (= to color)
+  static int d_local_group;
 
 };
 
