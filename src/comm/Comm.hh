@@ -68,6 +68,8 @@ namespace serment_comm
  *
  *  This is an easy API for using MPI (or some other parallel library).
  *
+ *  \todo Consider implementing Comm as a singleton so that better
+ *        encapsulation can be used
  */
 
 class Comm
@@ -84,6 +86,8 @@ public:
 
   /// Finish a parallel job.
   static void finalize();
+
+  static int g_rank;
 
   //---------------------------------------------------------------------------//
   // COMMUNICATORS
@@ -106,6 +110,13 @@ public:
   static bool is_global()
   {
     return d_is_global;
+  }
+
+  /// Have comm groups been built?  This could be put
+  /// into the init routine, but then a new parameter would be added.
+  static bool is_comm_built()
+  {
+    return d_is_comm_built;
   }
 
   //---------------------------------------------------------------------------//

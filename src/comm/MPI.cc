@@ -26,7 +26,7 @@ Communicator_t communicator   = world;
 bool   Comm::d_is_comm_built = false;
 bool   Comm::d_is_global     = true;
 double Comm::d_time = 0.0;
-
+int    Comm::g_rank = 0;
 //---------------------------------------------------------------------------//
 // SETUP FUNCTIONS
 //---------------------------------------------------------------------------//
@@ -35,6 +35,7 @@ void Comm::initialize(int &argc, char **&argv)
 {
   int result = MPI_Init(&argc, &argv);
   d_time = 0.0;
+  g_rank = Comm::rank();
   Ensure(result == MPI_SUCCESS);
 }
 

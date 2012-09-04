@@ -54,13 +54,6 @@ void Comm::set(const C &new_communicator)
   /* ... */
 }
 
-/// Free a communicator
-template<class C>
-void Comm::free(C &new_communicator)
-{
-  /* ... */
-}
-
 //---------------------------------------------------------------------------//
 // BLOCKING SEND/RECEIVE OPERATIONS
 //---------------------------------------------------------------------------//
@@ -226,9 +219,9 @@ inline double Comm::toc()
 // UTILITIES
 //---------------------------------------------------------------------------//
 
-inline void Comm::partition(int &global_count,
-                            int &local_start,
-                            int &local_count)
+inline void Comm::partition(unsigned int &global_count,
+                            unsigned int &local_start,
+                            unsigned int &local_count)
 {
   local_start = 0;
   local_count = global_count;

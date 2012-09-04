@@ -35,23 +35,31 @@ void ResponseMatrix::update(const double keff)
   // Update the responses
   d_server->update(keff);
 
+  // Offset for a block.  Starts at this matrix's lower bound.
+  int offset = lower_bound();
+
   // Loop through nodes
   for (int n = 0; n < d_nodes->number_local_nodes(); n++)
   {
+    std::cout << " node = " << n << std::endl;
+
     // Get response
     SP_response r = d_server->response(n);
 
     // Block indices
-    vec_int indices(r->size(), lower_bound());
+    vec_int indices(r->size(), offset);
     for (size_type i = 0; i < indices.size(); i++)
       indices[i] += i;
 
     // Insert each column (corresponding to an incident moment)
     for (int in = 0; in < r->size(); in++)
     {
-      insert_values(r->size(), &indices[0], 1, &in,
+      int col = in + offset;
+      insert_values(r->size(), &indices[0], 1, &col,
                     &r->boundary_response(0, in));
     }
+
+    offset += indices.size();
   }
 
   // Assemble after finishing

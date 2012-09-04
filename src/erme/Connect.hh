@@ -36,16 +36,33 @@ class Connect: public linear_algebra::Matrix
 
 public:
 
-  typedef erme_geometry::NodeList         NodeList;
-  typedef erme_response::ResponseIndexer  ResponseIndexer;
+  //-------------------------------------------------------------------------//
+  // TYPEDEFS
+  //-------------------------------------------------------------------------//
 
-  Connect(erme_geometry::NodeList &nodes,
-          erme_response::ResponseIndexer &indexer);
+  typedef erme_geometry::NodeList::SP_nodelist        SP_nodelist;
+  typedef erme_response::ResponseIndexer::SP_indexer  SP_indexer;
+
+  //-------------------------------------------------------------------------//
+  // PUBLIC INTERFACE
+  //-------------------------------------------------------------------------//
+
+  /*!
+   *  \brief Constructor
+   *  \param nodes    Pointer to list of nodes
+   *  \param indexer  Pointer to response indexer
+   */
+  Connect(SP_nodelist nodes, SP_indexer indexer);
 
 private:
-//
-//  const NodeList&         d_nodes;
-//  const ResponseIndexer&  d_indexer;
+
+  //-------------------------------------------------------------------------//
+  // PRIVATE DATA
+  //-------------------------------------------------------------------------//
+
+  //-------------------------------------------------------------------------//
+  // IMPLEMENTATION
+  //-------------------------------------------------------------------------//
 
 };
 

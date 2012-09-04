@@ -38,7 +38,7 @@ NodePartitioner::NodePartitioner()
   /* ... */
 }
 
-void NodePartitioner::partition(NodeList &nodes)
+void NodePartitioner::partition(SP_nodelist &nodes)
 {
 
   // \todo Make sure we set the proper communicator!
@@ -47,19 +47,20 @@ void NodePartitioner::partition(NodeList &nodes)
   size_t number_nodes = 0;
   size_t local_number_nodes = 0;
   size_t lower_bound = 0;
-  if (Comm::rank() == 0) number_nodes = nodes.number_global_nodes();
+  if (Comm::rank() == 0) number_nodes = nodes->number_global_nodes();
   Comm::partition(number_nodes, lower_bound, local_number_nodes);
 
   // Broadcast the nodes.
   broadcast_nodes(nodes);
+  Assert(nodes);
 
   // Set node bounds and finalize.
-  nodes.set_bounds(lower_bound, lower_bound + local_number_nodes);
-  nodes.finalize();
+  nodes->set_bounds(lower_bound, lower_bound + local_number_nodes);
+  nodes->finalize();
 
 }
 
-void NodePartitioner::broadcast_nodes(NodeList &nodes)
+void NodePartitioner::broadcast_nodes(SP_nodelist &nodes)
 {
 
   // Clear the buffer.  This wipes the contents, but keeps the

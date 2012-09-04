@@ -1,9 +1,9 @@
 //----------------------------------*-C++-*----------------------------------//
 /*!
- * \file   test_Connect.cc
+ * \file   test_MR_scaling.cc
  * \author Jeremy Roberts
  * \date   Aug 19, 2012
- * \brief  Test of Connect class.
+ * \brief  Tests the parallel scaling of the action M * R
  * \note   Copyright (C) 2012 Jeremy Roberts. 
  */
 //---------------------------------------------------------------------------//
@@ -14,6 +14,7 @@
 
 #include "TestDriver.hh"
 #include "Connect.hh"
+#include "ResponseMatrix.hh"
 #include "erme_geometry/NodePartitioner.hh"
 #include "erme_geometry/test/nodelist_fixture.hh"
 #include <iostream>
@@ -34,8 +35,17 @@ int main(int argc, char *argv[])
 // TEST DEFINITIONS
 //----------------------------------------------//
 
-// Test of basic public interface
-int test_Connect(int argc, char *argv[])
+/*
+ *  The global problem has at its core the action M*R, where M
+ *  is the connectivity matrix and R is the response matrix.  While
+ *  we anticipate the local response computation will represent the
+ *  overwhelming majority of all computation, understanding the
+ *  scaling of the global problem is important for running the
+ *  problem on large machines and for problems in which the
+ *  local responses are relatively cheap (e.g. few group diffusion).
+ *
+ */
+int test_MR_scaling(int argc, char *argv[])
 {
   typedef serment_comm::Comm Comm;
 
@@ -45,7 +55,7 @@ int test_Connect(int argc, char *argv[])
   // Get the node list
   erme_geometry::NodeList::SP_nodelist nodes;
   if (Comm::rank() == 0)
-    nodes = erme_geometry::cartesian_node_detran_list_2d();
+    nodes = erme_geometry::cartesian_node_dummy_list_2d();
 
   // Partition the nodes
   erme_geometry::NodePartitioner partitioner;

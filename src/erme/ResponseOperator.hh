@@ -52,6 +52,7 @@ public:
     , d_server(server)
   {
     // Preconditions
+    Require(d_nodes);
     Require(d_indexer);
     Require(d_server);
   }

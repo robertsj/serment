@@ -109,7 +109,7 @@ public:
   size_type number_local_nodes() const;
 
   /*!
-   *  \brief Get the neighbor index for a node surface
+   *  \brief Get the global neighbor index for a node surface
    *  \param n  Global node index
    *  \param s  Node surface
    */

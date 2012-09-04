@@ -44,12 +44,14 @@ public:
   // TYPEDEFS
   //-------------------------------------------------------------------------//
 
-  typedef detran::SP<ResponseServer>  SP_server;
-  typedef NodeResponse::SP_response   SP_response;
-  typedef std::vector<SP_response>    vec_response;
-  typedef unsigned int                size_t;
-  typedef ResponseSource::SP_source   SP_source;
-  typedef std::vector<SP_source>      vec_source;
+  typedef detran::SP<ResponseServer>            SP_server;
+  typedef NodeResponse::SP_response             SP_response;
+  typedef std::vector<SP_response>              vec_response;
+  typedef ResponseSource::SP_source             SP_source;
+  typedef std::vector<SP_source>                vec_source;
+  typedef ResponseIndexer::SP_indexer           SP_indexer;
+  typedef erme_geometry::NodeList::SP_nodelist  SP_nodelist;
+  typedef unsigned int                          size_t;
 
   //-------------------------------------------------------------------------//
   // PUBLIC INTERFACE
@@ -57,10 +59,10 @@ public:
 
   /*!
    *  \brief Constructor
-   *  \param nodes    Reference to node list
-   *  \param indexer  Reference to indexer
+   *  \param nodes    Pointer to node list
+   *  \param indexer  Pointer to indexer
    */
-  ResponseServer(erme_geometry::NodeList &nodes, ResponseIndexer &indexer);
+  ResponseServer(SP_nodelist nodes, SP_indexer indexer);
 
   /// Update the eigenvalue and compute the new responses
   void update(const double keff);
@@ -75,10 +77,10 @@ private:
   //-------------------------------------------------------------------------//
 
   /// Nodes
-  erme_geometry::NodeList& d_nodes;
+  SP_nodelist d_nodes;
 
   /// Indexer
-  ResponseIndexer& d_indexer;
+  SP_indexer d_indexer;
 
   /// Sources
   vec_source d_sources;

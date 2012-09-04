@@ -52,7 +52,7 @@ public:
    *  \brief Partition a list of nodes
    *  \param nodes  Node list
    */
-  void partition(NodeList &nodes);
+  void partition(SP_nodelist &nodes);
 
 private:
 
@@ -71,7 +71,7 @@ private:
   //-------------------------------------------------------------------------//
 
   /// Send a node from master to another process
-  void broadcast_nodes(NodeList &nodes);
+  void broadcast_nodes(SP_nodelist &nodes);
 
 };
 

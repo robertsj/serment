@@ -26,11 +26,11 @@ namespace erme_geometry
 //---------------------------------------------------------------------------//
 
 // Get a list of Detran nodes
-NodeList cartesian_node_detran_list_2d()
+NodeList::SP_nodelist cartesian_node_detran_list_2d()
 {
 
   // Create node list
-  NodeList nodes;
+  NodeList::SP_nodelist nodes(new NodeList());
 
   // Get four, two-dimensional Cartesian test nodes
   NodeList::SP_node node0 = cartesian_node_detran(2);
@@ -58,11 +58,11 @@ NodeList cartesian_node_detran_list_2d()
   neigh3[CartesianNode::WEST]   = NeighborSurface(2, CartesianNode::EAST);
 
   // Add nodes
-  nodes.add_node(node0, neigh0);
-  nodes.add_node(node1, neigh1);
-  nodes.add_node(node2, neigh2);
-  nodes.add_node(node3, neigh3);
-  nodes.finalize();
+  nodes->add_node(node0, neigh0);
+  nodes->add_node(node1, neigh1);
+  nodes->add_node(node2, neigh2);
+  nodes->add_node(node3, neigh3);
+  nodes->finalize();
 
   return nodes;
 }
@@ -72,11 +72,11 @@ NodeList cartesian_node_detran_list_2d()
 //---------------------------------------------------------------------------//
 
 // Get a list of Dummy nodes
-NodeList cartesian_node_dummy_list_1d()
+NodeList::SP_nodelist cartesian_node_dummy_list_1d()
 {
 
   // Create node list
-  NodeList nodes;
+  NodeList::SP_nodelist nodes(new NodeList());;
 
   // Get four, two-dimensional Cartesian test nodes
   NodeList::SP_node node0(new CartesianNodeDummy(1, 0, 0, 2, 0, 0));
@@ -102,27 +102,28 @@ NodeList cartesian_node_dummy_list_1d()
   neigh3[CartesianNode::WEST] = NeighborSurface(2, CartesianNode::EAST);
 
   // Add nodes
-  nodes.add_node(node0, neigh0);
-  nodes.add_node(node1, neigh1);
-  nodes.add_node(node2, neigh2);
-  nodes.add_node(node3, neigh3);
-  nodes.finalize();
+  nodes->add_node(node0, neigh0);
+  nodes->add_node(node1, neigh1);
+  nodes->add_node(node2, neigh2);
+  nodes->add_node(node3, neigh3);
+  nodes->finalize();
 
   return nodes;
 }
 
 // Get a list of Dummy nodes
-NodeList cartesian_node_dummy_list_2d()
+NodeList::SP_nodelist
+cartesian_node_dummy_list_2d(int so = 4, int ao = 2, int po = 2)
 {
 
   // Create node list
-  NodeList nodes;
+  NodeList::SP_nodelist nodes(new NodeList());;
 
   // Get four, two-dimensional Cartesian test nodes
-  NodeList::SP_node node0(new CartesianNodeDummy(2, 0, 4, 2, 2, 0));
-  NodeList::SP_node node1(new CartesianNodeDummy(2, 1, 4, 2, 2, 0));
-  NodeList::SP_node node2(new CartesianNodeDummy(2, 2, 4, 2, 2, 0));
-  NodeList::SP_node node3(new CartesianNodeDummy(2, 3, 4, 2, 2, 0));
+  NodeList::SP_node node0(new CartesianNodeDummy(2, 0, so, po, ao, 0));
+  NodeList::SP_node node1(new CartesianNodeDummy(2, 1, so, po, ao, 0));
+  NodeList::SP_node node2(new CartesianNodeDummy(2, 2, so, po, ao, 0));
+  NodeList::SP_node node3(new CartesianNodeDummy(2, 3, so, po, ao, 0));
 
   // Create neighbor lists.
   NodeList::vec_neighbor neigh0(4, NeighborSurface(Node::VACUUM, 0));
@@ -144,21 +145,21 @@ NodeList cartesian_node_dummy_list_2d()
   neigh3[CartesianNode::WEST]   = NeighborSurface(2, CartesianNode::EAST);
 
   // Add nodes
-  nodes.add_node(node0, neigh0);
-  nodes.add_node(node1, neigh1);
-  nodes.add_node(node2, neigh2);
-  nodes.add_node(node3, neigh3);
-  nodes.finalize();
+  nodes->add_node(node0, neigh0);
+  nodes->add_node(node1, neigh1);
+  nodes->add_node(node2, neigh2);
+  nodes->add_node(node3, neigh3);
+  nodes->finalize();
 
   return nodes;
 }
 
 // Get a list of Dummy nodes
-NodeList cartesian_node_dummy_list_3d()
+NodeList::SP_nodelist cartesian_node_dummy_list_3d()
 {
 
   // Create node list
-  NodeList nodes;
+  NodeList::SP_nodelist nodes(new NodeList());;
 
   // Get four, two-dimensional Cartesian test nodes
   NodeList::SP_node node0(new CartesianNodeDummy(3, 0, 4, 2, 2, 0));
@@ -186,11 +187,11 @@ NodeList cartesian_node_dummy_list_3d()
   neigh3[CartesianNode::WEST]   = NeighborSurface(2, CartesianNode::EAST);
 
   // Add nodes
-  nodes.add_node(node0, neigh0);
-  nodes.add_node(node1, neigh1);
-  nodes.add_node(node2, neigh2);
-  nodes.add_node(node3, neigh3);
-  nodes.finalize();
+  nodes->add_node(node0, neigh0);
+  nodes->add_node(node1, neigh1);
+  nodes->add_node(node2, neigh2);
+  nodes->add_node(node3, neigh3);
+  nodes->finalize();
 
   return nodes;
 }

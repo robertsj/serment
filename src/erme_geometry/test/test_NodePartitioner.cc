@@ -41,7 +41,7 @@ int test_NodePartitioner(int argc, char *argv[])
   Comm::initialize(argc, argv);
 
   // Nodes
-  NodeList nodes;
+  NodeList::SP_nodelist nodes;
   if (Comm::rank() == 0) nodes = cartesian_node_detran_list_2d();
 
   // Create partitioner
@@ -53,35 +53,35 @@ int test_NodePartitioner(int argc, char *argv[])
   // TEST
   if (Comm::size() == 1)
   {
-    TEST(nodes.number_local_nodes() == 4);
+    TEST(nodes->number_local_nodes() == 4);
   }
   else if (Comm::size() == 2)
   {
-    TEST(nodes.number_local_nodes() == 2);
+    TEST(nodes->number_local_nodes() == 2);
   }
   else if (Comm::size() == 3)
   {
     if (Comm::rank() == 2)
     {
-      TEST(nodes.number_local_nodes() == 2);
+      TEST(nodes->number_local_nodes() == 2);
     }
     else
     {
-      TEST(nodes.number_local_nodes() == 1);
+      TEST(nodes->number_local_nodes() == 1);
     }
   }
   else
   {
     if (Comm::rank() < 4)
     {
-      TEST(nodes.number_local_nodes() == 1);
+      TEST(nodes->number_local_nodes() == 1);
     }
     else
     {
-      TEST(nodes.number_local_nodes() == 0);
+      TEST(nodes->number_local_nodes() == 0);
     }
   }
-  TEST(nodes.number_global_nodes() == 4);
+  TEST(nodes->number_global_nodes() == 4);
 
   // Finalize Comm
   Comm::finalize();

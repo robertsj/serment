@@ -49,6 +49,8 @@ public:
 
   void compute(SP_response response, ResponseIndex index)
   {
+    Require(response);
+    return;
     size_t in = index.local;
 
     // Easy value to recreate.

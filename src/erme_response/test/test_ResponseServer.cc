@@ -58,16 +58,25 @@ int test_ResponseServer(int argc, char *argv[])
 
   using detran::soft_equiv;
 
+  // Initialize comm
   Comm::initialize(argc, argv);
+
+  // Set the number of local communicators, equivalent to the number
+  // of processes that participate in the global problem.  For testing,
+  // we'll keep one group for 1 and 2 processes, and two groups
+  // for anything more.
+  int number_local_comm = 1;
+  if (Comm::size() > 2) number_local_comm = 2;
+  Comm::setup_communicators(number_local_comm);
 
   //-------------------------------------------------------------------------//
   // WORLD
   //-------------------------------------------------------------------------//
 
   // Get the node list
-  erme_geometry::NodeList nodes;
+  erme_geometry::NodeList::SP_nodelist nodes;
   if (Comm::rank() == 0)
-    nodes = erme_geometry::cartesian_node_dummy_list_2d();
+    nodes = erme_geometry::cartesian_node_dummy_list_2d(0, 0, 0);
 
   // Partition the nodes
   erme_geometry::NodePartitioner partitioner;
@@ -79,7 +88,7 @@ int test_ResponseServer(int argc, char *argv[])
 
   // Create indexer
   db->put<int>("erme_order_reduction", 3);
-  ResponseIndexer indexer(db, nodes);
+  ResponseIndexer::SP_indexer indexer(new ResponseIndexer(db, nodes));
 
   // Create server
   ResponseServer server(nodes, indexer);
@@ -87,24 +96,34 @@ int test_ResponseServer(int argc, char *argv[])
   // Update
   server.update(1.0);
 
+  return 0;
+
   //-------------------------------------------------------------------------//
   // LOCAL
   //-------------------------------------------------------------------------//
 
-  // Switch to global and get responses for each node.
+  // Switch to local
   Comm::set(serment_comm::local);
-  for (int n = nodes.lower_bound(); n < nodes.upper_bound(); n++)
+
+  if (Comm::rank() == 0) cout << " zero " << endl;
+  return 0;
+
+  // Only root process has data at this point
+  if (Comm::rank() == 0)
+  {
+
+  for (int n = nodes->lower_bound(); n < nodes->upper_bound(); n++)
   {
     // Response for this node
-    SP_response r = server.response(nodes.local_index(n));
+    SP_response r = server.response(nodes->local_index(n));
 
     // Loop over surfaces
-    for (int s = 0; s < nodes.node(n)->number_surfaces(); s++)
+    for (int s = 0; s < nodes->node(n)->number_surfaces(); s++)
     {
       // Loop over surface moments
-      for (int m = 0; m < indexer.number_surface_moments(n, s); m++)
+      for (int m = 0; m < indexer->number_surface_moments(n, s); m++)
       {
-        ResponseIndex index = indexer.node_index(n, s, m);
+        ResponseIndex index = indexer->response_index(n, s, m);
         unsigned int in = index.local;
         double value = 1000000.0 * index.node +
                         100000.0 * index.surface +
@@ -126,14 +145,15 @@ int test_ResponseServer(int argc, char *argv[])
       }
     }
 
-  }
+  } // end node loop
+
+  } // end local root (aka global) block
 
   //-------------------------------------------------------------------------//
   // WORLD
   //-------------------------------------------------------------------------//
 
   Comm::set(serment_comm::world);
-
   Comm::finalize();
   return 0;
 }

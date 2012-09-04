@@ -1,19 +1,19 @@
 //----------------------------------*-C++-*----------------------------------//
 /*!
- * \file   test_Connect.cc
+ * \file   test_ResponseMatrix.cc
  * \author Jeremy Roberts
  * \date   Aug 19, 2012
- * \brief  Test of Connect class.
+ * \brief  Test of ResponseMatrix class.
  * \note   Copyright (C) 2012 Jeremy Roberts. 
  */
 //---------------------------------------------------------------------------//
 
 // LIST OF TEST FUNCTIONS
 #define TEST_LIST           \
-        FUNC(test_Connect)
+        FUNC(test_ResponseMatrix)
 
 #include "TestDriver.hh"
-#include "Connect.hh"
+#include "ResponseMatrix.hh"
 #include "erme_geometry/NodePartitioner.hh"
 #include "erme_geometry/test/nodelist_fixture.hh"
 #include <iostream>
@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
 //----------------------------------------------//
 
 // Test of basic public interface
-int test_Connect(int argc, char *argv[])
+int test_ResponseMatrix(int argc, char *argv[])
 {
   typedef serment_comm::Comm Comm;
 
@@ -45,7 +45,7 @@ int test_Connect(int argc, char *argv[])
   // Get the node list
   erme_geometry::NodeList::SP_nodelist nodes;
   if (Comm::rank() == 0)
-    nodes = erme_geometry::cartesian_node_detran_list_2d();
+    nodes = erme_geometry::cartesian_node_dummy_list_2d();
 
   // Partition the nodes
   erme_geometry::NodePartitioner partitioner;
@@ -60,13 +60,20 @@ int test_Connect(int argc, char *argv[])
   erme_response::ResponseIndexer::SP_indexer
     indexer(new erme_response::ResponseIndexer(db, nodes));
 
+  // Creater server
+  erme_response::ResponseServer::SP_server
+    server(new erme_response::ResponseServer(nodes, indexer));
+
   // Create new scope for M, since M must be destructed before finalization.
   {
-    // Connect
-    Connect M(nodes, indexer);
+    // ResponseMatrix
+    ResponseMatrix R(nodes, indexer, server);
+
+    // Update.  Since this uses the dummy data, this simply fills R.
+    R.update(1.0);
 
     // Write to binary for inspection in MATLAB
-    M.display(Connect::BINARY, "binary.out");
+    R.display(ResponseMatrix::BINARY, "response_matrix.out");
   }
 
   PetscFinalize();

@@ -13,9 +13,9 @@
 namespace erme_response
 {
 
-ResponseIndexer::ResponseIndexer(SP_db db, erme_geometry::NodeList &nodes)
-  : d_sizes(nodes.number_global_nodes(), 0)
-  , d_offsets(nodes.number_global_nodes(), 0)
+ResponseIndexer::ResponseIndexer(SP_db db, SP_nodelist nodes)
+  : d_sizes(nodes->number_global_nodes(), 0)
+  , d_offsets(nodes->number_global_nodes(), 0)
   , d_order_reduction(0)
   , d_local_size(0)
   , d_global_offset(0)
@@ -24,6 +24,7 @@ ResponseIndexer::ResponseIndexer(SP_db db, erme_geometry::NodeList &nodes)
   // Preconditions
   Require(db);
 
+  // Dimension required for correct builder
   Insist(db->check("dimension"), "Parameter database must specify dimension.");
   int dimension = db->get<int>("dimension");
 
@@ -31,39 +32,40 @@ ResponseIndexer::ResponseIndexer(SP_db db, erme_geometry::NodeList &nodes)
   if (db->check("erme_order_reduction"))
     d_order_reduction = db->get<int>("erme_order_reduction");
 
-  // Loop over all nodes
-  for (size_t n = 0; n < nodes.number_global_nodes(); n++)
+  // Loop over all nodes.  All process get all the same info.  This makes
+  // it easier to ensure consistent expansions between nodes.  If this for
+  // some reason becomes a bottleneck, it can be reformulated.
+  for (size_t n = 0; n < nodes->number_global_nodes(); n++)
   {
-    // Moments size for the node
+    // Moments size for the node.
     size_t size = 0;
     if (dimension == 1)
-      size = build_1D(nodes.node(n), n);
+      size = build_1D(nodes->node(n), n);
     else if (dimension == 2)
-      size = build_2D(nodes.node(n), n);
+      size = build_2D(nodes->node(n), n);
     else
-      size = build_3D(nodes.node(n), n);
+      size = build_3D(nodes->node(n), n);
+    // Record the size for this node and the corresponding offset.
     d_sizes[n] = size;
-    d_offsets[n] = d_local_size;
-    d_local_size += size;
+    d_offsets[n] = d_global_size;
+    // After all nodes, this *is* the global size
+    d_global_size += size;
   }
 
-  // Communicate local sizes
-  std::vector<int> all_sizes(serment_comm::Comm::size(), 0);
-  all_sizes[serment_comm::Comm::rank()] = d_local_size;
-  serment_comm::Comm::global_sum(&all_sizes[0], all_sizes.size());
-
-  // Compute the global moment offset
-  for (int i = 0; i < serment_comm::Comm::rank(); i++)
-    d_global_offset += all_sizes[i];
-
-  // Compute the global size
-  for (int i = 0; i < all_sizes.size(); i++)
-    d_global_size += all_sizes[i];
+  // Compute local sizes and global offset (= # moments before my first)
+  for (int n = nodes->lower_bound(); n < nodes->upper_bound(); n++)
+  {
+    d_local_size += d_sizes[n];
+  }
+  for (int n = 0; n < nodes->lower_bound(); n++)
+  {
+    d_global_offset += d_offsets[n];
+  }
 
   // Compute the local moment to (node, surface, moment) index
   d_local_indices.resize(d_local_size, vec_size_t(3, 0));
   size_t local_index = 0;
-  for (int n = nodes.lower_bound(); n < nodes.upper_bound(); n++)
+  for (int n = nodes->lower_bound(); n < nodes->upper_bound(); n++)
   {
     for (int s = 0; s < d_indices[n].size(); s++)
     {
@@ -92,14 +94,14 @@ void ResponseIndexer::display() const
       for (int m = 0; m < d_indices[n][s].size(); m++)
       {
         cout << "    " << m << " | "
-             << node_index(n, s, m).node  << " "
-             << node_index(n, s, m).surface  << " | "
-             << node_index(n, s, m).energy   << " | "
-             << node_index(n, s, m).polar    << " "
-             << node_index(n, s, m).azimuth  << " | "
-             << node_index(n, s, m).space0   << " "
-             << node_index(n, s, m).space1   << " | "
-             << node_index(n, s, m).even_odd << " |" << endl;
+             << response_index(n, s, m).node  << " "
+             << response_index(n, s, m).surface  << " | "
+             << response_index(n, s, m).energy   << " | "
+             << response_index(n, s, m).polar    << " "
+             << response_index(n, s, m).azimuth  << " | "
+             << response_index(n, s, m).space0   << " "
+             << response_index(n, s, m).space1   << " | "
+             << response_index(n, s, m).even_odd << " |" << endl;
       }
     }
   }
