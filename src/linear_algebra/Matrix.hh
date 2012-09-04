@@ -25,7 +25,24 @@ public:
          const vec_int &number_nonzeros,
          const vec_int &number_nonzeros_offdiagonal = vec_int(0));
 
-private:
+protected:
+
+  /*!
+   *  \brief Default constructor
+   *
+   *  This is intended for derived classes that have extensive self-build
+   *  processes that are best hidden from the client.
+   *
+   */
+  Matrix(const size_type m,
+         const size_type n);
+
+  /*!
+   *  \brief Preallocate the matrix
+   */
+  void preallocate(const vec_int &number_nonzeros,
+                   const vec_int &number_nonzeros_offdiagonal = vec_int(0));
+
 
 };
 

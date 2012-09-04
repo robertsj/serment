@@ -51,8 +51,8 @@ public:
    */
   ResponseMatrix(SP_nodelist nodes, SP_indexer indexer, SP_server server);
 
-  /// Update the response matrix data for a new eigenvalue
-  void update(const double keff);
+  /// Update the response matrix data
+  void update();
 
 private:
 

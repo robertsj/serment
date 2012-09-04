@@ -12,7 +12,7 @@
 namespace linear_algebra
 {
 
-Vector::Vector(const size_type m)
+Vector::Vector(const size_type m, const double val)
   : d_local_size(m)
   , d_is_assembled(false)
 {
@@ -22,6 +22,7 @@ Vector::Vector(const size_type m)
   // Create the vector
   PetscErrorCode ierr;
   ierr = VecCreateMPI(PETSC_COMM_WORLD, m, PETSC_DETERMINE, &d_V);
+  ierr = VecSet(d_V, val);
 
   // Get the global size.
   int gs;

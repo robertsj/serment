@@ -25,6 +25,8 @@ inline ResponseIndexer::size_t
 ResponseIndexer::number_surface_moments(const size_t node_g,
                                         const size_t surface) const
 {
+  if (node_g >= d_indices.size())
+    std::cout << " wr=" << serment_comm::Comm::world_rank() << " node=" << node_g << " surf=" << surface << " size=" << d_indices.size() << std::endl;
   Require(node_g < d_indices.size());
   Require(surface < d_indices[node_g].size());
   return d_indices[node_g][surface].size();

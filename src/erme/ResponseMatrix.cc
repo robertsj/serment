@@ -16,26 +16,42 @@ ResponseMatrix::ResponseMatrix(SP_nodelist nodes,
                                SP_indexer indexer,
                                SP_server server)
   : ResponseOperator(nodes, indexer, server)
-  , linear_algebra::Matrix(indexer->number_local_moments(),
-                           indexer->number_local_moments(),
-                           // We have at most a "block size" per row, all
-                           // within the local range.
-                           vec_int(indexer->number_local_moments(),
-                                   indexer->number_local_moments()),
-                           // There are no off block-diagonal entries.
-                           vec_int(indexer->number_local_moments(),
-                                   0))
+  , Matrix(indexer->number_local_moments(),
+           indexer->number_local_moments())
 {
+
+  /*
+   *  Build number of nonzeros
+   *
+   *  In parallel, PETSc defines matrices in terms of local rows.  To
+   *  preallocate a parallel matrix, the number of nonzeros per local
+   *  row must be specified.  This is broken into "on diagonal" and
+   *  "off diagonal" blocks.  The on diagonal blocks contain those
+   *  elements that are within the local row/column block.  Off diagonal
+   *  terms are within the local rows but are in columns that don't
+   *  correspond to the local rows.  For the response matrix, there
+   *  are no off diagonal terms.
+   */
+  vec_int nnz_on_diag(indexer->number_local_moments(),  0);
+  vec_int nnz_off_diag(indexer->number_local_moments(), 0);
+
+  int m = 0;
+  for (int n = nodes->lower_bound(); n < nodes->upper_bound(); n++)
+  {
+    int size = indexer->number_node_moments(n);
+    for (int i = 0; i < size; i++, m++)
+      nnz_on_diag[m] = size;
+  }
+
+  // Preallocate.  This also computes the bounds and such.
+  preallocate(nnz_on_diag, nnz_off_diag);
 
 }
 
-void ResponseMatrix::update(const double keff)
+void ResponseMatrix::update()
 {
   using std::cout;
   using std::endl;
-
-  // Update the responses
-  d_server->update(keff);
 
   // Offset for a block.  Starts at this matrix's lower bound.
   int offset = lower_bound();
@@ -43,7 +59,6 @@ void ResponseMatrix::update(const double keff)
   // Loop through nodes
   for (int n = 0; n < d_nodes->number_local_nodes(); n++)
   {
-    std::cout << " node = " << n << std::endl;
 
     // Get response
     SP_response r = d_server->response(n);
@@ -57,16 +72,15 @@ void ResponseMatrix::update(const double keff)
     for (int in = 0; in < r->size(); in++)
     {
       int col = in + offset;
-      cout << " in = " << in << " col = " << col << endl;
-//      insert_values(r->size(), &indices[0], 1, &col,
-//                    &r->boundary_response(0, in));
+      insert_values(r->size(), &indices[0], 1, &col,
+                    &r->boundary_response(0, in));
     }
 
     offset += indices.size();
   }
 
   // Assemble after finishing
- // assemble();
+  assemble();
 
 }
 

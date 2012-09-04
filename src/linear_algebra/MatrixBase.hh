@@ -13,6 +13,9 @@
 // Linear Algebra
 #include "Vector.hh"
 
+// Comm
+#include "comm/Comm.hh"
+
 // Detran Utilities
 #include "DBC.hh"
 

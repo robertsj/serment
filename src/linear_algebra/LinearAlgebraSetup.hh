@@ -26,14 +26,18 @@ void initialize(int &argc, char **&argv)
   // Set PETSc communicator to global
   PETSC_COMM_WORLD = serment_comm::global;
 
-  // Initialize PETSc
-  PetscInitialize(&argc, &argv, PETSC_NULL, PETSC_NULL);
+  // Initialize PETSc on the *global* communicator
+  if (serment_comm::Comm::is_global())
+    PetscInitialize(&argc, &argv, PETSC_NULL, PETSC_NULL);
+
 }
 
 /// Finish a parallel job.
 void finalize()
 {
-  PetscFinalize();
+  // Finalize PETSc on the *global* communicator
+  if (serment_comm::Comm::is_global())
+    PetscFinalize();
 }
 
 

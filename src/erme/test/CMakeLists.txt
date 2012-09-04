@@ -17,6 +17,9 @@ TARGET_LINK_LIBRARIES(test_Connect  		erme)
 ADD_EXECUTABLE(test_ResponseMatrix	    	test_ResponseMatrix.cc)
 TARGET_LINK_LIBRARIES(test_ResponseMatrix 	erme)
 
+ADD_EXECUTABLE(test_MR_scaling              test_MR_scaling.cc)
+TARGET_LINK_LIBRARIES(test_MR_scaling       erme)
+
 #------------------------------------------------------------------------------#
 # Define tests
 #------------------------------------------------------------------------------#

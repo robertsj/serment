@@ -41,9 +41,10 @@ public:
 
   /*!
    *  \brief Constructor
-   *  \param m  Local number of rows
+   *  \param m      Local number of rows
+   *  \param val    Optional initial value
    */
-  Vector(const size_type m);
+  Vector(const size_type m, const double val = 0.0);
 
   /// Destructor
   ~Vector();

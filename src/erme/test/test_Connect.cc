@@ -14,6 +14,7 @@
 
 #include "TestDriver.hh"
 #include "Connect.hh"
+#include "linear_algebra/LinearAlgebraSetup.hh"
 #include "erme_geometry/NodePartitioner.hh"
 #include "erme_geometry/test/nodelist_fixture.hh"
 #include <iostream>
@@ -37,10 +38,31 @@ int main(int argc, char *argv[])
 // Test of basic public interface
 int test_Connect(int argc, char *argv[])
 {
+
+  //-------------------------------------------------------------------------//
+  // SETUP COMM
+  //-------------------------------------------------------------------------//
+
   typedef serment_comm::Comm Comm;
 
+  // Initialize comm
   Comm::initialize(argc, argv);
-  PetscInitialize(&argc, &argv, PETSC_NULL, PETSC_NULL);
+
+  // Setup local and global communicators.
+  int number_local_comm = 1;
+  if (Comm::size() > 2) number_local_comm = 2;
+  Comm::setup_communicators(number_local_comm);
+
+  //-------------------------------------------------------------------------//
+  // SETUP LINEAR ALGEBRA
+  //-------------------------------------------------------------------------//
+
+  // This sets the PETSc communicator to global
+  linear_algebra::initialize(argc, argv);
+
+  //-------------------------------------------------------------------------//
+  // SETUP NODES AND PARTITION
+  //-------------------------------------------------------------------------//
 
   // Get the node list
   erme_geometry::NodeList::SP_nodelist nodes;
@@ -51,6 +73,10 @@ int test_Connect(int argc, char *argv[])
   erme_geometry::NodePartitioner partitioner;
   partitioner.partition(nodes);
 
+  //-------------------------------------------------------------------------//
+  // SETUP INDEXER
+  //-------------------------------------------------------------------------//
+
   // Create parameter database
   erme_response::ResponseIndexer::SP_db db(new detran::InputDB());
   db->put<int>("dimension", 2);
@@ -60,7 +86,19 @@ int test_Connect(int argc, char *argv[])
   erme_response::ResponseIndexer::SP_indexer
     indexer(new erme_response::ResponseIndexer(db, nodes));
 
-  // Create new scope for M, since M must be destructed before finalization.
+  //-------------------------------------------------------------------------//
+  // TEST
+  //-------------------------------------------------------------------------//
+
+  /*
+   *  The global problem is defined only on the global processes. Hence,
+   *  the operators M, R, etc. must be constructed in this communicator.
+   *  Of course, the response servers live everywhere, and internally,
+   *  the operators get their data from the response server root
+   *  processes.
+   *
+   */
+  if (Comm::is_global())
   {
     // Connect
     Connect M(nodes, indexer);
@@ -69,7 +107,11 @@ int test_Connect(int argc, char *argv[])
     M.display(Connect::BINARY, "connectivity.out");
   }
 
-  PetscFinalize();
+  //-------------------------------------------------------------------------//
+  // WRAP UP
+  //-------------------------------------------------------------------------//
+
+  linear_algebra::finalize();
   Comm::finalize();
   return 0;
 

@@ -61,14 +61,11 @@ public:
   virtual ~ResponseOperator(){}
 
   /*!
-   *  \brief Update responses for new eigenvalue
+   *  \brief Update responses.
    *
-   *  Each operator must implement this for its
-   *  own operator structure.
-   *
-   *  \param keff   New k-eigenvalue
+   *  This assumes that the response server is updated.
    */
-  virtual void update(const double keff) = 0;
+  virtual void update() = 0;
 
 protected:
 

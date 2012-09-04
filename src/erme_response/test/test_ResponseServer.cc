@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
 
 int test_ResponseServer(int argc, char *argv[])
 {
-  typedef serment_comm::Comm Comm;
+
   typedef NodeResponse::SP_response SP_response;
 
   using detran::soft_equiv;
@@ -61,6 +61,8 @@ int test_ResponseServer(int argc, char *argv[])
   //-------------------------------------------------------------------------//
   // SETUP COMM
   //-------------------------------------------------------------------------//
+
+  typedef serment_comm::Comm Comm;
 
   // Initialize comm
   Comm::initialize(argc, argv);

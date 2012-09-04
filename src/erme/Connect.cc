@@ -38,6 +38,7 @@ Connect::Connect(SP_nodelist nodes, SP_indexer indexer)
   // Loop over local nodes
   for (int n = nodes->lower_bound(); n < nodes->upper_bound(); n++)
   {
+
     int n_index = 0;
 
     // Loop over node surfaces
@@ -77,14 +78,14 @@ Connect::Connect(SP_nodelist nodes, SP_indexer indexer)
           // reflection since it owns the row in which the entry lives.
           column = indexer->nodal_to_global(neigh_n, neigh_n_index);
 
-          if (serment_comm::Comm::rank() == 1)
-          {
-            cout << " neigh = " << neigh_n << " s = "
-                 << neigh_s << " m = " << m
-                 << " nidx = " << neigh_n_index
-                 << " col =  " << column
-                 << endl;
-          }
+//          if (serment_comm::Comm::rank() == 1)
+//          {
+//            cout << " neigh = " << neigh_n << " s = "
+//                 << neigh_s << " m = " << m
+//                 << " nidx = " << neigh_n_index
+//                 << " col =  " << column
+//                 << endl;
+//          }
 
           value  = 1.0;
         }
