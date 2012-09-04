@@ -31,6 +31,8 @@ ResponseMatrix::ResponseMatrix(SP_nodelist nodes,
 
 void ResponseMatrix::update(const double keff)
 {
+  using std::cout;
+  using std::endl;
 
   // Update the responses
   d_server->update(keff);
@@ -55,15 +57,16 @@ void ResponseMatrix::update(const double keff)
     for (int in = 0; in < r->size(); in++)
     {
       int col = in + offset;
-      insert_values(r->size(), &indices[0], 1, &col,
-                    &r->boundary_response(0, in));
+      cout << " in = " << in << " col = " << col << endl;
+//      insert_values(r->size(), &indices[0], 1, &col,
+//                    &r->boundary_response(0, in));
     }
 
     offset += indices.size();
   }
 
   // Assemble after finishing
-  assemble();
+ // assemble();
 
 }
 

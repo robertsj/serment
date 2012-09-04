@@ -132,10 +132,10 @@ public:
 
   /*!
    *  \brief Get local moment index from a cardinal index within node
-   *  \param  node_g      Global node index
+   *  \param  node_l      Local node index
    *  \param  index_n     Cardinal moment index within node
    */
-  size_t nodal_to_local(const size_t node, const size_t index_n) const;
+  size_t nodal_to_local(const size_t node_l, const size_t index_n) const;
 
   /*!
    *  \brief Get local moment index from global moment index
@@ -171,6 +171,9 @@ private:
   // PRIVATE DATA
   //-------------------------------------------------------------------------//
 
+  /// Node list
+  SP_nodelist d_nodes;
+
   /// List of indices for all nodes [nodes][surface][moments]
   vec3_index d_indices;
 
@@ -183,6 +186,9 @@ private:
   /// Offset of node indices (within local set)
   std::vector<size_t> d_offsets;
 
+  /// Offset of node indices (within local set)
+  std::vector<size_t> d_global_offsets;
+
   /// Local size of moments vector
   size_t d_local_size;
 
@@ -191,6 +197,12 @@ private:
 
   /// Global size
   size_t d_global_size;
+
+  /// Number global nodes
+  size_t d_number_global_nodes;
+
+  /// Number local nodes
+  size_t d_number_local_nodes;
 
   /// Order reduction selector
   int d_order_reduction;

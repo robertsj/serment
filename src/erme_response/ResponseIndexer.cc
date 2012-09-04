@@ -14,15 +14,20 @@ namespace erme_response
 {
 
 ResponseIndexer::ResponseIndexer(SP_db db, SP_nodelist nodes)
-  : d_sizes(nodes->number_global_nodes(), 0)
-  , d_offsets(nodes->number_global_nodes(), 0)
+  : d_nodes(nodes)
+  , d_sizes(nodes->number_global_nodes(), 0)
+  , d_offsets(nodes->number_local_nodes(), 0)
+  , d_global_offsets(nodes->number_global_nodes(), 0)
   , d_order_reduction(0)
   , d_local_size(0)
   , d_global_offset(0)
   , d_global_size(0)
+  , d_number_global_nodes(nodes->number_global_nodes())
+  , d_number_local_nodes(nodes->number_local_nodes())
 {
   // Preconditions
   Require(db);
+  Require(nodes);
 
   // Dimension required for correct builder
   Insist(db->check("dimension"), "Parameter database must specify dimension.");
@@ -47,19 +52,28 @@ ResponseIndexer::ResponseIndexer(SP_db db, SP_nodelist nodes)
       size = build_3D(nodes->node(n), n);
     // Record the size for this node and the corresponding offset.
     d_sizes[n] = size;
-    d_offsets[n] = d_global_size;
     // After all nodes, this *is* the global size
     d_global_size += size;
   }
 
-  // Compute local sizes and global offset (= # moments before my first)
+  // Global offsets for each node
+  for (int n = 0; n < nodes->number_global_nodes() - 1; n++)
+  {
+    d_global_offsets[n + 1] = d_global_offsets[n] + d_sizes[n];
+  }
+  // Compute local sizes, local offsets, and my global offset
   for (int n = nodes->lower_bound(); n < nodes->upper_bound(); n++)
   {
     d_local_size += d_sizes[n];
   }
+  for (int n = nodes->lower_bound(); n < nodes->upper_bound() - 1; n++)
+  {
+    d_offsets[n - nodes->lower_bound() + 1] =
+      d_offsets[n - nodes->lower_bound()] + d_sizes[n];
+  }
   for (int n = 0; n < nodes->lower_bound(); n++)
   {
-    d_global_offset += d_offsets[n];
+    d_global_offset += d_global_offsets[n];
   }
 
   // Compute the local moment to (node, surface, moment) index

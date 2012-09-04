@@ -45,7 +45,7 @@ int test_ResponseMatrix(int argc, char *argv[])
   // Get the node list
   erme_geometry::NodeList::SP_nodelist nodes;
   if (Comm::rank() == 0)
-    nodes = erme_geometry::cartesian_node_dummy_list_2d();
+    nodes = erme_geometry::cartesian_node_dummy_list_2d(0,0,0);
 
   // Partition the nodes
   erme_geometry::NodePartitioner partitioner;
@@ -71,9 +71,9 @@ int test_ResponseMatrix(int argc, char *argv[])
 
     // Update.  Since this uses the dummy data, this simply fills R.
     R.update(1.0);
-
-    // Write to binary for inspection in MATLAB
-    R.display(ResponseMatrix::BINARY, "response_matrix.out");
+//
+//    // Write to binary for inspection in MATLAB
+//    R.display(ResponseMatrix::BINARY, "response_matrix.out");
   }
 
   PetscFinalize();

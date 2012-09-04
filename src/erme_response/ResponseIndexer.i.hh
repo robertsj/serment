@@ -77,8 +77,8 @@ ResponseIndexer::response_index(const size_t index_l) const
 inline ResponseIndexer::size_t ResponseIndexer::
 nodal_to_local(const size_t node_g, const size_t index_n) const
 {
-  Require(node_g < d_indices.size());
-  return index_n + d_offsets[node_g];
+  Require(node_g < d_number_local_nodes);
+  return index_n + d_offsets[d_nodes->local_index(node_g)];
 }
 
 inline int ResponseIndexer::
@@ -99,14 +99,22 @@ nodal_to_global(const size_t node_g, const size_t index_n) const
 {
   Require(node_g < d_indices.size());
   Require(index_n < d_sizes[node_g]);
-  return index_n + d_offsets[node_g] + d_global_offset;
+
+
+  size_t index_g = index_n +
+                   d_global_offsets[node_g];
+
+  Ensure(index_g < d_global_size);
+  return index_g;
 }
 
 inline ResponseIndexer::size_t ResponseIndexer::
 local_to_global(const size_t index_l) const
 {
   Require(index_l < d_local_size);
-  return index_l + d_global_offset;
+  size_t index_g = index_l + d_global_offset;
+  Ensure(index_g < d_global_size);
+  return index_g;
 }
 
 } // end namespace erme_response

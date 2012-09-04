@@ -45,7 +45,7 @@ int test_Connect(int argc, char *argv[])
   // Get the node list
   erme_geometry::NodeList::SP_nodelist nodes;
   if (Comm::rank() == 0)
-    nodes = erme_geometry::cartesian_node_detran_list_2d();
+    nodes = erme_geometry::cartesian_node_dummy_list_2d(1, 0, 0);
 
   // Partition the nodes
   erme_geometry::NodePartitioner partitioner;
@@ -66,7 +66,7 @@ int test_Connect(int argc, char *argv[])
     Connect M(nodes, indexer);
 
     // Write to binary for inspection in MATLAB
-    M.display(Connect::BINARY, "binary.out");
+    M.display(Connect::BINARY, "connectivity.out");
   }
 
   PetscFinalize();
