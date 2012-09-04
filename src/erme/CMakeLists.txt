@@ -12,6 +12,8 @@ SET(SRC
     StateERME.cc
     Connect.cc
     ResponseMatrix.cc
+    FissionOperator.cc
+    AbsorptionOperator.cc
 )
 
 #-------------------------------------#

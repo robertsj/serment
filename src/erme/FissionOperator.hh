@@ -11,20 +11,60 @@
 #define FISSIONOPERATOR_HH_
 
 #include "ResponseOperator.hh"
+#include "linear_algebra/Vector.hh"
 
 namespace erme
 {
 
-class FissionOperator: public ResponseOperator
+/*!
+ *  \class FissionOperator
+ *  \brief Converts a global moments vector into a global fission rate
+ *
+ */
+/*!
+ *  \example erme/test/test_FissionOperator
+ *
+ *  Test of FissionOperator class
+ */
+class FissionOperator: public linear_algebra::Vector,
+                       public ResponseOperator
 {
 
 public:
 
-  typedef detran::SP<FissionOperator> SP_fission;
+  //-------------------------------------------------------------------------//
+  // TYPEDEFS
+  //-------------------------------------------------------------------------//
 
-  FissionOperator();
+  typedef detran::SP<FissionOperator>       SP_fission;
+
+
+  //-------------------------------------------------------------------------//
+  // PUBLIC INTERFACE
+  //-------------------------------------------------------------------------//
+
+  /*!
+   *  \brief Constructor
+   *  \param nodes    Pointer to node list
+   *  \param indexer  Pointer to response indexer
+   *  \param server   Pointer to response server
+   */
+  FissionOperator(SP_nodelist nodes, SP_indexer indexer, SP_server server);
+
+  /// Update the vector data
+  void update();
 
 private:
+
+  //-------------------------------------------------------------------------//
+  // PRIVATE DATA
+  //-------------------------------------------------------------------------//
+
+
+  //-------------------------------------------------------------------------//
+  // IMPLEMENTATION
+  //-------------------------------------------------------------------------//
+
 
 
 };

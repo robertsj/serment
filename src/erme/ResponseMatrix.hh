@@ -26,7 +26,7 @@ namespace erme
 /*!
  *  \example erme/test/test_ResponseMatrix
  *
- *  Test of ResponseMatrixClass
+ *  Test of ResponseMatrix class
  */
 class ResponseMatrix: public linear_algebra::Matrix,
                       public ResponseOperator
@@ -46,6 +46,7 @@ public:
 
   /*!
    *  \brief Constructor
+   *  \param nodes    Pointer to node list
    *  \param indexer  Pointer to response indexer
    *  \param server   Pointer to response server
    */
