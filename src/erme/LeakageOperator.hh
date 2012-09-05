@@ -38,7 +38,7 @@ public:
   // TYPEDEFS
   //-------------------------------------------------------------------------//
 
-  typedef detran::SP<LeakageOperator>         SP_leakageoperator;
+  typedef detran::SP<LeakageOperator>         SP_leakage;
   typedef linear_algebra::Vector::SP_vector   SP_vector;
 
   //-------------------------------------------------------------------------//
