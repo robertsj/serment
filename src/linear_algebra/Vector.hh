@@ -12,6 +12,7 @@
 
 // Detran
 #include "DBC.hh"
+#include "SP.hh"
 
 // System
 #include "petsc.h"
@@ -37,7 +38,8 @@ class Vector
 
 public:
 
-  typedef unsigned int size_type;
+  typedef detran::SP<Vector>    SP_vector;
+  typedef unsigned int          size_type;
 
   /*!
    *  \brief Constructor

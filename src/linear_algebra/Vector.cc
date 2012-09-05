@@ -1,7 +1,7 @@
 //----------------------------------*-C++-*----------------------------------//
 /*!
  * \file   Vector.cc
- * \brief  Vector 
+ * \brief  Vector member definitions
  * \author Jeremy Roberts
  * \date   Aug 19, 2012
  */

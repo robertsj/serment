@@ -15,6 +15,8 @@ namespace erme_geometry
 NodeList::NodeList()
   : d_lower_bound(0),
     d_upper_bound(0),
+    d_number_local_surfaces(0),
+    d_number_global_surfaces(0),
     d_is_finalized(false)
 {}
 

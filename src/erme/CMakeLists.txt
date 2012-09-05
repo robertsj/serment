@@ -14,6 +14,7 @@ SET(SRC
     ResponseMatrix.cc
     FissionOperator.cc
     AbsorptionOperator.cc
+    LeakageOperator.cc
 )
 
 #-------------------------------------#

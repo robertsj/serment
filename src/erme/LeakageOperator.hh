@@ -26,7 +26,7 @@ namespace erme
 /*!
  *  \example erme/test/test_LeakageOperator
  *
- *  Test of LeakageOperator classs
+ *  Test of LeakageOperator class
  */
 class LeakageOperator: public linear_algebra::Matrix,
                        public ResponseOperator
@@ -38,7 +38,8 @@ public:
   // TYPEDEFS
   //-------------------------------------------------------------------------//
 
-  typedef detran::SP<LeakageOperator> SP_leakageoperator;
+  typedef detran::SP<LeakageOperator>         SP_leakageoperator;
+  typedef linear_algebra::Vector::SP_vector   SP_vector;
 
   //-------------------------------------------------------------------------//
   // PUBLIC INTERFACE
@@ -55,12 +56,23 @@ public:
   /// Update the response matrix data
   void update();
 
+  /*!
+   *  \brief Compute the net global leakage given a global moments vector
+   *  \param x    Global moments vector
+   */
+  double leakage(linear_algebra::Vector &x);
+
 private:
 
   //-------------------------------------------------------------------------//
   // PRIVATE DATA
   //-------------------------------------------------------------------------//
 
+  /// Dotted with L*J, this gives the net leakage at global boundaries
+  linear_algebra::Vector d_global_leakage;
+
+  /// Vector for storing L*J
+  linear_algebra::Vector d_L_times_moments;
 
   //-------------------------------------------------------------------------//
   // IMPLEMENTATION

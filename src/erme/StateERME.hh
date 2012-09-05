@@ -15,19 +15,38 @@
 namespace erme
 {
 
+/*!
+ *  \class State
+ *  \brief Represents the problem state vector
+ *
+ */
+/*!
+ *  \example erme/test/test_StateERME.cc
+ *
+ *  Test of StateERME class
+ */
 class StateERME
 {
 
 public:
 
-  typedef linear_algebra::Vector moments_type;
-  typedef unsigned int           size_type;
+  //-------------------------------------------------------------------------//
+  // TYPEDEFS
+  //-------------------------------------------------------------------------//
+
+  typedef detran::SP<StateERME>             SP_state;
+  typedef linear_algebra::Vector            moments_type;
+  typedef unsigned int                      size_t;
+
+  //-------------------------------------------------------------------------//
+  // PUBLIC INTERFACE
+  //-------------------------------------------------------------------------//
 
   /*!
    *  \brief Constructor
    *  \param size   Size of local state vector
    */
-  StateERME(const int size_type);
+  StateERME(const int size_t);
 
   // SETTERS
 
@@ -42,7 +61,6 @@ public:
   double lambda() const;
 
   // MOMENT ACCESS
-
 
 
 private:

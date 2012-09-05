@@ -36,7 +36,7 @@ public:
   // TYPEDEFS
   //-------------------------------------------------------------------------//
 
-  typedef detran::SP<AbsorptionOperator>       SP_fission;
+  typedef detran::SP<AbsorptionOperator>       SP_absorption;
 
 
   //-------------------------------------------------------------------------//

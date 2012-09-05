@@ -18,6 +18,7 @@
 
 // Detran Utilities
 #include "DBC.hh"
+#include "SP.hh"
 
 // System
 #include "petsc.h"
@@ -38,8 +39,9 @@ public:
     STDOUT, ASCII, BINARY, MATLAB
   };
 
-  typedef unsigned int size_type;
-  typedef std::vector<int> vec_int;
+  typedef detran::SP<MatrixBase>  SP_matrix;
+  typedef unsigned int            size_type;
+  typedef std::vector<int>        vec_int;
 
   /*!
    *  \brief Constructor

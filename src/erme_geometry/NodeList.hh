@@ -52,7 +52,7 @@ public:
   //-------------------------------------------------------------------------//
 
   typedef detran::SP<NodeList>          SP_nodelist;
-  typedef unsigned int                  size_type;
+  typedef unsigned int                  size_t;
   typedef Node::SP_node                 SP_node;
   typedef std::vector<SP_node>          vec_node;
   typedef std::vector<int>              vec_int;
@@ -77,7 +77,7 @@ public:
    *  \param lb   Lower bound
    *  \param ub   Upper bound
    */
-  void set_bounds(const size_type lb, const size_type ub)
+  void set_bounds(const size_t lb, const size_t ub)
   {
     d_lower_bound = lb;
     d_upper_bound = ub;
@@ -97,30 +97,36 @@ public:
   SP_node node(const int n);
 
   /// Return local lower bound
-  size_type lower_bound() const;
+  size_t lower_bound() const;
 
   /// Return local upper bound
-  size_type upper_bound() const;
+  size_t upper_bound() const;
 
   /// Number of global nodes
-  size_type number_global_nodes() const;
+  size_t number_global_nodes() const;
 
   /// Number of local nodes
-  size_type number_local_nodes() const;
+  size_t number_local_nodes() const;
+
+  /// Number of local surfaces
+  size_t number_global_surfaces() const;
+
+  /// Number of local surfaces
+  size_t number_local_surfaces() const;
 
   /*!
    *  \brief Get the global neighbor index for a node surface
    *  \param n  Global node index
    *  \param s  Node surface
    */
-  const NeighborSurface& neighbor(const size_type n, const size_type s) const;
+  const NeighborSurface& neighbor(const size_t n, const size_t s) const;
 
 
   /*!
    *  \brief Get the global index of a local node
    *  \param n  Local node index
    */
-  size_type global_index(const size_type n) const;
+  size_t global_index(const size_t n) const;
 
   /*!
    *  \brief Get the local index of a global node
@@ -129,7 +135,7 @@ public:
    *  Returns a negative value if the global index
    *  is not within the local range.
    */
-  int local_index(const size_type n) const;
+  int local_index(const size_t n) const;
 
   void finalize()
   {
@@ -154,10 +160,16 @@ private:
   vec2_neighbor d_neighbors;
 
   /// Starting index of local nodes
-  size_type d_lower_bound;
+  size_t d_lower_bound;
 
   /// Upper bound of local nodes
-  size_type d_upper_bound;
+  size_t d_upper_bound;
+
+  /// Number of local surfaces
+  size_t d_number_local_surfaces;
+
+  /// Number of global surfaces
+  size_t d_number_global_surfaces;
 
   /// Flag indicating ready to use
   bool d_is_finalized;
