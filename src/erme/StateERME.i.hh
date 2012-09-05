@@ -33,6 +33,26 @@ inline double StateERME::lambda() const
   return d_lambda;
 }
 
+inline StateERME::size_t StateERME::local_size() const
+{
+  return d_local_size;
+}
+
+inline StateERME::size_t StateERME::global_size() const
+{
+  return d_global_size;
+}
+
+inline const StateERME::Vector& StateERME::moments() const
+{
+  return d_boundary_moments;
+}
+
+inline StateERME::Vector& StateERME::moments()
+{
+  return d_boundary_moments;
+}
+
 } // end namespace erme
 
 #endif // STATEERME_I_HH_ 

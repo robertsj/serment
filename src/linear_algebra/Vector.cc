@@ -44,6 +44,10 @@ Vector::Vector(const size_type m, const double val)
   ierr = VecGetArray(d_V, &d_array);
   ierr = VecRestoreArray(d_V, PETSC_NULL);
 
+  // Because we initialize to zero, we can assemble right
+  // away, since we might just be filling this from a multiplication.
+  assemble();
+
   // Postconditions
   Ensure(!ierr);
   Ensure(d_upper_bound - d_lower_bound == d_local_size);

@@ -19,6 +19,10 @@ namespace erme
  *  \class State
  *  \brief Represents the problem state vector
  *
+ *  A solution for the eigenvalue response matrix equations consists
+ *  of a global boundary vector, which contains moments for each surface
+ *  of each cell, and the k-eigenvalue.
+ *
  */
 /*!
  *  \example erme/test/test_StateERME.cc
@@ -35,7 +39,7 @@ public:
   //-------------------------------------------------------------------------//
 
   typedef detran::SP<StateERME>             SP_state;
-  typedef linear_algebra::Vector            moments_type;
+  typedef linear_algebra::Vector            Vector;
   typedef unsigned int                      size_t;
 
   //-------------------------------------------------------------------------//
@@ -46,7 +50,7 @@ public:
    *  \brief Constructor
    *  \param size   Size of local state vector
    */
-  StateERME(const int size_t);
+  StateERME(const size_t size);
 
   // SETTERS
 
@@ -60,13 +64,28 @@ public:
 
   double lambda() const;
 
-  // MOMENT ACCESS
+  size_t local_size() const;
 
+  size_t global_size() const;
+
+  // MOMENT ACCESS (for now, just return the vector directly)
+
+  /// Const reference to moments vector
+  const Vector& moments() const;
+
+  /// Mutable reference to moments vector
+  Vector& moments();
 
 private:
 
   /// Boundary unknowns
-  moments_type d_boundary_moments;
+  Vector d_boundary_moments;
+
+  /// Local size of moments
+  size_t d_local_size;
+
+  /// Global size of moments
+  size_t d_global_size;
 
   /// K-eigenvalue
   double d_k;
