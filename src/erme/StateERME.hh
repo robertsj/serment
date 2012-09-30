@@ -38,7 +38,7 @@ public:
   // TYPEDEFS
   //-------------------------------------------------------------------------//
 
-  typedef detran::SP<StateERME>             SP_state;
+  typedef detran_utilities::SP<StateERME>   SP_state;
   typedef linear_algebra::Vector            Vector;
   typedef unsigned int                      size_t;
 

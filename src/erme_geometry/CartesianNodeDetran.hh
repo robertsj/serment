@@ -10,13 +10,10 @@
 #ifndef CARTESIANNODEDETRAN_HH_
 #define CARTESIANNODEDETRAN_HH_
 
-// ERME geometry
 #include "CartesianNode.hh"
-
-// Detran
-#include "InputDB.hh"
-#include "Material.hh"
-#include "detran_geometry.hh"
+#include "utilities/InputDB.hh"
+#include "material/Material.hh"
+#include "geometry/detran_geometry.hh"
 
 namespace erme_geometry
 {
@@ -37,10 +34,10 @@ class CartesianNodeDetran: public CartesianNode
 public:
 
   /// Useful typedefs
-  typedef CartesianNode                   Base;
-  typedef detran::InputDB::SP_input       SP_db;
-  typedef detran::Material::SP_material   SP_material;
-  typedef detran::Mesh::SP_mesh           SP_mesh;
+  typedef CartesianNode                             Base;
+  typedef detran_utilities::InputDB::SP_input       SP_db;
+  typedef detran_material::Material::SP_material    SP_material;
+  typedef detran_geometry::Mesh::SP_mesh            SP_mesh;
 
   /*!
    *  \brief Constructor

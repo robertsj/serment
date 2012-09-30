@@ -12,8 +12,7 @@
 
 #include "Node.hh"
 #include "NeighborSurface.hh"
-#include "SP.hh"
-// System
+#include "utilities/SP.hh"
 #include <vector>
 #include <boost/serialization/vector.hpp>
 #include <boost/serialization/access.hpp>
@@ -51,14 +50,14 @@ public:
   // TYPEDEFS
   //-------------------------------------------------------------------------//
 
-  typedef detran::SP<NodeList>          SP_nodelist;
-  typedef unsigned int                  size_t;
-  typedef Node::SP_node                 SP_node;
-  typedef std::vector<SP_node>          vec_node;
-  typedef std::vector<int>              vec_int;
-  typedef std::vector<vec_int>          vec2_int;
-  typedef std::vector<NeighborSurface>  vec_neighbor;
-  typedef std::vector<vec_neighbor>     vec2_neighbor;
+  typedef detran_utilities::SP<NodeList>    SP_nodelist;
+  typedef unsigned int                      size_t;
+  typedef Node::SP_node                     SP_node;
+  typedef std::vector<SP_node>              vec_node;
+  typedef std::vector<int>                  vec_int;
+  typedef std::vector<vec_int>              vec2_int;
+  typedef std::vector<NeighborSurface>      vec_neighbor;
+  typedef std::vector<vec_neighbor>         vec2_neighbor;
 
   //-------------------------------------------------------------------------//
   // PUBLIC INTERFACE

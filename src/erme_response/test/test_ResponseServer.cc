@@ -12,7 +12,7 @@
 #define TEST_LIST               \
         FUNC(test_ResponseServer)
 
-#include "TestDriver.hh"
+#include "utilities/TestDriver.hh"
 #include "erme_response/ResponseIndexer.hh"
 #include "erme_response/ResponseServer.hh"
 #include "erme_geometry/NodePartitioner.hh"
@@ -23,6 +23,7 @@
 
 using namespace erme_response;
 using namespace detran_test;
+using detran_utilities::soft_equiv;
 using std::cout;
 using std::endl;
 
@@ -56,8 +57,6 @@ int test_ResponseServer(int argc, char *argv[])
 
   typedef NodeResponse::SP_response SP_response;
 
-  using detran::soft_equiv;
-
   //-------------------------------------------------------------------------//
   // SETUP COMM
   //-------------------------------------------------------------------------//
@@ -86,7 +85,7 @@ int test_ResponseServer(int argc, char *argv[])
   partitioner.partition(nodes);
 
   // Create parameter database
-  ResponseIndexer::SP_db db(new detran::InputDB());
+  ResponseIndexer::SP_db db(new detran_utilities::InputDB());
   db->put<int>("dimension", 2);
 
   // Create indexer

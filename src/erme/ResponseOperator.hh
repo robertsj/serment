@@ -13,8 +13,7 @@
 #include "erme_geometry/NodeList.hh"
 #include "erme_response/ResponseIndexer.hh"
 #include "erme_response/ResponseServer.hh"
-
-#include "SP.hh"
+#include "utilities/SP.hh"
 
 namespace erme
 {

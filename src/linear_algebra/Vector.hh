@@ -10,11 +10,8 @@
 #ifndef VECTOR_HH_
 #define VECTOR_HH_
 
-// Detran
-#include "DBC.hh"
-#include "SP.hh"
-
-// System
+#include "utilities/DBC.hh"
+#include "utilities/SP.hh"
 #include "petsc.h"
 
 namespace linear_algebra
@@ -38,8 +35,8 @@ class Vector
 
 public:
 
-  typedef detran::SP<Vector>    SP_vector;
-  typedef unsigned int          size_type;
+  typedef detran_utilities::SP<Vector>      SP_vector;
+  typedef unsigned int                      size_type;
 
   /*!
    *  \brief Constructor

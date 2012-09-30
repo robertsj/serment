@@ -13,7 +13,7 @@
         FUNC(test_GlobalReduction)
 
 // Detran test
-#include "TestDriver.hh"
+#include "utilities/TestDriver.hh"
 
 #include "Comm.hh"
 
@@ -26,6 +26,7 @@
 
 using namespace serment_comm;
 using namespace detran_test;
+using detran_utilities::soft_equiv;
 using std::cout;
 using std::endl;
 
@@ -53,7 +54,7 @@ int test_GlobalReduction(int argc, char *argv[])
   double value = Comm::rank();
   double ref = 0.5 * (Comm::size() * (Comm::size() - 1));
   Comm::global_sum(value);
-  TEST(detran::soft_equiv(value, ref));
+  TEST(soft_equiv(value, ref));
 
   // product
   value = Comm::rank() + 1.0;
@@ -61,19 +62,19 @@ int test_GlobalReduction(int argc, char *argv[])
   for (int i = 1; i <= Comm::size(); i++)
     ref *= (double) i;
   Comm::global_prod(value);
-  TEST(detran::soft_equiv(value, ref));
+  TEST(soft_equiv(value, ref));
 
   // min
   value = Comm::rank() + 1.0;
   ref = 1.0;
   Comm::global_min(value);
-  TEST(detran::soft_equiv(value, ref));
+  TEST(soft_equiv(value, ref));
 
   // max
   value = Comm::rank() + 1.0;
   ref = (double) Comm::size();
   Comm::global_max(value);
-  TEST(detran::soft_equiv(value, ref));
+  TEST(soft_equiv(value, ref));
 
   //----------------------------------------------//
   // ARRAY REDUCTIONS
@@ -83,9 +84,9 @@ int test_GlobalReduction(int argc, char *argv[])
   double values[] = {Comm::rank(), Comm::rank(), Comm::rank()};
   ref = 0.5 * (Comm::size() * (Comm::size() - 1));
   Comm::global_sum(values, 3);
-  TEST(detran::soft_equiv(values[0], ref));
-  TEST(detran::soft_equiv(values[1], ref));
-  TEST(detran::soft_equiv(values[2], ref));
+  TEST(soft_equiv(values[0], ref));
+  TEST(soft_equiv(values[1], ref));
+  TEST(soft_equiv(values[2], ref));
 
   // product
   values[0] = Comm::rank() + 1.0;
@@ -95,9 +96,9 @@ int test_GlobalReduction(int argc, char *argv[])
   for (int i = 1; i <= Comm::size(); i++)
     ref *= (double) i;
   Comm::global_prod(values, 3);
-  TEST(detran::soft_equiv(values[0], ref));
-  TEST(detran::soft_equiv(values[1], ref));
-  TEST(detran::soft_equiv(values[2], ref));
+  TEST(soft_equiv(values[0], ref));
+  TEST(soft_equiv(values[1], ref));
+  TEST(soft_equiv(values[2], ref));
 
   // min
   values[0] = Comm::rank() + 1.0;
@@ -105,9 +106,9 @@ int test_GlobalReduction(int argc, char *argv[])
   values[2] = Comm::rank() + 1.0;
   ref = 1.0;
   Comm::global_min(values, 3);
-  TEST(detran::soft_equiv(values[0], ref));
-  TEST(detran::soft_equiv(values[1], ref));
-  TEST(detran::soft_equiv(values[2], ref));
+  TEST(soft_equiv(values[0], ref));
+  TEST(soft_equiv(values[1], ref));
+  TEST(soft_equiv(values[2], ref));
 
   // max
   values[0] = Comm::rank() + 1.0;
@@ -115,9 +116,9 @@ int test_GlobalReduction(int argc, char *argv[])
   values[2] = Comm::rank() + 1.0;
   ref = (double) Comm::size();
   Comm::global_max(values, 3);
-  TEST(detran::soft_equiv(values[0], ref));
-  TEST(detran::soft_equiv(values[1], ref));
-  TEST(detran::soft_equiv(values[2], ref));
+  TEST(soft_equiv(values[0], ref));
+  TEST(soft_equiv(values[1], ref));
+  TEST(soft_equiv(values[2], ref));
 
   // Finalize Comm
   Comm::finalize();

@@ -12,7 +12,7 @@
 #define TEST_LIST             \
         FUNC(test_MR_scaling)
 
-#include "TestDriver.hh"
+#include "utilities/TestDriver.hh"
 #include "Connect.hh"
 #include "ResponseMatrix.hh"
 #include "erme_geometry/NodePartitioner.hh"
@@ -27,6 +27,7 @@
 
 using namespace erme;
 using namespace detran_test;
+using detran_utilities::soft_equiv;
 using std::cout;
 using std::endl;
 
@@ -131,7 +132,7 @@ int test_MR_scaling(int argc, char *argv[])
   //-------------------------------------------------------------------------//
 
   // Create parameter database
-  erme_response::ResponseIndexer::SP_db db(new detran::InputDB());
+  erme_response::ResponseIndexer::SP_db db(new detran_utilities::InputDB());
   db->put<int>("dimension", 3);
   db->put<int>("erme_order_reduction", 0);
 

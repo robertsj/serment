@@ -12,7 +12,7 @@
 #define TEST_LIST           \
         FUNC(test_LeakageOperator)
 
-#include "TestDriver.hh"
+#include "utilities/TestDriver.hh"
 #include "LeakageOperator.hh"
 #include "linear_algebra/LinearAlgebraSetup.hh"
 #include "erme_geometry/NodePartitioner.hh"
@@ -23,6 +23,7 @@
 
 using namespace erme;
 using namespace detran_test;
+using detran_utilities::soft_equiv;
 using std::cout;
 using std::endl;
 
@@ -76,7 +77,7 @@ int test_LeakageOperator(int argc, char *argv[])
   //-------------------------------------------------------------------------//
 
   // Create parameter database
-  erme_response::ResponseIndexer::SP_db db(new detran::InputDB());
+  erme_response::ResponseIndexer::SP_db db(new detran_utilities::InputDB());
   db->put<int>("dimension", 2);
   db->put<int>("erme_order_reduction", 3);
 
@@ -118,7 +119,7 @@ int test_LeakageOperator(int argc, char *argv[])
                    (0.4 + 0*0.01 + 0.4 + 2*0.01) + (0.4 + 2*0.01 + 0.4 + 1*0.01) +
                    (0.4 + 0*0.01 + 0.4 + 3*0.01) + (0.4 + 3*0.01 + 0.4 + 1*0.01);
 
-    TEST(detran::soft_equiv(leakage, ref));
+    TEST(soft_equiv(leakage, ref));
   }
 
   //-------------------------------------------------------------------------//

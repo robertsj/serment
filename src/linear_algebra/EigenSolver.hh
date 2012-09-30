@@ -11,18 +11,11 @@
 #ifndef EIGENSOLVER_HH_
 #define EIGENSOLVER_HH_
 
-// Linear Algebra
 #include "Vector.hh"
 #include "MatrixBase.hh"
-
-// Comm
 #include "comm/Comm.hh"
-
-// Detran Utilities
-#include "DBC.hh"
-#include "SP.hh"
-
-// System
+#include "utilities/DBC.hh"
+#include "utilities/SP.hh"
 #include "slepc.h"
 #include <vector>
 #include <string>

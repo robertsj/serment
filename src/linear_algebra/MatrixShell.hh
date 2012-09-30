@@ -10,11 +10,7 @@
 #ifndef MATRIXSHELL_HH_
 #define MATRIXSHELL_HH_
 
-// Serment Linear Algebra
 #include "MatrixBase.hh"
-
-// Detran Utilities
-#include "DBC.hh"
 
 namespace linear_algebra
 {

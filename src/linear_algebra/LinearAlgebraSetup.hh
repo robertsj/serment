@@ -23,8 +23,9 @@ void initialize(int &argc, char **&argv)
   Insist(serment_comm::Comm::is_comm_built(),
     "The local and global communicator must be built before linear algebra");
 
-  // Set PETSc communicator to global
-  PETSC_COMM_WORLD = serment_comm::global;
+  // Set PETSc communicator to global if running in parallel
+  if (serment_comm::Comm::size() > 1)
+    PETSC_COMM_WORLD = serment_comm::global;
 
   // Initialize PETSc on the *global* communicator
   if (serment_comm::Comm::is_global())

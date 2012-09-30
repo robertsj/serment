@@ -15,7 +15,7 @@
         FUNC(test_PingPong_latency)
 
 // Detran test
-#include "TestDriver.hh"
+#include "utilities/TestDriver.hh"
 
 #include "Comm.hh"
 
@@ -28,6 +28,7 @@
 
 using namespace serment_comm;
 using namespace detran_test;
+using detran_utilities::soft_equiv;
 using std::cout;
 using std::endl;
 
@@ -83,8 +84,8 @@ int test_PingPong_sendreceive(int argc, char *argv[])
     TEST(c == 'B');
     TEST(i == 2);
     TEST(l == 2000);
-    TEST(detran::soft_equiv(f, 2.5f));
-    TEST(detran::soft_equiv(d, 3.5));
+    TEST(soft_equiv(f, 2.5f));
+    TEST(soft_equiv(d, 3.5));
   }
 
   // receive and send on node 1
@@ -101,8 +102,8 @@ int test_PingPong_sendreceive(int argc, char *argv[])
     TEST(c == 'A');
     TEST(i == 1);
     TEST(l == 1000);
-    TEST(detran::soft_equiv(f, 1.5f));
-    TEST(detran::soft_equiv(d, 2.5));
+    TEST(soft_equiv(f, 1.5f));
+    TEST(soft_equiv(d, 2.5));
 
     // assign new values
     c = 'B';

@@ -10,17 +10,10 @@
 #ifndef MATRIXBASE_HH_
 #define MATRIXBASE_HH_
 
-// Linear Algebra
 #include "Vector.hh"
-
-// Comm
 #include "comm/Comm.hh"
-
-// Detran Utilities
-#include "DBC.hh"
-#include "SP.hh"
-
-// System
+#include "utilities/DBC.hh"
+#include "utilities/SP.hh"
 #include "petsc.h"
 #include <vector>
 #include <string>
@@ -39,9 +32,9 @@ public:
     STDOUT, ASCII, BINARY, MATLAB
   };
 
-  typedef detran::SP<MatrixBase>  SP_matrix;
-  typedef unsigned int            size_type;
-  typedef std::vector<int>        vec_int;
+  typedef detran_utilities::SP<MatrixBase>  SP_matrix;
+  typedef unsigned int                      size_type;
+  typedef std::vector<int>                  vec_int;
 
   /*!
    *  \brief Constructor

@@ -71,7 +71,6 @@ namespace serment_comm
  *  \todo Consider implementing Comm as a singleton so that better
  *        encapsulation can be used
  */
-
 class Comm
 {
 

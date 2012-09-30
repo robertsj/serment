@@ -10,11 +10,11 @@
 #ifndef RESPONSESOURCE_HH_
 #define RESPONSESOURCE_HH_
 
-#include "DBC.hh"
-#include "SP.hh"
 #include "NodeResponse.hh"
 #include "ResponseIndex.hh"
 #include "erme_geometry/Node.hh"
+#include "utilities/DBC.hh"
+#include "utilities/SP.hh"
 
 namespace erme_response
 {
@@ -41,10 +41,10 @@ public:
   // TYPEDEFS
   //-------------------------------------------------------------------------//
 
-  typedef detran::SP<ResponseSource>    SP_source;
-  typedef unsigned int                  size_t;
-  typedef NodeResponse::SP_response     SP_response;
-  typedef erme_geometry::Node::SP_node  SP_node;
+  typedef detran_utilities::SP<ResponseSource>  SP_source;
+  typedef unsigned int                          size_t;
+  typedef NodeResponse::SP_response             SP_response;
+  typedef erme_geometry::Node::SP_node          SP_node;
 
   //-------------------------------------------------------------------------//
   // PUBLIC INTERFACE

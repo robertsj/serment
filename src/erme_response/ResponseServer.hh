@@ -10,12 +10,12 @@
 #ifndef RESPONSESERVER_HH_
 #define RESPONSESERVER_HH_
 
-#include "erme_geometry/NodeList.hh"
 #include "ResponseIndexer.hh"
 #include "NodeResponse.hh"
 #include "ResponseSource.hh"
-#include "DBC.hh"
-#include "SP.hh"
+#include "erme_geometry/NodeList.hh"
+#include "utilities/DBC.hh"
+#include "utilities/SP.hh"
 #include <vector>
 
 namespace erme_response
@@ -44,7 +44,7 @@ public:
   // TYPEDEFS
   //-------------------------------------------------------------------------//
 
-  typedef detran::SP<ResponseServer>            SP_server;
+  typedef detran_utilities::SP<ResponseServer>  SP_server;
   typedef NodeResponse::SP_response             SP_response;
   typedef std::vector<SP_response>              vec_response;
   typedef ResponseSource::SP_source             SP_source;

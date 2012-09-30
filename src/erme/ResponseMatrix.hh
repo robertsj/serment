@@ -13,9 +13,6 @@
 #include "ResponseOperator.hh"
 #include "linear_algebra/Matrix.hh"
 
-#include "DBC.hh"
-#include "SP.hh"
-
 namespace erme
 {
 
@@ -38,7 +35,7 @@ public:
   // TYPEDEFS
   //-------------------------------------------------------------------------//
 
-  typedef detran::SP<ResponseMatrix>                  SP_responsematrix;
+  typedef detran_utilities::SP<ResponseMatrix>      SP_responsematrix;
 
   //-------------------------------------------------------------------------//
   // PUBLIC INTERFACE

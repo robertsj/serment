@@ -36,12 +36,12 @@ Node::SP_node cartesian_node_detran(const int dim)
   typedef erme_geometry::CartesianNodeDetran Node_T;
 
   // Parameter database
-  Node_T::SP_db   db(new detran::InputDB());
+  Node_T::SP_db   db(new detran_utilities::InputDB());
   db->put("number_groups",  1);
   db->put("dimension",      dim);
 
   // Build the material
-  Node_T::SP_material mat(new detran::Material(1, 1));
+  Node_T::SP_material mat(new detran_material::Material(1, 1));
   mat->set_sigma_t(0, 0, 1.0);
   mat->set_sigma_s(0, 0, 0, 0.5);
   mat->set_sigma_f(0, 0, 0.5);
@@ -55,11 +55,11 @@ Node::SP_node cartesian_node_detran(const int dim)
   // Build the mesh
   Node_T::SP_mesh mesh;
   if (dim == 1)
-    mesh = new detran::Mesh1D(fm, cm, mt);
+    mesh = new detran_geometry::Mesh1D(fm, cm, mt);
   else if (dim == 2)
-    mesh = new detran::Mesh2D(fm, fm, cm, cm, mt);
+    mesh = new detran_geometry::Mesh2D(fm, fm, cm, cm, mt);
   else
-    mesh = new detran::Mesh3D(fm, fm, fm, cm, cm, cm, mt);
+    mesh = new detran_geometry::Mesh3D(fm, fm, fm, cm, cm, cm, mt);
 
   Node_T::vec_dbl widths(3, 1.0);
   for (int i = 0; i < dim; i++)

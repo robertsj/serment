@@ -11,9 +11,9 @@
 #define NODEFACTORY_HH_
 
 #include "Node.hh"
-#include "InputDB.hh"
-#include "detran_material.hh"
-#include "detran_geometry.hh"
+#include "utilities/InputDB.hh"
+#include "material/detran_material.hh"
+#include "geometry/detran_geometry.hh"
 
 namespace erme_geometry
 {
@@ -28,10 +28,10 @@ class NodeFactory
 public:
 
   /// Useful typedefs
-  typedef detran::InputDB::SP_input         SP_db;
-  typedef detran::Material::SP_material     SP_material;
-  typedef detran::Mesh::SP_mesh             SP_mesh;
-  typedef Node::SP_node                     SP_node;
+  typedef detran_utilities::InputDB::SP_input       SP_db;
+  typedef detran_material::Material::SP_material    SP_material;
+  typedef detran_geometry::Mesh::SP_mesh            SP_mesh;
+  typedef Node::SP_node                             SP_node;
 
   /// Constructor
   NodeFactory(){}

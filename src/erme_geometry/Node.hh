@@ -12,17 +12,10 @@
 
 #include "serment_config.h"
 
-// ERME geometry
-#include "Point.hh"
-
-// Serment Comm
+#include "utilities/Point.hh"
 #include "comm/Comm.hh"
-
-// Detran
-#include "DBC.hh"
-#include "SP.hh"
-
-// System
+#include "utilities/DBC.hh"
+#include "utilities/SP.hh"
 #include <vector>
 #ifdef SERMENT_ENABLE_BOOST
 #include <boost/serialization/map.hpp>
@@ -81,13 +74,13 @@ public:
   const static int VACUUM  = -2;
 
   /// Useful typedefs
-  typedef detran::SP<Node>            SP_node;
+  typedef detran_utilities::SP<Node>  SP_node;
   typedef unsigned int                size_type;
   typedef std::vector<int>            vec_int;
   typedef std::vector<double>         vec_dbl;
   typedef std::vector<size_type>      vec_size_type;
   typedef std::vector<vec_size_type>  vec2_size_type;
-  typedef detran::Point               Point;
+  typedef detran_utilities::Point     Point;
 
   /*!
    *  \brief Constructor

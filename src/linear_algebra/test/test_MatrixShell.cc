@@ -13,7 +13,7 @@
         FUNC(test_MatrixShell)
 
 // Detran test
-#include "TestDriver.hh"
+#include "utilities/TestDriver.hh"
 
 #include "MatrixShell.hh"
 
@@ -92,7 +92,7 @@ int test_MatrixShell_actual()
     double ref = 2.0;
     if (i == 0 and rank == 0) ref = 1.0;
     if (i == n - 1 and rank == size - 1) ref = 2 - 25 * size * size;
-    TEST(detran::soft_equiv(Y[i], ref));
+    TEST(detran_utilities::soft_equiv(Y[i], ref));
   }
 
   A.display();

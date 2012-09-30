@@ -13,7 +13,7 @@
         FUNC(test_Vector)
 
 // Detran test
-#include "TestDriver.hh"
+#include "utilities/TestDriver.hh"
 
 #include "Vector.hh"
 
@@ -71,11 +71,11 @@ int test_Vector_actual()
   X.assemble();
 
   value = X.dot(X);
-  TEST(detran::soft_equiv(value, 1.0*X.global_size()));
+  TEST(detran_utilities::soft_equiv(value, 1.0*X.global_size()));
 
   X.scale(2.0);
   for (int i = 0; i < X.local_size(); i++)
-    TEST(detran::soft_equiv(X[i], 2.0));
+    TEST(detran_utilities::soft_equiv(X[i], 2.0));
 
   //X.display();
 

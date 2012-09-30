@@ -10,13 +10,8 @@
 #ifndef MPI_HH_
 #define MPI_HH_
 
-// Serment Comm
 #include "MPI_Traits.hh"
-
-// Detran utilities
-#include "DBC.hh"
-
-// System
+#include "utilities/DBC.hh"
 #include <mpi.h>
 #include <vector>
 #include <iostream>

@@ -9,7 +9,7 @@
 
 #include "CartesianNodeDetran.hh"
 
-#include "detran_utilities.hh"
+#include "utilities/detran_utilities.hh"
 
 namespace erme_geometry
 {

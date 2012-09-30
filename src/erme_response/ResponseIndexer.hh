@@ -12,8 +12,8 @@
 
 #include "ResponseIndex.hh"
 #include "erme_geometry/NodeList.hh"
-#include "InputDB.hh"
-#include "SP.hh"
+#include "utilities/InputDB.hh"
+#include "utilities/SP.hh"
 #include <vector>
 
 namespace erme_response
@@ -63,8 +63,8 @@ public:
   // TYPEDEFS
   //-------------------------------------------------------------------------//
 
-  typedef detran::SP<ResponseIndexer>           SP_indexer;
-  typedef detran::InputDB::SP_input             SP_db;
+  typedef detran_utilities::SP<ResponseIndexer> SP_indexer;
+  typedef detran_utilities::InputDB::SP_input   SP_db;
   typedef erme_geometry::NodeList::SP_nodelist  SP_nodelist;
   typedef erme_geometry::NodeList::SP_node      SP_node;
   typedef unsigned int                          size_t;

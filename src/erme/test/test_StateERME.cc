@@ -12,7 +12,7 @@
 #define TEST_LIST           \
         FUNC(test_StateERME)
 
-#include "TestDriver.hh"
+#include "utilities/TestDriver.hh"
 #include "StateERME.hh"
 #include <iostream>
 
@@ -20,6 +20,7 @@
 
 using namespace erme;
 using namespace detran_test;
+using detran_utilities::soft_equiv;
 using std::cout;
 using std::endl;
 
@@ -43,8 +44,8 @@ int test_StateERME(int argc, char *argv[])
 
   state.set_k(1.12);
   state.set_lambda(1.13);
-  TEST(detran::soft_equiv(state.k(),      1.12));
-  TEST(detran::soft_equiv(state.lambda(), 1.13));
+  TEST(soft_equiv(state.k(),      1.12));
+  TEST(soft_equiv(state.lambda(), 1.13));
 
   return 0;
 

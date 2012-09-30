@@ -13,7 +13,7 @@
         FUNC(test_CartesianNodeDetran)          \
         FUNC(test_CartesianNodeDetran_serialize)
 
-#include "TestDriver.hh"
+#include "utilities/TestDriver.hh"
 #include "erme_geometry/CartesianNodeDetran.hh"
 #include "erme_geometry/test/node_fixture.hh"
 

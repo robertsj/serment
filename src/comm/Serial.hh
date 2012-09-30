@@ -10,8 +10,7 @@
 #ifndef SERIAL_HH_
 #define SERIAL_HH_
 
-// Detran utilities
-#include "DBC.hh"
+#include "utilities/DBC.hh"
 
 namespace serment_comm
 {
@@ -54,24 +53,30 @@ void Comm::set(const C &new_communicator)
   /* ... */
 }
 
+/// Free a communicator
+inline void Comm::free()
+{
+  /* ... */
+}
+
 //---------------------------------------------------------------------------//
 // BLOCKING SEND/RECEIVE OPERATIONS
 //---------------------------------------------------------------------------//
 
 template<class T>
-int send(const T *buffer,
-         int      size,
-         int      destination,
-         int      tag)
+int Comm::send(const T *buffer,
+               int      size,
+               int      destination,
+               int      tag)
 {
   return COMM_SUCCESS;
 }
 
 template<class T>
-int receive(T   *buffer,
-            int  size,
-            int  source,
-            int  tag)
+int Comm::receive(T   *buffer,
+                  int  size,
+                  int  source,
+                  int  tag)
 {
   return COMM_SUCCESS;
 }
@@ -81,9 +86,9 @@ int receive(T   *buffer,
 //---------------------------------------------------------------------------//
 
 template<class T>
-int broadcast(T  *buffer,
-              int size,
-              int root)
+int Comm::broadcast(T  *buffer,
+                    int size,
+                    int root)
 {
   return COMM_SUCCESS;
 }
@@ -93,49 +98,49 @@ int broadcast(T  *buffer,
 //---------------------------------------------------------------------------//
 
 template<class T>
-inline void sum(T &x, int to_node)
-{
-  return x;
-}
-
-template<class T>
-inline void prod(T &x, int to_node)
-{
-  return x;
-}
-
-template<class T>
-inline void min(T &x, int to_node)
+inline void Comm::sum(T &x, int to_node)
 {
   /* ... */
 }
 
 template<class T>
-inline void max(T &x, int to_node)
+inline void Comm::prod(T &x, int to_node)
 {
   /* ... */
 }
 
 template<class T>
-inline void sum(T *x, int n, int to_node)
+inline void Comm::min(T &x, int to_node)
+{
+  /* ... */
+}
+
+template<class T>
+inline void Comm::max(T &x, int to_node)
+{
+  /* ... */
+}
+
+template<class T>
+inline void Comm::sum(T *x, int n, int to_node)
 {
   Require(x);
 }
 
 template<class T>
-inline void prod(T  *x, int n, int to_node)
+inline void Comm::prod(T  *x, int n, int to_node)
 {
   Require(x);
 }
 
 template<class T>
-inline void min(T *x, int n, int to_node)
+inline void Comm::min(T *x, int n, int to_node)
 {
   Require(x);
 }
 
 template<class T>
-inline void max(T *x, int n, int to_node)
+inline void Comm::max(T *x, int n, int to_node)
 {
   Require(x);
 }
@@ -145,49 +150,49 @@ inline void max(T *x, int n, int to_node)
 //---------------------------------------------------------------------------//
 
 template<class T>
-inline void global_sum(T &x)
-{
-  return x;
-}
-
-template<class T>
-inline void global_prod(T &x)
-{
-  return x;
-}
-
-template<class T>
-inline void global_min(T &x)
+inline void Comm::global_sum(T &x)
 {
   /* ... */
 }
 
 template<class T>
-inline void global_max(T &x)
+inline void Comm::global_prod(T &x)
 {
   /* ... */
 }
 
 template<class T>
-inline void global_sum(T *x, int n)
+inline void Comm::global_min(T &x)
+{
+  /* ... */
+}
+
+template<class T>
+inline void Comm::global_max(T &x)
+{
+  /* ... */
+}
+
+template<class T>
+inline void Comm::global_sum(T *x, int n)
 {
   Require(x);
 }
 
 template<class T>
-inline void global_prod(T  *x, int n)
+inline void Comm::global_prod(T  *x, int n)
 {
   Require(x);
 }
 
 template<class T>
-inline void global_min(T *x, int n)
+inline void Comm::global_min(T *x, int n)
 {
   Require(x);
 }
 
 template<class T>
-inline void global_max(T *x, int n)
+inline void Comm::global_max(T *x, int n)
 {
   Require(x);
 }
@@ -196,7 +201,7 @@ inline void global_max(T *x, int n)
 // BARRIER
 //---------------------------------------------------------------------------//
 
-void global_barrier()
+inline void Comm::global_barrier()
 {
   /* ... */
 }
@@ -207,11 +212,12 @@ void global_barrier()
 
 inline void Comm::tic()
 {
-
+  /* ... */
 }
 
 inline double Comm::toc()
 {
+  // \todo Implement this
   return 0.0;
 }
 

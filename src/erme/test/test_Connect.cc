@@ -12,7 +12,7 @@
 #define TEST_LIST           \
         FUNC(test_Connect)
 
-#include "TestDriver.hh"
+#include "utilities/TestDriver.hh"
 #include "Connect.hh"
 #include "linear_algebra/LinearAlgebraSetup.hh"
 #include "erme_geometry/NodePartitioner.hh"
@@ -78,7 +78,7 @@ int test_Connect(int argc, char *argv[])
   //-------------------------------------------------------------------------//
 
   // Create parameter database
-  erme_response::ResponseIndexer::SP_db db(new detran::InputDB());
+  erme_response::ResponseIndexer::SP_db db(new detran_utilities::InputDB());
   db->put<int>("dimension", 2);
   db->put<int>("erme_order_reduction", 3);
 

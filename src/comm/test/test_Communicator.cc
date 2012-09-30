@@ -13,7 +13,7 @@
         FUNC(test_Communicator)
 
 // Detran test
-#include "TestDriver.hh"
+#include "utilities/TestDriver.hh"
 
 #include "Comm.hh"
 

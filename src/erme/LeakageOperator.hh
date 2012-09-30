@@ -13,9 +13,6 @@
 #include "ResponseOperator.hh"
 #include "linear_algebra/Matrix.hh"
 
-#include "DBC.hh"
-#include "SP.hh"
-
 namespace erme
 {
 
@@ -38,8 +35,8 @@ public:
   // TYPEDEFS
   //-------------------------------------------------------------------------//
 
-  typedef detran::SP<LeakageOperator>         SP_leakageoperator;
-  typedef linear_algebra::Vector::SP_vector   SP_vector;
+  typedef detran_utilities::SP<LeakageOperator>     SP_leakageoperator;
+  typedef linear_algebra::Vector::SP_vector         SP_vector;
 
   //-------------------------------------------------------------------------//
   // PUBLIC INTERFACE

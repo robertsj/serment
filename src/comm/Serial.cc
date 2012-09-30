@@ -14,10 +14,18 @@
 namespace serment_comm
 {
 
+// Set the default communicators
+Communicator_t world          = 0;
+Communicator_t global         = world;
+Communicator_t local          = world;
+Communicator_t communicator   = world;
+
 // Initialize private static variables
-bool   Comm::d_global = false;
-bool   Comm::d_local  = false;
-double Comm::d_time   = 0.0;
+bool   Comm::d_is_comm_built = false;
+bool   Comm::d_is_global     = true;
+double Comm::d_time = 0.0;
+int    Comm::d_world_rank = 0;
+int    Comm::d_local_group = 0;
 
 //---------------------------------------------------------------------------//
 // SETUP FUNCTIONS
@@ -43,21 +51,19 @@ void Comm::finalize()
  */
 void Comm::setup_communicators(const unsigned int N)
 {
-  /* ... */
+  d_is_comm_built = true;
 }
-
-static bool Comm::is_global = true;
 
 //---------------------------------------------------------------------------//
 // QUERY FUNCTIONS
 //---------------------------------------------------------------------------//
 
-int rank()
+int Comm::rank()
 {
   return 0;
 }
 
-int size()
+int Comm::size()
 {
   return 1;
 }

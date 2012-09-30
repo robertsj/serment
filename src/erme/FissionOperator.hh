@@ -36,7 +36,7 @@ public:
   // TYPEDEFS
   //-------------------------------------------------------------------------//
 
-  typedef detran::SP<FissionOperator>       SP_fission;
+  typedef detran_utilities::SP<FissionOperator>       SP_fission;
 
 
   //-------------------------------------------------------------------------//

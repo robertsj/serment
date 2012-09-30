@@ -12,7 +12,7 @@
 #define TEST_LIST           \
         FUNC(test_NodeResponse)
 
-#include "TestDriver.hh"
+#include "utilities/TestDriver.hh"
 #include "erme_response/NodeResponse.hh"
 #include <iostream>
 
@@ -20,6 +20,7 @@
 
 using namespace erme_response;
 using namespace detran_test;
+using detran_utilities::soft_equiv;
 using std::cout;
 using std::endl;
 
@@ -54,14 +55,14 @@ int test_NodeResponse(int argc, char *argv[])
   double *l = &response.leakage_response(0, 3);
   for (size_t i = 0; i < 16; i++)
   {
-    TEST(detran::soft_equiv(b[i], 5.0 + i));
-    TEST(detran::soft_equiv(f[i], 1.0 * i));
-    TEST(detran::soft_equiv(a[i], 2.0 * i));
+    TEST(soft_equiv(b[i], 5.0 + i));
+    TEST(soft_equiv(f[i], 1.0 * i));
+    TEST(soft_equiv(a[i], 2.0 * i));
   }
-  TEST(detran::soft_equiv(l[0],   3.0));
-  TEST(detran::soft_equiv(l[1], 103.0));
-  TEST(detran::soft_equiv(l[2], 203.0));
-  TEST(detran::soft_equiv(l[3], 303.0));
+  TEST(soft_equiv(l[0],   3.0));
+  TEST(soft_equiv(l[1], 103.0));
+  TEST(soft_equiv(l[2], 203.0));
+  TEST(soft_equiv(l[3], 303.0));
 
   return 0;
 }

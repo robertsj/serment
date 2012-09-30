@@ -10,8 +10,8 @@
 #ifndef NODERESPONSE_HH_
 #define NODERESPONSE_HH_
 
-#include "DBC.hh"
-#include "SP.hh"
+#include "utilities/DBC.hh"
+#include "utilities/SP.hh"
 #include <vector>
 
 namespace erme_response
@@ -64,11 +64,11 @@ public:
   // TYPEDEFS
   //-------------------------------------------------------------------------//
 
-  typedef detran::SP<NodeResponse>    SP_response;
-  typedef unsigned int                size_t;
-  typedef std::vector<size_t>      vec_size_t;
-  typedef std::vector<double>         vec_dbl;
-  typedef std::vector<vec_dbl>        vec2_dbl;
+  typedef detran_utilities::SP<NodeResponse>    SP_response;
+  typedef unsigned int                          size_t;
+  typedef std::vector<size_t>                   vec_size_t;
+  typedef std::vector<double>                   vec_dbl;
+  typedef std::vector<vec_dbl>                  vec2_dbl;
 
   //-------------------------------------------------------------------------//
   // PUBLIC INTERFACE

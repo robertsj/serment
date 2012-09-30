@@ -12,7 +12,7 @@
 #define TEST_LIST                 \
         FUNC(test_NodePartitioner)
 
-#include "TestDriver.hh"
+#include "utilities/TestDriver.hh"
 #include "erme_geometry/NodePartitioner.hh"
 #include "erme_geometry/test/nodelist_fixture.hh"
 #include <iostream>

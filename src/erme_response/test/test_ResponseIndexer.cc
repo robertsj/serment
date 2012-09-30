@@ -13,7 +13,7 @@
         FUNC(test_ResponseIndexer)              \
         FUNC(test_ResponseIndexer_zeroth_order)
 
-#include "TestDriver.hh"
+#include "utilities/TestDriver.hh"
 #include "erme_response/ResponseIndexer.hh"
 #include "erme_geometry/NodePartitioner.hh"
 #include <iostream>
@@ -23,6 +23,7 @@
 
 using namespace erme_response;
 using namespace detran_test;
+using detran_utilities::soft_equiv;
 using std::cout;
 using std::endl;
 
@@ -65,7 +66,7 @@ int test_ResponseIndexer(int argc, char *argv[])
   partitioner.partition(nodes);
 
   // Create parameter database
-  ResponseIndexer::SP_db db(new detran::InputDB());
+  ResponseIndexer::SP_db db(new detran_utilities::InputDB());
   db->put<int>("dimension", 2);
 
   //-------------------------------------------------------------------------//
@@ -180,7 +181,7 @@ int test_ResponseIndexer_zeroth_order(int argc, char *argv[])
   //-------------------------------------------------------------------------//
 
   // Create parameter database
-  ResponseIndexer::SP_db db(new detran::InputDB());
+  ResponseIndexer::SP_db db(new detran_utilities::InputDB());
   db->put<int>("dimension", 2);
 
   db->put<int>("erme_order_reduction", 0);
