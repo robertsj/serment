@@ -40,6 +40,7 @@ public:
   // TYPEDEFS
   //-------------------------------------------------------------------------//
 
+  typedef detran::SP<Connect>                         SP_connect;
   typedef erme_geometry::NodeList::SP_nodelist        SP_nodelist;
   typedef erme_response::ResponseIndexer::SP_indexer  SP_indexer;
 
