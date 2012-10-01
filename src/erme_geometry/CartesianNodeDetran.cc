@@ -14,19 +14,19 @@
 namespace erme_geometry
 {
 
-CartesianNodeDetran::CartesianNodeDetran(const size_type  d,
-                                         const size_type  n,
-                                         const int        nodeid,
-                                         std::string      nodename,
-                                         const Point      nodeorigin,
-                                         vec2_size_type   so,
-                                         vec_size_type    po,
-                                         vec_size_type    ao,
-                                         vec_size_type    eo,
-                                         vec_dbl          nodewidth,
-                                         SP_db            nodedb,
-                                         SP_material      nodematerial,
-                                         SP_mesh          nodemesh)
+CartesianNodeDetran::CartesianNodeDetran(const size_t  d,
+                                         const size_t  n,
+                                         const int     nodeid,
+                                         std::string   nodename,
+                                         const Point   nodeorigin,
+                                         vec2_size_t   so,
+                                         vec_size_t    po,
+                                         vec_size_t    ao,
+                                         vec_size_t    eo,
+                                         vec_dbl       nodewidth,
+                                         SP_db         nodedb,
+                                         SP_material   nodematerial,
+                                         SP_mesh       nodemesh)
   : CartesianNode(d, n, nodeid, nodename, nodeorigin, so, po, ao, eo, nodewidth)
   , d_db(nodedb)
   , d_material(nodematerial)
@@ -47,9 +47,7 @@ double CartesianNodeDetran::color(Point point)
 
 } // end namespace erme_geometry
 
-#ifdef SERMENT_ENABLE_BOOST
 BOOST_CLASS_EXPORT_IMPLEMENT(erme_geometry::CartesianNodeDetran)
-#endif
 
 //---------------------------------------------------------------------------//
 //              end of file CartesianNodeDetran.cc

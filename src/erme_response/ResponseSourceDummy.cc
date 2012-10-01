@@ -1,9 +1,9 @@
 //----------------------------------*-C++-*----------------------------------//
-/*!
- * \file   ResponseSourceDummy.cc
- * \brief  ResponseSourceDummy 
- * \author Jeremy Roberts
- * \date   Aug 31, 2012
+/**
+ *  @file   ResponseSourceDummy.cc
+ *  @brief  ResponseSourceDummy
+ *  @author Jeremy Roberts
+ *  @date   Aug 31, 2012
  */
 //---------------------------------------------------------------------------//
 

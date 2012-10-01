@@ -17,6 +17,9 @@ TARGET_LINK_LIBRARIES(test_NodeResponse        erme_response)
 ADD_EXECUTABLE(test_ResponseServer	           test_ResponseServer.cc)
 TARGET_LINK_LIBRARIES(test_ResponseServer      erme_response)
 
+ADD_EXECUTABLE(test_ResponseDatabase           test_ResponseDatabase.cc)
+TARGET_LINK_LIBRARIES(test_ResponseDatabase    erme_response)
+
 #------------------------------------------------------------------------------#
 # Define tests
 #------------------------------------------------------------------------------#
@@ -24,3 +27,4 @@ TARGET_LINK_LIBRARIES(test_ResponseServer      erme_response)
 ADD_TEST(test_ResponseIndexer 	test_ResponseIndexer 0)
 ADD_TEST(test_NodeResponse 		test_NodeResponse 0)
 ADD_TEST(test_ResponseServer 	test_ResponseServer 0)
+ADD_TEST(test_ResponseDatabase  test_ResponseDatabase 0)

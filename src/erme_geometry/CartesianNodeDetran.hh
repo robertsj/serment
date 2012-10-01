@@ -51,19 +51,19 @@ public:
    *  \param ao               Azimuth orders [surface]
    *  \param eo               Energy orders [surface]
    */
-  CartesianNodeDetran(const size_type  dimension,
-                      const size_type  number_surfaces,
-                      const int        nodeid,
-                      std::string      nodename,
-                      const Point      nodeorigin,
-                      vec2_size_type   so,
-                      vec_size_type    po,
-                      vec_size_type    ao,
-                      vec_size_type    eo,
-                      vec_dbl          nodewidth,
-                      SP_db            nodedb,
-                      SP_material      nodematerial,
-                      SP_mesh          nodemesh);
+  CartesianNodeDetran(const size_t  dimension,
+                      const size_t  number_surfaces,
+                      const int     nodeid,
+                      std::string   nodename,
+                      const Point   nodeorigin,
+                      vec2_size_t   so,
+                      vec_size_t    po,
+                      vec_size_t    ao,
+                      vec_size_t    eo,
+                      vec_dbl       nodewidth,
+                      SP_db         nodedb,
+                      SP_material   nodematerial,
+                      SP_mesh       nodemesh);
 
   //-------------------------------------------------------------------------//
   // ABSTRACT INTERFACE
@@ -112,7 +112,6 @@ private:
   /// Default constructor is needed for serialization.
   CartesianNodeDetran(){}
 
-#ifdef SERMENT_ENABLE_BOOST
   friend class boost::serialization::access;
   template<class Archive>
   void serialize(Archive & ar, const unsigned int version)
@@ -122,15 +121,12 @@ private:
     ar & d_material;
     ar & d_mesh;
   }
-#endif
 
 };
 
 } // end namespace erme_geometry
 
-#ifdef SERMENT_ENABLE_BOOST
 BOOST_CLASS_EXPORT_KEY(erme_geometry::CartesianNodeDetran)
-#endif
 
 #endif // CARTESIANNODEDETRAN_HH_ 
 

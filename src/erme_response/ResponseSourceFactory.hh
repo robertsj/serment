@@ -1,9 +1,9 @@
 //----------------------------------*-C++-*----------------------------------//
-/*!
- * \file   ResponseSourceFactory.hh
- * \brief  ResponseSourceFactory 
- * \author Jeremy Roberts
- * \date   Aug 29, 2012
+/**
+ *  @file   ResponseSourceFactory.hh
+ *  @brief  ResponseSourceFactory
+ *  @author Jeremy Roberts
+ *  @date   Aug 29, 2012
  */
 //---------------------------------------------------------------------------//
 
@@ -14,13 +14,14 @@
 // Concrete source types
 #include "ResponseSourceDummy.hh"
 #include "ResponseSourceDetran.hh"
+#include "ResponseSourceDatabase.hh"
 
 namespace erme_response
 {
 
-/*!
- *  \class ResponseSourceFactory
- *  \brief Constructs response
+/**
+ *  @class ResponseSourceFactory
+ *  @brief Constructs response
  *
  */
 class ResponseSourceFactory
@@ -39,13 +40,13 @@ public:
   // PUBLIC INTERFACE
   //-------------------------------------------------------------------------//
 
-  /*!
-   *  \brief Build a response source
+  /**
+   *  @brief Build a response source
    *
-   *  This is a factory method that must be implemented for each
-   *  type of node to be constructed.
+   *  This is a factory method that calls an implemention for
+   *  each type of node to be constructed.
    *
-   *  \param node   Smart pointer to node
+   *  @param node   Smart pointer to node
    */
   template <typename SP_NODE>
   SP_source build(SP_NODE node)
@@ -55,11 +56,13 @@ public:
 
     SP_source s;
 
-    // Try to dynamic to all the node types available
+    // Try to dynamic-cast to all the node types available
     if (dynamic_cast<erme_geometry::CartesianNodeDummy*>(node.bp()))
       s = build_dummy(node);
     else if(dynamic_cast<erme_geometry::CartesianNodeDetran*>(node.bp()))
       s = build_detran(node);
+    else if(dynamic_cast<erme_geometry::CartesianNode*>(node.bp()))
+      s = build_database(node);
     else
       THROW("Unsupported response source type");
 
@@ -80,7 +83,8 @@ private:
 
   SP_source build_detran(SP_node node);
   SP_source build_dummy(SP_node node);
-  //void build_openmc(SP_node node);
+  SP_source build_database(SP_node node);
+  //SP_source build_openmc(SP_node node);
 
 };
 
@@ -93,7 +97,7 @@ private:
 
 #include "ResponseSourceFactoryDummy.hh"
 #include "ResponseSourceFactoryDetran.hh"
-//#include "ResponseSourceFactoryOpenMC.hh"
+#include "ResponseSourceFactoryDatabase.hh"
 
 #endif // RESPONSESOURCEFACTORY_HH_ 
 

@@ -26,7 +26,8 @@ namespace erme_response
  *  \param  s0  First spatial dimension order
  *  \param  s1  Second spatial dimenion order
  *  \param  eo  Is the combined function even=false or odd=true?
- *  \param  l   Moment index with set of local nodes
+ *  \param  li  Moment index with set of local nodes
+ *  \param  ni  Moment index within the local node
  */
 struct ResponseIndex
 {
@@ -40,10 +41,11 @@ struct ResponseIndex
                 size_t s0 = 0,
                 size_t s1 = 0,
                 bool   eo = false,
-                size_t l  = 0)
+                size_t li  = 0,
+                size_t ni  = 0)
   : node(n), surface(s), energy(e), polar(p), azimuth(a),
     space0(s0), space1(s1), even_odd(eo),
-    local(l)
+    local(li), nodal(ni)
   {/* ... */}
   size_t node;
   size_t surface;
@@ -54,7 +56,7 @@ struct ResponseIndex
   size_t space1;
   bool   even_odd;
   size_t local;
-
+  size_t nodal;
 };
 
 } // end namespace erme_response
@@ -70,7 +72,8 @@ inline std::ostream& operator<< (std::ostream &out,
       << "  azimuth = " << r.azimuth << std::endl
       << "   space0 = " << r.space0 << std::endl
       << "   space1 = " << r.space1 << std::endl
-      << "    local = " << r.local << std::endl;
+      << "    local = " << r.local << std::endl
+      << "    nodal = " << r.nodal << std::endl;
   return out;
 }
 

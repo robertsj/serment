@@ -1,24 +1,24 @@
 //----------------------------------*-C++-*----------------------------------//
-/*!
- * \file   ResponseSourceDatabase.hh
- * \brief  ResponseSourceDatabase 
- * \author Jeremy Roberts
- * \date   Sep 30, 2012
+/**
+ *  @file   ResponseSourceDatabase.hh
+ *  @brief  ResponseSourceDatabase
+ *  @author Jeremy Roberts
+ *  @date   Sep 30, 2012
  */
 //---------------------------------------------------------------------------//
 
 #ifndef erme_response_RESPONSESOURCEDATABASE_HH_
 #define erme_response_RESPONSESOURCEDATABASE_HH_
 
+#include "ResponseSource.hh"
+#include "ResponseDatabase.hh"
+
 namespace erme_response
 {
 
 /**
  *  @class ResponseDatabase
- *  @brief Provides precomputed responses stored on disk
- *
- *  T
- *
+ *  @brief Provides precomputed responses from a database
  */
 class ResponseSourceDatabase: public ResponseSource
 {
@@ -29,8 +29,8 @@ public:
   // TYPEDEFS
   //-------------------------------------------------------------------------//
 
-  typedef detran_utilities::SP<ResponseSourceDatabase>  SP_responsedatabase;
-  typedef erme_geometry::Node::SP_node                  SP_node;
+  typedef ResponseDatabase::SP_rfdb             SP_rfdb;
+  typedef erme_geometry::Node::SP_node          SP_node;
 
   //-------------------------------------------------------------------------//
   // CONSTRUCTOR & DESTRUCTOR
@@ -58,14 +58,8 @@ private:
   // DATA
   //-------------------------------------------------------------------------//
 
-  /// HDF5 file id
-  hid_t d_file_id;
-
-  /// HDF5 filename
-  std::string d_filename;
-
-  /// HDF5 is open
-  bool d_open;
+  /// Response function database
+  SP_rfdb d_rfdb;
 
   //-------------------------------------------------------------------------//
   // IMPLEMENTATION

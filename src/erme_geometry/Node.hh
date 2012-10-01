@@ -1,9 +1,9 @@
 //----------------------------------*-C++-*----------------------------------//
-/*!
- * \file   Node.hh
- * \brief  Node class definition
- * \author Jeremy Roberts
- * \date   Aug 22, 2012
+/**
+ *  @file   Node.hh
+ *  @brief  Node class definition
+ *  @author Jeremy Roberts
+ *  @date   Aug 22, 2012
  */
 //---------------------------------------------------------------------------//
 
@@ -17,21 +17,19 @@
 #include "utilities/DBC.hh"
 #include "utilities/SP.hh"
 #include <vector>
-#ifdef SERMENT_ENABLE_BOOST
 #include <boost/serialization/map.hpp>
 #include <boost/serialization/vector.hpp>
 #include <boost/serialization/string.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/export.hpp>
-#endif
 
 namespace erme_geometry
 {
 
-/*!
- *  \class Node
- *  \brief Base node class
+/**
+ *  @class Node
+ *  @brief Base node class
  *
  *  The response matrix method decomposes a system into independent
  *  computational nodes.  This class represents an abstract node,
@@ -53,7 +51,7 @@ namespace erme_geometry
  *  in any 3D node.
  *
  *  Because visualization of a node (or the set of connected nodes)
- *  is extremely useful, a Node must implement a \ref color function
+ *  is extremely useful, a Node can implement a \ref color function
  *  that returns some useful information about the node.  Because
  *  all nodes are assigned an origin, the implementation can determine
  *  whether a queried point is within the node, and if so, return a
@@ -75,111 +73,74 @@ public:
 
   /// Useful typedefs
   typedef detran_utilities::SP<Node>  SP_node;
-  typedef unsigned int                size_type;
+  typedef unsigned int                size_t;
   typedef std::vector<int>            vec_int;
   typedef std::vector<double>         vec_dbl;
-  typedef std::vector<size_type>      vec_size_type;
-  typedef std::vector<vec_size_type>  vec2_size_type;
+  typedef std::vector<size_t>      vec_size_t;
+  typedef std::vector<vec_size_t>  vec2_size_t;
   typedef detran_utilities::Point     Point;
 
-  /*!
-   *  \brief Constructor
-   *  \param dimension        Dimension of the node
-   *  \param number_surfaces  Number of surfaces
-   *  \param id               Identifier
-   *  \param name             Name
-   *  \param origin           Node origin relative to global origin
-   *  \param so               Spatial orders [surface][axis]
-   *  \param po               Polar orders [surface]
-   *  \param ao               Azimuth orders [surface]
-   *  \param eo               Energy orders [surface]
+  /**
+   *  @brief Constructor
+   *  @param dimension        Dimension of the node
+   *  @param number_surfaces  Number of surfaces
+   *  @param id               Identifier
+   *  @param name             Name
+   *  @param origin           Node origin relative to global origin
+   *  @param so               Spatial orders [surface][axis]
+   *  @param po               Polar orders [surface]
+   *  @param ao               Azimuth orders [surface]
+   *  @param eo               Energy orders [surface]
    */
-  Node(const size_type  dimension,
-       const size_type  number_surfaces,
-       const int        id,
-       std::string      name,
-       const Point      origin,
-       vec2_size_type   so,
-       vec_size_type    po,
-       vec_size_type    ao,
-       vec_size_type    eo);
+  Node(const size_t  dimension,
+       const size_t  number_surfaces,
+       const int     id,
+       std::string   name,
+       const Point   origin,
+       vec2_size_t   so,
+       vec_size_t    po,
+       vec_size_t    ao,
+       vec_size_t    eo);
 
-  /// Virtual destructor
-  virtual ~Node(){}
+  /// Pure virtual destructor
+  virtual ~Node() = 0;
 
   //-------------------------------------------------------------------------//
   // ABSTRACT INTERFACE
   //-------------------------------------------------------------------------//
 
-  /*!
-   *  \brief Return the area of a node surface
-   *  \param surface    Surface index
+  /**
+   *  @brief Return the area of a node surface
+   *  @param surface    Surface index
    */
-  virtual double area(const size_type surface) const = 0;
+  virtual double area(const size_t surface) const = 0;
 
   /// Return the volume of the node
   virtual double volume() const = 0;
 
-  /// Return the color associated with the spatial coordinate.
+  /// Return a color
   virtual double color(Point point) = 0;
 
   //-------------------------------------------------------------------------//
   // PUBLIC INTERFACE
   //-------------------------------------------------------------------------//
 
-  size_type dimension() const
-  {
-    return d_dimension;
-  }
+  /// Node dimension
+  size_t dimension() const;
+  size_t number_surfaces() const;
+  int id() const;
+  std::string name() const;
+  Point origin() const;
+  /// Spatial order for a surface and possible dimension
+  size_t spatial_order(const size_t s, const size_t d) const;
+  /// Polar order for a surface
+  size_t polar_order(const size_t s) const;
+  /// Azimuthal order for a surface
+  size_t azimuthal_order(const size_t s) const;
+  /// Energy order for a surface
+  size_t energy_order(const size_t s) const;
+  ///
 
-  size_type number_surfaces() const
-  {
-    return d_number_surfaces;
-  }
-
-  int id() const
-  {
-    return d_id;
-  }
-
-  std::string name() const
-  {
-    return d_name;
-  }
-
-  Point origin() const
-  {
-    return d_origin;
-  }
-
-  size_type spatial_order(const size_type s, const size_type d) const
-  {
-    // Preconditions
-    Require(s < d_number_surfaces);
-    Require(d < d_spatial_order[s].size());
-    return d_spatial_order[s][d];
-  }
-
-  size_type polar_order(const size_type s) const
-  {
-    // Preconditions
-    Require(s < d_number_surfaces);
-    return d_polar_order[s];
-  }
-
-  size_type azimuthal_order(const size_type s) const
-  {
-    // Preconditions
-    Require(s < d_number_surfaces);
-    return d_azimuthal_order[s];
-  }
-
-  size_type energy_order(const size_type s) const
-  {
-    // Preconditions
-    Require(s < d_number_surfaces);
-    return d_energy_order[s];
-  }
 
 private:
 
@@ -188,31 +149,23 @@ private:
   //-------------------------------------------------------------------------//
 
   /// Problem dimension
-  size_type d_dimension;
-
+  size_t d_dimension;
   /// Number of node surfaces
-  size_type d_number_surfaces;
-
+  size_t d_number_surfaces;
   /// Identifier
   int d_id;
-
   /// Node name
   std::string d_name;
-
   /// Origin
   Point d_origin;
-
   /// Spatial orders per dimension per surface
-  vec2_size_type d_spatial_order;
-
+  vec2_size_t d_spatial_order;
   /// Polar order per surface
-  vec_size_type d_polar_order;
-
+  vec_size_t d_polar_order;
   /// Azimuth order per surface
-  vec_size_type d_azimuthal_order;
-
+  vec_size_t d_azimuthal_order;
   /// Energy order per surface
-  vec_size_type d_energy_order;
+  vec_size_t d_energy_order;
 
   //-------------------------------------------------------------------------//
   // IMPLEMENTATION
@@ -250,6 +203,8 @@ private:
 } // end namespace erme_geometry
 
 BOOST_SERIALIZATION_ASSUME_ABSTRACT(erme_geometry::Node)
+
+#include "Node.i.hh"
 
 #endif // NODE_HH_ 
 

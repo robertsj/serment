@@ -1,9 +1,9 @@
 //----------------------------------*-C++-*----------------------------------//
-/*!
- * \file   CartesianNode.hh
- * \brief  CartesianNode 
- * \author Jeremy Roberts
- * \date   Aug 22, 2012
+/**
+ *  @file   CartesianNode.hh
+ *  @brief  CartesianNode
+ *  @author Jeremy Roberts
+ *  @date   Aug 22, 2012
  */
 //---------------------------------------------------------------------------//
 
@@ -15,15 +15,18 @@
 namespace erme_geometry
 {
 
-/*!
- *  \class CartesianNode
- *  \brief Base Cartesian node class
- *
+/**
+ *  @class CartesianNode
+ *  @brief Base Cartesian node class
  */
 class CartesianNode: public Node
 {
 
 public:
+
+  //-------------------------------------------------------------------------//
+  // ENUMERATIONS
+  //-------------------------------------------------------------------------//
 
   // Face identifiers
   enum FACE
@@ -36,29 +39,37 @@ public:
     TOP
   };
 
+  //-------------------------------------------------------------------------//
+  // TYPEDEFS
+  //-------------------------------------------------------------------------//
+
   typedef Node                    Base;
   typedef std::vector<double>     vec_dbl;
 
-  CartesianNode(const size_type  d,
-                const size_type  n,
-                const int        nodeid,
-                std::string      nodename,
-                const Point      nodeorigin,
-                vec2_size_type   so,
-                vec_size_type    po,
-                vec_size_type    ao,
-                vec_size_type    eo,
-                vec_dbl          nodewidth);
+  //-------------------------------------------------------------------------//
+  // CONSTRUCTOR & DESTRUCTOR
+  //-------------------------------------------------------------------------//
+
+  CartesianNode(const size_t  d,
+                const size_t  n,
+                const int     nodeid,
+                std::string   nodename,
+                const Point   nodeorigin,
+                vec2_size_t   so,
+                vec_size_t    po,
+                vec_size_t    ao,
+                vec_size_t    eo,
+                vec_dbl       nodewidth);
 
   //-------------------------------------------------------------------------//
   // ABSTRACT INTERFACE
   //-------------------------------------------------------------------------//
 
-  /*!
-   *  \brief Return the area of a node surface
-   *  \param surface    Surface index
+  /**
+   *  @brief Return the area of a node surface
+   *  @param surface    Surface index
    */
-  double area(const size_type surface) const
+  double area(const size_t surface) const
   {
     Require(surface < number_surfaces());
     if (surface == 0 or surface == 1)
@@ -74,8 +85,22 @@ public:
     return d_width[0] * d_width[1] * d_width[2];
   }
 
-  /// Return the color associated with the spatial coordinate.
-  virtual double color(Point point) = 0;
+  /// Default color.  Am I in the box or not?
+  virtual double color(Point point)
+  {
+    Point point_local = point + -1*origin();
+    if ( (point_local.x() < 0.0) or
+         (point_local.y() < 0.0) or
+         (point_local.z() < 0.0) or
+         (point_local.x() > d_width[0]) or
+         (point_local.y() > d_width[1]) or
+         (point_local.z() > d_width[2]) )
+    {
+      return -1.0;
+    }
+    return (double) id();
+  }
+
 
 private:
 
@@ -97,7 +122,6 @@ protected:
 
 private:
 
-#ifdef SERMENT_ENABLE_BOOST
   friend class boost::serialization::access;
   template<class Archive>
   void serialize(Archive & ar, const unsigned int version)
@@ -105,18 +129,13 @@ private:
     ar & boost::serialization::base_object<Base>(*this);
     ar & d_width;
   }
-#endif
 
 };
 
 } // end namespace erme_geometry
 
-#ifdef SERMENT_ENABLE_BOOST
 BOOST_CLASS_EXPORT_KEY(erme_geometry::CartesianNode)
 BOOST_SERIALIZATION_ASSUME_ABSTRACT(erme_geometry::CartesianNode)
-#endif
-
-
 
 #endif // CARTESIANNODE_HH_ 
 

@@ -13,10 +13,12 @@
 #include "ResponseIndexer.hh"
 #include "NodeResponse.hh"
 #include "ResponseSource.hh"
+#include "ResponseDatabase.hh"
 #include "erme_geometry/NodeList.hh"
 #include "utilities/DBC.hh"
 #include "utilities/SP.hh"
 #include <vector>
+#include <string>
 
 namespace erme_response
 {
@@ -51,18 +53,20 @@ public:
   typedef std::vector<SP_source>                vec_source;
   typedef ResponseIndexer::SP_indexer           SP_indexer;
   typedef erme_geometry::NodeList::SP_nodelist  SP_nodelist;
+  typedef ResponseDatabase::SP_rfdb             SP_rfdb;
   typedef unsigned int                          size_t;
 
   //-------------------------------------------------------------------------//
   // PUBLIC INTERFACE
   //-------------------------------------------------------------------------//
 
-  /*!
-   *  \brief Constructor
-   *  \param nodes    Pointer to node list
-   *  \param indexer  Pointer to indexer
+  /**
+   *  @brief Constructor
+   *  @param nodes    Pointer to node list
+   *  @param indexer  Pointer to indexer
+   *  @param dbname   Filename of response database (optional)
    */
-  ResponseServer(SP_nodelist nodes, SP_indexer indexer);
+  ResponseServer(SP_nodelist nodes, SP_indexer indexer, std::string dbname = "");
 
   /// Update the eigenvalue and compute the new responses
   void update(const double keff);
@@ -87,6 +91,9 @@ private:
 
   /// Node response functions [size = local number of nodes]
   vec_response d_responses;
+
+  /// Response database
+  SP_rfdb d_rfdb;
 
   //-------------------------------------------------------------------------//
   // IMPLEMENTATION

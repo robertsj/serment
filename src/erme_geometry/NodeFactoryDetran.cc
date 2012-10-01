@@ -53,10 +53,10 @@ Node::SP_node NodeFactoryDetran::create_node(SP_db db,
   std::string name = db->get<std::string>("erme_node_name");
 
   // Set the order vectors
-  Node_T::vec2_size_type sov(ns, Node_T::vec_size_type(dim-1, so));
-  Node_T::vec_size_type  pov(ns, po);
-  Node_T::vec_size_type  aov(ns, ao);
-  Node_T::vec_size_type  eov(ns, eo);
+  Node_T::vec2_size_t sov(ns, Node_T::vec_size_t(dim-1, so));
+  Node_T::vec_size_t  pov(ns, po);
+  Node_T::vec_size_t  aov(ns, ao);
+  Node_T::vec_size_t  eov(ns, eo);
 
   // Origin
   Node_T::Point origin(0, 0, 0);

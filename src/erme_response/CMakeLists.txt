@@ -13,6 +13,8 @@ SET(SRC
     NodeResponse.cc
     ResponseServer.cc
     ResponseSourceDummy.cc
+    ResponseDatabase.cc
+    ResponseSourceDatabase.cc
 )
 
 #-------------------------------------#
@@ -26,7 +28,8 @@ ADD_LIBRARY(erme_response
 TARGET_LINK_LIBRARIES( erme_response
                        erme_geometry
                        serment_comm
-                       ${Detran_LIBRARIES}                    
+                       ${Detran_LIBRARIES}  
+                       ${HDF5_LIBRARIES}             
 )
 
 INSTALL_FILES(/include .hh)

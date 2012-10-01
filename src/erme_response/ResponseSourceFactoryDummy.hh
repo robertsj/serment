@@ -1,10 +1,9 @@
 //----------------------------------*-C++-*----------------------------------//
-/*!
- * \file   ResponseSourceFactoryDummy.hh
- * \author robertsj
- * \date   Aug 31, 2012
- * \brief  ResponseSourceFactory build specialization for Dummy nodes
- * \note   Copyright (C) 2012 Jeremy Roberts. 
+/**
+ *  @file   ResponseSourceFactoryDummy.hh
+ *  @author robertsj
+ *  @date   Aug 31, 2012
+ *  @brief  ResponseSourceFactory build specialization for Dummy nodes
  */
 //---------------------------------------------------------------------------//
 

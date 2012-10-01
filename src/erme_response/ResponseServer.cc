@@ -1,10 +1,9 @@
 //----------------------------------*-C++-*----------------------------------//
-/*!
- * \file   ResponseServer.cc
- * \author robertsj
- * \date   Aug 31, 2012
- * \brief  ResponseServer class definition.
- * \note   Copyright (C) 2012 Jeremy Roberts. 
+/**
+ *  @file   ResponseServer.cc
+ *  @author robertsj
+ *  @date   Aug 31, 2012
+ *  @brief  ResponseServer class definition.
  */
 //---------------------------------------------------------------------------//
 
@@ -17,13 +16,23 @@
 namespace erme_response
 {
 
-ResponseServer::ResponseServer(SP_nodelist nodes,
-                               SP_indexer indexer)
+ResponseServer::ResponseServer(SP_nodelist  nodes,
+                               SP_indexer   indexer,
+                               std::string  dbname)
   : d_nodes(nodes)
   , d_indexer(indexer)
   , d_sources(nodes->number_local_nodes())
   , d_responses(nodes->number_local_nodes())
 {
+  // Preconditions
+  Require(nodes);
+  Require(indexer);
+
+  // Build the response database if requested
+  if (dbname != "")
+  {
+    d_rfdb = ResponseDatabase::Create(dbname);
+  }
 
   ResponseSourceFactory builder;
   for (size_t n = 0; n < d_sources.size(); n++)
@@ -31,13 +40,13 @@ ResponseServer::ResponseServer(SP_nodelist nodes,
     // Build the sources
     size_t n_global = nodes->global_index(n);
     d_sources[n] = builder.build(nodes->node(n_global));
-    Assert(d_sources[n]);
+    Ensure(d_sources[n]);
 
     // Build the nodal response containers
     d_responses[n] =
         new NodeResponse(d_indexer->number_node_moments(n_global),
                          d_nodes->node(n_global)->number_surfaces());
-    Assert(d_responses[n]);
+    Ensure(d_responses[n]);
   }
 
 }

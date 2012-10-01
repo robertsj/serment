@@ -1,9 +1,9 @@
 //----------------------------------*-C++-*----------------------------------//
-/*!
- * \file   HexagonalNode.hh
- * \brief  HexagonalNode 
- * \author Jeremy Roberts
- * \date   Aug 28, 2012
+/**
+ *  @file   HexagonalNode.hh
+ *  @brief  HexagonalNode
+ *  @author Jeremy Roberts
+ *  @date   Aug 28, 2012
  */
 //---------------------------------------------------------------------------//
 
@@ -15,9 +15,9 @@
 namespace erme_geometry
 {
 
-/*!
- *  \class HexagonalNode
- *  \brief Base Hexagonal node class
+/**
+ *  @class HexagonalNode
+ *  @brief Base Hexagonal node class
  *
  */
 class HexagonalNode: public Node
@@ -41,15 +41,15 @@ public:
   typedef Node                    Base;
   typedef std::vector<double>     vec_dbl;
 
-  HexagonalNode(const size_type  d,
-                const size_type  n,
+  HexagonalNode(const size_t  d,
+                const size_t  n,
                 const int        nodeid,
                 std::string      nodename,
                 const Point      nodeorigin,
-                vec2_size_type   so,
-                vec_size_type    po,
-                vec_size_type    ao,
-                vec_size_type    eo,
+                vec2_size_t   so,
+                vec_size_t    po,
+                vec_size_t    ao,
+                vec_size_t    eo,
                 const double     face_width,
                 const double     height = 1.0);
 
@@ -57,11 +57,11 @@ public:
   // ABSTRACT INTERFACE
   //-------------------------------------------------------------------------//
 
-  /*!
-   *  \brief Return the area of a node surface
-   *  \param surface    Surface index
+  /**
+   *  @brief Return the area of a node surface
+   *  @param surface    Surface index
    */
-  double area(const size_type surface) const
+  double area(const size_t surface) const
   {
     Require(surface < number_surfaces());
     if (surface < 6)

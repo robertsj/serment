@@ -1,9 +1,9 @@
 //----------------------------------*-C++-*----------------------------------//
-/*!
- * \file   CartesianNode.cc
- * \brief  CartesianNode 
- * \author Jeremy Roberts
- * \date   Aug 22, 2012
+/**
+ *  @file   CartesianNode.cc
+ *  @brief  CartesianNode
+ *  @author Jeremy Roberts
+ *  @date   Aug 22, 2012
  */
 //---------------------------------------------------------------------------//
 
@@ -12,15 +12,15 @@
 namespace erme_geometry
 {
 
-CartesianNode::CartesianNode(const size_type  d,
-                             const size_type  n,
-                             const int        nodeid,
-                             std::string      nodename,
-                             const Point      nodeorigin,
-                             vec2_size_type   so,
-                             vec_size_type    po,
-                             vec_size_type    ao,
-                             vec_size_type    eo,
+CartesianNode::CartesianNode(const size_t  d,
+                             const size_t  n,
+                             const int     nodeid,
+                             std::string   nodename,
+                             const Point   nodeorigin,
+                             vec2_size_t   so,
+                             vec_size_t    po,
+                             vec_size_t    ao,
+                             vec_size_t    eo,
                              vec_dbl          nodewidth)
   : Node(d, n, nodeid, nodename, nodeorigin, so, po, ao, eo)
   , d_width(nodewidth)
@@ -36,9 +36,7 @@ CartesianNode::CartesianNode(const size_type  d,
 
 } // end namespace erme_geometry
 
-#ifdef SERMENT_ENABLE_BOOST
 BOOST_CLASS_EXPORT_IMPLEMENT(erme_geometry::CartesianNode)
-#endif
 
 //---------------------------------------------------------------------------//
 //              end of file CartesianNode.cc

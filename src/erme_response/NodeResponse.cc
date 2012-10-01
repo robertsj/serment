@@ -35,9 +35,34 @@ void NodeResponse::display() const
   {
     for (int in = 0; in < d_N; in++)
     {
-      printf("%12.8e ", d_boundary_response[in][out]);
+      printf("%16.8e ", d_boundary_response[in][out]);
     }
     printf("\n");
+  }
+  printf("\n");
+  printf("Leakage Responses \n");
+  printf("------------------ \n");
+  for (int out = 0; out < d_number_surfaces; out++)
+  {
+    for (int in = 0; in < d_N; in++)
+    {
+      printf("%16.8e ", d_leakage_response[in][out]);
+    }
+    printf("\n");
+  }
+  printf("\n");
+  printf("Fission Responses \n");
+  printf("------------------ \n");
+  for (int in = 0; in < d_N; in++)
+  {
+    printf("%16.8e ", d_fission_response[in]);
+  }
+  printf("\n\n");
+  printf("Absorption Responses \n");
+  printf("------------------ \n");
+  for (int in = 0; in < d_N; in++)
+  {
+    printf("%16.8e ", d_absorption_response[in]);
   }
   printf("\n\n");
 }

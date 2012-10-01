@@ -12,15 +12,15 @@
 namespace erme_geometry
 {
 
-Node::Node(const size_type  d,
-           const size_type  n,
-           const int        nodeid,
-           std::string      nodename,
-           const Point      nodeorigin,
-           vec2_size_type   so,
-           vec_size_type    po,
-           vec_size_type    ao,
-           vec_size_type    eo)
+Node::Node(const size_t  d,
+           const size_t  n,
+           const int     nodeid,
+           std::string   nodename,
+           const Point   nodeorigin,
+           vec2_size_t   so,
+           vec_size_t    po,
+           vec_size_t    ao,
+           vec_size_t    eo)
   : d_dimension(d)
   , d_number_surfaces(n)
   , d_id(nodeid)
@@ -38,6 +38,11 @@ Node::Node(const size_type  d,
   Require(d_polar_order.size()      == d_number_surfaces);
   Require(d_azimuthal_order.size()  == d_number_surfaces);
   Require(d_energy_order.size()     == d_number_surfaces);
+}
+
+Node::~Node()
+{
+  /* ... */
 }
 
 } // end namespace detran
