@@ -22,7 +22,7 @@ class GlobalSolverPicard: public GlobalSolverBase
   // TYPEDEFS
   //-------------------------------------------------------------------------//
 
-  typedef detran::SP<GlobalSolverPicard>              SP_solver;
+  typedef detran_utilities::SP<GlobalSolverPicard>    SP_solver;
   typedef GlobalSolverBase                            Base;
 
   //-------------------------------------------------------------------------//
