@@ -66,7 +66,9 @@ public:
    *  @param indexer  Pointer to indexer
    *  @param dbname   Filename of response database (optional)
    */
-  ResponseServer(SP_nodelist nodes, SP_indexer indexer, std::string dbname = "");
+  ResponseServer(SP_nodelist nodes,
+                 SP_indexer indexer,
+                 std::string dbname = "");
 
   /// Update the eigenvalue and compute the new responses
   void update(const double keff);
@@ -82,16 +84,12 @@ private:
 
   /// Nodes
   SP_nodelist d_nodes;
-
   /// Indexer
   SP_indexer d_indexer;
-
   /// Sources [size = local number of nodes]
   vec_source d_sources;
-
   /// Node response functions [size = local number of nodes]
   vec_response d_responses;
-
   /// Response database
   SP_rfdb d_rfdb;
 
@@ -99,8 +97,8 @@ private:
   // IMPLEMENTATION
   //-------------------------------------------------------------------------//
 
-  /*!
-   *  \brief Compute responses by dividing work explicitly among processes
+  /**
+   *  @brief Compute responses by dividing work explicitly among processes
    *
    *  Each response is treated the same, when in fact some responses (or
    *  nodes) might be inherently expensive.  A reduction is used to get
@@ -110,13 +108,13 @@ private:
    */
   void update_explicit_work_share();
 
-  /*!
-   *  \brief Compute responses by using a self-scheduling master-slave
+  /**
+   *  @brief Compute responses by using a self-scheduling master-slave
    *         approach
    */
   void update_master_slave()
   {
-    THROW("not yet done");
+    THROW("MASTER-SLAVE NOT IMPLEMENTED");
   }
 
 };

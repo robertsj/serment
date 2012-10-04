@@ -76,7 +76,7 @@ inline void ResponseDatabase::get(std::string     nodename,
   }
   else
   {
-    /* ... */
+    THROW("R(k) = R0 + R1/k ... EXPANSION NOT YET IMPLEMENTED");
   }
 
 }

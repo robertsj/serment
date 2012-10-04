@@ -1,9 +1,9 @@
 //----------------------------------*-C++-*----------------------------------//
-/*!
- * \file   AbsorptionOperator.hh
- * \brief  AbsorptionOperator
- * \author Jeremy Roberts
- * \date   Aug 24, 2012
+/**
+ *  @file   AbsorptionOperator.hh
+ *  @brief  AbsorptionOperator
+ *  @author Jeremy Roberts
+ *  @date   Aug 24, 2012
  */
 //---------------------------------------------------------------------------//
 
@@ -16,13 +16,12 @@
 namespace erme
 {
 
-/*!
- *  \class AbsorptionOperator
- *  \brief Converts a global moments vector into a global absorption rate
- *
+/**
+ *  @class AbsorptionOperator
+ *  @brief Converts a global moments vector into a global absorption rate
  */
-/*!
- *  \example erme/test/test_AbsorptionOperator
+/**
+ *  @example erme/test/test_AbsorptionOperator
  *
  *  Test of AbsorptionOperator class
  */

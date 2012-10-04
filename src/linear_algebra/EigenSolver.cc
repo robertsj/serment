@@ -20,8 +20,9 @@ EigenSolver::EigenSolver(SP_matrix A, SP_matrix B)
   // Preconditions
   Require(A);
 
+  // Watch for a generalized problem
   bool generalized = false;
-  if (d_B) generalize = true;
+  if (d_B) generalized = true;
 
   // Create the context.
   PetscErrorCode ierr = EPSCreate(PETSC_COMM_WORLD, &d_solver);
@@ -48,21 +49,34 @@ EigenSolver::EigenSolver(SP_matrix A, SP_matrix B)
   ierr = EPSSetFromOptions(d_solver);
   Insist(!ierr, "Error setting EPS from options.");
 
+  // Set temporary storage
+  d_x_imaginary = new linear_algebra::Vector(A->number_local_columns());
+
   // Postconditions
   Ensure(!ierr);
 }
 
-void EigenSolver::solve(SP_vector b, SP_vector x)
+double EigenSolver::solve(SP_vector x)
 {
   // Preconditions
-  Require(b);
   Require(x);
 
-  // Solve
-  PetscErrorCode ierr = KSPSolve(d_solver, b->V(), x->V());
+  // Solve the eigenproblem
+  PetscErrorCode ierr = EPSSolve(d_solver);
+  Insist(!ierr, "Error solving eigenvalue problem.");
 
-  // Postconditions
-  Insist(!ierr, "Error in KSPSolve.");
+  // Extract the number of iterations
+  ierr = EPSGetIterationNumber(d_solver, &d_number_iterations);
+  Insist(!ierr, "Error getting iteration count.");
+
+  // Get the dominant mode.
+  ierr = EPSGetEigenpair(d_solver, 0,
+                         &d_lambda, &d_lambda_imaginary,
+                         x->V(), d_x_imaginary->V());
+  Insist(!ierr, "Error getting eigenpair.");
+
+  // Return the eigenvalue
+  return d_lambda;
 }
 
 } // end namespace linear_algebra

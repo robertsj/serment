@@ -1,9 +1,9 @@
 //----------------------------------*-C++-*----------------------------------//
-/*!
- * \file   FissionOperator.hh
- * \brief  FissionOperator 
- * \author Jeremy Roberts
- * \date   Aug 24, 2012
+/**
+ *  @file   FissionOperator.hh
+ *  @brief  FissionOperator
+ *  @author Jeremy Roberts
+ *  @date   Aug 24, 2012
  */
 //---------------------------------------------------------------------------//
 
@@ -16,13 +16,13 @@
 namespace erme
 {
 
-/*!
- *  \class FissionOperator
- *  \brief Converts a global moments vector into a global fission rate
+/**
+ *  @class FissionOperator
+ *  @brief Converts a global moments vector into a global fission rate
  *
  */
-/*!
- *  \example erme/test/test_FissionOperator
+/**
+ *  @example erme/test/test_FissionOperator
  *
  *  Test of FissionOperator class
  */
@@ -43,11 +43,11 @@ public:
   // PUBLIC INTERFACE
   //-------------------------------------------------------------------------//
 
-  /*!
-   *  \brief Constructor
-   *  \param nodes    Pointer to node list
-   *  \param indexer  Pointer to response indexer
-   *  \param server   Pointer to response server
+  /**
+   *  @brief Constructor
+   *  @param nodes    Pointer to node list
+   *  @param indexer  Pointer to response indexer
+   *  @param server   Pointer to response server
    */
   FissionOperator(SP_nodelist nodes, SP_indexer indexer, SP_server server);
 

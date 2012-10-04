@@ -1,15 +1,14 @@
 //----------------------------------*-C++-*----------------------------------//
-/*!
- * \file   EigenSolver.hh
- * \author robertsj
- * \date   Sep 5, 2012
- * \brief  EigenSolver class definition.
- * \note   Copyright (C) 2012 Jeremy Roberts. 
+/**
+ *  @file   EigenSolver.hh
+ *  @author robertsj
+ *  @date   Sep 5, 2012
+ *  @brief  EigenSolver class definition.
  */
 //---------------------------------------------------------------------------//
 
-#ifndef EIGENSOLVER_HH_
-#define EIGENSOLVER_HH_
+#ifndef linear_algebra_EIGENSOLVER_HH_
+#define linear_algebra_EIGENSOLVER_HH_EIGENSOLVER_HH_
 
 #include "Vector.hh"
 #include "MatrixBase.hh"
@@ -32,27 +31,27 @@ public:
   // TYPEDEFS
   //-------------------------------------------------------------------------//
 
-  typedef detran::SP<EigenSolver>    SP_solver;
-  typedef MatrixBase::SP_matrix       SP_matrix;
-  typedef Vector::SP_vector           SP_vector;
+  typedef detran_utilities::SP<EigenSolver>     SP_solver;
+  typedef MatrixBase::SP_matrix                 SP_matrix;
+  typedef Vector::SP_vector                     SP_vector;
 
   //-------------------------------------------------------------------------//
   // PUBLIC INTERFACE
   //-------------------------------------------------------------------------//
 
-  /*!
-   *  \brief Constructor
-   *  \param A  Pointer to left hand operator
-   *  \param P  Pointer to right hand operator (possibly null)
+  /**
+   *  @brief Constructor
+   *  @param A  Pointer to left hand operator
+   *  @param P  Pointer to right hand operator (possibly null)
    */
   EigenSolver(SP_matrix A, SP_matrix B = SP_matrix(0));
 
-
-  /*!
-   *  \brief Solve the eigenvalue problem
-   *  \param x  Eigenvector
+  /**
+   *  @brief Solve the eigenvalue problem
+   *  @param x  Eigenvector
+   *  @return   Dominant eigenvalue
    */
-  void solve(SP_vector x);
+  double solve(SP_vector x);
 
 private:
 
@@ -62,21 +61,28 @@ private:
 
   /// SLEPc eigensolver
   EPS d_solver;
-
   /// Left side
   SP_matrix d_A;
-
   /// Right side
   SP_matrix d_B;
+  /// Temporary vector for imaginary component
+  SP_vector d_x_imaginary;
+  /// Eigenvalue (real part)
+  double d_lambda;
+  /// Eigenvalue (imaginary part)
+  double d_lambda_imaginary;
+  /// Number of iterations
+  int d_number_iterations;
 
   //-------------------------------------------------------------------------//
   // IMPLEMENTATION
   //-------------------------------------------------------------------------//
 
-
 };
 
-#endif /* EIGENSOLVER_HH_ */
+} // end namespace linear_algebra
+
+#endif /* linear_algebra_EIGENSOLVER_HH_EIGENSOLVER_HH_ */
 
 //---------------------------------------------------------------------------//
 //              end of file EigenSolver.hh

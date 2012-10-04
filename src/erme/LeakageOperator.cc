@@ -1,9 +1,9 @@
 //----------------------------------*-C++-*----------------------------------//
-/*!
- * \file   LeakageOperator.cc
- * \brief  LeakageOperator 
- * \author Jeremy Roberts
- * \date   Sep 4, 2012
+/**
+ *  @file   LeakageOperator.cc
+ *  @brief  LeakageOperator
+ *  @author Jeremy Roberts
+ *  @date   Sep 4, 2012
  */
 //---------------------------------------------------------------------------//
 
@@ -28,7 +28,7 @@ LeakageOperator::LeakageOperator(SP_nodelist nodes,
   int index_s = 0;
   int index_m = 0;
 
-  /*!
+  /*
    *  Loop over all nodes.  The nonzero count is the number of moments
    *  for the node.  The global leakage vector gets an entry for each
    *  node surface.

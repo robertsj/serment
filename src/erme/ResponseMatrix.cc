@@ -1,9 +1,9 @@
 //----------------------------------*-C++-*----------------------------------//
-/*!
- * \file   ResponseMatrix.cc
- * \brief  ResponseMatrix member definitions
- * \author Jeremy Roberts
- * \date   Sep 2, 2012
+/**
+ *  @file   ResponseMatrix.cc
+ *  @brief  ResponseMatrix member definitions
+ *  @author Jeremy Roberts
+ *  @date   Sep 2, 2012
  */
 //---------------------------------------------------------------------------//
 

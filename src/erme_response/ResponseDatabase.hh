@@ -1,9 +1,9 @@
 //----------------------------------*-C++-*----------------------------------//
-/*!
- * \file   ResponseDatabase.hh
- * \brief  ResponseDatabase 
- * \author Jeremy Roberts
- * \date   Sep 24, 2012
+/**
+ *  @file   ResponseDatabase.hh
+ *  @brief  ResponseDatabase
+ *  @author Jeremy Roberts
+ *  @date   Sep 24, 2012
  */
 //---------------------------------------------------------------------------//
 

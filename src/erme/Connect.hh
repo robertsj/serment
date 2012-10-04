@@ -1,14 +1,14 @@
 //----------------------------------*-C++-*----------------------------------//
-/*!
- * \file   Connect.hh
- * \brief  Connect class definition
- * \author Jeremy Roberts
- * \date   Aug 23, 2012
+/**
+ *  @file   Connect.hh
+ *  @brief  Connect class definition
+ *  @author Jeremy Roberts
+ *  @date   Aug 23, 2012
  */
 //---------------------------------------------------------------------------//
 
-#ifndef CONNECT_HH_
-#define CONNECT_HH_
+#ifndef erme_CONNECT_HH_
+#define erme_CONNECT_HH_
 
 #include "linear_algebra/Matrix.hh"
 #include "erme_geometry/NodeList.hh"
@@ -17,9 +17,9 @@
 namespace erme
 {
 
-/*!
- *  \class Connect
- *  \brief Defines the geometric relationship between nodes
+/**
+ *  @class Connect
+ *  @brief Defines the geometric relationship between nodes
  *
  *  In the simplest case of one unknown per node surface, the connectivity
  *  matrix is simply an adjacency matrix in which a 1 is placed at any
@@ -29,7 +29,7 @@ namespace erme
  *  Vacuum or reflective boundary conditions are built into the connectivity
  *  matrix.  Reflective conditions require a polarity shift for odd
  *  moments; this applies to some combinations of space and angle basis
- *  functions.
+ *  functions.  Rotational symmetry can be built into the node connections.
  */
 class Connect: public linear_algebra::Matrix
 {
@@ -48,7 +48,7 @@ public:
   // PUBLIC INTERFACE
   //-------------------------------------------------------------------------//
 
-  /*!
+  /**
    *  \brief Constructor
    *  \param nodes    Pointer to list of nodes
    *  \param indexer  Pointer to response indexer
@@ -68,9 +68,9 @@ private:
 };
 
 
-} // end namespace detran
+} // end namespace erme
 
-#endif // CONNECT_HH_ 
+#endif // erme_CONNECT_HH_
 
 //---------------------------------------------------------------------------//
 //              end of file Connect.hh

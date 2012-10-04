@@ -1,9 +1,9 @@
 //----------------------------------*-C++-*----------------------------------//
-/*!
- * \file   Vector.hh
- * \brief  Vector 
- * \author Jeremy Roberts
- * \date   Aug 19, 2012
+/**
+ *  @file   Vector.hh
+ *  @brief  Vector
+ *  @author Jeremy Roberts
+ *  @date   Aug 19, 2012
  */
 //---------------------------------------------------------------------------//
 
@@ -17,16 +17,16 @@
 namespace linear_algebra
 {
 
-/*!
- *  \class Vector
- *  \brief Lightweight wrapper for PETSc Vec.
+/**
+ *  @class Vector
+ *  @brief Lightweight wrapper for PETSc Vec.
  *
  *  Use of Vector and the corresponding \ref Matrix class should, in
  *  theory, eliminate a lot of PETSc code from the rest of Serment.
  *
  */
-/*!
- *  \example linear_algebra/test/test_Vector.cc
+/**
+ *  @example linear_algebra/test/test_Vector.cc
  *
  *  Test of Vector class.
  */
@@ -35,15 +35,46 @@ class Vector
 
 public:
 
+  //---------------------------------------------------------------------------//
+  // ENUMERATIONS
+  //---------------------------------------------------------------------------//
+
+  /**
+   *  @brief various vector norms available
+   *
+   *  For a vector @f$ v \in (m, 1) @f$:
+   *    - @f$ ||v||_1         \equiv \sum_i |v_i| @f$
+   *    - @f$ ||v||_2         \equiv \sqrt{\sum_i v_i^2} @f$
+   *    - @f$ ||v||_{\infty}  \equiv \max_{v_i} |v_i| @f$
+   */
+  enum vector_norm_types
+  {
+    L1, L2, LINF, END_VECTOR_NORM_TYPES
+  };
+
+  //---------------------------------------------------------------------------//
+  // TYPEDEFS
+  //---------------------------------------------------------------------------//
+
   typedef detran_utilities::SP<Vector>      SP_vector;
   typedef unsigned int                      size_type;
 
-  /*!
-   *  \brief Constructor
-   *  \param m      Local number of rows
-   *  \param val    Optional initial value
+  //---------------------------------------------------------------------------//
+  // CONSTRUCTOR & DESTRUCTOR
+  //---------------------------------------------------------------------------//
+
+  /**
+   *  @brief Constructor
+   *  @param m      Local number of rows
+   *  @param val    Optional initial value
    */
   Vector(const size_type m, const double val = 0.0);
+
+  /**
+   *  @brief Copy Constructor
+   *  @param V      Vector to copy
+   */
+  Vector(const Vector &V);
 
   /// Destructor
   ~Vector();
@@ -52,11 +83,11 @@ public:
   // SETTERS
   //---------------------------------------------------------------------------//
 
-  /*!
-   *  \brief Insert values
-   *  \param values   Array of values to insert
-   *  \param number   Number of values to insert
-   *  \param rows     Indices of rows where values are inserted
+  /**
+   *  @brief Insert values
+   *  @param values   Array of values to insert
+   *  @param number   Number of values to insert
+   *  @param rows     Indices of rows where values are inserted
    */
   void insert_values(const unsigned int number,
                      const int *rows,
@@ -70,25 +101,32 @@ public:
   // VECTOR OPERATIONS
   //---------------------------------------------------------------------------//
 
-  /// Dot product of another Vector with me
+  /// Compute my norm.
+  double norm(const int type = L2);
+  double norm_residual(const Vector& x, const int type = L2);
   double dot(Vector &x);
-
-  /// Scale the Vector
   void scale(const double factor);
+  void set(const double v);
+  void add(const Vector& x);
+  void subtract(const Vector& x);
+  void multiply(const Vector& x);
+  void divide(const Vector& x);
+  void copy(const Vector& x);
+  void add_a_times_x(const double a, const Vector& x);
 
   //---------------------------------------------------------------------------//
   // ACCESSORS
   //---------------------------------------------------------------------------//
 
-  /*
-   *  \brief Const access to local array
-   *  \param i  Local index
+  /**
+   *  @brief Const access to local array
+   *  @param i  Local index
    */
   const double& operator[](const size_type i) const;
 
-  /*
-   *  \brief Mutable access to local array
-   *  \param i  Local index
+  /**
+   *  @brief Mutable access to local array
+   *  @param i  Local index
    */
   double& operator[](const size_type i);
 
