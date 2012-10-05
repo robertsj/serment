@@ -53,7 +53,7 @@ private:
 
 } // end namespace erme_geometry
 
-BOOST_CLASS_EXPORT_KEY(erme_geometry::CartesianNodeDummy)
+//BOOST_CLASS_EXPORT_KEY(erme_geometry::CartesianNodeDummy)
 
 #endif // DUMMYNODE_HH_ 
 

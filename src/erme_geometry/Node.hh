@@ -68,16 +68,20 @@ public:
 
   /// Boundary condition identifiers.  Note, periodic is not listed, since
   /// nodes can be explicitly linked in a periodic fashion.
-  const static int REFLECT = -1;
-  const static int VACUUM  = -2;
+//  const static int REFLECT = -1;
+//  const static int VACUUM  = -2;
+  enum NODE_BC
+  {
+    REFLECT = -1, VACUUM = -2
+  };
 
   /// Useful typedefs
   typedef detran_utilities::SP<Node>  SP_node;
   typedef unsigned int                size_t;
   typedef std::vector<int>            vec_int;
   typedef std::vector<double>         vec_dbl;
-  typedef std::vector<size_t>      vec_size_t;
-  typedef std::vector<vec_size_t>  vec2_size_t;
+  typedef std::vector<size_t>         vec_size_t;
+  typedef std::vector<vec_size_t>     vec2_size_t;
   typedef detran_utilities::Point     Point;
 
   /**
@@ -202,7 +206,7 @@ private:
 
 } // end namespace erme_geometry
 
-BOOST_SERIALIZATION_ASSUME_ABSTRACT(erme_geometry::Node)
+//BOOST_SERIALIZATION_ASSUME_ABSTRACT(erme_geometry::Node)
 
 #include "Node.i.hh"
 

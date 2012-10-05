@@ -42,8 +42,8 @@ public:
   // TYPEDEFS
   //-------------------------------------------------------------------------//
 
-  typedef detran_utilities::InputDB::SP_input       SP_db;
   typedef detran_utilities::SP<GlobalSolverBase>    SP_solver;
+  typedef detran_utilities::InputDB::SP_input       SP_db;
   typedef erme_response::ResponseServer::SP_server  SP_server;
   typedef erme::StateERME::SP_state                 SP_state;
   typedef erme::ResponseMatrix::SP_responsematrix   SP_R;

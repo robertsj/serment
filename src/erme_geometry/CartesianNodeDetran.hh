@@ -126,7 +126,7 @@ private:
 
 } // end namespace erme_geometry
 
-BOOST_CLASS_EXPORT_KEY(erme_geometry::CartesianNodeDetran)
+//BOOST_CLASS_EXPORT_KEY(erme_geometry::CartesianNodeDetran)
 
 #endif // CARTESIANNODEDETRAN_HH_ 
 

@@ -117,8 +117,8 @@ private:
 
 } // end namespace erme_geometry
 
-BOOST_CLASS_EXPORT_KEY(erme_geometry::CartesianNode)
-BOOST_SERIALIZATION_ASSUME_ABSTRACT(erme_geometry::CartesianNode)
+//BOOST_CLASS_EXPORT_KEY(erme_geometry::HexagonalNode)
+//BOOST_SERIALIZATION_ASSUME_ABSTRACT(erme_geometry::HexagonalNode)
 
 #endif // HEXAGONALNODE_HH_ 
 

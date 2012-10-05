@@ -45,6 +45,9 @@ set(SERMENT_ENABLE_HDF5    NO CACHE BOOL
     "Enable HDF5.")
 set(SERMENT_ENABLE_MPI     NO CACHE BOOL  
     "Enable MPI.")
+set(SERMENT_ENABLE_PYTHON  NO CACHE BOOL
+    "Enable Python bindings via SWIG."
+)
 
 # PETSc is essential for most things...
 if(NOT SERMENT_ENABLE_PETSC)
@@ -109,7 +112,14 @@ if(SERMENT_ENABLE_MPI)
   endif()
 endif()
 
-
+if(SERMENT_ENABLE_PYTHON)
+  find_package(SWIG REQUIRED)
+  include(${SWIG_USE_FILE})
+  find_package(PythonLibs REQUIRED)
+  include_directories(${PYTHON_INCLUDE_PATH})
+  include_directories(${PROJECT_BINARY_DIR}/config)
+  set(CMAKE_SWIG_FLAGS "-verbose")
+endif()
 
 #------------------------------------------------------------------------------#
 # CONFIGURATION

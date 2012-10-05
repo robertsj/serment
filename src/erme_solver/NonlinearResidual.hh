@@ -7,8 +7,8 @@
  */
 //---------------------------------------------------------------------------//
 
-#ifndef NONLINEARRESIDUAL_HH_
-#define NONLINEARRESIDUAL_HH_
+#ifndef erme_solver_NONLINEARRESIDUAL_HH_
+#define erme_solver_NONLINEARRESIDUAL_HH_
 
 #include "erme/ResponseMatrix.hh"
 #include "erme/Connect.hh"
@@ -101,10 +101,11 @@ private:
 
 };
 
-
 } // end namespace erme_solver
 
-#endif // NONLINEARRESIDUAL_HH_ 
+#include "NonlinearResidual.i.hh"
+
+#endif // erme_solver_NONLINEARRESIDUAL_HH_
 
 //---------------------------------------------------------------------------//
 //              end of file NonlinearResidual.hh

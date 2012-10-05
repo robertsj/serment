@@ -34,7 +34,8 @@ public:
   //-------------------------------------------------------------------------//
 
   /// Constructor
-  EigenvalueUpdate();
+  EigenvalueUpdate()
+  {/* ... */}
 
   /// Virtual destructor
   virtual ~EigenvalueUpdate(){}

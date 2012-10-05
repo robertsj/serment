@@ -1,5 +1,5 @@
 #-------------------------------------------------------------------------------
-# serment/src/linear_algebra/CMakeLists.txt
+# serment/src/erme_utils/CMakeLists.txt
 #-------------------------------------------------------------------------------
 
 SET(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR})
@@ -9,36 +9,30 @@ SET(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 #-------------------------------------#
 
 SET(SRC
-    MatrixBase.cc
-    Matrix.cc
-    MatrixShell.cc
-    Vector.cc
-    EigenSolver.cc
+    Manager.cc
 )
 
 #-------------------------------------#
 # SHARED LIBRARY
 #-------------------------------------#
 
-ADD_LIBRARY(linear_algebra
+ADD_LIBRARY(erme_utils
             SHARED
             ${SRC} 
 )
-TARGET_LINK_LIBRARIES(linear_algebra
-                      ${Detran_LIBRARIES}
-                      ${PETSC_LIBRARIES}
-                      ${Boost_LIBRARIES}
+TARGET_LINK_LIBRARIES(erme_utils
+                      erme_solver                   
 )
 
 INSTALL_FILES(/include .hh)
-INSTALL_TARGETS(/lib linear_algebra)
+INSTALL_TARGETS(/lib erme_utils)
 
 #-------------------------------------#
 # TESTING
 #-------------------------------------#
 
-if( SERMENT_ENABLE_TEST )
-    include_directories(${SRC_DIR}/test)
-    add_subdirectory(${SRC_DIR}/test)
-endif()
+#if( SERMENT_ENABLE_TEST )
+#    include_directories(${SRC_DIR}/test)
+#    add_subdirectory(${SRC_DIR}/test)
+#endif()
 
