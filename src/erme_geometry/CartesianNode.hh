@@ -7,8 +7,8 @@
  */
 //---------------------------------------------------------------------------//
 
-#ifndef CARTESIANNODE_HH_
-#define CARTESIANNODE_HH_
+#ifndef erme_geometry_CARTESIANNODE_HH_
+#define erme_geometry_CARTESIANNODE_HH_
 
 #include "Node.hh"
 
@@ -44,7 +44,6 @@ public:
   //-------------------------------------------------------------------------//
 
   typedef Node                    Base;
-  typedef std::vector<double>     vec_dbl;
 
   //-------------------------------------------------------------------------//
   // CONSTRUCTOR & DESTRUCTOR
@@ -60,6 +59,24 @@ public:
                 vec_size_t    ao,
                 vec_size_t    eo,
                 vec_dbl       nodewidth);
+
+  /// SP constructor
+  static SP_node Create(const size_t  d,
+                        const size_t  n,
+                        const int     nodeid,
+                        std::string   nodename,
+                        const Point   nodeorigin,
+                        vec2_size_t   so,
+                        vec_size_t    po,
+                        vec_size_t    ao,
+                        vec_size_t    eo,
+                        vec_dbl       nodewidth)
+  {
+    SP_node p(new CartesianNode(d, n, nodeid, nodename, nodeorigin,
+                                so, po, ao, eo, nodewidth));
+    return p;
+  }
+
 
   //-------------------------------------------------------------------------//
   // ABSTRACT INTERFACE
@@ -134,10 +151,7 @@ private:
 
 } // end namespace erme_geometry
 
-//BOOST_CLASS_EXPORT_KEY(erme_geometry::CartesianNode)
-//BOOST_SERIALIZATION_ASSUME_ABSTRACT(erme_geometry::CartesianNode)
-
-#endif // CARTESIANNODE_HH_ 
+#endif // erme_geometry_CARTESIANNODE_HH_
 
 //---------------------------------------------------------------------------//
 //              end of file CartesianNode.hh

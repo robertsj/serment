@@ -173,37 +173,26 @@ private:
 
   /// Node list
   SP_nodelist d_nodes;
-
   /// List of indices for all nodes [nodes][surface][moments]
   vec3_index d_indices;
-
   /// Map a local cardinal index to the [node, surface, moment]
   vec2_size_t d_local_indices;
-
   /// Vector of moment sizes per node
   std::vector<size_t> d_sizes;
-
   /// Offset of node indices (within local set)
   std::vector<size_t> d_offsets;
-
   /// Offset of node indices (within local set)
   std::vector<size_t> d_global_offsets;
-
   /// Local size of moments vector
   size_t d_local_size;
-
   /// Global offset (i.e. the number of moments before me)
   size_t d_global_offset;
-
   /// Global size
   size_t d_global_size;
-
   /// Number global nodes
   size_t d_number_global_nodes;
-
   /// Number local nodes
   size_t d_number_local_nodes;
-
   /// Order reduction selector
   int d_order_reduction;
 

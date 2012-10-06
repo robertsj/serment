@@ -1,9 +1,9 @@
 //----------------------------------*-C++-*----------------------------------//
-/*!
- * \file   NodeList.i.hh
- * \brief  NodeList inline member definitions
- * \author Jeremy Roberts
- * \date   Aug 27, 2012
+/**
+ *  @file   NodeList.i.hh
+ *  @brief  NodeList inline member definitions
+ *  @author Jeremy Roberts
+ *  @date   Aug 27, 2012
  */
 //---------------------------------------------------------------------------//
 

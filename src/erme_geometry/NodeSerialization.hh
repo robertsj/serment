@@ -10,10 +10,11 @@
 #ifndef NODESERIALIZATION_HH_
 #define NODESERIALIZATION_HH_
 
+// Each node specialization must be added here
 #include "CartesianNodeDetran.hh"
 #include "DummyNode.hh"
 
-// This header must be included by node list
+// All node implementations (the .cc files) must include this header
 
 // Node
 BOOST_SERIALIZATION_ASSUME_ABSTRACT(erme_geometry::Node)

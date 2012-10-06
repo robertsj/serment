@@ -43,6 +43,8 @@ void Comm::initialize(int &argc, char **&argv)
 
 void Comm::finalize()
 {
+  // Free the communicators if applicable
+  free();
   MPI_Finalize();
 }
 
@@ -59,6 +61,10 @@ void Comm::setup_communicators(const unsigned int N)
 {
   Insist(communicator == world,
     "The current communicator must be world when setting up comm.");
+
+  // Free the communicators if already built.  This allows decomposition
+  // testing on-the-fly.
+  if (d_is_comm_built) free();
 
   // Number of processes in world
   int world_size = Comm::size();

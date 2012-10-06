@@ -8,6 +8,7 @@
 //---------------------------------------------------------------------------//
 
 #include "CartesianNodeDetran.hh"
+#include "NodeSerialization.hh"
 
 #include "utilities/detran_utilities.hh"
 

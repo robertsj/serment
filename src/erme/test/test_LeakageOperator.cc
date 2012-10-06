@@ -85,7 +85,7 @@ int test_LeakageOperator(int argc, char *argv[])
   erme_response::ResponseIndexer::SP_indexer
     indexer(new erme_response::ResponseIndexer(db, nodes));
 
-  // Creater server
+  // Create server
   erme_response::ResponseServer::SP_server
     server(new erme_response::ResponseServer(nodes, indexer));
 

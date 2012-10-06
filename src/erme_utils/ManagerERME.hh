@@ -1,14 +1,14 @@
 //----------------------------------*-C++-*----------------------------------//
 /**
- *  @file   Manager.hh
- *  @brief  Manager class definition
+ *  @file   ManagerERME.hh
+ *  @brief  ManagerERME class definition
  *  @author Jeremy Roberts
  *  @date   Sep 1, 2012
  */
 //---------------------------------------------------------------------------//
 
-#ifndef MANAGER_HH_
-#define MANAGER_HH_
+#ifndef erme_utils_MANAGERERME_HH_
+#define erme_utils_MANAGERERME_HH_
 
 //---------------------------------------------------------------------------//
 /** @mainpage Serment: An Eigenvalue Response Matrix Code
@@ -66,10 +66,10 @@ namespace erme_utils
 {
 
 /**
- *  @class Manager
+ *  @class ManagerERME
  *  @brief Manages solution of eigenvalue response matrix problem.
  */
-class Manager
+class ManagerERME
 {
 
 public:
@@ -78,7 +78,7 @@ public:
   // TYPEDEFS
   //-------------------------------------------------------------------------//
 
-  typedef detran_utilities::SP<Manager>               SP_manager;
+  typedef detran_utilities::SP<ManagerERME>           SP_manager;
   typedef detran_utilities::InputDB::SP_input         SP_db;
   typedef erme::StateERME::SP_state                   SP_state;
   typedef erme::ResponseMatrix::SP_responsematrix     SP_R;
@@ -97,13 +97,10 @@ public:
   //-------------------------------------------------------------------------//
 
   /// Constructor
-  Manager(SP_db db);
-
-  /// Destructor
-  ~Manager();
+  ManagerERME(int argc, char *argv[], SP_db db);
 
   /// SP constructor
-  static SP_manager Create(SP_db db);
+  static SP_manager Create(int argc, char *argv[], SP_db db);
 
   //-------------------------------------------------------------------------//
   // PUBLIC FUNCTIONS
@@ -123,6 +120,9 @@ public:
    *  solves.
    */
   void solve();
+
+  void finalize();
+
 
 private:
 
@@ -153,13 +153,13 @@ private:
   /// Global solver
   SP_solver d_solver;
 
-};
 
+};
 
 } // end namespace erme_utils
 
-#endif // MANAGER_HH_ 
+#endif // erme_utils_MANAGERERME_HH_
 
 //---------------------------------------------------------------------------//
-//              end of file Manager.hh
+//              end of file ManagerERME.hh
 //---------------------------------------------------------------------------//

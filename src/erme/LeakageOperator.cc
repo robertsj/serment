@@ -29,23 +29,54 @@ LeakageOperator::LeakageOperator(SP_nodelist nodes,
   int index_m = 0;
 
   /*
-   *  Loop over all nodes.  The nonzero count is the number of moments
-   *  for the node.  The global leakage vector gets an entry for each
-   *  node surface.
+   *  Note that the L operator has the form for a two 1D nodes
+   *  with two moments per side:
+   *
+   *     --- --- --- --- --- --- --- ---
+   *    | x | x | x | x | o | o | o | o |
+   *     --- --- --- --- --- --- --- ---
+   *    | x | x | x | x | o | o | o | o |
+   *     --- --- --- --- --- --- --- ---
+   *    | o | o | o | o | x | x | x | x |
+   *     --- --- --- --- --- --- --- ---
+   *    | o | o | o | o | x | x | x | x |
+   *     --- --- --- --- --- --- --- ---
+   *
+   *  Per PETSc's matrix definitions, each row has just
+   *  one nonzero on its diagonal.  The number of off diagonal
+   *  nonzeros is the number of nodal moments minus one.
+   *
    */
+
+
+  // Loop over all nodes
   for (int n = d_nodes->lower_bound(); n < d_nodes->upper_bound(); n++)
   {
+    // Total moments for this node
     int size = d_indexer->number_node_moments(n);
-    for (int i = 0; i < size; i++, index_m++)
-      nnz_on_diag[index_m] = size;
 
-    for (int s = 0; s < d_nodes->node(n)->number_surfaces(); s++, index_s++)
+    // Loop over this nodes surfaces
+    for (int s = 0; s < d_nodes->node(n)->number_surfaces(); ++s, ++index_s)
     {
+
+      Assert(index_s < nnz_on_diag.size());
+      nnz_on_diag[index_s] = 1;
+      nnz_off_diag[index_s] = size - 1;
+
+      // Check for leakage
       if (d_nodes->neighbor(n, s).neighbor() == erme_geometry::Node::VACUUM)
       {
+        Assert(index_s < d_global_leakage.local_size());
         d_global_leakage[index_s] = 1.0;
       }
+
     }
+
+  }
+
+  for (int i = 0; i < d_global_leakage.local_size(); ++i)
+  {
+    std::cout << " i = " << d_global_leakage[i] << std::endl;
   }
 
   // Preallocate.  This also computes the bounds and such.

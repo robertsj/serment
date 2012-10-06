@@ -1,9 +1,9 @@
 //----------------------------------*-C++-*----------------------------------//
-/*!
- * \file   NodeList.hh
- * \brief  NodeList class definition
- * \author Jeremy Roberts
- * \date   Aug 22, 2012
+/**
+ *  @file   NodeList.hh
+ *  @brief  NodeList class definition
+ *  @author Jeremy Roberts
+ *  @date   Aug 22, 2012
  */
 //---------------------------------------------------------------------------//
 
@@ -20,9 +20,9 @@
 namespace erme_geometry
 {
 
-/*!
- *  \class NodeList
- *  \brief Container for nodes and indices of their neighbors.
+/**
+ *  @class NodeList
+ *  @brief Container for nodes and indices of their neighbors.
  *
  *  The purpose of NodeList is to contain a list of Node
  *  pointers and their neighbors.  A neighbor index must be
@@ -35,8 +35,8 @@ namespace erme_geometry
  *  Once the user adds all nodes, finalize() must be
  *  called.
  */
-/*!
- *  \example erme_geometry/test/test_NodeList.cc
+/**
+ *  @example erme_geometry/test/test_NodeList.cc
  *
  *  Example of the NodeList class.
  */
@@ -66,15 +66,18 @@ public:
   /// Constructor
   NodeList();
 
-  /*!
-   *  \brief Set the local node array bounds
+  /// SP constructor
+  static SP_nodelist Create();
+
+  /**
+   *  @brief Set the local node array bounds
    *
    *  The entire vector of nodes lives on all process.  The
    *  partitioner must set the bounds corresponding to a
    *  particular node.
    *
-   *  \param lb   Lower bound
-   *  \param ub   Upper bound
+   *  @param lb   Lower bound
+   *  @param ub   Upper bound
    */
   void set_bounds(const size_t lb, const size_t ub)
   {
@@ -82,16 +85,16 @@ public:
     d_upper_bound = ub;
   }
 
-  /*!
-   *  \brief Add a node and a vector of (neighbor, surface) indices
-   *  \param n          Node to be added
-   *  \param neighbors  Vector of neighbor/surface indices
+  /**
+   *  @brief Add a node and a vector of (neighbor, surface) indices
+   *  @param n          Node to be added
+   *  @param neighbors  Vector of neighbor/surface indices
    */
   void add_node(SP_node n, vec_neighbor neighbors);
 
-  /*!
-   *  \brief Get a node
-   *  \param n  Local node index
+  /**
+   *  @brief Get a node
+   *  @param n  Local node index
    */
   SP_node node(const int n);
 
@@ -113,23 +116,22 @@ public:
   /// Number of local surfaces
   size_t number_local_surfaces() const;
 
-  /*!
-   *  \brief Get the global neighbor index for a node surface
-   *  \param n  Global node index
-   *  \param s  Node surface
+  /**
+   *  @brief Get the global neighbor index for a node surface
+   *  @param n  Global node index
+   *  @param s  Node surface
    */
   const NeighborSurface& neighbor(const size_t n, const size_t s) const;
 
-
-  /*!
-   *  \brief Get the global index of a local node
-   *  \param n  Local node index
+  /**
+   *  @brief Get the global index of a local node
+   *  @param n  Local node index
    */
   size_t global_index(const size_t n) const;
 
-  /*!
-   *  \brief Get the local index of a global node
-   *  \param n  Global node index
+  /**
+   *  @brief Get the local index of a global node
+   *  @param n  Global node index
    *
    *  Returns a negative value if the global index
    *  is not within the local range.
@@ -154,22 +156,16 @@ private:
 
   /// Vector of nodes
   vec_node d_nodes;
-
   /// Vector of vectors of node (neighbor, surface) index pairs
   vec2_neighbor d_neighbors;
-
   /// Starting index of local nodes
   size_t d_lower_bound;
-
   /// Upper bound of local nodes
   size_t d_upper_bound;
-
   /// Number of local surfaces
   size_t d_number_local_surfaces;
-
   /// Number of global surfaces
   size_t d_number_global_surfaces;
-
   /// Flag indicating ready to use
   bool d_is_finalized;
 

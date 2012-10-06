@@ -18,5 +18,16 @@
 # MA 02110-1301, USA.
 
 from pyserment import *
-import numpy as np
 
+try :
+  from detran import *
+except ImportError :
+  print "Could not import Detran.  Either your paths are wrong" 
+  print "or the Detran Python interface was not built. Exiting."
+  exit()
+
+try :
+  import numpy as np
+except ImportError :
+  print "Could not import Numpy.  While not critical, you're"
+  print "better off with it!"

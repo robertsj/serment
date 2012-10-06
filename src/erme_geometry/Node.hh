@@ -7,14 +7,14 @@
  */
 //---------------------------------------------------------------------------//
 
-#ifndef NODE_HH_
-#define NODE_HH_
+#ifndef erme_geometry_NODE_HH_
+#define erme_geometry_NODE_HH_
 
 #include "serment_config.h"
-
-#include "utilities/Point.hh"
 #include "comm/Comm.hh"
+#include "utilities/Definitions.hh"
 #include "utilities/DBC.hh"
+#include "utilities/Point.hh"
 #include "utilities/SP.hh"
 #include <vector>
 #include <boost/serialization/map.hpp>
@@ -24,6 +24,10 @@
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/export.hpp>
 
+/**
+ *  @namespace erme_geometry
+ *  @brief Contains constructs for describing problem geometry
+ */
 namespace erme_geometry
 {
 
@@ -66,23 +70,32 @@ class Node
 
 public:
 
+  //-------------------------------------------------------------------------//
+  // ENUMERATIONS
+  //-------------------------------------------------------------------------//
+
   /// Boundary condition identifiers.  Note, periodic is not listed, since
   /// nodes can be explicitly linked in a periodic fashion.
-//  const static int REFLECT = -1;
-//  const static int VACUUM  = -2;
   enum NODE_BC
   {
     REFLECT = -1, VACUUM = -2
   };
 
-  /// Useful typedefs
-  typedef detran_utilities::SP<Node>  SP_node;
-  typedef unsigned int                size_t;
-  typedef std::vector<int>            vec_int;
-  typedef std::vector<double>         vec_dbl;
-  typedef std::vector<size_t>         vec_size_t;
-  typedef std::vector<vec_size_t>     vec2_size_t;
-  typedef detran_utilities::Point     Point;
+  //-------------------------------------------------------------------------//
+  // TYPEDEFS
+  //-------------------------------------------------------------------------//
+
+  typedef detran_utilities::SP<Node>        SP_node;
+  typedef detran_utilities::size_t          size_t;
+  typedef detran_utilities::vec_int         vec_int;
+  typedef detran_utilities::vec_dbl         vec_dbl;
+  typedef detran_utilities::vec_size_t      vec_size_t;
+  typedef detran_utilities::vec2_size_t     vec2_size_t;
+  typedef detran_utilities::Point           Point;
+
+  //-------------------------------------------------------------------------//
+  // CONSTRUCTOR & DESTRUCTOR
+  //-------------------------------------------------------------------------//
 
   /**
    *  @brief Constructor
@@ -206,11 +219,9 @@ private:
 
 } // end namespace erme_geometry
 
-//BOOST_SERIALIZATION_ASSUME_ABSTRACT(erme_geometry::Node)
-
 #include "Node.i.hh"
 
-#endif // NODE_HH_ 
+#endif // erme_geometry_NODE_HH_
 
 //---------------------------------------------------------------------------//
 //              end of file Node.hh

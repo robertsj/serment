@@ -23,8 +23,11 @@
 #include "erme_geometry/NodeFactoryDetran.hh"
 #include "erme_geometry/NodeList.hh"
 
+// Linear algebra
+#include "LinearAlgebraSetup.hh"
+  
 // Manager
-#include "erme_utils/Manager.hh"
+#include "erme_utils/ManagerERME.hh"
 
 %} // end module pyserment
 
@@ -35,13 +38,13 @@
 %include "std_vector.i"
 
 // Detran
-%include "detran_utilities.i"
-%include "detran_geometry.i"
-%include "detran_materials.i"
-
+%include "utilities/detran_utilities.i"
+%include "material/detran_material.i"
+%include "geometry/detran_geometry.i"
 
 // Geometry
 %include "erme_geometry/NeighborSurface.hh"
+%template(vec_neighbor) std::vector<erme_geometry::NeighborSurface>;
 %include "erme_geometry/Node.hh"
 %include "erme_geometry/CartesianNode.hh"
 %include "erme_geometry/DummyNode.hh"
@@ -56,5 +59,9 @@
 %template(CartesianNodeDetranSP)  detran_utilities::SP<erme_geometry::CartesianNodeDetran>;
 %template(NodeListSP)             detran_utilities::SP<erme_geometry::NodeList>;
 
+// PETSc/SLEPc initialization
+%include "linear_algebra/LinearAlgebraSetup.hh"
+
 // Manager
-//%include "erme_utils/Manager.hh"
+%include "erme_utils/ManagerERME.hh"
+%template(ManagerERMESP)          detran_utilities::SP<erme_utils::ManagerERME>;

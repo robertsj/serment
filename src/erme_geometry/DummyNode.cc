@@ -8,6 +8,7 @@
 //---------------------------------------------------------------------------//
 
 #include "DummyNode.hh"
+#include "NodeSerialization.hh"
 
 namespace erme_geometry
 {

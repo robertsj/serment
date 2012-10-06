@@ -12,6 +12,7 @@
 
 #include "comm/Comm.hh"
 #include "petsc.h"
+#include "slepc.h"
 
 namespace linear_algebra
 {
@@ -29,7 +30,10 @@ void initialize(int &argc, char **&argv)
 
   // Initialize PETSc on the *global* communicator
   if (serment_comm::Comm::is_global())
+  {
     PetscInitialize(&argc, &argv, PETSC_NULL, PETSC_NULL);
+    SlepcInitialize(&argc, &argv, PETSC_NULL, PETSC_NULL);
+  }
 
 }
 
@@ -38,7 +42,10 @@ void finalize()
 {
   // Finalize PETSc on the *global* communicator
   if (serment_comm::Comm::is_global())
+  {
+    SlepcFinalize();
     PetscFinalize();
+  }
 }
 
 
