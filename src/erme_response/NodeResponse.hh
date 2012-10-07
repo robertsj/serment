@@ -1,9 +1,9 @@
 //----------------------------------*-C++-*----------------------------------//
-/*!
- * \file   NodeResponse.hh
- * \brief  NodeResponse class definition.
- * \author Jeremy Roberts
- * \date   Aug 28, 2012
+/*@
+ *  @file   NodeResponse.hh
+ *  @brief  NodeResponse class definition.
+ *  @author Jeremy Roberts
+ *  @date   Aug 28, 2012
  */
 //---------------------------------------------------------------------------//
 
@@ -17,9 +17,9 @@
 namespace erme_response
 {
 
-/*!
- *  \class NodeResponse
- *  \brief Container for nodal response functions
+/**
+ *  @class NodeResponse
+ *  @brief Container for nodal response functions
  *
  *  NodeResponse is a very simple container for responses.  For the simplest
  *  problems, the only responses required are for the boundary function
@@ -50,8 +50,8 @@ namespace erme_response
  *  boundary responses, columns will be stored contiguously.
  *
  */
-/*!
- *  \example erme_response/test/test_NodeResponse.cc
+/**
+ *  @example erme_response/test/test_NodeResponse.cc
  *
  *  Test of NodeResponse class.
  */
@@ -74,9 +74,9 @@ public:
   // PUBLIC INTERFACE
   //-------------------------------------------------------------------------//
 
-  /*!
-   *  \brief Constructor
-   *  \param moments_size   Size of node moments vector for each surface
+  /**
+   *  @brief Constructor
+   *  @param moments_size   Size of node moments vector for each surface
    */
   NodeResponse(const size_t N, const size_t number_surfaces);
 

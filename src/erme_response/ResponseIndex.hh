@@ -72,6 +72,7 @@ inline std::ostream& operator<< (std::ostream &out,
       << "  azimuth = " << r.azimuth << std::endl
       << "   space0 = " << r.space0 << std::endl
       << "   space1 = " << r.space1 << std::endl
+      << " even_odd = " << r.even_odd << std::endl
       << "    local = " << r.local << std::endl
       << "    nodal = " << r.nodal << std::endl;
   return out;

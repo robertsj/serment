@@ -17,10 +17,26 @@ namespace erme_solver
 
 void GlobalSolverPicard::solve()
 {
+  std::cout << " Picard: solving... " << std::endl;
 
-  // Hard-coded initial guess
-  double keff   = 1.0;
+  // Get initial keff guess
+  double keff = 1.0;
+  if (d_db->check("erme_initial_keff"))
+    keff = d_db->get<double>("erme_initial_keff");
+  // Start lambda at unity
   double lambda = 1.0;
+  // Set space-angle zeroth order moments to uniform guess.  Note
+  // this doesn't actually get used by SLEPc but would will in a
+  // hand-coded power iteration.
+  for (int i = 0; i < d_indexer->number_local_moments(); ++i)
+  {
+    bool zeroth;
+    erme_response::ResponseIndex ri = d_indexer->response_index(i);
+    if (ri.azimuth + ri.polar + ri.space0 + ri.space1 == 0) (*d_J0)[i] = 1.0;
+  }
+  // Ensure a normalized initial guess and initialize the responses
+  d_J0->scale(1.0/d_J0->norm(d_J0->L2));
+  update_response(keff);
 
   // Initialize balance parameters
   double loss       = 0;
@@ -58,7 +74,10 @@ void GlobalSolverPicard::solve()
     leakage     = d_L->leakage(*d_J0);
     loss        = absorption + leakage;
 
-    // Update keff
+    // Initial update of keff
+    keff = gain / loss;
+
+    // Improved the update, if applicable
     keff = d_update->compute(keff, d_J0);
 
     // Update the responses
@@ -82,6 +101,7 @@ void GlobalSolverPicard::solve()
   std::printf(" **** INNER ITERATIONS  = %8i \n", innertot);
 
   // Update the state
+
 
   return;
 

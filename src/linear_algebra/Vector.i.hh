@@ -175,7 +175,7 @@ inline void Vector::add_a_times_x(const double a, const Vector& x)
   Require(x.local_size() == local_size());
 
   PetscErrorCode ierr;
-  VecAXPY(d_V, a, const_cast<Vector*>(&x)->V());
+  ierr = VecAXPY(d_V, a, const_cast<Vector*>(&x)->V());
 
   // Postconditions
   Ensure(!ierr);

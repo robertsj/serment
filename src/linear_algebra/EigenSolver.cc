@@ -1,10 +1,9 @@
 //----------------------------------*-C++-*----------------------------------//
-/*!
- * \file   EigenSolver.cc
- * \author robertsj
- * \date   Sep 5, 2012
- * \brief  EigenSolver class definition.
- * \note   Copyright (C) 2012 Jeremy Roberts. 
+/**
+ *  @file   EigenSolver.cc
+ *  @author robertsj
+ *  @date   Sep 5, 2012
+ *  @brief  EigenSolver class definition.
  */
 //---------------------------------------------------------------------------//
 
@@ -68,6 +67,16 @@ double EigenSolver::solve(SP_vector x)
   // Extract the number of iterations
   ierr = EPSGetIterationNumber(d_solver, &d_number_iterations);
   Insist(!ierr, "Error getting iteration count.");
+
+  // Check if converged
+  int nconv;
+  ierr = EPSGetConverged(d_solver, &nconv);
+  if (nconv == 0)
+  {
+    // \todo Need a graceful way to handle this.  It sucks that SLEPc
+    //       doesn't allow one to extract the unconverged iterate...
+    THROW("SLEPc did not converge!  Exiting...");
+  }
 
   // Get the dominant mode.
   ierr = EPSGetEigenpair(d_solver, 0,

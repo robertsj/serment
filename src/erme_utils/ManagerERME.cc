@@ -92,7 +92,7 @@ void ManagerERME::solve()
 {
   // Create solver
   d_solver = new erme_solver::GlobalSolverPicard(
-    d_db, d_server, d_state, d_R, d_M, d_F, d_A, d_L);
+    d_db, d_indexer, d_server, d_state, d_R, d_M, d_F, d_A, d_L);
 
   // Solve
   d_solver->solve();
@@ -101,12 +101,7 @@ void ManagerERME::solve()
 
 void ManagerERME::finalize()
 {
-  // Create solver
-  d_solver = new erme_solver::GlobalSolverPicard(
-    d_db, d_server, d_state, d_R, d_M, d_F, d_A, d_L);
-
-  // Solve
-  d_solver->solve();
+  /* ... */
 }
 
 } // end namespace erme_utils

@@ -20,14 +20,14 @@ inline void ResponseDatabase::get(std::string     nodename,
                                   const double    keff)
 {
   // Preconditions
-  Require(!nodename.compare(""));
+  Require(nodename != "");
   Require(response);
 
   // Ensure we have the response.
   response_it it;
   it = d_responses.find(nodename);
   Insist(it != d_responses.end(), "node " + nodename
-         + " not found in datbase " + d_filename);
+         + " not found in database " + d_filename);
   DBResponse &rf = it->second;
 
   // We are interpolating
@@ -44,19 +44,24 @@ inline void ResponseDatabase::get(std::string     nodename,
       k1 = 1;
       for (; k1 < rf.number_keffs; ++k1)
         if (keff < rf.keffs[k1]) break;
+      if (k1 == rf.number_keffs) --k1;
       if (k1 > 1)  k0 = k1 - 1;
     }
 
     // incident nodal response index
     int in = index.nodal;
+
     // interpolation function values and abscissa
     double r0 = 0;
     double r1 = 0;
     double x0 = rf.keffs[k0];
     double x1 = rf.keffs[k1];
+
     // fill the responses
     for (int o = 0; o < response->size(); ++o)
     {
+
+      Assert(response->size() == rf.responses[k0]->size());
       r0 = rf.responses[k0]->boundary_response(o, in);
       r1 = rf.responses[k1]->boundary_response(o, in);
       response->boundary_response(o, in) = interpolate(keff, x0, x1, r0, r1);
@@ -95,8 +100,8 @@ inline bool ResponseDatabase::read_scalar_attribute
 inline double ResponseDatabase::
 interpolate(double x, double x0, double x1, double r0, double r1)
 {
-  double idx = 1.0 / (x1 - x0);
-  return idx * ( (r1 - r0) * x + (r1 * x0 - r0 * x1) );
+  if (x0 == x1) return r0;
+  return  (r1 - r0) * (x - x0) / (x1 - x0) + r0;
 }
 
 } // end namespace erme_response

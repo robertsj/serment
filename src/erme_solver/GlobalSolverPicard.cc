@@ -14,6 +14,7 @@ namespace erme_solver
 {
 
 GlobalSolverPicard::GlobalSolverPicard(SP_db      db,
+                                       SP_indexer indexer,
                                        SP_server  server,
                                        SP_state   state,
                                        SP_R       R,
@@ -21,7 +22,7 @@ GlobalSolverPicard::GlobalSolverPicard(SP_db      db,
                                        SP_F       F,
                                        SP_A       A,
                                        SP_L       L)
-  : Base(db, server, state, R, M, F, A, L)
+  : Base(db, indexer, server, state, R, M, F, A, L)
   , d_J0(new linear_algebra::Vector(d_state->local_size(), 0.0))
   , d_J1(new linear_algebra::Vector(d_state->local_size(), 0.0))
 {

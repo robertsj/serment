@@ -80,9 +80,7 @@ ResponseDatabase::ResponseDatabase(std::string filename)
     read_scalar_attribute(group, "scheme", scheme);
     std::cout << "   scheme " << scheme << std::endl;
 
-    // Presize the responses and record scheme info
-    d_responses[nodename].responses.resize(number_keffs,
-      SP_response(new NodeResponse(response_size, number_surfaces)));
+    // Instantiate this node.  This *assumes*  the db doesn't have repeats
     d_responses[nodename].number_keffs = number_keffs;
     d_responses[nodename].scheme = scheme;
 
@@ -102,6 +100,7 @@ ResponseDatabase::ResponseDatabase(std::string filename)
     // Load the responses
     for (int k = 0; k < number_keffs; ++k)
     {
+      SP_response r(new NodeResponse(response_size, number_surfaces));
 
       // Boundary response
       {
@@ -125,7 +124,7 @@ ResponseDatabase::ResponseDatabase(std::string filename)
         status = H5Dread(dset, H5T_NATIVE_DOUBLE, memspace, space, H5P_DEFAULT, buffer);
         for (int ii = 0; ii < response_size; ++ii)
           for (int jj = 0; jj < response_size; ++jj)
-            d_responses[nodename].responses[k]->boundary_response(ii, jj) = buffer[ii + jj * response_size];
+            r->boundary_response(ii, jj) = buffer[ii + jj * response_size];
         delete [] buffer;
 
         H5Dclose(dset);
@@ -154,7 +153,7 @@ ResponseDatabase::ResponseDatabase(std::string filename)
         status = H5Dread(dset, H5T_NATIVE_DOUBLE, memspace, space, H5P_DEFAULT, buffer);
         for (int ii = 0; ii < number_surfaces; ++ii)
           for (int jj = 0; jj < response_size; ++jj)
-            d_responses[nodename].responses[k]->leakage_response(ii, jj) = buffer[ii + jj * number_surfaces];
+            r->leakage_response(ii, jj) = buffer[ii + jj * number_surfaces];
         delete [] buffer;
 
         H5Dclose(dset);
@@ -180,7 +179,7 @@ ResponseDatabase::ResponseDatabase(std::string filename)
 
         // Read the set and kill the buffer
         status = H5Dread(dset, H5T_NATIVE_DOUBLE, memspace, space, H5P_DEFAULT,
-                         &d_responses[nodename].responses[k]->fission_response(0));
+                         &r->fission_response(0));
 
         H5Dclose(dset);
         H5Sclose(space);
@@ -205,11 +204,14 @@ ResponseDatabase::ResponseDatabase(std::string filename)
 
         // Read the set and kill the buffer
         status = H5Dread(dset, H5T_NATIVE_DOUBLE, memspace, space, H5P_DEFAULT,
-                         &d_responses[nodename].responses[k]->absorption_response(0));
+                         &r->absorption_response(0));
 
         H5Dclose(dset);
         H5Sclose(space);
       }
+
+      // Add the temporary response to the vector
+      d_responses[nodename].responses.push_back(r);
 
     } // end keff loop
 
@@ -223,7 +225,7 @@ ResponseDatabase::ResponseDatabase(std::string filename)
 //---------------------------------------------------------------------------//
 ResponseDatabase::~ResponseDatabase()
 {
-  // Close the HDF5 file
+  // Close the HDF5 file \todo why does this yield an error? h5py related?
   //herr_t ierr = H5Fclose(d_file_id);
   //Ensure(!ierr);
   d_open = false;

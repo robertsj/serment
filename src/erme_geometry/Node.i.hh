@@ -66,6 +66,8 @@ inline Node::size_t Node::azimuthal_order(const size_t s) const
 
 inline Node::size_t Node::energy_order(const size_t s) const
 {
+  std::cout << " s = " << s << " ns = " << d_number_surfaces << std::endl;
+
   // Preconditions
   Require(s < d_number_surfaces);
   return d_energy_order[s];

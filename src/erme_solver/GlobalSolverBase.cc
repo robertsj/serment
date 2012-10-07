@@ -13,9 +13,10 @@ namespace erme_solver
 {
 
 GlobalSolverBase::
-GlobalSolverBase(SP_db db, SP_server server, SP_state state,
+GlobalSolverBase(SP_db db, SP_indexer indexer, SP_server server, SP_state state,
                  SP_R R, SP_M M, SP_F F, SP_A A, SP_L L)
   : d_db(db)
+  , d_indexer(indexer)
   , d_server(server)
   , d_state(state)
   , d_R(R)
@@ -23,9 +24,12 @@ GlobalSolverBase(SP_db db, SP_server server, SP_state state,
   , d_F(F)
   , d_A(A)
   , d_L(L)
+  , d_maximum_iterations(100)
+  , d_tolerance(1.0e-6)
 {
   // Preconditions
   Require(d_db);
+  Require(d_indexer);
   Require(d_server);
   Require(d_state);
   Require(d_R);

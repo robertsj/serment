@@ -25,8 +25,6 @@ inline ResponseIndexer::size_t
 ResponseIndexer::number_surface_moments(const size_t node_g,
                                         const size_t surface) const
 {
-  if (node_g >= d_indices.size())
-    std::cout << " wr=" << serment_comm::Comm::world_rank() << " node=" << node_g << " surf=" << surface << " size=" << d_indices.size() << std::endl;
   Require(node_g < d_indices.size());
   Require(surface < d_indices[node_g].size());
   return d_indices[node_g][surface].size();
@@ -86,26 +84,30 @@ nodal_to_local(const size_t node_g, const size_t index_n) const
 inline int ResponseIndexer::
 global_to_local(const size_t index_g) const
 {
+  // Preconditions
   Require(index_g < d_global_size);
+
   int index_l = index_g - d_global_offset;
   if (index_g >= d_global_offset + d_local_size or
       index_g < d_global_offset)
   {
     index_l = -1;
   }
+
   return index_l;
 }
 
 inline ResponseIndexer::size_t ResponseIndexer::
 nodal_to_global(const size_t node_g, const size_t index_n) const
 {
+  // Preconditions
   Require(node_g < d_indices.size());
   Require(index_n < d_sizes[node_g]);
-
 
   size_t index_g = index_n +
                    d_global_offsets[node_g];
 
+  // Postconditions
   Ensure(index_g < d_global_size);
   return index_g;
 }
@@ -113,8 +115,12 @@ nodal_to_global(const size_t node_g, const size_t index_n) const
 inline ResponseIndexer::size_t ResponseIndexer::
 local_to_global(const size_t index_l) const
 {
+  // Preconditions
   Require(index_l < d_local_size);
+
   size_t index_g = index_l + d_global_offset;
+
+  // Postconditions
   Ensure(index_g < d_global_size);
   return index_g;
 }

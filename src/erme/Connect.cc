@@ -71,7 +71,7 @@ Connect::Connect(SP_nodelist nodes, SP_indexer indexer)
         if (nodes->neighbor(n, s).neighbor() >= 0)
         {
           // Get neighbor node moment index
-          int neigh_n_index = indexer->response_index(neigh_n, neigh_s, m).local;
+          int neigh_n_index = indexer->response_index(neigh_n, neigh_s, m).nodal;
 
           // My row connects to their column.  Note, the matrix is symmetric
           // for most problems, but we let the other process fill the

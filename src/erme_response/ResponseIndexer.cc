@@ -133,7 +133,7 @@ ResponseIndexer::size_t
 ResponseIndexer::build_3D(SP_node node, const size_t n)
 {
 
-  size_t local_index = 0;
+  size_t nodal_index = 0;
   size_t offset;
   for (size_t i = 0; i < n; i++)
     offset += d_sizes[i];
@@ -186,10 +186,10 @@ ResponseIndexer::build_3D(SP_node node, const size_t n)
 
               // Add the index
               moment_indices.push_back(
-                ResponseIndex(n, s, e, p, a, s0, s1, polarity, local_index));
+                ResponseIndex(n, s, e, p, a, s0, s1, polarity, offset+nodal_index, nodal_index));
 
               // Update the local index
-              local_index++;
+              nodal_index++;
 
             } // end second spatial
           } // end first spatial
@@ -200,7 +200,7 @@ ResponseIndexer::build_3D(SP_node node, const size_t n)
   } // end surface
 
   d_indices.push_back(surface_indices);
-  return local_index;
+  return nodal_index;
 }
 
 ResponseIndexer::size_t
@@ -210,7 +210,7 @@ ResponseIndexer::build_2D(SP_node node, const size_t n)
   using std::endl;
 
   // Moment index local to a node
-  size_t local_index = 0;
+  size_t nodal_index = 0;
   // Number of moments on preceding nodes
   size_t offset = 0;
   for (size_t i = 0; i < n; i++)
@@ -256,10 +256,10 @@ ResponseIndexer::build_2D(SP_node node, const size_t n)
 
             // Add the index
             moment_indices.push_back(
-              ResponseIndex(n, s, e, p, a, s0, 0, polarity, local_index));
+              ResponseIndex(n, s, e, p, a, s0, 0, polarity, offset + nodal_index, nodal_index));
 
-            // Update the local index
-            local_index++;
+            // Update the nodal index
+            nodal_index++;
 
           } // end first spatial
         } // end azimuth
@@ -269,33 +269,35 @@ ResponseIndexer::build_2D(SP_node node, const size_t n)
   } // end surface
   d_indices.push_back(surface_indices);
 
-  return local_index;
+  return nodal_index;
 }
 
 ResponseIndexer::size_t
 ResponseIndexer::build_1D(SP_node node, const size_t n)
 {
 
-  size_t local_index = 0;
+  size_t nodal_index = 0;
   size_t offset;
   for (size_t i = 0; i < n; i++)
     offset += d_sizes[i];
-
+  std::cout << " node  = " << n << std::endl;
   vec2_index surface_indices;
-  for (size_t s = 0; s <= node->number_surfaces(); s++)
+  for (size_t s = 0; s < node->number_surfaces(); s++)
   {
+    std::cout << " surface  = " << s << std::endl;
     vec_index moment_indices;
     for (size_t e = 0; e <= node->energy_order(s); e++)
     {
+      std::cout << " energy  = " << s << std::endl;
       for (size_t p = 0; p <= node->polar_order(s); p++)
       {
-
+        std::cout << " polar  = " << p << std::endl;
         // Add the index
         moment_indices.push_back(
-          ResponseIndex(n, s, e, p, 0, 0, 0, false, local_index));
+          ResponseIndex(n, s, e, p, 0, 0, 0, false, offset+nodal_index, nodal_index));
 
         // Update the local index
-        local_index++;
+        nodal_index++;
 
       } // end polar
     } // end energy
@@ -304,7 +306,7 @@ ResponseIndexer::build_1D(SP_node node, const size_t n)
 
   d_indices.push_back(surface_indices);
 
-  return local_index;
+  return nodal_index;
 }
 
 } // end namespace erme_response

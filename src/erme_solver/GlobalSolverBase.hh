@@ -11,6 +11,7 @@
 #define erme_solver_GLOBALSOLVERBASE_HH_
 
 #include "NonlinearResidual.hh"
+#include "erme_response/ResponseIndexer.hh"
 #include "erme_response/ResponseServer.hh"
 #include "erme/StateERME.hh"
 #include "erme/ResponseMatrix.hh"
@@ -42,18 +43,19 @@ public:
   // TYPEDEFS
   //-------------------------------------------------------------------------//
 
-  typedef detran_utilities::SP<GlobalSolverBase>    SP_solver;
-  typedef detran_utilities::InputDB::SP_input       SP_db;
-  typedef erme_response::ResponseServer::SP_server  SP_server;
-  typedef erme::StateERME::SP_state                 SP_state;
-  typedef erme::ResponseMatrix::SP_responsematrix   SP_R;
-  typedef erme::Connect::SP_connect                 SP_M;
-  typedef erme::FissionOperator::SP_fission         SP_F;
-  typedef erme::AbsorptionOperator::SP_absorption   SP_A;
-  typedef erme::LeakageOperator::SP_leakage         SP_L;
-  typedef NonlinearResidual::SP_residual            SP_residual;
-  typedef detran_utilities::vec_dbl                 vec_dbl;
-  typedef detran_utilities::vec_int                 vec_int;
+  typedef detran_utilities::SP<GlobalSolverBase>      SP_solver;
+  typedef detran_utilities::InputDB::SP_input         SP_db;
+  typedef erme_response::ResponseIndexer::SP_indexer  SP_indexer;
+  typedef erme_response::ResponseServer::SP_server    SP_server;
+  typedef erme::StateERME::SP_state                   SP_state;
+  typedef erme::ResponseMatrix::SP_responsematrix     SP_R;
+  typedef erme::Connect::SP_connect                   SP_M;
+  typedef erme::FissionOperator::SP_fission           SP_F;
+  typedef erme::AbsorptionOperator::SP_absorption     SP_A;
+  typedef erme::LeakageOperator::SP_leakage           SP_L;
+  typedef NonlinearResidual::SP_residual              SP_residual;
+  typedef detran_utilities::vec_dbl                   vec_dbl;
+  typedef detran_utilities::vec_int                   vec_int;
 
   //-------------------------------------------------------------------------//
   // PUBLIC INTERFACE
@@ -61,16 +63,18 @@ public:
 
   /**
    *  @brief Constructor
-   *  @param db     Pointer to parameter database
-   *  @param server Pointer to response server
-   *  @param state  Pointer to state vector
-   *  @param R      Pointer to response matrix
-   *  @param M      Pointer to connectivity matrix
-   *  @param F      Pointer to fission operator
-   *  @param A      Pointer to absorption operator
-   *  @param L      Pointer to leakage operator
+   *  @param db       Pointer to parameter database
+   *  @param indexer  Pointer to response indexer
+   *  @param server   Pointer to response server
+   *  @param state    Pointer to state vector
+   *  @param R        Pointer to response matrix
+   *  @param M        Pointer to connectivity matrix
+   *  @param F        Pointer to fission operator
+   *  @param A        Pointer to absorption operator
+   *  @param L        Pointer to leakage operator
    */
-  GlobalSolverBase(SP_db db, SP_server server, SP_state state,
+  GlobalSolverBase(SP_db db, SP_indexer indexer, SP_server server,
+                   SP_state state,
                    SP_R R, SP_M M, SP_F F, SP_A A, SP_L L);
 
   /// Pure virtual destructor
@@ -87,6 +91,8 @@ protected:
 
   /// Parameter database
   SP_db d_db;
+  /// Response index
+  SP_indexer d_indexer;
   /// Response server
   SP_server d_server;
   /// State vector

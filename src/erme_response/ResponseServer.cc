@@ -153,6 +153,7 @@ void ResponseServer::update_explicit_work_share()
  // Loop over all of my local moments
  for (size_t index_l = start; index_l < finish; index_l++)
  {
+
    const ResponseIndex index_r = d_indexer->response_index(index_l);
 
    // Local node index
