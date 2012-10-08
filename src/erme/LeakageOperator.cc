@@ -74,11 +74,6 @@ LeakageOperator::LeakageOperator(SP_nodelist nodes,
 
   }
 
-  for (int i = 0; i < d_global_leakage.local_size(); ++i)
-  {
-    std::cout << " i = " << d_global_leakage[i] << std::endl;
-  }
-
   // Preallocate.  This also computes the bounds and such.
   preallocate(nnz_on_diag, nnz_off_diag);
 

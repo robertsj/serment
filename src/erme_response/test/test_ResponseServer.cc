@@ -122,7 +122,7 @@ int test_ResponseServer(int argc, char *argv[])
       for (int m = 0; m < indexer->number_surface_moments(n, s); m++)
       {
         ResponseIndex index = indexer->response_index(n, s, m);
-        unsigned int in = index.local;
+        unsigned int in = index.nodal;
         double value = 1000000.0 * index.node +
                         100000.0 * index.surface +
                          10000.0 * index.polar +

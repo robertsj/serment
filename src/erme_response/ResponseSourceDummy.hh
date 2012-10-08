@@ -51,7 +51,7 @@ public:
   {
     Require(response);
 
-    size_t in = index.local;
+    size_t in = index.nodal;
 
     // Easy value to recreate.
     double value = 1000000.0 * index.node +

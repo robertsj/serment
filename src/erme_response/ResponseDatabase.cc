@@ -21,6 +21,7 @@ ResponseDatabase::ResponseDatabase(std::string filename)
   : d_filename(filename)
   , d_open(false)
 {
+  bool db = false;
 
   // Open the HDF5 file
   d_file_id = H5Fopen(d_filename.c_str(),   // filename
@@ -38,7 +39,6 @@ ResponseDatabase::ResponseDatabase(std::string filename)
   ierr = H5Gget_num_objs(d_file_id, &d_number_nodes);
   Assert(!ierr);
   Insist(d_number_nodes, "The HDF5 file " + d_filename + " has no nodes!");
-  std::cout << " # nodes = " << d_number_nodes << std::endl;
 
   // Loop over all nodes
   for (int i = 0; i < d_number_nodes; ++i)
@@ -55,7 +55,7 @@ ResponseDatabase::ResponseDatabase(std::string filename)
            H5_INDEX_NAME, H5_ITER_INC, i, name, (size_t) size, H5P_DEFAULT);
     std::string nodename(name);
     delete [] name;
-    std::cout << " READING NODE " << nodename << std::endl;
+    if (db) std::cout << " READING NODE " << nodename << std::endl;
 
     // Open group
     hid_t group = H5Gopen(d_file_id, nodename.c_str(), H5P_DEFAULT);
@@ -63,22 +63,22 @@ ResponseDatabase::ResponseDatabase(std::string filename)
     // Get the number of keff terms
     int number_keffs = 0;
     read_scalar_attribute(group, "number_keffs", number_keffs);
-    std::cout << "   number_keffs " << number_keffs << std::endl;
+    if (db) std::cout << "   number_keffs " << number_keffs << std::endl;
 
     // Response size
     int response_size = 0;
     read_scalar_attribute(group, "response_size", response_size);
-    std::cout << "   response_size " << response_size << std::endl;
+    if (db) std::cout << "   response_size " << response_size << std::endl;
 
     // Number of surfaces
     int number_surfaces = 0;
     read_scalar_attribute(group, "number_surfaces", number_surfaces);
-    std::cout << "   number_surfaces " << number_surfaces << std::endl;
+    if (db) std::cout << "   number_surfaces " << number_surfaces << std::endl;
 
     // Number of surfaces
     int scheme = 0;
     read_scalar_attribute(group, "scheme", scheme);
-    std::cout << "   scheme " << scheme << std::endl;
+    if (db) std::cout << "   scheme " << scheme << std::endl;
 
     // Instantiate this node.  This *assumes*  the db doesn't have repeats
     d_responses[nodename].number_keffs = number_keffs;
@@ -92,9 +92,13 @@ ResponseDatabase::ResponseDatabase(std::string filename)
       herr_t status = H5Dread(dset, H5T_NATIVE_DOUBLE, H5S_ALL, H5S_ALL,
                               H5P_DEFAULT, &d_responses[nodename].keffs[0]);
       status = H5Dclose(dset);
+      Assert(!status);
 
-      for (int k = 0; k < number_keffs; ++k)
-        std::cout << " k[" << k << "] = " << d_responses[nodename].keffs[k] << std::endl;
+      if (db)
+      {
+        for (int k = 0; k < number_keffs; ++k)
+          std::cout << " k[" << k << "] = " << d_responses[nodename].keffs[k] << std::endl;
+      }
     }
 
     // Load the responses
@@ -108,12 +112,14 @@ ResponseDatabase::ResponseDatabase(std::string filename)
         hid_t space = H5Dget_space(dset);
         hsize_t       dims_out[3];
         int rank    = H5Sget_simple_extent_ndims(space);
-        int status  = H5Sget_simple_extent_dims(space, dims_out, NULL);
+        int ndims   = H5Sget_simple_extent_dims(space, dims_out, NULL);
+        Assert(ndims > 0);
 
         // Want hyperslab corresponding to this k, i.e. data[k,:,:]
         hsize_t count[]  = {1, response_size, response_size};
         hsize_t offset[] = {k, 0, 0};
-        status = H5Sselect_hyperslab(space, H5S_SELECT_SET, offset, NULL, count, NULL);
+        int status = H5Sselect_hyperslab(space, H5S_SELECT_SET, offset, NULL, count, NULL);
+        Assert(!status);
 
         // Define memory dataspace
         hsize_t dims[] = {response_size, response_size};
@@ -122,6 +128,7 @@ ResponseDatabase::ResponseDatabase(std::string filename)
 
         // Read the set and kill the buffer
         status = H5Dread(dset, H5T_NATIVE_DOUBLE, memspace, space, H5P_DEFAULT, buffer);
+        Assert(!status);
         for (int ii = 0; ii < response_size; ++ii)
           for (int jj = 0; jj < response_size; ++jj)
             r->boundary_response(ii, jj) = buffer[ii + jj * response_size];
@@ -137,12 +144,14 @@ ResponseDatabase::ResponseDatabase(std::string filename)
         hid_t space = H5Dget_space(dset);
         hsize_t       dims_out[3];
         int rank    = H5Sget_simple_extent_ndims(space);
-        int status  = H5Sget_simple_extent_dims(space, dims_out, NULL);
+        int ndims   = H5Sget_simple_extent_dims(space, dims_out, NULL);
+        Assert(ndims > 0);
 
         // Want hyperslab corresponding to this k, i.e. data[k,:,:]
         hsize_t count[]  = {1, number_surfaces, response_size};
         hsize_t offset[] = {k, 0, 0};
-        status = H5Sselect_hyperslab(space, H5S_SELECT_SET, offset, NULL, count, NULL);
+        int status = H5Sselect_hyperslab(space, H5S_SELECT_SET, offset, NULL, count, NULL);
+        Assert(!status);
 
         // Define memory dataspace
         hsize_t dims[] = {number_surfaces, response_size};
@@ -151,6 +160,7 @@ ResponseDatabase::ResponseDatabase(std::string filename)
 
         // Read the set and kill the buffer
         status = H5Dread(dset, H5T_NATIVE_DOUBLE, memspace, space, H5P_DEFAULT, buffer);
+        Assert(!status);
         for (int ii = 0; ii < number_surfaces; ++ii)
           for (int jj = 0; jj < response_size; ++jj)
             r->leakage_response(ii, jj) = buffer[ii + jj * number_surfaces];
@@ -166,20 +176,23 @@ ResponseDatabase::ResponseDatabase(std::string filename)
         hid_t space = H5Dget_space(dset);
         hsize_t       dims_out[2];
         int rank    = H5Sget_simple_extent_ndims(space);
-        int status  = H5Sget_simple_extent_dims(space, dims_out, NULL);
+        int ndims   = H5Sget_simple_extent_dims(space, dims_out, NULL);
+        Assert(ndims > 0);
 
         // Want hyperslab corresponding to this k, i.e. data[k,:]
         hsize_t count[]  = {1, response_size};
         hsize_t offset[] = {k, 0};
-        status = H5Sselect_hyperslab(space, H5S_SELECT_SET, offset, NULL, count, NULL);
+        int status = H5Sselect_hyperslab(space, H5S_SELECT_SET, offset, NULL, count, NULL);
+        Assert(!status);
 
         // Define memory dataspace
-        hsize_t dims[] = {number_surfaces, response_size};
+        hsize_t dims[] = {response_size};
         hid_t memspace = H5Screate_simple (1, dims, NULL);
 
         // Read the set and kill the buffer
         status = H5Dread(dset, H5T_NATIVE_DOUBLE, memspace, space, H5P_DEFAULT,
                          &r->fission_response(0));
+        Assert(!status);
 
         H5Dclose(dset);
         H5Sclose(space);
@@ -191,20 +204,23 @@ ResponseDatabase::ResponseDatabase(std::string filename)
         hid_t space = H5Dget_space(dset);
         hsize_t       dims_out[2];
         int rank    = H5Sget_simple_extent_ndims(space);
-        int status  = H5Sget_simple_extent_dims(space, dims_out, NULL);
+        int ndims   = H5Sget_simple_extent_dims(space, dims_out, NULL);
+        Assert(ndims > 0);
 
         // Want hyperslab corresponding to this k, i.e. data[k,:]
         hsize_t count[]  = {1, response_size};
         hsize_t offset[] = {k, 0};
-        status = H5Sselect_hyperslab(space, H5S_SELECT_SET, offset, NULL, count, NULL);
+        int status = H5Sselect_hyperslab(space, H5S_SELECT_SET, offset, NULL, count, NULL);
+        Assert(!status);
 
         // Define memory dataspace
-        hsize_t dims[] = {number_surfaces, response_size};
+        hsize_t dims[] = {response_size};
         hid_t memspace = H5Screate_simple (1, dims, NULL);
 
         // Read the set and kill the buffer
         status = H5Dread(dset, H5T_NATIVE_DOUBLE, memspace, space, H5P_DEFAULT,
                          &r->absorption_response(0));
+        Assert(!status);
 
         H5Dclose(dset);
         H5Sclose(space);
