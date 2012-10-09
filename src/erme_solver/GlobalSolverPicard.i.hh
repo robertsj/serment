@@ -48,7 +48,6 @@ void GlobalSolverPicard::solve()
   // Count total iterations
   int innertot = 0;
 
-  std::cout << " norm ... " << std::endl;
   // Compute the initial residual norm
   double norm = d_residual->compute_norm(*d_J0, keff, lambda);
 
@@ -59,16 +58,12 @@ void GlobalSolverPicard::solve()
   int it = 1; // count outer iteration
   for (; it <= d_maximum_iterations; it++)
   {
-    std::cout << " it =  " << it << std::endl;
 
     //-----------------------------------------------------------------------//
     // INNER ITERATIONS -- solves M*R*X = lambda*X
     //-----------------------------------------------------------------------//
 
     lambda = d_innersolver->solve(d_J0);
-
-    //std::cout << " LAMBDA = " << lambda << std::endl;
-    d_J0->display();
 
     //-----------------------------------------------------------------------//
     // EIGENVALUE UPDATE -- k = fission / (absorption + leakage)
@@ -107,7 +102,6 @@ void GlobalSolverPicard::solve()
   std::printf(" **** INNER ITERATIONS  = %8i \n", innertot);
 
   // Update the state
-
 
   return;
 

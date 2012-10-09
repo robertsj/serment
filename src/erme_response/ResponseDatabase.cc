@@ -17,9 +17,10 @@ ResponseDatabase::SP_rfdb
 ResponseDatabase::d_instance = ResponseDatabase::SP_rfdb(NULL);
 
 //---------------------------------------------------------------------------//
-ResponseDatabase::ResponseDatabase(std::string filename)
+ResponseDatabase::ResponseDatabase(std::string filename, size_t order)
   : d_filename(filename)
   , d_open(false)
+  , d_interpolation_order(order)
 {
   bool db = false;
 
@@ -129,6 +130,7 @@ ResponseDatabase::ResponseDatabase(std::string filename)
         // Read the set and kill the buffer
         status = H5Dread(dset, H5T_NATIVE_DOUBLE, memspace, space, H5P_DEFAULT, buffer);
         Assert(!status);
+        // Note the indexing of ii and jj: jj changes fastest.
         for (int ii = 0; ii < response_size; ++ii)
           for (int jj = 0; jj < response_size; ++jj)
             r->boundary_response(ii, jj) = buffer[jj + ii * response_size];
@@ -229,8 +231,6 @@ ResponseDatabase::ResponseDatabase(std::string filename)
       // Add the temporary response to the vector
       d_responses[nodename].responses.push_back(r);
 
-      r->display();
-
     } // end keff loop
 
     // Close group
@@ -249,15 +249,15 @@ ResponseDatabase::~ResponseDatabase()
   d_open = false;
 }
 
-
 //---------------------------------------------------------------------------//
-ResponseDatabase::SP_rfdb ResponseDatabase::Create(std::string filename)
+ResponseDatabase::SP_rfdb
+ResponseDatabase::Create(std::string filename, size_t order)
 {
   //Preconditions
   Require(filename != "");
 
   // Create the instance if not done already
-  if (!d_instance) d_instance = new ResponseDatabase(filename);
+  if (!d_instance) d_instance = new ResponseDatabase(filename, order);
 
   // Postconditions
   Ensure(d_instance);

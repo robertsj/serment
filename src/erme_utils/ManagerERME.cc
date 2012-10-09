@@ -61,9 +61,14 @@ void ManagerERME::build_erme(SP_nodelist nodes)
 
   // Check if this is a database problem
   std::string dbname = "";
-  if (d_db->check("response_dbname"))
+  size_t dborder = 1;
+  if (d_db->check("response_db_name"))
   {
-    dbname = d_db->get<std::string>("response_dbname");
+    dbname = d_db->get<std::string>("response_db_name");
+  }
+  if (d_db->check("response_db_order"))
+  {
+    dborder = d_db->get<int>("response_db_order");
   }
 
   // Create partitioner and partition
@@ -74,7 +79,7 @@ void ManagerERME::build_erme(SP_nodelist nodes)
   d_indexer = new erme_response::ResponseIndexer(d_db, d_nodes);
 
   // Create server
-  d_server = new erme_response::ResponseServer(d_nodes, d_indexer, dbname);
+  d_server = new erme_response::ResponseServer(d_nodes, d_indexer, dbname, dborder);
 
   // Create state
   d_state = new erme::StateERME(d_indexer->number_local_moments());

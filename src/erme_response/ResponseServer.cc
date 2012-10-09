@@ -18,7 +18,8 @@ namespace erme_response
 
 ResponseServer::ResponseServer(SP_nodelist  nodes,
                                SP_indexer   indexer,
-                               std::string  dbname)
+                               std::string  dbname,
+                               size_t       dborder)
   : d_nodes(nodes)
   , d_indexer(indexer)
   , d_sources(nodes->number_local_nodes())
@@ -31,7 +32,7 @@ ResponseServer::ResponseServer(SP_nodelist  nodes,
   // Build the response database if requested
   if (dbname != "")
   {
-    d_rfdb = ResponseDatabase::Create(dbname);
+    d_rfdb = ResponseDatabase::Create(dbname, dborder);
   }
 
   ResponseSourceFactory builder;

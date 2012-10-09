@@ -13,6 +13,7 @@
 #include "NodeResponse.hh"
 #include "ResponseIndex.hh"
 #include "ioutils/IO_HDF5_Traits.hh"
+#include "utilities/Definitions.hh"
 #include <map>
 #include <string>
 #include <vector>
@@ -49,6 +50,9 @@ public:
   typedef detran_utilities::SP<ResponseDatabase>  SP_rfdb;
   typedef NodeResponse::SP_response               SP_response;
   typedef std::vector<SP_response>                vec_response;
+  typedef detran_utilities::size_t                size_t;
+  typedef detran_utilities::vec_int               vec_int;
+  typedef detran_utilities::vec_dbl               vec_dbl;
   typedef struct
   {
     // number of keff terms (for interpolating/expanding)
@@ -73,7 +77,7 @@ public:
    *  @brief SP constructor
    *  @param filename  name of hdf5 file
    */
-  static SP_rfdb Create(std::string filename);
+  static SP_rfdb Create(std::string filename, size_t order = 1);
 
   /// SP Accessor
   static SP_rfdb Instance();
@@ -111,18 +115,16 @@ private:
 
   /// Single instance
   static SP_rfdb d_instance;
-
   /// HDF5 filename
   std::string d_filename;
-
   /// HDF5 is open
   bool d_open;
-
   /// HDF5 file id
   hid_t d_file_id;
-
   /// Number of nodes in the database
   hsize_t d_number_nodes;
+  /// Linear, quadratic, or cubic interpolation, when applicable
+  size_t d_interpolation_order;
 
   /**
    *  Response data
@@ -134,6 +136,8 @@ private:
    */
   map_response d_responses;
 
+
+
   //-------------------------------------------------------------------------//
   // IMPLEMENTATION
   //-------------------------------------------------------------------------//
@@ -142,15 +146,11 @@ private:
    *  @brief Constructor
    *  @param filename   name of hdf5 file
    */
-  ResponseDatabase(std::string filename);
+  ResponseDatabase(std::string filename, size_t order = 1);
 
   /// Read a scalar (int or double) attribute
   template <class T>
   bool read_scalar_attribute(hid_t group, const char* name, T &value);
-
-
-  /// Interpolate
-  double interpolate(double x, double x0, double x1, double y0, double y1);
 
 };
 

@@ -10,6 +10,8 @@
 #ifndef RESPONSEDATABASE_I_HH_
 #define RESPONSEDATABASE_I_HH_
 
+#include "Interpolation.hh"
+
 namespace erme_response
 {
 
@@ -37,46 +39,56 @@ inline void ResponseDatabase::get(std::string     nodename,
   //
   if (rf.scheme == 1)
   {
-    int k0 = 0; // first k point
-    int k1 = 0; // second k point
-    if (rf.number_keffs > 1)
+    // Determine number of points and size the vectors.
+    size_t nk = rf.number_keffs;
+    if (d_interpolation_order < nk + 1) nk = d_interpolation_order + 1;
+    vec_int kidx(nk, 0);
+    vec_dbl kval(nk, 0.0);
+    vec_dbl rval(nk, 0.0);
+
+    // If nk is larger than one, we need the bounding keffs.  For quadratic,
+    // we want the central abscissa to be as close to the in keff as possible.
+
+    if (nk > 1)
     {
-      k1 = 1;
+      int k1 = nk / 2;
       for (; k1 < rf.number_keffs; ++k1)
         if (keff < rf.keffs[k1]) break;
-      if (k1 == rf.number_keffs) --k1;
-      if (k1 > 1)  k0 = k1 - 1;
+      for (int i = 0; i < nk; ++i)
+        kidx[i] = (i - nk/2) + k1;
+      if (kidx[nk-1] >= rf.number_keffs)
+      {
+        for (int i = 0; i < nk; ++i)
+          kidx[i] -= (kidx[nk-1] - rf.number_keffs + 1);
+      }
     }
-
     // incident nodal response index
     int in = index.nodal;
 
-    // interpolation function values and abscissa
-    double r0 = 0;
-    double r1 = 0;
-    double x0 = rf.keffs[k0];
-    double x1 = rf.keffs[k1];
+    // interpolation abscissa
+    for (int i = 0; i < nk; ++i)
+      kval[i] = rf.keffs[kidx[i]];
 
     // fill the responses
     for (int o = 0; o < response->size(); ++o)
     {
-      Assert(response->size() == rf.responses[k0]->size());
-      r0 = rf.responses[k0]->boundary_response(o, in);
-      r1 = rf.responses[k1]->boundary_response(o, in);
-      response->boundary_response(o, in) = interpolate(keff, x0, x1, r0, r1);
+      Assert(response->size() == rf.responses[kidx[0]]->size());
+      for (int i = 0; i < nk; ++i)
+        rval[i] = rf.responses[kidx[i]]->boundary_response(o, in);
+      response->boundary_response(o, in) = interpolate(keff, kval, rval);
     }
     for (int o = 0; o < response->number_surfaces(); ++o)
     {
-      r0 = rf.responses[k0]->leakage_response(o, in);
-      r1 = rf.responses[k1]->leakage_response(o, in);
-      response->leakage_response(o, in) = interpolate(keff, x0, x1, r0, r1);
+      for (int i = 0; i < nk; ++i)
+        rval[i] = rf.responses[kidx[i]]->leakage_response(o, in);
+      response->leakage_response(o, in) = interpolate(keff, kval, rval);
     }
-    r0 = rf.responses[k0]->fission_response(in);
-    r1 = rf.responses[k1]->fission_response(in);
-    response->fission_response(in) = interpolate(keff, x0, x1, r0, r1);
-    r0 = rf.responses[k0]->absorption_response(in);
-    r1 = rf.responses[k1]->absorption_response(in);
-    response->absorption_response(in) = interpolate(keff, x0, x1, r0, r1);
+    for (int i = 0; i < nk; ++i)
+      rval[i] = rf.responses[kidx[i]]->fission_response(in);
+    response->fission_response(in) = interpolate(keff, kval, rval);
+    for (int i = 0; i < nk; ++i)
+      rval[i] = rf.responses[kidx[i]]->absorption_response(in);
+    response->absorption_response(in) = interpolate(keff, kval, rval);
   }
   else
   {
@@ -94,13 +106,6 @@ inline bool ResponseDatabase::read_scalar_attribute
   herr_t status = H5Aread(att, mem.type<T>(), &value);
   status        = H5Aclose(att);
   return true;
-}
-
-inline double ResponseDatabase::
-interpolate(double x, double x0, double x1, double r0, double r1)
-{
-  if (x0 == x1) return r0;
-  return  (r1 - r0) * (x - x0) / (x1 - x0) + r0;
 }
 
 } // end namespace erme_response

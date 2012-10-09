@@ -16,6 +16,7 @@
 #include "ResponseDatabase.hh"
 #include "erme_geometry/NodeList.hh"
 #include "utilities/DBC.hh"
+#include "utilities/Definitions.hh"
 #include "utilities/SP.hh"
 #include <vector>
 #include <string>
@@ -54,7 +55,7 @@ public:
   typedef ResponseIndexer::SP_indexer           SP_indexer;
   typedef erme_geometry::NodeList::SP_nodelist  SP_nodelist;
   typedef ResponseDatabase::SP_rfdb             SP_rfdb;
-  typedef unsigned int                          size_t;
+  typedef detran_utilities::size_t              size_t;
 
   //-------------------------------------------------------------------------//
   // PUBLIC INTERFACE
@@ -65,10 +66,12 @@ public:
    *  @param nodes    Pointer to node list
    *  @param indexer  Pointer to indexer
    *  @param dbname   Filename of response database (optional)
+   *  @param dborder  Interpolation order for database (optional)
    */
   ResponseServer(SP_nodelist nodes,
                  SP_indexer indexer,
-                 std::string dbname = "");
+                 std::string dbname = "",
+                 size_t dborder = 1);
 
   /// Update the eigenvalue and compute the new responses
   void update(const double keff);

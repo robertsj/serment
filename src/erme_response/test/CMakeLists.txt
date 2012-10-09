@@ -20,6 +20,10 @@ TARGET_LINK_LIBRARIES(test_ResponseServer      erme_response)
 ADD_EXECUTABLE(test_ResponseDatabase           test_ResponseDatabase.cc)
 TARGET_LINK_LIBRARIES(test_ResponseDatabase    erme_response)
 
+ADD_EXECUTABLE(test_Interpolation              test_Interpolation.cc)
+TARGET_LINK_LIBRARIES(test_ResponseDatabase    erme_response)
+
+
 #------------------------------------------------------------------------------#
 # Define tests
 #------------------------------------------------------------------------------#
