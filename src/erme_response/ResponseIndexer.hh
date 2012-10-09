@@ -1,9 +1,9 @@
 //----------------------------------*-C++-*----------------------------------//
-/*!
- * \file   ResponseIndexer.hh
- * \brief  ResponseIndexer class definition
- * \author Jeremy Roberts
- * \date   Aug 24, 2012
+/**
+ *  @file   ResponseIndexer.hh
+ *  @brief  ResponseIndexer class definition
+ *  @author Jeremy Roberts
+ *  @date   Aug 24, 2012
  */
 //---------------------------------------------------------------------------//
 
@@ -19,9 +19,9 @@
 namespace erme_response
 {
 
-/*!
- *  \class ResponseIndexer
- *  \brief Indexes a node response vector
+/**
+ *  @class ResponseIndexer
+ *  @brief Indexes a node response vector
  *
  *  Each Node has assigned maximum orders in each phase space
  *  variable on each surface of the node.  Each variable is
@@ -49,8 +49,8 @@ namespace erme_response
  *    - dimension
  *    - erme_order_reduction
  */
-/*!
- *  \example erme_response/test/test_ResponseIndexer.cc
+/**
+ *  @example erme_response/test/test_ResponseIndexer.cc
  *
  *  Test of ResponseIndexer class.
  */
@@ -67,9 +67,9 @@ public:
   typedef detran_utilities::InputDB::SP_input   SP_db;
   typedef erme_geometry::NodeList::SP_nodelist  SP_nodelist;
   typedef erme_geometry::NodeList::SP_node      SP_node;
-  typedef unsigned int                          size_t;
-  typedef std::vector<size_t>                   vec_size_t;
-  typedef std::vector<vec_size_t>               vec2_size_t;
+  typedef detran_utilities::size_t              size_t;
+  typedef detran_utilities::vec_size_t          vec_size_t;
+  typedef detran_utilities::vec2_size_t         vec2_size_t;
   typedef std::vector<ResponseIndex>            vec_index;
   typedef std::vector<vec_index>                vec2_index;
   typedef std::vector<vec2_index>               vec3_index;
@@ -78,10 +78,10 @@ public:
   // PUBLIC INTERFACE
   //-------------------------------------------------------------------------//
 
-  /*!
-   *  \brief Constructor
-   *  \param db     Pointer to parameter database
-   *  \param nodes  Pointer to node list
+  /**
+   *  @brief Constructor
+   *  @param db     Pointer to parameter database
+   *  @param nodes  Pointer to node list
    */
   ResponseIndexer(SP_db db, SP_nodelist nodes);
 
@@ -90,16 +90,16 @@ public:
   /// Total number of nodes in the problem
   size_t number_nodes() const;
 
-  /*!
-   *  \brief Number of moments associated with a node
-   *  \param node_g   Global node index
+  /**
+   *  @brief Number of moments associated with a node
+   *  @param node_g   Global node index
    */
   size_t number_node_moments(const size_t node_g) const;
 
-  /*!
-   *  \brief Number of moments on a node surface
-   *  \param node_g   Global node index
-   *  \param surface  Node surface index
+  /**
+   *  @brief Number of moments on a node surface
+   *  @param node_g   Global node index
+   *  @param surface  Node surface index
    */
   size_t number_surface_moments(const size_t node_g,
                                 const size_t surface_n) const;
@@ -112,51 +112,51 @@ public:
 
   //-------------------------------------------------------------------------//
 
-  /*!
-   *  \brief Get moment indices from cardinal index within node
-   *  \param node_g       Global index of node
-   *  \param surface_n    Surface index of node
-   *  \param index_s      Moment index on surface of node
+  /**
+   *  @brief Get moment indices from cardinal index within node
+   *  @param node_g       Global index of node
+   *  @param surface_n    Surface index of node
+   *  @param index_s      Moment index on surface of node
    */
   ResponseIndex response_index(const size_t node_g,
                                const size_t surface_n,
                                const size_t index_s) const;
 
-  /*!
-   *  \brief Get moment indices from local cardinal index
-   *  \param index_l      Moment index within local nodes
+  /**
+   *  @brief Get moment indices from local cardinal index
+   *  @param index_l      Moment index within local nodes
    */
   ResponseIndex response_index(const size_t index_l) const;
 
   //-------------------------------------------------------------------------//
 
-  /*!
-   *  \brief Get local moment index from a cardinal index within node
-   *  \param  node_l      Local node index
-   *  \param  index_n     Cardinal moment index within node
+  /**
+   *  @brief Get local moment index from a cardinal index within node
+   *  @param  node_l      Local node index
+   *  @param  index_n     Cardinal moment index within node
    */
   size_t nodal_to_local(const size_t node_l, const size_t index_n) const;
 
-  /*!
-   *  \brief Get local moment index from global moment index
+  /**
+   *  @brief Get local moment index from global moment index
    *
    *  Note, this returns -1 if the global index doesn't represent
    *  a local index.
    *
-   *  \param  index_g   Global node index
+   *  @param  index_g   Global node index
    */
   int global_to_local(const size_t index_g) const;
 
-  /*!
-   *  \brief Get global moment index from a nodal moment index
-   *  \param  node_g    Global node index
-   *  \param  index_n   Moment index within node
+  /**
+   *  @brief Get global moment index from a nodal moment index
+   *  @param  node_g    Global node index
+   *  @param  index_n   Moment index within node
    */
   size_t nodal_to_global(const size_t node_g, const size_t index_n) const;
 
-  /*!
-   *  \brief Get global moment index from a local moment index
-   *  \param  index_l   Local moment index
+  /**
+   *  @brief Get global moment index from a local moment index
+   *  @param  index_l   Local moment index
    */
   size_t local_to_global(const size_t index_l) const;
 

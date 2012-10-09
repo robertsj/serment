@@ -42,7 +42,16 @@ GlobalSolverBase(SP_db db, SP_indexer indexer, SP_server server, SP_state state,
   d_residual = new NonlinearResidual(R, M, F, A, L);
 
   // Set convergence criteria
-
+  if (d_db->check("erme_maximum_iterations"))
+  {
+    d_maximum_iterations = d_db->get<int>("erme_maximum_iterations");
+    Assert(d_maximum_iterations >= 0);
+  }
+  if (d_db->check("erme_tolerance"))
+  {
+    d_tolerance = d_db->get<double>("erme_tolerance");
+    Assert(d_tolerance >= 0.0);
+  }
 
   // Postconditions
   Ensure(d_residual);

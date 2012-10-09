@@ -109,7 +109,9 @@ void ResponseIndexer::display() const
 
       for (int m = 0; m < d_indices[n][s].size(); m++)
       {
-        cout << "    " << m << " | "
+        cout << "    "
+             << response_index(n, s, m).local << " "
+             << response_index(n, s, m).nodal << " | "
              << response_index(n, s, m).node  << " "
              << response_index(n, s, m).surface  << " | "
              << response_index(n, s, m).energy   << " | "

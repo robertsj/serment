@@ -60,7 +60,6 @@ inline void ResponseDatabase::get(std::string     nodename,
     // fill the responses
     for (int o = 0; o < response->size(); ++o)
     {
-
       Assert(response->size() == rf.responses[k0]->size());
       r0 = rf.responses[k0]->boundary_response(o, in);
       r1 = rf.responses[k1]->boundary_response(o, in);

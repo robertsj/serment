@@ -71,8 +71,10 @@ void ResponseMatrix::update()
     // Insert each column (corresponding to an incident moment)
     for (int in = 0; in < r->size(); in++)
     {
+
       int col = in + offset;
-      insert_values(r->size(), &indices[0], 1, &col,
+      insert_values(r->size(), &indices[0],
+                    1, &col,
                     &r->boundary_response(0, in));
     }
 

@@ -22,6 +22,11 @@
 #include "erme_geometry/NodeFactory.hh"
 #include "erme_geometry/NodeFactoryDetran.hh"
 #include "erme_geometry/NodeList.hh"
+  
+// Response
+#include "NodeResponse.hh"
+#include "ResponseIndex.hh"
+#include "ResponseIndexer.hh"
 
 // Linear algebra
 #include "LinearAlgebraSetup.hh"
@@ -58,6 +63,14 @@
 %template(CartesianNodeDummySP)   detran_utilities::SP<erme_geometry::CartesianNodeDummy>;
 %template(CartesianNodeDetranSP)  detran_utilities::SP<erme_geometry::CartesianNodeDetran>;
 %template(NodeListSP)             detran_utilities::SP<erme_geometry::NodeList>;
+
+// Response
+%include "NodeResponse.hh"
+%template(NodeResponseSP)  detran_utilities::SP<erme_response::NodeResponse>;
+%include "ResponseIndex.hh"
+%template(ResponseIndexSP)  detran_utilities::SP<erme_response::ResponseIndex>;
+%include "ResponseIndexer.hh"
+%template(ResponseIndexerSP)  detran_utilities::SP<erme_response::ResponseIndexer>;
 
 // PETSc/SLEPc initialization
 %include "linear_algebra/LinearAlgebraSetup.hh"

@@ -131,7 +131,7 @@ ResponseDatabase::ResponseDatabase(std::string filename)
         Assert(!status);
         for (int ii = 0; ii < response_size; ++ii)
           for (int jj = 0; jj < response_size; ++jj)
-            r->boundary_response(ii, jj) = buffer[ii + jj * response_size];
+            r->boundary_response(ii, jj) = buffer[jj + ii * response_size];
         delete [] buffer;
 
         H5Dclose(dset);
@@ -228,6 +228,8 @@ ResponseDatabase::ResponseDatabase(std::string filename)
 
       // Add the temporary response to the vector
       d_responses[nodename].responses.push_back(r);
+
+      r->display();
 
     } // end keff loop
 

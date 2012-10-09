@@ -121,8 +121,11 @@ public:
    */
   void solve();
 
-  void finalize();
+  /// Return the indexer
+  SP_indexer indexer() const { return d_indexer; }
 
+  /// Close libraries, etc.
+  void finalize();
 
 private:
 

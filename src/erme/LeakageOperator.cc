@@ -94,16 +94,20 @@ void LeakageOperator::update()
     // Get response
     SP_response r = d_server->response(n);
 
-    // Block indices
+    // Block indices for the rows.  These index into the
+    // nodal surfaces.
     vec_int indices(r->number_surfaces(), offset);
-    for (size_type i = 0; i < indices.size(); i++)
+    for (size_type i = 0; i < r->number_surfaces(); i++)
+    {
       indices[i] += i;
+    }
 
     // Insert each column (corresponding to an incident moment)
     for (int in = 0; in < r->size(); in++)
     {
       int col = in + offset;
-      insert_values(r->size(), &indices[0], 1, &col,
+      insert_values(r->number_surfaces(), &indices[0],
+                    1, &col,
                     &r->leakage_response(0, in));
     }
 
