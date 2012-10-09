@@ -59,6 +59,9 @@ public:
    */
   double leakage(linear_algebra::Vector &x);
 
+  /// Display the global leakage vector
+  void display_leakage();
+
 private:
 
   //-------------------------------------------------------------------------//

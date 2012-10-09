@@ -23,7 +23,8 @@ namespace erme_response
 inline double
 interpolate_linear(double x, double x0, double x1, double r0, double r1)
 {
-  if (x0 == x1) return r0;
+//  double r = (r1 - r0) * (x - x0) / (x1 - x0) + r0;
+//  std::cout << " x0 x1 r0 r1 = " << x0 << " " << x1 << " " << r0 << " " << r1 << " " << x << " " << x << " " << r << std::endl;
   return  (r1 - r0) * (x - x0) / (x1 - x0) + r0;
 }
 
@@ -272,13 +273,17 @@ interpolate(double xi,
   // Number of abscissa for interpolating
   detran_utilities::size_t n = x.size();
 
-  double ri = r[0];
+  double ri;
+  if (n == 1)
+    ri = r[0];
   if (n == 2)
     ri = interpolate_linear(xi, x[0], x[1], r[0], r[1]);
   else if (n == 3)
     ri = interpolate_quadratic(xi, x[0], x[1], x[2], r[0], r[1], r[2]);
   else if (n == 4)
     ri = interpolate_cubic(xi, x[0], x[1], x[2], x[3], r[0], r[1], r[2], r[3]);
+  else
+    THROW("INTERPOLATION WRONG ORDER");
   return ri;
 }
 

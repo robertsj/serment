@@ -75,6 +75,15 @@ void GlobalSolverPicard::solve()
     leakage     = d_L->leakage(*d_J0);
     loss        = absorption + leakage;
 
+//    std::cout << " GAIN = "     << gain << std::endl;
+//    std::cout << " ABS = "      << absorption << std::endl;
+//    std::cout << " leakage = "  << leakage << std::endl;
+
+//    d_R->display(d_L->BINARY, "R.out");
+//    d_M->display(d_L->BINARY, "M.out");
+//    d_L->display(d_L->BINARY, "L.out");
+//    d_L->display_leakage();
+
     // Initial update of keff
     keff = gain / loss;
 

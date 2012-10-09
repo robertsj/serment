@@ -102,10 +102,14 @@ void LeakageOperator::update()
       indices[i] += i;
     }
 
+    // Converting the first nodal moment to the global
+    // moment yields the offset for the column indices
+    int column_offset = d_indexer->nodal_to_global(n, 0);
+
     // Insert each column (corresponding to an incident moment)
     for (int in = 0; in < r->size(); in++)
     {
-      int col = in + offset;
+      int col = in + column_offset;
       insert_values(r->number_surfaces(), &indices[0],
                     1, &col,
                     &r->leakage_response(0, in));
@@ -136,7 +140,11 @@ double LeakageOperator::leakage(linear_algebra::Vector &x)
   return val;
 }
 
-
+void LeakageOperator::display_leakage()
+{
+  std::cout << " GLOBAL LEAKAGE: " << std::endl;
+  d_global_leakage.display();
+}
 
 } // end namespace erme
 

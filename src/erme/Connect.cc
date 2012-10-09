@@ -97,7 +97,7 @@ Connect::Connect(SP_nodelist nodes, SP_indexer indexer)
         }
         else if (nodes->neighbor(n, s).neighbor() == erme_geometry::Node::VACUUM)
         {
-          // Nothing for vacuum
+         // value = -2;
         }
         else
         {

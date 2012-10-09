@@ -41,13 +41,16 @@ inline void ResponseDatabase::get(std::string     nodename,
   {
     // Determine number of points and size the vectors.
     size_t nk = rf.number_keffs;
-    if (d_interpolation_order < nk + 1) nk = d_interpolation_order + 1;
-    vec_int kidx(nk, 0);
-    vec_dbl kval(nk, 0.0);
-    vec_dbl rval(nk, 0.0);
 
     // If nk is larger than one, we need the bounding keffs.  For quadratic,
     // we want the central abscissa to be as close to the in keff as possible.
+    if (nk > 1)
+    {
+      if (d_interpolation_order < nk + 1) nk = d_interpolation_order + 1;
+    }
+    vec_int kidx(nk, 0);
+    vec_dbl kval(nk, 0.0);
+    vec_dbl rval(nk, 0.0);
 
     if (nk > 1)
     {
@@ -62,12 +65,24 @@ inline void ResponseDatabase::get(std::string     nodename,
           kidx[i] -= (kidx[nk-1] - rf.number_keffs + 1);
       }
     }
-    // incident nodal response index
-    int in = index.nodal;
-
     // interpolation abscissa
     for (int i = 0; i < nk; ++i)
       kval[i] = rf.keffs[kidx[i]];
+
+//    std::cout << " all keffs = " << std::endl;
+//    for (int i = 0; i < rf.number_keffs; ++i)
+//    {
+//      std::cout << " k(i) = " << rf.keffs[i] << std::endl;
+//    }
+//    std::cout << " requested k = " << keff << std::endl;
+//    std::cout << " bounding keffs = " << std::endl;
+//    for (int i = 0; i < nk; ++i)
+//    {
+//      std::cout << " idx = " << kidx[i] << " k = " << kval[i] << std::endl;
+//    }
+
+    // incident nodal response index
+    int in = index.nodal;
 
     // fill the responses
     for (int o = 0; o < response->size(); ++o)

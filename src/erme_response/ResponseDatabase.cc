@@ -163,9 +163,13 @@ ResponseDatabase::ResponseDatabase(std::string filename, size_t order)
         // Read the set and kill the buffer
         status = H5Dread(dset, H5T_NATIVE_DOUBLE, memspace, space, H5P_DEFAULT, buffer);
         Assert(!status);
+//        for (int kk = 0; kk < number_surfaces*response_size; ++kk)
+//        {
+//          std::cout << " buffer " << kk << " = " << buffer[kk] << std::endl;
+//        }
         for (int ii = 0; ii < number_surfaces; ++ii)
           for (int jj = 0; jj < response_size; ++jj)
-            r->leakage_response(ii, jj) = buffer[ii + jj * number_surfaces];
+            r->leakage_response(ii, jj) = buffer[jj + ii * response_size];
         delete [] buffer;
 
         H5Dclose(dset);
@@ -230,6 +234,9 @@ ResponseDatabase::ResponseDatabase(std::string filename, size_t order)
 
       // Add the temporary response to the vector
       d_responses[nodename].responses.push_back(r);
+
+//      r->display();
+//      THROW("");
 
     } // end keff loop
 

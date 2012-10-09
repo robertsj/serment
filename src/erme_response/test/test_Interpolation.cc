@@ -44,11 +44,11 @@ int test_Interpolation(int argc, char *argv[])
   TEST(soft_equiv(f_test, 0.5));
 
   // test quadratic
-  double f_test = interpolate_quadratic(0.5, x0, x1, x2, f0, f1, f2);
+  f_test = interpolate_quadratic(0.5, x0, x1, x2, f0, f1, f2);
   TEST(soft_equiv(f_test, 0.5));
 
   // test linear
-  double f_test = interpolate_cubic(0.5, x0, x1, x2, x3, f0, f1, f2, f3);
+  f_test = interpolate_cubic(0.5, x0, x1, x2, x3, f0, f1, f2, f3);
   TEST(soft_equiv(f_test, 0.5));
 
   return 0;
