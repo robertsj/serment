@@ -33,10 +33,6 @@ inline void ResponseDatabase::get(std::string     nodename,
   DBResponse &rf = it->second;
 
   // We are interpolating
-  //
-  // Linear:    r(k) ~ [r2-r1]/[k2-k1] * k + [r2x1-r1x2]/[x1-x2]
-  // Quadratic: r(k) ~ ... later
-  //
   if (rf.scheme == 1)
   {
     // Determine number of points and size the vectors.

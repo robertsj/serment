@@ -276,7 +276,7 @@ interpolate(double xi,
   double ri;
   if (n == 1)
     ri = r[0];
-  if (n == 2)
+  else if (n == 2)
     ri = interpolate_linear(xi, x[0], x[1], r[0], r[1]);
   else if (n == 3)
     ri = interpolate_quadratic(xi, x[0], x[1], x[2], r[0], r[1], r[2]);
