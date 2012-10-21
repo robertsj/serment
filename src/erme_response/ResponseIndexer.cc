@@ -30,8 +30,14 @@ ResponseIndexer::ResponseIndexer(SP_db db, SP_nodelist nodes)
   Require(nodes);
 
   // Dimension required for correct builder
-  Insist(db->check("dimension"), "Parameter database must specify dimension.");
+  Insist(db->check("dimension"),
+         "Parameter database must specify dimension.");
   int dimension = db->get<int>("dimension");
+  Require(dimension >= 1);
+  Require(dimension <= 3);
+  // Check that all nodes have the same dimension
+  for (int i = 0; i < nodes->number_global_nodes(); ++i)
+    Require(nodes->node(i)->dimension() == dimension);
 
   // Get options from database.
   if (db->check("erme_order_reduction"))

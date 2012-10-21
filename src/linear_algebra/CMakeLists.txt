@@ -27,6 +27,7 @@ ADD_LIBRARY(linear_algebra
 TARGET_LINK_LIBRARIES(linear_algebra
                       ${Detran_LIBRARIES}
                       ${PETSC_LIBRARIES}
+                      ${SLEPC_LIBRARIES}
                       ${Boost_LIBRARIES}
 )
 
