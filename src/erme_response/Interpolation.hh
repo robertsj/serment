@@ -256,6 +256,13 @@ interpolate_cubic(double x,
 
 /**
  *  @brief Interpolation helper function
+ *
+ *  Note, we invert the abscissa, since interpolating responses on
+ *  the inverse of k reduces the error significantly.  This was
+ *  suggested in Zhang & Rahnema (2012).  While they only use
+ *  linear interpolation, the 1/k dependences works for quadratic
+ *  and cubic as well.
+ *
  *  @param xi   Value of independent variable at which to evaluate function
  *  @param x    Abscissa
  *  @param r    Function evaluated at abscissa
@@ -277,11 +284,11 @@ interpolate(double xi,
   if (n == 1)
     ri = r[0];
   else if (n == 2)
-    ri = interpolate_linear(xi, x[0], x[1], r[0], r[1]);
+    ri = interpolate_linear(1.0/xi, 1.0/x[0], 1.0/x[1], r[0], r[1]);
   else if (n == 3)
-    ri = interpolate_quadratic(xi, x[0], x[1], x[2], r[0], r[1], r[2]);
+    ri = interpolate_quadratic(1.0/xi, 1.0/x[0], 1.0/x[1], 1.0/x[2], r[0], r[1], r[2]);
   else if (n == 4)
-    ri = interpolate_cubic(xi, x[0], x[1], x[2], x[3], r[0], r[1], r[2], r[3]);
+    ri = interpolate_cubic(1.0/xi, 1.0/x[0], 1.0/x[1], 1.0/x[2], 1.0/x[3], r[0], r[1], r[2], r[3]);
   else
     THROW("INTERPOLATION WRONG ORDER");
   return ri;

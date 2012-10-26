@@ -41,7 +41,7 @@ EigenSolver::EigenSolver(SP_matrix A, SP_matrix B)
   // Set the solver type to krylovschur and one largest eigenvalue.
   ierr = EPSSetType(d_solver, EPSKRYLOVSCHUR);
   Insist(!ierr, "Error defaulting EPS to EPSKRYLOVSCHUR.");
-  ierr = EPSSetWhichEigenpairs(d_solver, EPS_LARGEST_MAGNITUDE);
+  ierr = EPSSetWhichEigenpairs(d_solver, EPS_LARGEST_REAL);
   Insist(!ierr, "Error selecting EPS eigenpairs.");
 
   // Then allow for user choice.

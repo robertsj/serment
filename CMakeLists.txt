@@ -70,10 +70,12 @@ message("Detran library = ${Detran_LIBRARIES}")
 find_package(PETSc REQUIRED)
 include_directories(${PETSC_INCLUDES})
 add_definitions(${PETSC_DEFINITIONS})
+message("PETSc library = ${PETSC_LIBRARIES}")
 
 # SLEPc (required)
 find_package(SLEPc REQUIRED)
 include_directories(${SLEPC_INCLUDES})
+message("SLEPc library = ${SLEPC_LIBRARIES}")
 
 # Boost (required)
 set(Boost_USE_STATIC_LIBS OFF)
