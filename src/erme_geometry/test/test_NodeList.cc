@@ -1,10 +1,9 @@
 //----------------------------------*-C++-*----------------------------------//
-/*!
- * \file   test_NodeList.cc
- * \author Jeremy Roberts
- * \date   Aug 19, 2012
- * \brief  Test of NodeList class.
- * \note   Copyright (C) 2012 Jeremy Roberts. 
+/**
+ *  @file   test_NodeList.cc
+ *  @author Jeremy Roberts
+ *  @date   Aug 19, 2012
+ *  @brief  Test of NodeList class.
  */
 //---------------------------------------------------------------------------//
 
@@ -16,8 +15,6 @@
 #include "erme_geometry/NodeList.hh"
 #include "erme_geometry/test/nodelist_fixture.hh"
 #include <iostream>
-
-// Setup
 
 using namespace erme_geometry;
 using namespace detran_test;
@@ -39,6 +36,7 @@ int test_NodeList(int argc, char *argv[])
   // Test 2D Cartesian
   {
     NodeList::SP_nodelist nodes = cartesian_node_dummy_list_2d();
+
     TEST(nodes->number_global_nodes() == 4);
     TEST(nodes->neighbor(0, CartesianNode::NORTH).neighbor() == 2);
     TEST(nodes->neighbor(0, CartesianNode::NORTH).surface()  == CartesianNode::SOUTH);

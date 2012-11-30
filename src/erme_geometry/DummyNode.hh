@@ -15,7 +15,7 @@
 namespace erme_geometry
 {
 
-/*!
+/**
  *  Dummy Cartesian node for testing
  */
 class CartesianNodeDummy: public CartesianNode
@@ -23,14 +23,25 @@ class CartesianNodeDummy: public CartesianNode
 
 public:
 
+  //-------------------------------------------------------------------------//
+  // TYPEDEFS
+  //-------------------------------------------------------------------------//
+
   typedef CartesianNode Base;
 
+  //-------------------------------------------------------------------------//
+  // CONSTRUCTOR & DESTRUCTOR
+  //-------------------------------------------------------------------------//
+
   CartesianNodeDummy(const size_t dim,
-                     const size_t id = 0,
                      const size_t so = 0,
                      const size_t po = 0,
                      const size_t ao = 0,
                      const size_t eo = 0);
+
+  //-------------------------------------------------------------------------//
+  // ABSTRACT INTERFACE
+  //-------------------------------------------------------------------------//
 
   double color(Point point)
   {
@@ -38,6 +49,10 @@ public:
   }
 
 private:
+
+  //-------------------------------------------------------------------------//
+  // IMPLEMENTATION
+  //-------------------------------------------------------------------------//
 
   /// Default constructor needed for serialization
   CartesianNodeDummy(){}
@@ -52,8 +67,6 @@ private:
 };
 
 } // end namespace erme_geometry
-
-//BOOST_CLASS_EXPORT_KEY(erme_geometry::CartesianNodeDummy)
 
 #endif // DUMMYNODE_HH_ 
 

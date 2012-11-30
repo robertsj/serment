@@ -49,11 +49,8 @@ public:
   // CONSTRUCTOR & DESTRUCTOR
   //-------------------------------------------------------------------------//
 
-  CartesianNode(const size_t  d,
-                const size_t  n,
-                const int     nodeid,
+  CartesianNode(const size_t  dimension,
                 std::string   nodename,
-                const Point   nodeorigin,
                 vec2_size_t   so,
                 vec_size_t    po,
                 vec_size_t    ao,
@@ -61,18 +58,15 @@ public:
                 vec_dbl       nodewidth);
 
   /// SP constructor
-  static SP_node Create(const size_t  d,
-                        const size_t  n,
-                        const int     nodeid,
+  static SP_node Create(const size_t  dimension,
                         std::string   nodename,
-                        const Point   nodeorigin,
                         vec2_size_t   so,
                         vec_size_t    po,
                         vec_size_t    ao,
                         vec_size_t    eo,
                         vec_dbl       nodewidth)
   {
-    SP_node p(new CartesianNode(d, n, nodeid, nodename, nodeorigin,
+    SP_node p(new CartesianNode(dimension, nodename,
                                 so, po, ao, eo, nodewidth));
     return p;
   }
@@ -105,7 +99,7 @@ public:
   /// Default color.  Am I in the box or not?
   virtual double color(Point point)
   {
-    Point point_local = point + -1*origin();
+    Point point_local = point;
     if ( (point_local.x() < 0.0) or
          (point_local.y() < 0.0) or
          (point_local.z() < 0.0) or
@@ -115,7 +109,7 @@ public:
     {
       return -1.0;
     }
-    return (double) id();
+    return (double) 1.0;
   }
 
 

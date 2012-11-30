@@ -1,14 +1,14 @@
 //----------------------------------*-C++-*----------------------------------//
-/*!
- * \file   ResponseServer.hh
- * \brief  ResponseServer class definition
- * \author Jeremy Roberts
- * \date   Aug 28, 2012
+/**
+ *  @file   ResponseServer.hh
+ *  @brief  ResponseServer class definition
+ *  @author Jeremy Roberts
+ *  @date   Aug 28, 2012
  */
 //---------------------------------------------------------------------------//
 
-#ifndef RESPONSESERVER_HH_
-#define RESPONSESERVER_HH_
+#ifndef erme_response_RESPONSESERVER_HH_
+#define erme_response_RESPONSESERVER_HH_
 
 #include "ResponseIndexer.hh"
 #include "NodeResponse.hh"
@@ -130,7 +130,7 @@ private:
 
 #include "ResponseServer.i.hh"
 
-#endif // RESPONSESERVER_HH_ 
+#endif // erme_response_RESPONSESERVER_HH_
 
 //---------------------------------------------------------------------------//
 //              end of file ResponseServer.hh

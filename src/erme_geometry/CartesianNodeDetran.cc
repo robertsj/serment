@@ -15,11 +15,8 @@
 namespace erme_geometry
 {
 
-CartesianNodeDetran::CartesianNodeDetran(const size_t  d,
-                                         const size_t  n,
-                                         const int     nodeid,
+CartesianNodeDetran::CartesianNodeDetran(const size_t  dim,
                                          std::string   nodename,
-                                         const Point   nodeorigin,
                                          vec2_size_t   so,
                                          vec_size_t    po,
                                          vec_size_t    ao,
@@ -28,7 +25,7 @@ CartesianNodeDetran::CartesianNodeDetran(const size_t  d,
                                          SP_db         nodedb,
                                          SP_material   nodematerial,
                                          SP_mesh       nodemesh)
-  : CartesianNode(d, n, nodeid, nodename, nodeorigin, so, po, ao, eo, nodewidth)
+  : CartesianNode(dim, nodename, so, po, ao, eo, nodewidth)
   , d_db(nodedb)
   , d_material(nodematerial)
   , d_mesh(nodemesh)
@@ -43,7 +40,7 @@ CartesianNodeDetran::CartesianNodeDetran(const size_t  d,
 // Do something better later.
 double CartesianNodeDetran::color(Point point)
 {
-  return id();
+  return 0.0;
 }
 
 } // end namespace erme_geometry

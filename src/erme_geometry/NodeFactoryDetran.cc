@@ -1,9 +1,9 @@
 //----------------------------------*-C++-*----------------------------------//
-/*!
- * \file   NodeFactoryDetran.cc
- * \brief  NodeFactoryDetran 
- * \author Jeremy Roberts
- * \date   Aug 23, 2012
+/**
+ *  @file   NodeFactoryDetran.cc
+ *  @brief  NodeFactoryDetran
+ *  @author Jeremy Roberts
+ *  @date   Aug 23, 2012
  */
 //---------------------------------------------------------------------------//
 
@@ -58,9 +58,6 @@ Node::SP_node NodeFactoryDetran::create_node(SP_db db,
   Node_T::vec_size_t  aov(ns, ao);
   Node_T::vec_size_t  eov(ns, eo);
 
-  // Origin
-  Node_T::Point origin(0, 0, 0);
-
   // Width
   double w[] = {mesh->total_width_x(),
                 mesh->total_width_y(),
@@ -70,7 +67,7 @@ Node::SP_node NodeFactoryDetran::create_node(SP_db db,
     widths[i] = w[i];
 
   // Create node
-  Node_T::SP_node node(new Node_T(dim, ns, 0, name, origin,
+  Node_T::SP_node node(new Node_T(dim, name,
                                   sov, pov, aov, eov, widths,
                                   db, material, mesh));
   Ensure(node);

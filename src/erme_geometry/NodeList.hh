@@ -7,8 +7,8 @@
  */
 //---------------------------------------------------------------------------//
 
-#ifndef NODELIST_HH_
-#define NODELIST_HH_
+#ifndef erme_geometry_NODELIST_HH_
+#define erme_geometry_NODELIST_HH_
 
 #include "Node.hh"
 #include "NeighborSurface.hh"
@@ -24,9 +24,16 @@ namespace erme_geometry
  *  @class NodeList
  *  @brief Container for nodes and indices of their neighbors.
  *
- *  The purpose of NodeList is to contain a list of Node
- *  pointers and their neighbors.  A neighbor index must be
- *  supplied for each surface.  If the surface is a global
+ *  The node list maintains a vector of unique nodes, their
+ *  placement in the global domain, and their neighbors.  For
+ *  now, a "unique" node is defined by both its underlying
+ *  transport problem *and* its requested expansion orders.
+ *  Hence, if the same node is used multiple times in a problem
+ *  with varying orders (e.g. for scoping adaptivity), then
+ *  those are unique.
+ *
+ *  A neighbor index must be supplied for each nodal surface.
+ *  If the surface is a global
  *  boundary, then either Node::REFLECT or Node::VACUUM must
  *  be specified.  The surfaces are in a Node-specific
  *  ordering.  For example, Cartesian nodes are indexed
@@ -72,31 +79,40 @@ public:
   /**
    *  @brief Set the local node array bounds
    *
-   *  The entire vector of nodes lives on all process.  The
+   *  The entire vector of nodes lives on all processes.  The
    *  partitioner must set the bounds corresponding to a
-   *  particular node.
+   *  particular node.  The unique nodes on each process are also
+   *  identified.
    *
    *  @param lb   Lower bound
    *  @param ub   Upper bound
    */
-  void set_bounds(const size_t lb, const size_t ub)
-  {
-    d_lower_bound = lb;
-    d_upper_bound = ub;
-  }
+  void set_bounds(const size_t lb, const size_t ub);
 
   /**
-   *  @brief Add a node and a vector of (neighbor, surface) indices
+   *  @brief Add a unique node
    *  @param n          Node to be added
-   *  @param neighbors  Vector of neighbor/surface indices
    */
-  void add_node(SP_node n, vec_neighbor neighbors);
+  void add_node(SP_node n);
+
+  /**
+   *  @brief Set the map of nodes with their neighbors
+   *  @param nodal_indices  Indices into the vector of unique nodes
+   *  @param neighbor       Neighbor data for each node
+   */
+  void set_nodal_map(const vec_int &nodes, const vec2_neighbor &neighbors);
 
   /**
    *  @brief Get a node
-   *  @param n  Local node index
+   *  @param n  Index into vector of unique nodes
    */
-  SP_node node(const int n);
+  SP_node node(const int n) const;
+
+  /**
+   *  @brief Get a node.  Returns null pointer if not found.
+   *  @param name  Name of node
+   */
+  SP_node node(std::string name);
 
   /// Return local lower bound
   size_t lower_bound() const;
@@ -138,11 +154,13 @@ public:
    */
   int local_index(const size_t n) const;
 
+  /// Signify that all nodes are added
   void finalize()
   {
     d_is_finalized = true;
   }
 
+  /// Have all nodes been added?
   bool is_finalized() const
   {
     return d_is_finalized;
@@ -154,8 +172,12 @@ private:
   // DATA
   //-------------------------------------------------------------------------//
 
-  /// Vector of nodes
+  /// Vector of unique nodes
   vec_node d_nodes;
+  /// Global node map that provides indices into the node vector
+  vec_int d_node_map;
+  /// Indices of unique local nodes
+  vec_int d_unique_nodes;
   /// Vector of vectors of node (neighbor, surface) index pairs
   vec2_neighbor d_neighbors;
   /// Starting index of local nodes
@@ -179,6 +201,7 @@ private:
   void serialize(Archive & ar, const unsigned int version)
   {
     ar & d_nodes;
+    ar & d_node_map;
     ar & d_neighbors;
     ar & d_lower_bound;
     ar & d_upper_bound;
@@ -195,7 +218,7 @@ private:
 
 #include "NodeList.i.hh"
 
-#endif // NODELIST_HH_ 
+#endif // erme_geometry_NODELIST_HH_
 
 //---------------------------------------------------------------------------//
 //              end of file NodeList.hh

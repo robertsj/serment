@@ -25,6 +25,10 @@ class HexagonalNode: public Node
 
 public:
 
+  //-------------------------------------------------------------------------//
+  // ENUMERATIONS
+  //-------------------------------------------------------------------------//
+
   // Face identifiers
   enum FACE
   {
@@ -38,20 +42,24 @@ public:
     TOP
   };
 
-  typedef Node                    Base;
-  typedef std::vector<double>     vec_dbl;
+  //-------------------------------------------------------------------------//
+  // TYPEDEFS
+  //-------------------------------------------------------------------------//
 
-  HexagonalNode(const size_t  d,
-                const size_t  n,
-                const int        nodeid,
-                std::string      nodename,
-                const Point      nodeorigin,
+  typedef Node                    Base;
+
+  //-------------------------------------------------------------------------//
+  // CONSTRUCTOR & DESTRUCTOR
+  //-------------------------------------------------------------------------//
+
+  HexagonalNode(const size_t  dimension,
+                std::string   nodename = "hexagonal_node",
                 vec2_size_t   so,
                 vec_size_t    po,
                 vec_size_t    ao,
                 vec_size_t    eo,
-                const double     face_width,
-                const double     height = 1.0);
+                const double  face_width,
+                const double  height = 1.0);
 
   //-------------------------------------------------------------------------//
   // ABSTRACT INTERFACE
@@ -87,7 +95,6 @@ private:
 
   /// Width of a face
   const double d_face_width;
-
   /// Height of cell (defaults to 1.0 for 2D)
   const double d_height;
 

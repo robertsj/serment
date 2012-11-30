@@ -43,7 +43,9 @@ namespace erme_geometry
  *  response generator, be it Detran or something else.  Note,
  *  the maximum response order per variable is specified.  However,
  *  the actual order realized could depend on dynamic order
- *  schemes.
+ *  schemes.  Hence, while a unique node can be specified once,
+ *  the actual expansion orders used for multiple instances of the
+ *  node may vary.
  *
  *  Geometrically, nodes are rather flexible.  In 1D, they can
  *  represent slab slices, cylindrical shells, or spherical shells.
@@ -101,9 +103,7 @@ public:
    *  @brief Constructor
    *  @param dimension        Dimension of the node
    *  @param number_surfaces  Number of surfaces
-   *  @param id               Identifier
-   *  @param name             Name
-   *  @param origin           Node origin relative to global origin
+   *  @param name             Unique Name
    *  @param so               Spatial orders [surface][axis]
    *  @param po               Polar orders [surface]
    *  @param ao               Azimuth orders [surface]
@@ -111,9 +111,7 @@ public:
    */
   Node(const size_t  dimension,
        const size_t  number_surfaces,
-       const int     id,
        std::string   name,
-       const Point   origin,
        vec2_size_t   so,
        vec_size_t    po,
        vec_size_t    ao,
@@ -123,7 +121,7 @@ public:
   virtual ~Node() = 0;
 
   //-------------------------------------------------------------------------//
-  // ABSTRACT INTERFACE
+  // ABSTRACT INTERFACE -- ALL NODES MUST IMPLEMENT THESE
   //-------------------------------------------------------------------------//
 
   /**
@@ -144,10 +142,10 @@ public:
 
   /// Node dimension
   size_t dimension() const;
+  /// Number nodal surfaces
   size_t number_surfaces() const;
-  int id() const;
+  /// Nodal name
   std::string name() const;
-  Point origin() const;
   /// Spatial order for a surface and possible dimension
   size_t spatial_order(const size_t s, const size_t d) const;
   /// Polar order for a surface
@@ -156,7 +154,7 @@ public:
   size_t azimuthal_order(const size_t s) const;
   /// Energy order for a surface
   size_t energy_order(const size_t s) const;
-  ///
+  /// Pretty print of key characteristics
   void display() const
   {
     std::cout << "--------------------" << std::endl;
@@ -164,7 +162,7 @@ public:
     std::cout << "--------------------" << std::endl;
     std::cout << "  dimension = " << d_dimension << std::endl;
     std::cout << "   surfaces = " << d_number_surfaces << std::endl;
-    std::cout << "       name = " << d_name << std::endl;
+    std::cout << "      name  = " << d_name << std::endl;
   }
 
 
@@ -179,11 +177,7 @@ private:
   /// Number of node surfaces
   size_t d_number_surfaces;
   /// Identifier
-  int d_id;
-  /// Node name
   std::string d_name;
-  /// Origin
-  Point d_origin;
   /// Spatial orders per dimension per surface
   vec2_size_t d_spatial_order;
   /// Polar order per surface
@@ -203,8 +197,7 @@ protected:
   Node()
     : d_dimension(0),
       d_number_surfaces(0),
-      d_id(0),
-      d_origin(Point(0, 0, 0))
+      d_name("no_name_given")
   {/* ... */}
 
 private:
@@ -216,7 +209,6 @@ private:
   {
     ar & d_dimension;
     ar & d_number_surfaces;
-    ar & d_id;
     ar & d_name;
     ar & d_spatial_order;
     ar & d_polar_order;

@@ -16,18 +16,20 @@
 namespace erme_response
 {
 
+//---------------------------------------------------------------------------//
 ResponseServer::ResponseServer(SP_nodelist  nodes,
                                SP_indexer   indexer,
                                std::string  dbname,
                                size_t       dborder)
   : d_nodes(nodes)
   , d_indexer(indexer)
-  , d_sources(nodes->number_local_nodes())
-  , d_responses(nodes->number_local_nodes())
 {
   // Preconditions
-  Require(nodes);
-  Require(indexer);
+  Require(d_nodes);
+  Require(d_indexer);
+
+  d_sources.resize(d_nodes->number_local_nodes());
+  d_responses.resize(d_nodes->number_local_nodes());
 
   // Build the response database if requested
   if (dbname != "")
@@ -52,11 +54,7 @@ ResponseServer::ResponseServer(SP_nodelist  nodes,
 
 }
 
-/*
- * Currently, I expend the updates to be called from the global
- * communicator, since they want
- *
- */
+//---------------------------------------------------------------------------//
 void ResponseServer::update(const double keff)
 {
   // Preconditions
@@ -92,6 +90,7 @@ void ResponseServer::update(const double keff)
 // IMPLEMENTATION
 //---------------------------------------------------------------------------//
 
+//---------------------------------------------------------------------------//
 /*
  *  Simplest case of having each process do a predefined amount of
  *  work.  This first implementation assumes all responses are created
@@ -198,5 +197,4 @@ void ResponseServer::update_explicit_work_share()
 }
 
 } // end namespace erme_response
-
 

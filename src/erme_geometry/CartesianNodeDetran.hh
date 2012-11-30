@@ -1,9 +1,9 @@
 //----------------------------------*-C++-*----------------------------------//
-/*!
- * \file   CartesianNodeDetran.hh
- * \brief  CartesianNodeDetran class definition
- * \author Jeremy Roberts
- * \date   Aug 22, 2012
+/**
+ *  @file   CartesianNodeDetran.hh
+ *  @brief  CartesianNodeDetran class definition
+ *  @author Jeremy Roberts
+ *  @date   Aug 22, 2012
  */
 //---------------------------------------------------------------------------//
 
@@ -18,9 +18,9 @@
 namespace erme_geometry
 {
 
-/*!
- *  \class CartesianNodeDetran
- *  \brief Specialization of CartesianNode for use with Detran
+/**
+ *  @class CartesianNodeDetran
+ *  @brief Specialization of CartesianNode for use with Detran
  *
  *  The node essentially defines the local problem to be solved by
  *  Detran.  The required input consists of the parameters database,
@@ -39,23 +39,17 @@ public:
   typedef detran_material::Material::SP_material    SP_material;
   typedef detran_geometry::Mesh::SP_mesh            SP_mesh;
 
-  /*!
-   *  \brief Constructor
-   *  \param dimension        Dimension of the node
-   *  \param number_surfaces  Number of surfaces
-   *  \param id               Identifier
-   *  \param name             Name
-   *  \param origin           Node origin relative to global origin
-   *  \param so               Spatial orders [surface][axis]
-   *  \param po               Polar orders [surface]
-   *  \param ao               Azimuth orders [surface]
-   *  \param eo               Energy orders [surface]
+  /**
+   *  @brief Constructor
+   *  @param dimension        Dimension of the node
+   *  @param name             Name
+   *  @param so               Spatial orders [surface][axis]
+   *  @param po               Polar orders [surface]
+   *  @param ao               Azimuth orders [surface]
+   *  @param eo               Energy orders [surface]
    */
   CartesianNodeDetran(const size_t  dimension,
-                      const size_t  number_surfaces,
-                      const int     nodeid,
                       std::string   nodename,
-                      const Point   nodeorigin,
                       vec2_size_t   so,
                       vec_size_t    po,
                       vec_size_t    ao,
@@ -98,10 +92,8 @@ private:
 
   /// Detran db
   SP_db d_db;
-
   /// Detran material
   SP_material d_material;
-
   /// Detran mesh
   SP_mesh d_mesh;
 
