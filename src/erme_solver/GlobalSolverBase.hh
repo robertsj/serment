@@ -10,6 +10,7 @@
 #ifndef erme_solver_GLOBALSOLVERBASE_HH_
 #define erme_solver_GLOBALSOLVERBASE_HH_
 
+#include "OperatorMR.hh"
 #include "NonlinearResidual.hh"
 #include "erme_response/ResponseIndexer.hh"
 #include "erme_response/ResponseServer.hh"

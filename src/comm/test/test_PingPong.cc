@@ -1,10 +1,9 @@
 //----------------------------------*-C++-*----------------------------------//
-/*!
- * \file   test_Comm.cc
- * \author Jeremy Roberts
- * \date   Aug 19, 2012
- * \brief  Test of Vector class.
- * \note   Copyright (C) 2012 Jeremy Roberts. 
+/**
+ *  @file   test_PingPong.cc
+ *  @author Jeremy Roberts
+ *  @date   Aug 19, 2012
+ *  @brief  Latency test
  */
 //---------------------------------------------------------------------------//
 
@@ -136,8 +135,11 @@ int test_PingPong_bandwidth(int argc, char *argv[])
   Comm::initialize(argc, argv);
 
   // Test is valid for two processes only
-  if (Comm::size() != 2) return 0;
-
+  if (Comm::size() != 2)
+  {
+    std::cout << "PINGPONG bandwidth test needs 2 processes!" << std::endl;
+    return 0;
+  }
   // Do the test for several array sizes of powers of 2
   for (int n = -1; n < 20; n++)
   {

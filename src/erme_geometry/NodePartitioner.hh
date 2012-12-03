@@ -60,7 +60,6 @@ private:
 
   /// Buffer for sending nodes
   std::string d_buffer;
-
   /// Buffer size
   int d_buffer_size;
 

@@ -69,7 +69,6 @@ private:
 
   /// Values of keff for each iteration
   vec_dbl d_keffs;
-
   /// Minimum number of computed keffs before extrapolating
   int d_minimum;
 

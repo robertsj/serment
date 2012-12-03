@@ -1,9 +1,9 @@
 //----------------------------------*-C++-*----------------------------------//
-/*!
- * \file   MPI.hh
- * \brief  MPI communications interface
- * \author Jeremy Roberts
- * \date   Aug 21, 2012
+/**
+ *  @file   MPI.hh
+ *  @brief  MPI communications interface
+ *  @author Jeremy Roberts
+ *  @date   Aug 21, 2012
  */
 //---------------------------------------------------------------------------//
 

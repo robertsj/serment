@@ -92,7 +92,7 @@ private:
 // EXTERNAL WRAPPER FUNCTION AND SETTER
 //---------------------------------------------------------------------------//
 
-PetscErrorCode multiply_wrapper(Mat A, Vec x, Vec y)
+inline PetscErrorCode multiply_wrapper(Mat A, Vec x, Vec y)
 {
 
   // Get the context and cast as MatrixShell
@@ -106,7 +106,7 @@ PetscErrorCode multiply_wrapper(Mat A, Vec x, Vec y)
   return foo->shell_multiply(x, y);
 }
 
-PetscErrorCode MatrixShell::set_operation()
+inline PetscErrorCode MatrixShell::set_operation()
 {
   return MatShellSetOperation(d_A, MATOP_MULT,
                               (void(*)(void)) multiply_wrapper);

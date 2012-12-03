@@ -1,14 +1,14 @@
 //----------------------------------*-C++-*----------------------------------//
-/*!
- * \file   NodeSerialization.hh
- * \brief  Convenience header for holding Boost serialization macros
- * \author Jeremy Roberts
- * \date   Oct 4, 2012
+/**
+ *  @file   NodeSerialization.hh
+ *  @brief  Convenience header for holding Boost serialization macros
+ *  @author Jeremy Roberts
+ *  @date   Oct 4, 2012
  */
 //---------------------------------------------------------------------------//
 
-#ifndef NODESERIALIZATION_HH_
-#define NODESERIALIZATION_HH_
+#ifndef erme_geometry_NODESERIALIZATION_HH_
+#define erme_geometry_NODESERIALIZATION_HH_
 
 // Each node specialization must be added here
 #include "CartesianNodeDetran.hh"
@@ -30,7 +30,7 @@ BOOST_CLASS_EXPORT_KEY(erme_geometry::CartesianNodeDetran)
 BOOST_CLASS_EXPORT_KEY(erme_geometry::CartesianNodeDummy)
 
 
-#endif // NODESERIALIZATION_HH_ 
+#endif // erme_geometry_NODESERIALIZATION_HH_
 
 //---------------------------------------------------------------------------//
 //              end of file NodeSerialization.hh

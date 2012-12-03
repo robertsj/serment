@@ -1,10 +1,9 @@
 //----------------------------------*-C++-*----------------------------------//
-/*!
- * \file   test_ResponseIndexer.cc
- * \author Jeremy Roberts
- * \date   Aug 19, 2012
- * \brief  Test of ResponseIndexer class.
- * \note   Copyright (C) 2012 Jeremy Roberts. 
+/**
+ *  @file   test_ResponseIndexer.cc
+ *  @author Jeremy Roberts
+ *  @date   Aug 19, 2012
+ *  @brief  Test of ResponseIndexer class.
  */
 //---------------------------------------------------------------------------//
 
@@ -83,6 +82,32 @@ int test_ResponseIndexer(int argc, char *argv[])
     TEST(indexer.response_index(0, 3, 44).polar   == 2);
     TEST(indexer.response_index(0, 3, 44).azimuth == 2);
     TEST(indexer.response_index(0, 3, 44).space0  == 4);
+
+    if (Comm::size() < 3)
+    {
+      // One local group
+      if (Comm::rank() == 0)
+      {
+        TEST(indexer.local_to_global(  0) ==   0);
+        TEST(indexer.local_to_global(180) == 180);
+        TEST(indexer.local_to_global(360) == 360);
+
+      }
+    }
+    else
+    {
+      // Two local groups
+      if (Comm::rank() == 0 and Comm::local_group() == 0)
+      {
+        TEST(indexer.local_to_global(  0) ==   0);
+        TEST(indexer.local_to_global(180) == 180);
+      }
+      if (Comm::rank() == 0 and Comm::local_group() == 1)
+      {
+        TEST(indexer.local_to_global(  0) == 360);
+        TEST(indexer.local_to_global(180) == 540);
+      }
+    }
 
   } // end test with no order reduction
 
@@ -193,6 +218,7 @@ int test_ResponseIndexer_zeroth_order(int argc, char *argv[])
 
   TEST(indexer.number_nodes()           == 4);
   TEST(indexer.number_node_moments(0)   == 4);
+  //std::cout << " num g mom =  " << indexer.number_global_moments() << std::endl;
   TEST(indexer.number_global_moments()  == 16);
   if (Comm::size() == 1)
   {

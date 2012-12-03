@@ -16,12 +16,15 @@ namespace erme_response
 {
 
 //---------------------------------------------------------------------------//
-inline ResponseServer::SP_response ResponseServer::response(size_t node)
+inline ResponseServer::SP_response ResponseServer::response(size_t node_l)
 {
-  // Preconditions
-  Require(node < d_responses.size());
+  // Preconditions \todo not an optimal sequence of indexing...
+  size_t node_g  = d_nodes->global_index(node_l);
+  size_t node_ug = d_nodes->unique_global_index(node_g);
+  size_t node_ul = d_nodes->unique_local_index(node_ug);
+  Require(node_ul < d_responses.size());
 
-  return d_responses[node];
+  return d_responses[node_ul];
 }
 
 } // end namespace erme_response

@@ -104,9 +104,15 @@ public:
 
   /**
    *  @brief Get a node
-   *  @param n  Index into vector of unique nodes
+   *  @param n  Index into vector of unique nodes via the global index
    */
   SP_node node(const int n) const;
+
+  /**
+   *  @brief Get a node
+   *  @param n  Index into vector of unique nodes via the cardinal index
+   */
+  SP_node unique_node(const int n) const;
 
   /**
    *  @brief Get a node.  Returns null pointer if not found.
@@ -116,21 +122,21 @@ public:
 
   /// Return local lower bound
   size_t lower_bound() const;
-
   /// Return local upper bound
   size_t upper_bound() const;
 
   /// Number of global nodes
   size_t number_global_nodes() const;
-
   /// Number of local nodes
   size_t number_local_nodes() const;
-
   /// Number of local surfaces
   size_t number_global_surfaces() const;
-
   /// Number of local surfaces
   size_t number_local_surfaces() const;
+  /// Number of unique global nodes
+  size_t number_unique_global_nodes() const;
+  /// Number of unique local nodes
+  size_t number_unique_local_nodes() const;
 
   /**
    *  @brief Get the global neighbor index for a node surface
@@ -154,6 +160,25 @@ public:
    */
   int local_index(const size_t n) const;
 
+  /**
+   *  @brief Get the unique index of a global node
+   *  @param n  Global node index
+   */
+  size_t unique_global_index(const size_t n) const;
+
+  /**
+   *  @brief Get the unique index of a local node
+   *  @param n  Global unique node index
+   */
+  size_t unique_local_index(const size_t n) const;
+
+
+  /**
+   *  @brief Get the global index from the unique local
+   *
+   */
+  size_t global_index_from_local_unique(const size_t ui) const;
+
   /// Signify that all nodes are added
   void finalize()
   {
@@ -176,7 +201,7 @@ private:
   vec_node d_nodes;
   /// Global node map that provides indices into the node vector
   vec_int d_node_map;
-  /// Indices of unique local nodes
+  /// Indices of unique nodes needed locally
   vec_int d_unique_nodes;
   /// Vector of vectors of node (neighbor, surface) index pairs
   vec2_neighbor d_neighbors;
@@ -202,6 +227,7 @@ private:
   {
     ar & d_nodes;
     ar & d_node_map;
+    ar & d_unique_nodes;
     ar & d_neighbors;
     ar & d_lower_bound;
     ar & d_upper_bound;

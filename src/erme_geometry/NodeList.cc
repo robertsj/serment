@@ -42,19 +42,25 @@ void NodeList::set_bounds(const size_t lb, const size_t ub)
   // sort, and then use unique to get the local unique nodes that actually
   // have responses.
   d_unique_nodes.resize(ub-lb);
-  for (int i = lb; i < lb; ++i) d_unique_nodes[i-lb] = d_node_map[i];
+  for (int i = lb; i < ub; ++i)
+  {
+    //std::cout << " unique[" << i - lb << "]=" << d_node_map[i] << std::endl;
+    d_unique_nodes[i-lb] = d_node_map[i];
+  }
   std::sort(d_unique_nodes.begin(), d_unique_nodes.end());
-  vec_int::iterator it = std::unique(d_unique_nodes.begin(), d_unique_nodes.end());
+  vec_int::iterator it =
+    std::unique(d_unique_nodes.begin(), d_unique_nodes.end());
   d_unique_nodes.erase(it, d_unique_nodes.end());
 
+  // d_unique_nodes now has global indices of nodes this process needs.
 }
 
 //---------------------------------------------------------------------------//
 void NodeList::add_node(SP_node node)
 {
   // Preconditions
-  Require(!is_finalized());
-  Require(node);
+  Insist(!is_finalized(), "Cannot be finalized when adding a node.")
+  Insist(node, "Invalid node.");
 
   d_nodes.push_back(node);
 }
@@ -64,8 +70,9 @@ void NodeList::set_nodal_map(const vec_int &node_map,
                              const vec2_neighbor &neighbors)
 {
   // Preconditions
-  Require(is_finalized());
-  Require(node_map.size() == neighbors.size());
+  Insist(is_finalized(), "Must finalize before setting nodal map.");
+  Insist(node_map.size() == neighbors.size(),
+         "Node map size is inconsistent with size of neighbors.");
   for (int i = 0; i < node_map.size(); ++i)
   {
     Require(node_map[i] < d_nodes.size());

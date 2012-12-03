@@ -1,33 +1,38 @@
 //----------------------------------*-C++-*----------------------------------//
-/*!
- * \file   ResponseIndexer.cc
- * \brief  ResponseIndexer 
- * \author Jeremy Roberts
- * \date   Aug 24, 2012
+/**
+ *  @file   ResponseIndexer.cc
+ *  @brief  ResponseIndexer
+ *  @author Jeremy Roberts
+ *  @date   Aug 24, 2012
  */
 //---------------------------------------------------------------------------//
 
 #include "ResponseIndexer.hh"
 #include "comm/Comm.hh"
 #include <iostream>
+
 namespace erme_response
 {
 
+//---------------------------------------------------------------------------//
 ResponseIndexer::ResponseIndexer(SP_db db, SP_nodelist nodes)
   : d_nodes(nodes)
-  , d_sizes(nodes->number_global_nodes(), 0)
-  , d_offsets(nodes->number_local_nodes(), 0)
-  , d_global_offsets(nodes->number_global_nodes(), 0)
   , d_order_reduction(0)
-  , d_local_size(0)
   , d_global_offset(0)
+  , d_unique_size(0)
+  , d_local_size(0)
   , d_global_size(0)
-  , d_number_global_nodes(nodes->number_global_nodes())
-  , d_number_local_nodes(nodes->number_local_nodes())
 {
   // Preconditions
   Require(db);
-  Require(nodes);
+  Require(d_nodes);
+
+  // Initialize
+  d_sizes.resize(d_nodes->number_unique_global_nodes(), 0);
+  d_offsets.resize(d_nodes->number_local_nodes(), 0);
+  d_global_offsets.resize(d_nodes->number_global_nodes(), 0);
+  d_number_global_nodes = d_nodes->number_global_nodes();
+  d_number_local_nodes = d_nodes->number_unique_local_nodes();
 
   // Dimension required for correct builder
   Insist(db->check("dimension"),
@@ -36,70 +41,98 @@ ResponseIndexer::ResponseIndexer(SP_db db, SP_nodelist nodes)
   Require(dimension >= 1);
   Require(dimension <= 3);
   // Check that all nodes have the same dimension
-  for (int i = 0; i < nodes->number_global_nodes(); ++i)
-    Require(nodes->node(i)->dimension() == dimension);
+  for (int i = 0; i < d_nodes->number_unique_global_nodes(); ++i)
+    Require(d_nodes->unique_node(i)->dimension() == dimension);
 
   // Get options from database.
   if (db->check("erme_order_reduction"))
     d_order_reduction = db->get<int>("erme_order_reduction");
 
-  // Loop over all nodes.  All process get all the same info.  This makes
+  // Loop over all nodes.  All processes get all the same info.  This makes
   // it easier to ensure consistent expansions between nodes.  If this for
   // some reason becomes a bottleneck, it can be reformulated.
-  for (size_t n = 0; n < nodes->number_global_nodes(); n++)
+  for (size_t n = 0; n < d_nodes->number_unique_global_nodes(); n++)
   {
     // Moments size for the node.
     size_t size = 0;
     if (dimension == 1)
-      size = build_1D(nodes->node(n), n);
+      size = build_1D(d_nodes->node(n), n);
     else if (dimension == 2)
-      size = build_2D(nodes->node(n), n);
+      size = build_2D(d_nodes->node(n), n);
     else
-      size = build_3D(nodes->node(n), n);
-    // Record the size for this node and the corresponding offset.
+      size = build_3D(d_nodes->node(n), n);
     d_sizes[n] = size;
-    // After all nodes, this *is* the global size
-    d_global_size += size;
+    std::cout << " size of node " << n << " is " << size << std::endl;
   }
 
-  // Global offsets for each node
-  for (int n = 0; n < nodes->number_global_nodes() - 1; n++)
+  /*
+   *  Now d_sizes has the number of moments for each unique
+   *  node.  Also, the indices for all the unique nodes have
+   *  been built.  What we need now is to define the local
+   *  and global numbers of moments and so forth that will be
+   *  used in defining and updating global operators and
+   *  vectors.
+   */
+
+  // Number of unique moments, i.e. the number we solve on local comm
+  for (size_t node_ul = 0; node_ul < d_nodes->number_unique_local_nodes(); ++node_ul)
   {
-    d_global_offsets[n + 1] = d_global_offsets[n] + d_sizes[n];
+    // Get global from unique local, and then global unique from global.
+    size_t node_g  = d_nodes->global_index_from_local_unique(node_ul);
+    size_t node_ug = d_nodes->unique_global_index(node_g);
+    Assert(node_ug < d_sizes.size());
+    // Add the size
+    d_unique_size += d_sizes[node_ug];
   }
+
+  // Global size and offsets for each node
+  for (size_t node_g = 0; node_g < d_nodes->number_global_nodes() - 1; ++node_g)
+  {
+    size_t node_ug = d_nodes->unique_global_index(node_g);
+    d_global_offsets[node_g + 1] = d_global_offsets[node_g] + d_sizes[node_ug];
+  }
+  for (size_t node_g = 0; node_g < d_nodes->number_global_nodes(); ++node_g)
+  {
+    size_t node_ug = d_nodes->unique_global_index(node_g);
+    d_global_size += d_sizes[node_ug];
+  }
+
   // Compute local sizes, local offsets, and my global offset
-  for (int n = nodes->lower_bound(); n < nodes->upper_bound(); n++)
+  for (size_t node_g = nodes->lower_bound(); node_g < nodes->upper_bound(); ++node_g)
+    d_local_size += d_sizes[d_nodes->unique_global_index(node_g)];
+  for (int node_g = nodes->lower_bound(); node_g < nodes->upper_bound() - 1; ++node_g)
   {
-    d_local_size += d_sizes[n];
+    d_offsets[node_g - d_nodes->lower_bound() + 1] =
+      d_offsets[node_g - d_nodes->lower_bound()] +
+        d_sizes[d_nodes->unique_global_index(node_g)];
   }
-  for (int n = nodes->lower_bound(); n < nodes->upper_bound() - 1; n++)
-  {
-    d_offsets[n - nodes->lower_bound() + 1] =
-      d_offsets[n - nodes->lower_bound()] + d_sizes[n];
-  }
-  for (int n = 0; n < nodes->lower_bound(); n++)
-  {
-    d_global_offset += d_global_offsets[n];
-  }
+  // \todo Is this right? or should sizes be added?
+  for (int node_g = 0; node_g < nodes->lower_bound(); ++node_g)
+    d_global_offset += d_global_offsets[node_g];
+  std::cout << " GLOBAL OFFSET = " << d_global_offset << " " << d_unique_size << std::endl;
 
-  // Compute the local moment to (node, surface, moment) index
-  d_local_indices.resize(d_local_size, vec_size_t(3, 0));
-  size_t local_index = 0;
-  for (int n = nodes->lower_bound(); n < nodes->upper_bound(); n++)
+  // Compute the unique local moment to (global node, surface, moment) index
+  d_unique_indices.resize(d_unique_size, vec_size_t(3, 0));
+  size_t unique_index = 0;
+  for (int node_ul = 0; node_ul < nodes->number_unique_local_nodes(); ++node_ul)
   {
-    for (int s = 0; s < d_indices[n].size(); s++)
+    // Get global from unique local, and then global unique from global.
+    size_t node_g  = d_nodes->global_index_from_local_unique(node_ul);
+    size_t node_ug = d_nodes->unique_global_index(node_g);
+    for (int s = 0; s < d_indices[node_ug].size(); s++)
     {
-      for (int m = 0; m < d_indices[n][s].size(); m++, local_index++)
+      for (int m = 0; m < d_indices[node_ug][s].size(); m++, unique_index++)
       {
-         d_local_indices[local_index][0] = n;
-         d_local_indices[local_index][1] = s;
-         d_local_indices[local_index][2] = m;
+         d_unique_indices[unique_index][0] = node_ug;
+         d_unique_indices[unique_index][1] = s;
+         d_unique_indices[unique_index][2] = m;
       }
     }
   }
 
 }
 
+//---------------------------------------------------------------------------//
 // Simple implementation for now.  A better format would be nice.
 void ResponseIndexer::display() const
 {
@@ -107,25 +140,26 @@ void ResponseIndexer::display() const
   using std::endl;
   cout << endl << "RESPONSE INDICES" << endl << endl;
 
-  for (int n = 0; n < number_nodes(); n++)
+  for (int node_g = 0; node_g < number_nodes(); ++node_g)
   {
-    cout << "  global node " << n << endl;
-    for (int s = 0; s < d_indices[n].size(); s++)
+    cout << "  global node " << node_g << endl;
+    size_t node_ug = d_nodes->unique_global_index(node_g);
+    for (int s = 0; s < d_indices[node_ug].size(); s++)
     {
 
-      for (int m = 0; m < d_indices[n][s].size(); m++)
+      for (int m = 0; m < d_indices[node_g][s].size(); m++)
       {
         cout << "    "
-             << response_index(n, s, m).local << " "
-             << response_index(n, s, m).nodal << " | "
-             << response_index(n, s, m).node  << " "
-             << response_index(n, s, m).surface  << " | "
-             << response_index(n, s, m).energy   << " | "
-             << response_index(n, s, m).polar    << " "
-             << response_index(n, s, m).azimuth  << " | "
-             << response_index(n, s, m).space0   << " "
-             << response_index(n, s, m).space1   << " | "
-             << response_index(n, s, m).even_odd << " |" << endl;
+             << d_nodes->local_index(node_g) << " "
+             << response_index(node_ug, s, m).nodal << " | "
+             << response_index(node_ug, s, m).node  << " "
+             << response_index(node_ug, s, m).surface  << " | "
+             << response_index(node_ug, s, m).energy   << " | "
+             << response_index(node_ug, s, m).polar    << " "
+             << response_index(node_ug, s, m).azimuth  << " | "
+             << response_index(node_ug, s, m).space0   << " "
+             << response_index(node_ug, s, m).space1   << " | "
+             << response_index(node_ug, s, m).even_odd << " |" << endl;
       } // end surface moment
     } // end surface
   } // end node
@@ -137,14 +171,11 @@ void ResponseIndexer::display() const
 // IMPLEMENTATION
 //---------------------------------------------------------------------------//
 
+//---------------------------------------------------------------------------//
 ResponseIndexer::size_t
 ResponseIndexer::build_3D(SP_node node, const size_t n)
 {
-
   size_t nodal_index = 0;
-  size_t offset;
-  for (size_t i = 0; i < n; i++)
-    offset += d_sizes[i];
 
   vec2_index surface_indices;
   for (size_t s = 0; s < node->number_surfaces(); s++)
@@ -194,7 +225,7 @@ ResponseIndexer::build_3D(SP_node node, const size_t n)
 
               // Add the index
               moment_indices.push_back(
-                ResponseIndex(n, s, e, p, a, s0, s1, polarity, offset+nodal_index, nodal_index));
+                ResponseIndex(n, s, e, p, a, s0, s1, polarity, nodal_index));
 
               // Update the local index
               nodal_index++;
@@ -211,23 +242,24 @@ ResponseIndexer::build_3D(SP_node node, const size_t n)
   return nodal_index;
 }
 
+//---------------------------------------------------------------------------//
 ResponseIndexer::size_t
 ResponseIndexer::build_2D(SP_node node, const size_t n)
 {
   using std::cout;
   using std::endl;
 
+  bool db = false;
+
   // Moment index local to a node
   size_t nodal_index = 0;
-  // Number of moments on preceding nodes
-  size_t offset = 0;
-  for (size_t i = 0; i < n; i++)
-    offset += d_sizes[i];
+
+  if (db) std::cout << "NODE = " << n << std::endl;
 
   vec2_index surface_indices;
   for (size_t s = 0; s < node->number_surfaces(); s++)
   {
-    //cout << "SURFACE " << s << endl;
+    if (db) cout << "SURFACE " << s << endl;
 
     // Max angle order
     size_t mao = node->azimuthal_order(s);
@@ -240,20 +272,20 @@ ResponseIndexer::build_2D(SP_node node, const size_t n)
     vec_index moment_indices;
     for (size_t e = 0; e <= node->energy_order(s); e++)
     {
-      //cout << "  energy order " << e << endl;
+      if (db) cout << "  energy order " << e << endl;
       for (size_t p = 0; p <= node->polar_order(s); p++)
       {
-        //cout << "    polar order " << p << endl;
+        if (db) cout << "    polar order " << p << endl;
         for (size_t a = 0; a <= node->azimuthal_order(s); a++)
         {
-          //cout << "      azimuth order " << a << endl;
+          if (db) cout << "      azimuth order " << a << endl;
           // Break if angle order too high
           size_t ao = p + a;
           if (d_order_reduction == 2 and ao > mao) break;
 
           for (size_t s0 = 0; s0 <= node->spatial_order(s, 0); s0++)
           {
-            //cout << "        space order " << s0 << endl;
+            if (db) cout << "        space order " << s0 << endl;
             // Break if space or space-angle order is too high
             if (d_order_reduction == 3 and s0 + ao > msao) break;
 
@@ -261,10 +293,10 @@ ResponseIndexer::build_2D(SP_node node, const size_t n)
             // reflection is off a horizontal surface.  The other variables
             // always switch polarity.
             bool polarity = (a + s0) % 2;
-
+            if (db)  cout << "          polarity " << polarity << endl;
             // Add the index
             moment_indices.push_back(
-              ResponseIndex(n, s, e, p, a, s0, 0, polarity, offset + nodal_index, nodal_index));
+              ResponseIndex(n, s, e, p, a, s0, 0, polarity, nodal_index));
 
             // Update the nodal index
             nodal_index++;
@@ -280,14 +312,13 @@ ResponseIndexer::build_2D(SP_node node, const size_t n)
   return nodal_index;
 }
 
+//---------------------------------------------------------------------------//
 ResponseIndexer::size_t
 ResponseIndexer::build_1D(SP_node node, const size_t n)
 {
   bool db = false;
   size_t nodal_index = 0;
-  size_t offset;
-  for (size_t i = 0; i < n; i++)
-    offset += d_sizes[i];
+
   if(db) std::cout << " node  = " << n << std::endl;
   vec2_index surface_indices;
   for (size_t s = 0; s < node->number_surfaces(); s++)
@@ -303,7 +334,7 @@ ResponseIndexer::build_1D(SP_node node, const size_t n)
 
         // Add the index
         moment_indices.push_back(
-          ResponseIndex(n, s, e, p, 0, 0, 0, false, offset+nodal_index, nodal_index));
+          ResponseIndex(n, s, e, p, 0, 0, 0, false, nodal_index));
 
         // Update the local index
         nodal_index++;

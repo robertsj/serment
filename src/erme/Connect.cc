@@ -1,9 +1,9 @@
 //----------------------------------*-C++-*----------------------------------//
-/*!
- * \file   Connect.cc
- * \brief  Connect 
- * \author Jeremy Roberts
- * \date   Aug 23, 2012
+/**
+ *  @file   Connect.cc
+ *  @brief  Connect
+ *  @author Jeremy Roberts
+ *  @date   Aug 23, 2012
  */
 //---------------------------------------------------------------------------//
 
@@ -59,7 +59,7 @@ Connect::Connect(SP_nodelist nodes, SP_indexer indexer)
       }
 
       // Loop over all moments on a surface
-      for (int m = 0; m < indexer->number_surface_moments(n, s); m++, n_index++)
+      for (int m = 0; m < indexer->number_surface_moments(n, s); ++m, ++n_index)
       {
 
         // Set the row, column, and value.  Note, if the surface is shared,

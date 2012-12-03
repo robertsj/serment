@@ -24,17 +24,18 @@
 namespace erme_response
 {
 
-/*!
- *  \class ResponseServer
- *  \brief Serve nodal responses to clients
+/**
+ *  @class ResponseServer
+ *  @brief Serve nodal responses to clients
  *
  *  A ResponseServer lives on a local communicator.  A server is in charge
  *  of one or more Node objects.  The nodal responses are produced by a
- *  ResponseSource that solves the local problems.
+ *  ResponseSource that solves the local problems.  There is one
+ *  source for each unique node.
  *
  */
-/*!
- *  \example erme_response/test/test_ResponseServer.cc
+/**
+ *  @example erme_response/test/test_ResponseServer.cc
  *
  *  Test of ResponseServer class
  */
@@ -76,7 +77,10 @@ public:
   /// Update the eigenvalue and compute the new responses
   void update(const double keff);
 
-  /// Return a nodal response
+  /**
+   *  @brief Return a nodal response
+   *  @param node   Local node index
+   */
   SP_response response(size_t node);
 
 private:

@@ -12,7 +12,6 @@
 
 #include "EigenvalueUpdate.hh"
 #include "GlobalSolverBase.hh"
-#include "OperatorMR.hh"
 #include "linear_algebra/EigenSolver.hh"
 
 namespace erme_solver
