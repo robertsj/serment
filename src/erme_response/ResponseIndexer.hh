@@ -7,8 +7,8 @@
  */
 //---------------------------------------------------------------------------//
 
-#ifndef RESPONSEINDEXER_HH_
-#define RESPONSEINDEXER_HH_
+#ifndef erme_response_RESPONSEINDEXER_HH_
+#define erme_response_RESPONSEINDEXER_HH_
 
 #include "ResponseIndex.hh"
 #include "erme_geometry/NodeList.hh"
@@ -23,7 +23,7 @@ namespace erme_response
  *  @class ResponseIndexer
  *  @brief Indexes a node response vector
  *
- *  Each Node has assigned maximum orders in each phase space
+ *  Each unique Node has assigned maximum orders in each phase space
  *  variable on each surface of the node.  Each variable is
  *  expanded in a set of basis functions, and so the combined
  *  response is a tensor product of such functions.  Hence,
@@ -104,9 +104,10 @@ public:
   size_t number_surface_moments(const size_t node_g,
                                 const size_t surface_n) const;
 
+  /// Return the number of unique moments of local nodes
+  size_t number_unique_moments() const;
   /// Return the number of moments of all local nodes
   size_t number_local_moments() const;
-
   /// Return the number of moments of all nodes
   size_t number_global_moments() const;
 
@@ -123,10 +124,10 @@ public:
                                const size_t index_s) const;
 
   /**
-   *  @brief Get moment indices from local cardinal index
-   *  @param index_l      Moment index within local nodes
+   *  @brief Get moment indices from unique cardinal index
+   *  @param index_lu     Moment index within unique local nodes
    */
-  ResponseIndex response_index(const size_t index_l) const;
+  ResponseIndex response_index(const size_t index_lu) const;
 
   //-------------------------------------------------------------------------//
 
@@ -173,20 +174,22 @@ private:
 
   /// Node list
   SP_nodelist d_nodes;
-  /// List of indices for all nodes [nodes][surface][moments]
+  /// List of indices for all unique nodes [nodes][surface][moments]
   vec3_index d_indices;
-  /// Map a local cardinal index to the [node, surface, moment]
-  vec2_size_t d_local_indices;
+  /// Map a unique local cardinal index to the [node, surface, moment]
+  vec2_size_t d_unique_indices;
   /// Vector of moment sizes per node
   std::vector<size_t> d_sizes;
   /// Offset of node indices (within local set)
   std::vector<size_t> d_offsets;
   /// Offset of node indices (within local set)
   std::vector<size_t> d_global_offsets;
-  /// Local size of moments vector
-  size_t d_local_size;
   /// Global offset (i.e. the number of moments before me)
   size_t d_global_offset;
+  /// Unique local size (i.e. number of unique responses on local comm)
+  size_t d_unique_size;
+  /// Local size of moments vector (i.e. size of local of response vector)
+  size_t d_local_size;
   /// Global size
   size_t d_global_size;
   /// Number global nodes
@@ -215,7 +218,7 @@ private:
 
 #include "ResponseIndexer.i.hh"
 
-#endif // RESPONSEINDEXER_HH_ 
+#endif // erme_response_RESPONSEINDEXER_HH_
 
 //---------------------------------------------------------------------------//
 //              end of file ResponseIndexer.hh

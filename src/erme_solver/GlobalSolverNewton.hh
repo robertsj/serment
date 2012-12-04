@@ -1,28 +1,27 @@
 //----------------------------------*-C++-*----------------------------------//
 /**
- *  @file   GlobalSolverPicard.hh
- *  @brief  GlobalSolverPicard class definition
+ *  @file   GlobalSolverNewton.hh
+ *  @brief  GlobalSolverNewton
  *  @author Jeremy Roberts
- *  @date   Sep 4, 2012
+ *  @date   Nov 29, 2012
  */
 //---------------------------------------------------------------------------//
 
-#ifndef erme_solver_GLOBALSOLVERPICARD_HH_
-#define erme_solver_GLOBALSOLVERPICARD_HH_
+#ifndef erme_solver_GLOBALSOLVERNEWTON_HH_
+#define erme_solver_GLOBALSOLVERNEWTON_HH_
 
-#include "EigenvalueUpdate.hh"
 #include "GlobalSolverBase.hh"
-#include "linear_algebra/EigenSolver.hh"
+#include "OperatorMR.hh"
 
 namespace erme_solver
 {
 
 /**
- *  @class GlobalSolverPicard
+ *  @class GlobalSolverNewton
  *  @brief Solves the problem using Picard (fixed point) iteration
  *
  */
-class GlobalSolverPicard: public GlobalSolverBase
+class GlobalSolverNewton: public GlobalSolverBase
 {
 
 public:
@@ -31,11 +30,9 @@ public:
   // TYPEDEFS
   //-------------------------------------------------------------------------//
 
-  typedef detran_utilities::SP<GlobalSolverPicard>    SP_solver;
-  typedef erme_solver::GlobalSolverBase               Base;
-  typedef OperatorMR::SP_MR                           SP_MR;
-  typedef linear_algebra::EigenSolver::SP_solver      SP_innersolver;
-  typedef EigenvalueUpdate::SP_update                 SP_update;
+  typedef detran_utilities::SP<GlobalSolverNewton>    SP_solver;
+  typedef GlobalSolverBase                            Base;
+  typedef erme
 
   //-------------------------------------------------------------------------//
   // PUBLIC INTERFACE
@@ -51,12 +48,12 @@ public:
    *  @param A      Pointer to absorption operator
    *  @param L      Pointer to leakage operator
    */
-  GlobalSolverPicard(SP_db db, SP_indexer indexer, SP_server server,
+  GlobalSolverNewton(SP_db db, SP_indexer indexer, SP_server server,
                      SP_state state,
                      SP_R R, SP_M M, SP_F F, SP_A A, SP_L L);
 
   /// Virtual destructor
-  virtual ~GlobalSolverPicard(){}
+  virtual ~GlobalSolverNewton(){}
 
   /// Solve
   void solve();
@@ -67,10 +64,8 @@ private:
   // DATA
   //-------------------------------------------------------------------------//
 
-  /// Inner solver
-  SP_innersolver d_innersolver;
-  /// Eigenvalue update
-  SP_update d_update;
+  /// Jacobian
+  SP_Jacobian d_jacobian;
   /// MR operator
   SP_MR d_MR;
   /// Temporary working vectors
@@ -79,12 +74,11 @@ private:
 
 };
 
+
 } // end namespace erme_solver
 
-#include "GlobalSolverPicard.i.hh"
-
-#endif // erme_solver_GLOBALSOLVERPICARD_HH_
+#endif // erme_solver_GLOBALSOLVERNEWTON_HH_
 
 //---------------------------------------------------------------------------//
-//              end of file GlobalSolverPicard.hh
+//              end of file GlobalSolverNewton.hh
 //---------------------------------------------------------------------------//

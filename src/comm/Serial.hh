@@ -1,16 +1,17 @@
 //----------------------------------*-C++-*----------------------------------//
-/*!
- * \file   Serial.hh
- * \brief  Serial comm implementation inline member definitions.
- * \author Jeremy Roberts
- * \date   Aug 21, 2012
+/**
+ *  @file   Serial.hh
+ *  @brief  Serial comm implementation inline member definitions.
+ *  @author Jeremy Roberts
+ *  @date   Aug 21, 2012
  */
 //---------------------------------------------------------------------------//
 
-#ifndef SERIAL_HH_
-#define SERIAL_HH_
+#ifndef serment_comm_SERIAL_HH_
+#define serment_comm_SERIAL_HH_
 
 #include "utilities/DBC.hh"
+#include <ctime>
 
 namespace serment_comm
 {
@@ -212,13 +213,12 @@ inline void Comm::global_barrier()
 
 inline void Comm::tic()
 {
-  /* ... */
+  d_time = (double) std::clock() / (double)CLOCKS_PER_SEC;
 }
 
 inline double Comm::toc()
 {
-  // \todo Implement this
-  return 0.0;
+  return (double) std::clock() / (double)CLOCKS_PER_SEC - d_time;
 }
 
 //---------------------------------------------------------------------------//
@@ -235,7 +235,7 @@ inline void Comm::partition(unsigned int &global_count,
 
 } // end namespace serment_comm
 
-#endif // SERIAL_HH_ 
+#endif // serment_comm_SERIAL_HH_
 
 //---------------------------------------------------------------------------//
 //              end of file Serial.hh

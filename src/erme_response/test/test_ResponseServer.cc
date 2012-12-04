@@ -1,10 +1,9 @@
 //----------------------------------*-C++-*----------------------------------//
-/*!
- * \file   test_ResponseServer.cc
- * \author Jeremy Roberts
- * \date   Aug 19, 2012
- * \brief  Test of ResponseServer class.
- * \note   Copyright (C) 2012 Jeremy Roberts. 
+/**
+ *  @file   test_ResponseServer.cc
+ *  @author Jeremy Roberts
+ *  @date   Aug 19, 2012
+ *  @brief  Test of ResponseServer class.
  */
 //---------------------------------------------------------------------------//
 
@@ -75,7 +74,7 @@ int test_ResponseServer(int argc, char *argv[])
   // WORLD
   //-------------------------------------------------------------------------//
 
-  // Get the node list
+  // Get the node list, 2 unique in the following map: [1 0; 0 1]
   erme_geometry::NodeList::SP_nodelist nodes;
   if (Comm::rank() == 0)
     nodes = erme_geometry::cartesian_node_dummy_list_2d(0, 0, 0);

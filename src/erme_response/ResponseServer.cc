@@ -16,18 +16,20 @@
 namespace erme_response
 {
 
+//---------------------------------------------------------------------------//
 ResponseServer::ResponseServer(SP_nodelist  nodes,
                                SP_indexer   indexer,
                                std::string  dbname,
                                size_t       dborder)
   : d_nodes(nodes)
   , d_indexer(indexer)
-  , d_sources(nodes->number_local_nodes())
-  , d_responses(nodes->number_local_nodes())
 {
   // Preconditions
-  Require(nodes);
-  Require(indexer);
+  Require(d_nodes);
+  Require(d_indexer);
+
+  d_sources.resize(d_nodes->number_unique_local_nodes());
+  d_responses.resize(d_nodes->number_unique_local_nodes());
 
   // Build the response database if requested
   if (dbname != "")
@@ -35,11 +37,16 @@ ResponseServer::ResponseServer(SP_nodelist  nodes,
     d_rfdb = ResponseDatabase::Create(dbname, dborder);
   }
 
+  /*
+   *  Create the sources and responses.  Note, these are
+   *  done for *unique* nodes.  Thus, repeated nodes are
+   *  computed only once locally.
+   */
   ResponseSourceFactory builder;
   for (size_t n = 0; n < d_sources.size(); n++)
   {
     // Build the sources
-    size_t n_global = nodes->global_index(n);
+    size_t n_global = d_nodes->global_index_from_local_unique(n);
     d_sources[n] = builder.build(nodes->node(n_global));
     Ensure(d_sources[n]);
 
@@ -52,11 +59,7 @@ ResponseServer::ResponseServer(SP_nodelist  nodes,
 
 }
 
-/*
- * Currently, I expend the updates to be called from the global
- * communicator, since they want
- *
- */
+//---------------------------------------------------------------------------//
 void ResponseServer::update(const double keff)
 {
   // Preconditions
@@ -92,6 +95,7 @@ void ResponseServer::update(const double keff)
 // IMPLEMENTATION
 //---------------------------------------------------------------------------//
 
+//---------------------------------------------------------------------------//
 /*
  *  Simplest case of having each process do a predefined amount of
  *  work.  This first implementation assumes all responses are created
@@ -107,14 +111,15 @@ void ResponseServer::update_explicit_work_share()
 
   typedef serment_comm::Comm Comm;
 
-  // total number
   size_t number_responses = 0;
   std::vector<size_t> number_per_process(Comm::size(), 0);
 
-  // Local root \todo use Comm::partition
+  // Local root
+  // \todo use Comm::partition
   if (Comm::rank() == 0)
   {
-    number_responses = d_indexer->number_local_moments();
+    // Compute the number of unique local responses.
+    number_responses = d_indexer->number_unique_moments();
 
     // Initial guess for responses per process and the remainder.
     int npp = number_responses / Comm::size();
@@ -139,64 +144,49 @@ void ResponseServer::update_explicit_work_share()
 
   }
 
- // Broadcast the number of nodes in the problem
- Comm::broadcast(&number_responses, 1, 0);
+  // Find my start and finish
+  Comm::broadcast(&number_responses, 1, 0);
+  Comm::broadcast(&number_per_process[0], number_per_process.size(), 0);
+  size_t start = 0;
+  for (int i = 0; i < Comm::rank(); i++)
+    start += number_per_process[i];
+  size_t finish = start + number_per_process[Comm::rank()];
 
- // Broadcast the number of nodes per process.
- Comm::broadcast(&number_per_process[0], number_per_process.size(), 0);
+  // Loop over all of my unique local moments
+  for (size_t index_ul = start; index_ul < finish; index_ul++)
+  {
 
- // Find my start and finish
- size_t start = 0;
- for (int i = 0; i < Comm::rank(); i++)
-   start += number_per_process[i];
- size_t finish = start + number_per_process[Comm::rank()];
+    const ResponseIndex index_r = d_indexer->response_index(index_ul);
 
- // Loop over all of my local moments
- for (size_t index_l = start; index_l < finish; index_l++)
- {
+    // Local unique node index
+    int node_ul = d_nodes->unique_local_index(index_r.node);
 
-   const ResponseIndex index_r = d_indexer->response_index(index_l);
+    // Compute responses
+    Assert(node_ul < d_responses.size());
+    Assert(node_ul < d_sources.size());
 
-   // Local node index
-   int node_l = d_nodes->local_index(index_r.node);
+    d_sources[node_ul]->compute(d_responses[node_ul], index_r);
 
-   // Compute responses
-   Assert(node_l < d_responses.size());
-   Assert(node_l < d_sources.size());
+  }
+  Comm::global_barrier();
 
-   d_sources[node_l]->compute(d_responses[node_l], index_r);
-
- }
- Comm::global_barrier();
-
- // A simple way to gather the results on 0 is to reduce on the
- // arrays of each nodal response.  Note, this probably makes the
- // best sense for small numbers of local processes
- for (size_t n = 0; n < d_sources.size(); n++)
- {
-   int number_moments = d_responses[n]->size();
-   int number_surfaces = d_responses[n]->number_surfaces();
-   for (size_t in = 0; in < number_moments; in++)
-   {
-//     if (Comm::world_rank() == 0)
-//     {
-//       cout << " was " << d_responses[n]->boundary_response(0, in) << endl;
-//     }
-
-     Comm::sum(&d_responses[n]->boundary_response(0, in), number_moments,  0);
-     Comm::sum(&d_responses[n]->leakage_response(0, in),  number_surfaces, 0);
-
-//     if (Comm::world_rank() == 0)
-//     {
-//       cout << " now " << d_responses[n]->boundary_response(0, in) << endl;
-//     }
-   }
-   Comm::sum(&d_responses[n]->fission_response(0),    number_moments, 0);
-   Comm::sum(&d_responses[n]->absorption_response(0), number_moments, 0);
- }
+  // A simple way to gather the results on 0 is to reduce on the
+  // arrays of each nodal response.  Note, this probably makes the
+  // best sense for small numbers of local processes
+  for (size_t n = 0; n < d_sources.size(); n++)
+  {
+    int number_moments = d_responses[n]->size();
+    int number_surfaces = d_responses[n]->number_surfaces();
+    for (size_t in = 0; in < number_moments; in++)
+    {
+      Comm::sum(&d_responses[n]->boundary_response(0, in), number_moments, 0);
+      Comm::sum(&d_responses[n]->leakage_response(0, in), number_surfaces, 0);
+    }
+    Comm::sum(&d_responses[n]->fission_response(0), number_moments, 0);
+    Comm::sum(&d_responses[n]->absorption_response(0), number_moments, 0);
+  }
 
 }
 
 } // end namespace erme_response
-
 

@@ -1,9 +1,9 @@
 //----------------------------------*-C++-*----------------------------------//
-/*!
- * \file   NodeFactoryDetran.hh
- * \brief  NodeFactoryDetran 
- * \author Jeremy Roberts
- * \date   Aug 23, 2012
+/**
+ *  @file   NodeFactoryDetran.hh
+ *  @brief  NodeFactoryDetran
+ *  @author Jeremy Roberts
+ *  @date   Aug 23, 2012
  */
 //---------------------------------------------------------------------------//
 
@@ -15,9 +15,9 @@
 namespace erme_geometry
 {
 
-/*!
- *  \class NodeFactoryDetran
- *  \brief Build Detran-based nodes
+/**
+ *  @class NodeFactoryDetran
+ *  @brief Build Detran-based nodes
  */
 class NodeFactoryDetran: public NodeFactory
 {
@@ -30,7 +30,7 @@ public:
   /// Virtual destructor
   virtual ~NodeFactoryDetran(){}
 
-  /*!
+  /**
    *  \brief Create a node
    *  \param db   Parameter database.
    */

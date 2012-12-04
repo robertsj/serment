@@ -17,31 +17,25 @@ namespace erme_geometry
 // PUBLIC INTERFACE
 //---------------------------------------------------------------------------//
 
+//---------------------------------------------------------------------------//
 inline Node::size_t Node::dimension() const
 {
   return d_dimension;
 }
 
+//---------------------------------------------------------------------------//
 inline Node::size_t Node::number_surfaces() const
 {
   return d_number_surfaces;
 }
 
-inline int Node::id() const
-{
-  return d_id;
-}
-
+//---------------------------------------------------------------------------//
 inline std::string Node::name() const
 {
   return d_name;
 }
 
-inline Node::Point Node::origin() const
-{
-  return d_origin;
-}
-
+//---------------------------------------------------------------------------//
 inline Node::size_t Node::spatial_order(const size_t s, const size_t d) const
 {
   // Preconditions
@@ -50,6 +44,7 @@ inline Node::size_t Node::spatial_order(const size_t s, const size_t d) const
   return d_spatial_order[s][d];
 }
 
+//---------------------------------------------------------------------------//
 inline Node::size_t Node::polar_order(const size_t s) const
 {
   // Preconditions
@@ -57,6 +52,7 @@ inline Node::size_t Node::polar_order(const size_t s) const
   return d_polar_order[s];
 }
 
+//---------------------------------------------------------------------------//
 inline Node::size_t Node::azimuthal_order(const size_t s) const
 {
   // Preconditions
@@ -64,6 +60,7 @@ inline Node::size_t Node::azimuthal_order(const size_t s) const
   return d_azimuthal_order[s];
 }
 
+//---------------------------------------------------------------------------//
 inline Node::size_t Node::energy_order(const size_t s) const
 {
   // Preconditions

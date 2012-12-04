@@ -1,14 +1,14 @@
 //----------------------------------*-C++-*----------------------------------//
-/*!
- * \file   NodePartitioner.hh
- * \brief  NodePartitioner class definition
- * \author Jeremy Roberts
- * \date   Aug 24, 2012
+/**
+ *  @file   NodePartitioner.hh
+ *  @brief  NodePartitioner class definition
+ *  @author Jeremy Roberts
+ *  @date   Aug 24, 2012
  */
 //---------------------------------------------------------------------------//
 
-#ifndef NODEPARTITIONER_HH_
-#define NODEPARTITIONER_HH_
+#ifndef erme_geometry_NODEPARTITIONER_HH_
+#define erme_geometry_NODEPARTITIONER_HH_
 
 #include "comm/Comm.hh"
 #include "NodeList.hh"
@@ -17,9 +17,9 @@
 namespace erme_geometry
 {
 
-/*!
- *  \class NodePartitioner
- *  \brief Partition nodes one level 1 communicator
+/**
+ *  @class NodePartitioner
+ *  @brief Partition nodes one level 1 communicator
  *
  *  This is a very light weight partitioning that simply broadcasts
  *  the list of nodes and assigns array bounds for each receiving
@@ -43,14 +43,12 @@ public:
   // PUBLIC INTERFACE
   //-------------------------------------------------------------------------//
 
-  /*!
-   *  \brief Constructor
-   */
+  /// Constructor
   NodePartitioner();
 
-  /*!
-   *  \brief Partition a list of nodes
-   *  \param nodes  Node list
+  /**
+   *  @brief Partition a list of nodes
+   *  @param nodes  Node list
    */
   void partition(SP_nodelist &nodes);
 
@@ -62,7 +60,6 @@ private:
 
   /// Buffer for sending nodes
   std::string d_buffer;
-
   /// Buffer size
   int d_buffer_size;
 
@@ -77,7 +74,7 @@ private:
 
 } // end namespace erme_geometry
 
-#endif // NODEPARTITIONER_HH_ 
+#endif // erme_geometry_NODEPARTITIONER_HH_
 
 //---------------------------------------------------------------------------//
 //              end of file NodePartitioner.hh

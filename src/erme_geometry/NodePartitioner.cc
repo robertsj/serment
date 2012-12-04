@@ -1,9 +1,9 @@
 //----------------------------------*-C++-*----------------------------------//
-/*!
- * \file   NodePartitioner.cc
- * \brief  NodePartitioner member definitions
- * \author Jeremy Roberts
- * \date   Aug 24, 2012
+/**
+ *  @file   NodePartitioner.cc
+ *  @brief  NodePartitioner member definitions
+ *  @author Jeremy Roberts
+ *  @date   Aug 24, 2012
  */
 //---------------------------------------------------------------------------//
 
@@ -33,12 +33,14 @@ namespace erme_geometry
  *
  */
 
+//---------------------------------------------------------------------------//
 NodePartitioner::NodePartitioner()
   : d_buffer_size(0)
 {
   /* ... */
 }
 
+//---------------------------------------------------------------------------//
 void NodePartitioner::partition(SP_nodelist &nodes)
 {
 
@@ -63,14 +65,18 @@ void NodePartitioner::partition(SP_nodelist &nodes)
   Comm::broadcast(&lower_bound, 1, 0);
   Comm::broadcast(&local_number_nodes, 1, 0);
 
-  // Switch to world, broadcast nodes to everyone, and finalize.
+  // Switch to world, and broadcast nodes to everyone
   Comm::set(serment_comm::world);
   broadcast_nodes(nodes);
+
+  // Set local bounds, and determine local unique nodes
   nodes->set_bounds(lower_bound, lower_bound + local_number_nodes);
+
   nodes->finalize();
 
 }
 
+//---------------------------------------------------------------------------//
 void NodePartitioner::broadcast_nodes(SP_nodelist &nodes)
 {
   // Preconditions

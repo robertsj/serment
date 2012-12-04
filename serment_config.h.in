@@ -33,6 +33,9 @@
 #cmakedefine SERMENT_ENABLE_XML
 #cmakedefine SERMENT_ENABLE_BOOST
 
+// compiled on date
+#cmakedefine SERMENT_COMPILED_DATE
+
 #endif // SERMENT_CONFIG_H_ 
 
 //---------------------------------------------------------------------------//

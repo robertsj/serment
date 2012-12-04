@@ -10,6 +10,7 @@
 #ifndef erme_solver_GLOBALSOLVERBASE_HH_
 #define erme_solver_GLOBALSOLVERBASE_HH_
 
+#include "OperatorMR.hh"
 #include "NonlinearResidual.hh"
 #include "erme_response/ResponseIndexer.hh"
 #include "erme_response/ResponseServer.hh"
@@ -53,7 +54,9 @@ public:
   typedef erme::FissionOperator::SP_fission           SP_F;
   typedef erme::AbsorptionOperator::SP_absorption     SP_A;
   typedef erme::LeakageOperator::SP_leakage           SP_L;
+  typedef OperatorMR::SP_MR                           SP_MR;
   typedef NonlinearResidual::SP_residual              SP_residual;
+  typedef linear_algebra::Vector::SP_vector           SP_vector;
   typedef detran_utilities::vec_dbl                   vec_dbl;
   typedef detran_utilities::vec_int                   vec_int;
 

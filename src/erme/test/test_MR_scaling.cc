@@ -1,10 +1,9 @@
 //----------------------------------*-C++-*----------------------------------//
-/*!
- * \file   test_MR_scaling.cc
- * \author Jeremy Roberts
- * \date   Aug 19, 2012
- * \brief  Tests the parallel scaling of the action M * R
- * \note   Copyright (C) 2012 Jeremy Roberts. 
+/**
+ *  @file   test_MR_scaling.cc
+ *  @author Jeremy Roberts
+ *  @date   Aug 19, 2012
+ *  @brief  Tests the parallel scaling of the action M * R
  */
 //---------------------------------------------------------------------------//
 
@@ -209,7 +208,7 @@ int test_MR_scaling(int argc, char *argv[])
       standard_deviation +=
         (times[trial] - average_time) * (times[trial] - average_time);
     }
-    standard_deviation = std::sqrt(standard_deviation);
+    standard_deviation = std::sqrt(standard_deviation / nt);
 
     if (Comm::rank() == 0)
     {

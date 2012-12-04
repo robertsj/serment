@@ -1,5 +1,5 @@
 //----------------------------------*-C++-*----------------------------------//
-/*!
+/**
  * \file   Comm.hh
  * \brief  Comm 
  * \author Jeremy Roberts
@@ -19,8 +19,8 @@
 namespace serment_comm
 {
 
-/*!
- *  \page Serment Parallel Structure
+/**
+ *  @page Serment Parallel Structure
  *
  *  Serment employs a flexible parallel decomposition that should adapt
  *  well to just about any architecture.  The decomposition largely
@@ -31,13 +31,13 @@ namespace serment_comm
  *
  *  Suppose we have a compute cluster with \f$ N \f$ processes
  *  available.  The set of all these processes constitutes the
- *  \e world communicator.
+ *  @e world communicator.
  *
  *  Since the bulk of the computation occurs during computation of
  *  the nodal boundary conditions, the number of processes that need
  *  to participate in the global solution might be a small subset of
  *  the total number of process available.  Consequently, we split
- *  \e world into \f$ M \f$ new communicators denoted \e local.
+ *  @e world into \f$ M \f$ new communicators denoted \e local.
  *
  *  The root process of each \e local communicator is then included
  *  in a \e global communicator.  Processes in \e global participate
@@ -62,13 +62,13 @@ namespace serment_comm
  */
 
 
-/*!
- *  \class Comm
- *  \brief Parallel communication interface
+/**
+ *  @class Comm
+ *  @brief Parallel communication interface
  *
  *  This is an easy API for using MPI (or some other parallel library).
  *
- *  \todo Consider implementing Comm as a singleton so that better
+ *  @todo Consider implementing Comm as a singleton so that better
  *        encapsulation can be used
  */
 class Comm
@@ -90,9 +90,9 @@ public:
   // COMMUNICATORS
   //---------------------------------------------------------------------------//
 
-  /*!
-   *  \brief Create communicators
-   *  \param N  Number of local groups to create
+  /**
+   *  @brief Create communicators
+   *  @param N  Number of local groups to create
    */
   static void setup_communicators(const unsigned int N);
 
@@ -120,14 +120,14 @@ public:
   // QUERY FUNCTIONS
   //---------------------------------------------------------------------------//
 
-  /*!
+  /**
    * \brief Get the rank of the current processor.
    *
    * The rank is determined by the current communicator.
    */
   static int rank();
 
-  /*!
+  /**
    * \brief Get the number of processors used for this job.
    *
    * The number of processes is determined by the current communicator.
@@ -150,7 +150,7 @@ public:
   // BLOCKING SEND/RECEIVE OPERATIONS
   //---------------------------------------------------------------------------//
 
-  /*!
+  /**
    * \brief Do a point-to-point, blocking send.
    * \param buffer
    * \param size
@@ -161,7 +161,7 @@ public:
   static int send(const T *buffer, int size, int destination,
              int tag = Comm_Traits<T*>::tag);
 
-  /*!
+  /**
    * \brief Do a point-to-point, blocking receive.
    * \param buffer
    * \param size
@@ -176,7 +176,7 @@ public:
   // BROADCAST
   //---------------------------------------------------------------------------//
 
-  /*!
+  /**
    * \brief Do a root-to-all broadcast.
    * \param buffer
    * \param size
@@ -278,11 +278,11 @@ public:
   // UTILITY
   //---------------------------------------------------------------------------//
 
-  /*!
-   *  \brief Partition a number represented an amount of work, etc.
-   *  \param global_count   Total number of things to be partitioned
-   *  \param local_start    My local index in array of things
-   *  \param local_count    Number of local things I own
+  /**
+   *  @brief Partition a number represented an amount of work, etc.
+   *  @param global_count   Total number of things to be partitioned
+   *  @param local_start    My local index in array of things
+   *  @param local_count    Number of local things I own
    */
   static void partition(unsigned int &global_count,
                         unsigned int &local_start,

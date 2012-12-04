@@ -39,6 +39,7 @@ NodeList::SP_nodelist cartesian_node_detran_list_2d()
   NodeList::SP_node node3 = cartesian_node_detran(2);
 
   // Create neighbor lists.
+  NodeList::vec2_neighbor neighbors(4);
   NodeList::vec_neighbor neigh0(4, NeighborSurface(Node::VACUUM, 0));
   NodeList::vec_neighbor neigh1(4, NeighborSurface(Node::VACUUM, 0));
   NodeList::vec_neighbor neigh2(4, NeighborSurface(Node::VACUUM, 0));
@@ -58,11 +59,22 @@ NodeList::SP_nodelist cartesian_node_detran_list_2d()
   neigh3[CartesianNode::WEST]   = NeighborSurface(2, CartesianNode::EAST);
 
   // Add nodes
-  nodes->add_node(node0, neigh0);
-  nodes->add_node(node1, neigh1);
-  nodes->add_node(node2, neigh2);
-  nodes->add_node(node3, neigh3);
+  nodes->add_node(node0);
+  nodes->add_node(node1);
+  nodes->add_node(node2);
+  nodes->add_node(node3);
   nodes->finalize();
+
+  // Node map and neighbors
+  NodeList::vec_int node_map(4, 0);
+  node_map[1] = 1;
+  node_map[2] = 2;
+  node_map[3] = 3;
+  neighbors[0] = neigh0;
+  neighbors[1] = neigh1;
+  neighbors[2] = neigh2;
+  neighbors[3] = neigh3;
+  nodes->set_nodal_map(node_map, neighbors);
 
   return nodes;
 }
@@ -79,12 +91,10 @@ NodeList::SP_nodelist cartesian_node_dummy_list_1d()
   NodeList::SP_nodelist nodes(new NodeList());
 
   // Get four, two-dimensional Cartesian test nodes
-  NodeList::SP_node node0(new CartesianNodeDummy(1, 0, 0, 2, 0, 0));
-  NodeList::SP_node node1(new CartesianNodeDummy(1, 1, 0, 2, 0, 0));
-  NodeList::SP_node node2(new CartesianNodeDummy(1, 2, 0, 2, 0, 0));
-  NodeList::SP_node node3(new CartesianNodeDummy(1, 3, 0, 2, 0, 0));
+  NodeList::SP_node node0(new CartesianNodeDummy(1, 0, 2, 0, 0));
 
   // Create neighbor lists.
+  NodeList::vec2_neighbor neighbors(4);
   NodeList::vec_neighbor neigh0(4, NeighborSurface(Node::VACUUM, 0));
   NodeList::vec_neighbor neigh1(4, NeighborSurface(Node::VACUUM, 0));
   NodeList::vec_neighbor neigh2(4, NeighborSurface(Node::VACUUM, 0));
@@ -102,11 +112,16 @@ NodeList::SP_nodelist cartesian_node_dummy_list_1d()
   neigh3[CartesianNode::WEST] = NeighborSurface(2, CartesianNode::EAST);
 
   // Add nodes
-  nodes->add_node(node0, neigh0);
-  nodes->add_node(node1, neigh1);
-  nodes->add_node(node2, neigh2);
-  nodes->add_node(node3, neigh3);
+  nodes->add_node(node0);
   nodes->finalize();
+
+  // Node map and neighbors
+  NodeList::vec_int node_map(4, 0);
+  neighbors[0] = neigh0;
+  neighbors[1] = neigh1;
+  neighbors[2] = neigh2;
+  neighbors[3] = neigh3;
+  nodes->set_nodal_map(node_map, neighbors);
 
   return nodes;
 }
@@ -120,18 +135,17 @@ cartesian_node_dummy_list_2d(int so = 4, int ao = 2, int po = 2)
   NodeList::SP_nodelist nodes(new NodeList());
 
   // Get four, two-dimensional Cartesian test nodes
-  NodeList::SP_node node0(new CartesianNodeDummy(2, 0, so, po, ao, 0));
-  NodeList::SP_node node1(new CartesianNodeDummy(2, 1, so, po, ao, 0));
-  NodeList::SP_node node2(new CartesianNodeDummy(2, 2, so, po, ao, 0));
-  NodeList::SP_node node3(new CartesianNodeDummy(2, 3, so, po, ao, 0));
+  NodeList::SP_node node0(new CartesianNodeDummy(2, so, po, ao, 0));
+  NodeList::SP_node node1(new CartesianNodeDummy(2, so, po, ao, 0));
 
   // Create neighbor lists.
+  NodeList::vec2_neighbor neighbors(4);
   NodeList::vec_neighbor neigh0(4, NeighborSurface(Node::VACUUM, 0));
   NodeList::vec_neighbor neigh1(4, NeighborSurface(Node::VACUUM, 0));
   NodeList::vec_neighbor neigh2(4, NeighborSurface(Node::VACUUM, 0));
   NodeList::vec_neighbor neigh3(4, NeighborSurface(Node::VACUUM, 0));
   //  --- ---
-  // | 2 | 3 |
+  // | 1 | 0 |
   //  --- ---
   // | 0 | 1 |   with vacuum on all global surfaces
   //  --- ---
@@ -145,11 +159,20 @@ cartesian_node_dummy_list_2d(int so = 4, int ao = 2, int po = 2)
   neigh3[CartesianNode::WEST]   = NeighborSurface(2, CartesianNode::EAST);
 
   // Add nodes
-  nodes->add_node(node0, neigh0);
-  nodes->add_node(node1, neigh1);
-  nodes->add_node(node2, neigh2);
-  nodes->add_node(node3, neigh3);
+  nodes->add_node(node0);
+  nodes->add_node(node1);
   nodes->finalize();
+
+  // Node map and neighbors
+  NodeList::vec_int node_map(4, 0);
+  node_map[1] = 1;
+  node_map[2] = 1;
+  node_map[3] = 0;
+  neighbors[0] = neigh0;
+  neighbors[1] = neigh1;
+  neighbors[2] = neigh2;
+  neighbors[3] = neigh3;
+  nodes->set_nodal_map(node_map, neighbors);
 
   return nodes;
 }
@@ -162,12 +185,10 @@ NodeList::SP_nodelist cartesian_node_dummy_list_3d()
   NodeList::SP_nodelist nodes(new NodeList());
 
   // Get four, two-dimensional Cartesian test nodes
-  NodeList::SP_node node0(new CartesianNodeDummy(3, 0, 4, 2, 2, 0));
-  NodeList::SP_node node1(new CartesianNodeDummy(3, 1, 4, 2, 2, 0));
-  NodeList::SP_node node2(new CartesianNodeDummy(3, 2, 4, 2, 2, 0));
-  NodeList::SP_node node3(new CartesianNodeDummy(3, 3, 4, 2, 2, 0));
+  NodeList::SP_node node0(new CartesianNodeDummy(3, 4, 2, 2, 0));
 
   // Create neighbor lists.
+  NodeList::vec2_neighbor neighbors(4);
   NodeList::vec_neighbor neigh0(4, NeighborSurface(Node::VACUUM, 0));
   NodeList::vec_neighbor neigh1(4, NeighborSurface(Node::VACUUM, 0));
   NodeList::vec_neighbor neigh2(4, NeighborSurface(Node::VACUUM, 0));
@@ -187,11 +208,16 @@ NodeList::SP_nodelist cartesian_node_dummy_list_3d()
   neigh3[CartesianNode::WEST]   = NeighborSurface(2, CartesianNode::EAST);
 
   // Add nodes
-  nodes->add_node(node0, neigh0);
-  nodes->add_node(node1, neigh1);
-  nodes->add_node(node2, neigh2);
-  nodes->add_node(node3, neigh3);
+  nodes->add_node(node0);
   nodes->finalize();
+
+  // Node map and neighbors
+  NodeList::vec_int node_map(4, 0);
+  neighbors[0] = neigh0;
+  neighbors[1] = neigh1;
+  neighbors[2] = neigh2;
+  neighbors[3] = neigh3;
+  nodes->set_nodal_map(node_map, neighbors);
 
   return nodes;
 }
@@ -206,10 +232,10 @@ cartesian_node_dummy_list_2d_variable(int so, int N)
   NodeList::SP_nodelist nodes(new NodeList());
 
   // Define one node to use everywhere.
-  NodeList::SP_node node(new CartesianNodeDummy(2, 0, so, 0, 0, 0));
+  NodeList::SP_node node(new CartesianNodeDummy(2, so, 0, 0, 0));
 
   // Vector of neighbor lists.
-  std::vector<NodeList::vec_neighbor>
+  NodeList::vec2_neighbor
    neighbors(N * N,
              NodeList::vec_neighbor(4, NeighborSurface(Node::VACUUM, 0)));
 
@@ -219,6 +245,14 @@ cartesian_node_dummy_list_2d_variable(int so, int N)
   // | 0 | 1 |...|N-1|
   //  --- --- --- ---
 
+  // Add the single node
+  nodes->add_node(node);
+  nodes->finalize();
+
+  // Node map
+  NodeList::vec_int node_map(N*N, 0);
+
+  // Create the neighbor list
   for (int j = 0; j < N; j++)
   {
     for (int i = 0; i < N; i++)
@@ -228,8 +262,6 @@ cartesian_node_dummy_list_2d_variable(int so, int N)
       if (i < N-1) neighbors[n][CartesianNode::EAST] = NeighborSurface(n+1, CartesianNode::WEST);
       if (j > 0)   neighbors[n][CartesianNode::SOUTH] = NeighborSurface(i + (j-1)*N, CartesianNode::NORTH);
       if (j < N-1) neighbors[n][CartesianNode::NORTH] = NeighborSurface(i + (j+1)*N, CartesianNode::SOUTH);
-
-      nodes->add_node(node, neighbors[n]);
     }
   }
   nodes->finalize();
@@ -248,7 +280,7 @@ cartesian_node_dummy_list_3d_variable(int so, int N)
   NodeList::SP_nodelist nodes(new NodeList());
 
   // Define one node to use everywhere.
-  NodeList::SP_node node(new CartesianNodeDummy(3, 0, so, 0, 0, 0));
+  NodeList::SP_node node(new CartesianNodeDummy(3, so, 0, 0, 0));
 
   // Vector of neighbor lists.
   std::vector<NodeList::vec_neighbor>
@@ -261,6 +293,14 @@ cartesian_node_dummy_list_3d_variable(int so, int N)
   // | 0 | 1 |...|N-1|
   //  --- --- --- ---
 
+  // Add the single node
+  nodes->add_node(node);
+  nodes->finalize();
+
+  // Node map
+  NodeList::vec_int node_map(N*N*N, 0);
+
+  // Create the neighbor list
   for (int k = 0; k < N; k++)
   {
     for (int j = 0; j < N; j++)
@@ -282,11 +322,12 @@ cartesian_node_dummy_list_3d_variable(int so, int N)
         if (j < N - 1) neighbors[me][C_N::NORTH]   = NeighborSurface(n, C_N::SOUTH);
         if (k > 0)     neighbors[me][C_N::BOTTOM]  = NeighborSurface(b, C_N::NORTH);
         if (k < N - 1) neighbors[me][C_N::TOP]     = NeighborSurface(t, C_N::BOTTOM);
-        nodes->add_node(node, neighbors[me]);
       }
     }
   }
-  nodes->finalize();
+
+  nodes->set_nodal_map(node_map, neighbors);
+
   return nodes;
 }
 

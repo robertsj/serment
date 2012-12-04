@@ -29,6 +29,7 @@ TARGET_LINK_LIBRARIES(test_Interpolation       erme_response)
 #------------------------------------------------------------------------------#
 
 ADD_TEST(test_ResponseIndexer       test_ResponseIndexer 0)
+ADD_TEST(test_ResponseIndexerB      test_ResponseIndexer 1)
 ADD_TEST(test_NodeResponse          test_NodeResponse 0)
 ADD_TEST(test_ResponseServer        test_ResponseServer 0)
 ADD_TEST(test_ResponseDatabase      test_ResponseDatabase 0)

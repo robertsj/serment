@@ -70,8 +70,8 @@ int test_ResponseDatabase(int argc, char *argv[])
   {
     // Create response and fill
     SP_response rf(new NodeResponse(2, 2));
-    db->get("node1", rf, ResponseIndex(0,0,0,0,0,0,0,0,0,0), 1.0); // left side
-    db->get("node1", rf, ResponseIndex(0,0,0,0,0,0,0,0,0,1), 1.0); // right side
+    db->get("node1", rf, ResponseIndex(0,0,0,0,0,0,0,0,0), 1.0); // left side
+    db->get("node1", rf, ResponseIndex(0,0,0,0,0,0,0,0,1), 1.0); // right side
     // Test exact values.
     TEST(soft_equiv(rf->boundary_response(0, 0), 0.9375));
     TEST(soft_equiv(rf->boundary_response(1, 0), 0.0625));
@@ -83,8 +83,8 @@ int test_ResponseDatabase(int argc, char *argv[])
   {
     // Create response and fill
     SP_response rf(new NodeResponse(2, 2));
-    db->get("node2", rf, ResponseIndex(0,0,0,0,0,0,0,0,0,0), 1.0); // left side
-    db->get("node2", rf, ResponseIndex(0,0,0,0,0,0,0,0,0,1), 1.0); // right side
+    db->get("node2", rf, ResponseIndex(0,0,0,0,0,0,0,0,0), 1.0); // left side
+    db->get("node2", rf, ResponseIndex(0,0,0,0,0,0,0,0,1), 1.0); // right side
 
     // Test interpolated values
     double ref0 = 0.5 * (1.521990 + 0.610188);
@@ -99,8 +99,8 @@ int test_ResponseDatabase(int argc, char *argv[])
   {
     // Create response and fill
     SP_response rf(new NodeResponse(2, 2));
-    db->get("node3", rf, ResponseIndex(0,0,0,0,0,0,0,0,0,0), 1.05); // left side
-    db->get("node3", rf, ResponseIndex(0,0,0,0,0,0,0,0,0,1), 1.05); // right side
+    db->get("node3", rf, ResponseIndex(0,0,0,0,0,0,0,0,0), 1.05); // left side
+    db->get("node3", rf, ResponseIndex(0,0,0,0,0,0,0,0,1), 1.05); // right side
 
     // Test interpolated values
     double ref0 = 0.5 * (0.9375 + 0.6101880);
@@ -116,7 +116,7 @@ int test_ResponseDatabase(int argc, char *argv[])
     // Create response and fill
     SP_response rf(new NodeResponse(16, 4));
     for (int i = 0; i < 16; ++i)
-      db->get("node4", rf, ResponseIndex(0,0,0,0,0,0,0,0,0,i), 1.05);
+      db->get("node4", rf, ResponseIndex(0,0,0,0,0,0,0,0,i), 1.05);
 
     // Test interpolated values
     double ref0 = 0.5 * (0.362366  + 0.349561);

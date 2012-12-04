@@ -1,16 +1,16 @@
 //----------------------------------*-C++-*----------------------------------//
-/*!
- * \file   node_fixture.hh
- * \brief  Fixtures for various node types.
- * \author Jeremy Roberts
- * \date   Aug 22, 2012
+/**
+ *  @file   node_fixture.hh
+ *  @brief  Fixtures for various node types.
+ *  @author Jeremy Roberts
+ *  @date   Aug 22, 2012
  *
- * Ideally, fixtures for all available node types should be added to this
- * file.  Doing so greatly facilitates testing of each node within the
- * erme_geometry subsystem and Serment as a whole.
+ *  Ideally, fixtures for all available node types should be added to this
+ *  file.  Doing so greatly facilitates testing of each node within the
+ *  erme_geometry subsystem and Serment as a whole.
  *
- * Each node should be as simple to compute as possible
- * (i.e. small, few group, low orders) without limiting the scope of testing.
+ *  Each node should be as simple to compute as possible
+ *  (i.e. small, few group, low orders) without limiting the scope of testing.
  *
  */
 //---------------------------------------------------------------------------//
@@ -23,7 +23,7 @@
 namespace erme_geometry
 {
 
-/*!
+/**
  *  The Detran Cartesian nodes are all 10 cm in extent
  *  with a monoenergetic material.  All applicable
  *  responses are first order.
@@ -67,7 +67,7 @@ Node::SP_node cartesian_node_detran(const int dim)
 
   // Create node
   Node_T::SP_node
-    node(new Node_T(dim, 2*dim, 123, "cartnode", Node_T::Point(0, 0, 0),
+    node(new Node_T(dim, "cartnode",
          Node_T::vec2_size_t(2*dim, Node_T::vec_size_t(dim-1, 4)),  // space
          Node_T::vec_size_t(2*dim, 2),                                 // polar
          Node_T::vec_size_t(2*dim, 2),                                 // azimuth
