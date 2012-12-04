@@ -64,17 +64,17 @@
 %template(CartesianNodeDetranSP)  detran_utilities::SP<erme_geometry::CartesianNodeDetran>;
 %template(NodeListSP)             detran_utilities::SP<erme_geometry::NodeList>;
 
-// Response
-%include "NodeResponse.hh"
-%template(NodeResponseSP)  detran_utilities::SP<erme_response::NodeResponse>;
-%include "ResponseIndex.hh"
-%template(ResponseIndexSP)  detran_utilities::SP<erme_response::ResponseIndex>;
-%include "ResponseIndexer.hh"
-%template(ResponseIndexerSP)  detran_utilities::SP<erme_response::ResponseIndexer>;
-
-// PETSc/SLEPc initialization
-%include "linear_algebra/LinearAlgebraSetup.hh"
-
-// Manager
-%include "erme_utils/ManagerERME.hh"
-%template(ManagerERMESP)          detran_utilities::SP<erme_utils::ManagerERME>;
+//// Response
+//%include "NodeResponse.hh"
+//%template(NodeResponseSP)  detran_utilities::SP<erme_response::NodeResponse>;
+//%include "ResponseIndex.hh"
+//%template(ResponseIndexSP)  detran_utilities::SP<erme_response::ResponseIndex>;
+//%include "ResponseIndexer.hh"
+//%template(ResponseIndexerSP)  detran_utilities::SP<erme_response::ResponseIndexer>;
+//
+//// PETSc/SLEPc initialization
+//%include "linear_algebra/LinearAlgebraSetup.hh"
+//
+//// Manager
+//%include "erme_utils/ManagerERME.hh"
+//%template(ManagerERMESP)          detran_utilities::SP<erme_utils::ManagerERME>;
