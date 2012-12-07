@@ -8,12 +8,10 @@
 
 %module pyserment
 %{
-
 // Detran core
 #include "utilities/detran_utilities.hh"
 #include "material/detran_material.hh"
 #include "geometry/detran_geometry.hh"
-
 // Geometry
 #include "erme_geometry/NeighborSurface.hh"
 #include "erme_geometry/DummyNode.hh"
@@ -22,18 +20,14 @@
 #include "erme_geometry/NodeFactory.hh"
 #include "erme_geometry/NodeFactoryDetran.hh"
 #include "erme_geometry/NodeList.hh"
-  
 // Response
-#include "NodeResponse.hh"
-#include "ResponseIndex.hh"
-#include "ResponseIndexer.hh"
-
+#include "erme_response/NodeResponse.hh"
+#include "erme_response/ResponseIndex.hh"
+#include "erme_response/ResponseIndexer.hh"
 // Linear algebra
-#include "LinearAlgebraSetup.hh"
-  
+#include "linear_algebra/LinearAlgebraSetup.hh"
 // Manager
 #include "erme_utils/ManagerERME.hh"
-
 %} // end module pyserment
 
 %include "serment_config.h"
@@ -43,9 +37,10 @@
 %include "std_vector.i"
 
 // Detran
-%include "utilities/detran_utilities.i"
-%include "material/detran_material.i"
-%include "geometry/detran_geometry.i"
+%import "utilities/detran_utilities.i"
+%import "angle/detran_angle.i"
+%import "material/detran_material.i"
+%import "geometry/detran_geometry.i"
 
 // Geometry
 %include "erme_geometry/NeighborSurface.hh"
@@ -64,17 +59,17 @@
 %template(CartesianNodeDetranSP)  detran_utilities::SP<erme_geometry::CartesianNodeDetran>;
 %template(NodeListSP)             detran_utilities::SP<erme_geometry::NodeList>;
 
-//// Response
-//%include "NodeResponse.hh"
-//%template(NodeResponseSP)  detran_utilities::SP<erme_response::NodeResponse>;
-//%include "ResponseIndex.hh"
-//%template(ResponseIndexSP)  detran_utilities::SP<erme_response::ResponseIndex>;
-//%include "ResponseIndexer.hh"
-//%template(ResponseIndexerSP)  detran_utilities::SP<erme_response::ResponseIndexer>;
-//
-//// PETSc/SLEPc initialization
-//%include "linear_algebra/LinearAlgebraSetup.hh"
-//
-//// Manager
-//%include "erme_utils/ManagerERME.hh"
-//%template(ManagerERMESP)          detran_utilities::SP<erme_utils::ManagerERME>;
+// Response
+%include "NodeResponse.hh"
+%template(NodeResponseSP)  detran_utilities::SP<erme_response::NodeResponse>;
+%include "ResponseIndex.hh"
+%template(ResponseIndexSP)  detran_utilities::SP<erme_response::ResponseIndex>;
+%include "ResponseIndexer.hh"
+%template(ResponseIndexerSP)  detran_utilities::SP<erme_response::ResponseIndexer>;
+
+// PETSc/SLEPc initialization
+%include "linear_algebra/LinearAlgebraSetup.hh"
+
+// Manager
+%include "erme_utils/ManagerERME.hh"
+%template(ManagerERMESP)          detran_utilities::SP<erme_utils::ManagerERME>;

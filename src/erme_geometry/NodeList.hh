@@ -118,7 +118,7 @@ public:
    *  @brief Get a node.  Returns null pointer if not found.
    *  @param name  Name of node
    */
-  SP_node node(std::string name);
+  //SP_node node(std::string name);
 
   /// Return local lower bound
   size_t lower_bound() const;
@@ -218,7 +218,7 @@ private:
 
   //-------------------------------------------------------------------------//
   // SERIALIZATION
-  //-------------------------------------------------------------------------//
+  //-------------------------------------------------------------------------n//
 
   friend class boost::serialization::access;
 

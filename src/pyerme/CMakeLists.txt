@@ -6,6 +6,9 @@ SET_SOURCE_FILES_PROPERTIES(serment.i PROPERTIES CPLUSPLUS ON)
 SWIG_ADD_MODULE(pyserment python serment.i)
 SWIG_LINK_LIBRARIES(pyserment
                     ${PYTHON_LIBRARIES} 
+                    serment_comm
+                    erme_geometry
+                    erme
                     erme_utils)
 
 # Install the module and library

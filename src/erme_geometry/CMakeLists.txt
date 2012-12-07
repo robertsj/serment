@@ -26,9 +26,9 @@ ADD_LIBRARY(erme_geometry
             SHARED
             ${SRC} 
 )
-TARGET_LINK_LIBRARIES( erme_geometry
-                       serment_comm
-                       ${Detran_LIBRARIES}                    
+TARGET_LINK_LIBRARIES(erme_geometry
+                      serment_comm
+                      ${Detran_LIBRARIES}                    
 )
 
 INSTALL_FILES(/include .hh)
