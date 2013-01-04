@@ -22,6 +22,7 @@ inline NodeList::SP_node NodeList::node(const int n) const
 
   return d_nodes[d_node_map[n]];
 }
+
 //---------------------------------------------------------------------------//
 inline NodeList::SP_node NodeList::unique_node(const int n) const
 {

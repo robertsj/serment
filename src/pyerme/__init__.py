@@ -17,7 +17,6 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 # MA 02110-1301, USA.
 
-from pyserment import *
 
 try :
   from detran import *
@@ -25,6 +24,8 @@ except ImportError :
   print "Could not import Detran.  Either your paths are wrong" 
   print "or the Detran Python interface was not built. Exiting."
   exit()
+
+from pyserment import *
 
 try :
   import numpy as np
