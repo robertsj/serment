@@ -35,6 +35,9 @@ NodeList::SP_nodelist NodeList::Create()
 //---------------------------------------------------------------------------//
 void NodeList::set_bounds(const size_t lb, const size_t ub)
 {
+  // Preconditions
+  Require(ub >= lb); // Can have more processes than nodes
+
   d_lower_bound = lb;
   d_upper_bound = ub;
 
@@ -44,7 +47,7 @@ void NodeList::set_bounds(const size_t lb, const size_t ub)
   d_unique_nodes.resize(ub-lb);
   for (int i = lb; i < ub; ++i)
   {
-    //std::cout << " unique[" << i - lb << "]=" << d_node_map[i] << std::endl;
+    std::cout << " unique[" << i - lb << "]=" << d_node_map[i] << std::endl;
     d_unique_nodes[i-lb] = d_node_map[i];
   }
   std::sort(d_unique_nodes.begin(), d_unique_nodes.end());
@@ -70,18 +73,35 @@ void NodeList::set_nodal_map(const vec_int &node_map,
                              const vec2_neighbor &neighbors)
 {
   // Preconditions
-  Insist(is_finalized(), "Must finalize before setting nodal map.");
   Insist(node_map.size() == neighbors.size(),
          "Node map size is inconsistent with size of neighbors.");
   for (int i = 0; i < node_map.size(); ++i)
   {
-    Require(node_map[i] < d_nodes.size());
-    Require(d_nodes[node_map[i]]);
-    Require(neighbors[i].size() == d_nodes[node_map[i]]->number_surfaces());
+    Insist(node_map[i] < d_nodes.size(),
+           "Node index in map is larger than number of nodes added.");
+    Insist(d_nodes[node_map[i]],
+           "Null node indexed by map.  Ensure all nodes added are built.");
+    Insist(neighbors[i].size() == d_nodes[node_map[i]]->number_surfaces(),
+           "Size of node neighbor vector inconsistent with surface count.");
   }
 
   d_node_map = node_map;
   d_neighbors = neighbors;
+}
+
+//---------------------------------------------------------------------------//
+void NodeList::display() const
+{
+  if (serment_comm::Comm::rank() == 0)
+  {
+    for (size_t n = 0; n < number_global_nodes(); ++n)
+    {
+      std::cout << "---------------------" << std::endl;
+      std::cout << " GLOBAL NODE " << n << std::endl;
+      std::cout << "---------------------" << std::endl;
+      node(n)->display();
+    }
+  }
 }
 
 } // end namespace erme_geometry

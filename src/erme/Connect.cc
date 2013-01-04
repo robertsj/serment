@@ -64,8 +64,8 @@ Connect::Connect(SP_nodelist nodes, SP_indexer indexer)
 
         // Set the row, column, and value.  Note, if the surface is shared,
         // the column is changed below.
-        int row      = indexer->nodal_to_global(n, n_index);
-        int column   = indexer->nodal_to_global(n, n_index);
+        int row      = indexer->nodal_index_to_global(n, n_index);
+        int column   = indexer->nodal_index_to_global(n, n_index);
         double value = 0.0;
 
         if (nodes->neighbor(n, s).neighbor() >= 0)
@@ -76,7 +76,7 @@ Connect::Connect(SP_nodelist nodes, SP_indexer indexer)
           // My row connects to their column.  Note, the matrix is symmetric
           // for most problems, but we let the other process fill the
           // reflection since it owns the row in which the entry lives.
-          column = indexer->nodal_to_global(neigh_n, neigh_n_index);
+          column = indexer->nodal_index_to_global(neigh_n, neigh_n_index);
 
 //          if (serment_comm::Comm::rank() == 1)
 //          {

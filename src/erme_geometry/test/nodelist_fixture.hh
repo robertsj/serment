@@ -1,19 +1,20 @@
 //----------------------------------*-C++-*----------------------------------//
-/*!
- * \file   nodelist_fixture.hh
- * \brief  nodelist_fixture 
- * \author Jeremy Roberts
- * \date   Aug 26, 2012
+/**
+ *  @file   nodelist_fixture.hh
+ *  @brief  nodelist_fixture
+ *  @author Jeremy Roberts
+ *  @date   Aug 26, 2012
  *
- * Just as each node type should have a prebuilt test fixture, a node
- * list of such types (perhaps heterogeneous) shouls also be created.
+ *  Just as each node type should have a prebuilt test fixture, a node
+ *  list of such types (perhaps heterogeneous) shouls also be created.
  *
  */
 //---------------------------------------------------------------------------//
 
-#ifndef NODELIST_FIXTURE_HH_
-#define NODELIST_FIXTURE_HH_
+#ifndef erme_geometry_NODELIST_FIXTURE_HH_
+#define erme_geometry_NODELIST_FIXTURE_HH_
 
+#include "erme_geometry/NodePartitioner.hh"
 #include "erme_geometry/NodeList.hh"
 #include "erme_geometry/DummyNode.hh"
 #include "erme_geometry/test/node_fixture.hh"
@@ -26,7 +27,8 @@ namespace erme_geometry
 //---------------------------------------------------------------------------//
 
 // Get a list of Detran nodes
-NodeList::SP_nodelist cartesian_node_detran_list_2d()
+NodeList::SP_nodelist
+cartesian_node_detran_list_2d()
 {
 
   // Create node list
@@ -63,7 +65,6 @@ NodeList::SP_nodelist cartesian_node_detran_list_2d()
   nodes->add_node(node1);
   nodes->add_node(node2);
   nodes->add_node(node3);
-  nodes->finalize();
 
   // Node map and neighbors
   NodeList::vec_int node_map(4, 0);
@@ -76,6 +77,10 @@ NodeList::SP_nodelist cartesian_node_detran_list_2d()
   neighbors[3] = neigh3;
   nodes->set_nodal_map(node_map, neighbors);
 
+  // Partition
+  NodePartitioner P;
+  P.partition(nodes);
+
   return nodes;
 }
 
@@ -83,8 +88,9 @@ NodeList::SP_nodelist cartesian_node_detran_list_2d()
 // DUMMY NODE LISTS
 //---------------------------------------------------------------------------//
 
-// Get a list of Dummy nodes
-NodeList::SP_nodelist cartesian_node_dummy_list_1d()
+//---------------------------------------------------------------------------//
+NodeList::SP_nodelist
+cartesian_node_dummy_list_1d()
 {
 
   // Create node list
@@ -113,7 +119,6 @@ NodeList::SP_nodelist cartesian_node_dummy_list_1d()
 
   // Add nodes
   nodes->add_node(node0);
-  nodes->finalize();
 
   // Node map and neighbors
   NodeList::vec_int node_map(4, 0);
@@ -123,10 +128,14 @@ NodeList::SP_nodelist cartesian_node_dummy_list_1d()
   neighbors[3] = neigh3;
   nodes->set_nodal_map(node_map, neighbors);
 
+  // Partition
+  NodePartitioner P;
+  P.partition(nodes);
+
   return nodes;
 }
 
-// Get a list of Dummy nodes
+//---------------------------------------------------------------------------//
 NodeList::SP_nodelist
 cartesian_node_dummy_list_2d(int so = 4, int ao = 2, int po = 2)
 {
@@ -161,7 +170,6 @@ cartesian_node_dummy_list_2d(int so = 4, int ao = 2, int po = 2)
   // Add nodes
   nodes->add_node(node0);
   nodes->add_node(node1);
-  nodes->finalize();
 
   // Node map and neighbors
   NodeList::vec_int node_map(4, 0);
@@ -174,11 +182,16 @@ cartesian_node_dummy_list_2d(int so = 4, int ao = 2, int po = 2)
   neighbors[3] = neigh3;
   nodes->set_nodal_map(node_map, neighbors);
 
+  // Partition
+  NodePartitioner P;
+  P.partition(nodes);
+
   return nodes;
 }
 
-// Get a list of Dummy nodes
-NodeList::SP_nodelist cartesian_node_dummy_list_3d()
+//---------------------------------------------------------------------------//
+NodeList::SP_nodelist
+cartesian_node_dummy_list_3d()
 {
 
   // Create node list
@@ -209,7 +222,6 @@ NodeList::SP_nodelist cartesian_node_dummy_list_3d()
 
   // Add nodes
   nodes->add_node(node0);
-  nodes->finalize();
 
   // Node map and neighbors
   NodeList::vec_int node_map(4, 0);
@@ -219,14 +231,19 @@ NodeList::SP_nodelist cartesian_node_dummy_list_3d()
   neighbors[3] = neigh3;
   nodes->set_nodal_map(node_map, neighbors);
 
+  // Partition
+  NodePartitioner P;
+  P.partition(nodes);
+
   return nodes;
 }
 
-// Get a list of Dummy nodes.  This node list provides
-// a square map of nodes with varying spatial order.
+//---------------------------------------------------------------------------//
 NodeList::SP_nodelist
 cartesian_node_dummy_list_2d_variable(int so, int N)
 {
+  // Produce arbitrary length of identical 2D nodes of variable
+  // spatial order.
 
   // Create node list
   NodeList::SP_nodelist nodes(new NodeList());
@@ -247,7 +264,6 @@ cartesian_node_dummy_list_2d_variable(int so, int N)
 
   // Add the single node
   nodes->add_node(node);
-  nodes->finalize();
 
   // Node map
   NodeList::vec_int node_map(N*N, 0);
@@ -264,15 +280,21 @@ cartesian_node_dummy_list_2d_variable(int so, int N)
       if (j < N-1) neighbors[n][CartesianNode::NORTH] = NeighborSurface(i + (j+1)*N, CartesianNode::SOUTH);
     }
   }
-  nodes->finalize();
+
+  // Partition
+  NodePartitioner P;
+  P.partition(nodes);
+
   return nodes;
 }
 
-// Get a list of Dummy nodes.  This node list provides
-// a square map of nodes with varying spatial order.
+//---------------------------------------------------------------------------//
 NodeList::SP_nodelist
 cartesian_node_dummy_list_3d_variable(int so, int N)
 {
+  // Produce arbitrary length of identical 3D nodes of variable
+  // spatial order.
+
   typedef CartesianNode C_N;
 
 
@@ -295,7 +317,6 @@ cartesian_node_dummy_list_3d_variable(int so, int N)
 
   // Add the single node
   nodes->add_node(node);
-  nodes->finalize();
 
   // Node map
   NodeList::vec_int node_map(N*N*N, 0);
@@ -325,16 +346,18 @@ cartesian_node_dummy_list_3d_variable(int so, int N)
       }
     }
   }
-
   nodes->set_nodal_map(node_map, neighbors);
+
+  // Partition
+  NodePartitioner P;
+  P.partition(nodes);
 
   return nodes;
 }
 
-
 } // end namespace erme_geometry
 
-#endif // NODELIST_FIXTURE_HH_ 
+#endif // erme_geometry_NODELIST_FIXTURE_HH_
 
 //---------------------------------------------------------------------------//
 //              end of file nodelist_fixture.hh

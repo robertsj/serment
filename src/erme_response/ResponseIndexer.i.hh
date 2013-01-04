@@ -25,7 +25,7 @@ inline ResponseIndexer::size_t
 ResponseIndexer::number_surface_moments(const size_t node_g,
                                         const size_t surface) const
 {
-  size_t node_ug = d_nodes->unique_global_index(node_g);
+  size_t node_ug = d_nodes->unique_global_index_from_global(node_g);
   Require(node_ug < d_indices.size());
   Require(surface < d_indices[node_ug].size());
   return d_indices[node_ug][surface].size();
@@ -35,7 +35,7 @@ ResponseIndexer::number_surface_moments(const size_t node_g,
 inline ResponseIndexer::size_t
 ResponseIndexer::number_node_moments(const size_t node_g) const
 {
-  size_t node_ug = d_nodes->unique_global_index(node_g);
+  size_t node_ug = d_nodes->unique_global_index_from_global(node_g);
   Require(node_ug < d_sizes.size());
   return d_sizes[node_ug];
 }
@@ -66,8 +66,8 @@ ResponseIndexer::response_index(const size_t node_g,
                                 const size_t index_s) const
 {
   // Preconditions
-  size_t node_ug = d_nodes->unique_global_index(node_g);
-  Require(node_ug  < d_indices.size());
+  size_t node_ug = d_nodes->unique_global_index_from_global(node_g);
+  Require(node_ug < d_indices.size());
   Require(surface < d_indices[node_ug].size());
   Require(index_s < d_indices[node_ug][surface].size());
   return d_indices[node_ug][surface][index_s];
@@ -75,27 +75,50 @@ ResponseIndexer::response_index(const size_t node_g,
 
 //---------------------------------------------------------------------------//
 inline ResponseIndex
-ResponseIndexer::response_index(const size_t index_ul) const
+ResponseIndexer::response_index_from_unique_local(const size_t index_ul) const
 {
   // Preconditions
+  std::cout << " UL = " << index_ul << " Usize = "
+            << d_unique_size << " " << d_unique_indices.size()
+            << " " << d_unique_indices[0].size() << std::endl;
   Require(index_ul < d_unique_size);
   size_t node_ug = d_unique_indices[index_ul][0];
   size_t surface = d_unique_indices[index_ul][1];
   size_t nindex  = d_unique_indices[index_ul][2];
+  Ensure(node_ug < d_indices.size());
+  Ensure(surface < d_indices[node_ug].size());
+  Ensure(nindex  < d_indices[node_ug][surface].size());
   return d_indices[node_ug][surface][nindex];
 }
 
 //---------------------------------------------------------------------------//
-inline ResponseIndexer::size_t ResponseIndexer::
-nodal_to_local(const size_t node_g, const size_t index_n) const
+inline ResponseIndex
+ResponseIndexer::response_index_from_local(const size_t index_l) const
 {
+  // Preconditions
+  Require(index_l < number_local_moments());
+
+  // Get local unique moment
+  size_t index_ul = local_index_to_unique(index_l);
+
+  // Postconditions
+  Ensure(index_ul < d_unique_size);
+  return response_index_from_unique_local(index_ul);
+}
+
+//---------------------------------------------------------------------------//
+inline ResponseIndexer::size_t ResponseIndexer::
+nodal_index_to_local(const size_t node_g, const size_t index_n) const
+{
+  // Preconditions
   Require(node_g < d_number_local_nodes);
-  return index_n + d_offsets[d_nodes->local_index(node_g)];
+
+  return index_n + d_offsets[d_nodes->local_index_from_global(node_g)];
 }
 
 //---------------------------------------------------------------------------//
 inline int ResponseIndexer::
-global_to_local(const size_t index_g) const
+global_index_to_local(const size_t index_g) const
 {
   // Preconditions
   Require(index_g < d_global_size);
@@ -112,11 +135,11 @@ global_to_local(const size_t index_g) const
 
 //---------------------------------------------------------------------------//
 inline ResponseIndexer::size_t ResponseIndexer::
-nodal_to_global(const size_t node_g, const size_t index_n) const
+nodal_index_to_global(const size_t node_g, const size_t index_n) const
 {
   // Preconditions
   Require(node_g < d_global_offsets.size());
-  size_t node_ug = d_nodes->unique_global_index(node_g);
+  size_t node_ug = d_nodes->unique_global_index_from_global(node_g);
   Require(node_ug < d_indices.size());
   Require(index_n < d_sizes[node_ug]);
 
@@ -130,7 +153,7 @@ nodal_to_global(const size_t node_g, const size_t index_n) const
 
 //---------------------------------------------------------------------------//
 inline ResponseIndexer::size_t ResponseIndexer::
-local_to_global(const size_t index_l) const
+local_index_to_global(const size_t index_l) const
 {
   // Preconditions
   Require(index_l < d_local_size);
@@ -140,6 +163,20 @@ local_to_global(const size_t index_l) const
   // Postconditions
   Ensure(index_g < d_global_size);
   return index_g;
+}
+
+//---------------------------------------------------------------------------//
+inline ResponseIndexer::size_t ResponseIndexer::
+local_index_to_unique(const size_t index_l) const
+{
+  // Preconditions
+  Require(index_l < d_local_to_unique.size());
+
+  size_t index_ul = d_local_to_unique[index_l];
+
+  // Postconditions
+  Ensure(index_ul < number_unique_moments());
+  return index_ul;
 }
 
 } // end namespace erme_response

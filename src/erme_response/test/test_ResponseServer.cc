@@ -112,7 +112,7 @@ int test_ResponseServer(int argc, char *argv[])
   for (int n = nodes->lower_bound(); n < nodes->upper_bound(); n++)
   {
     // Response for this node
-    SP_response r = server.response(nodes->local_index(n));
+    SP_response r = server.response(nodes->local_index_from_global(n));
 
     // Loop over surfaces
     for (int s = 0; s < nodes->node(n)->number_surfaces(); s++)

@@ -30,8 +30,7 @@ void GlobalSolverPicard::solve()
   // hand-coded power iteration.
   for (int i = 0; i < d_indexer->number_local_moments(); ++i)
   {
-    bool zeroth;
-    erme_response::ResponseIndex ri = d_indexer->response_index(i);
+    erme_response::ResponseIndex ri = d_indexer->response_index_from_local(i);
     if (ri.azimuth + ri.polar + ri.space0 + ri.space1 == 0) (*d_J0)[i] = 1.0;
   }
   // Ensure a normalized initial guess and initialize the responses

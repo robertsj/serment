@@ -104,7 +104,7 @@ void LeakageOperator::update()
 
     // Converting the first nodal moment to the global
     // moment yields the offset for the column indices
-    int column_offset = d_indexer->nodal_to_global(n, 0);
+    int column_offset = d_indexer->nodal_index_to_global(n, 0);
 
     // Insert each column (corresponding to an incident moment)
     for (int in = 0; in < r->size(); in++)

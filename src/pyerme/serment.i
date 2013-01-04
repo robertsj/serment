@@ -44,7 +44,9 @@
 
 // Geometry
 %include "erme_geometry/NeighborSurface.hh"
-%template(vec_neighbor) std::vector<erme_geometry::NeighborSurface>;
+%template(vec_neighbor)  std::vector<erme_geometry::NeighborSurface>;
+%template(vec2_neighbor) std::vector<std::vector<erme_geometry::NeighborSurface> >;
+
 %include "erme_geometry/Node.hh"
 %include "erme_geometry/CartesianNode.hh"
 %include "erme_geometry/DummyNode.hh"
@@ -52,6 +54,7 @@
 %include "erme_geometry/NodeFactory.hh"
 %include "erme_geometry/NodeFactoryDetran.hh"
 %include "erme_geometry/NodeList.hh"
+%include "erme_geometry/NodePartitioner.hh"
 //// Smart pointer templates
 %template(NodeSP)                 detran_utilities::SP<erme_geometry::Node>;
 %template(CartesianNodeSP)        detran_utilities::SP<erme_geometry::CartesianNode>;

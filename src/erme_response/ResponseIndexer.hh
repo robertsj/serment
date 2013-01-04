@@ -45,6 +45,11 @@ namespace erme_response
  *  functions help provide indices into the global, local, and
  *  nodal moments.
  *
+ *  The indexer is responsible for giving easy access into
+ *  a moments vector or operator row/column.  This can be done
+ *  via a global, local, or nodal view, and within those,
+ *  a unique view, since responses in general can be repeated.
+ *
  *  Relevant database entries:
  *    - dimension
  *    - erme_order_reduction
@@ -125,9 +130,15 @@ public:
 
   /**
    *  @brief Get moment indices from unique cardinal index
-   *  @param index_lu     Moment index within unique local nodes
+   *  @param index_ul     Moment index within unique local moments
    */
-  ResponseIndex response_index(const size_t index_lu) const;
+  ResponseIndex response_index_from_unique_local(const size_t index_ul) const;
+
+  /**
+   *  @brief Get moment indices from local cardinal index
+   *  @param index_ul     Moment index within local moments
+   */
+  ResponseIndex response_index_from_local(const size_t index_l) const;
 
   //-------------------------------------------------------------------------//
 
@@ -136,7 +147,7 @@ public:
    *  @param  node_l      Local node index
    *  @param  index_n     Cardinal moment index within node
    */
-  size_t nodal_to_local(const size_t node_l, const size_t index_n) const;
+  size_t nodal_index_to_local(const size_t node_l, const size_t index_n) const;
 
   /**
    *  @brief Get local moment index from global moment index
@@ -146,20 +157,26 @@ public:
    *
    *  @param  index_g   Global node index
    */
-  int global_to_local(const size_t index_g) const;
+  int global_index_to_local(const size_t index_g) const;
 
   /**
    *  @brief Get global moment index from a nodal moment index
    *  @param  node_g    Global node index
    *  @param  index_n   Moment index within node
    */
-  size_t nodal_to_global(const size_t node_g, const size_t index_n) const;
+  size_t nodal_index_to_global(const size_t node_g, const size_t index_n) const;
 
   /**
    *  @brief Get global moment index from a local moment index
    *  @param  index_l   Local moment index
    */
-  size_t local_to_global(const size_t index_l) const;
+  size_t local_index_to_global(const size_t index_l) const;
+
+  /**
+   *  @brief Get the unique local index from cardinal local index
+   *  @param  index_l   Local moment index
+   */
+  size_t local_index_to_unique(const size_t index_l) const;
 
   //-------------------------------------------------------------------------//
 
@@ -178,12 +195,12 @@ private:
   vec3_index d_indices;
   /// Map a unique local cardinal index to the [node, surface, moment]
   vec2_size_t d_unique_indices;
-  /// Vector of moment sizes per node
-  std::vector<size_t> d_sizes;
+  /// Vector of moment sizes per unique global node
+  vec_size_t d_sizes;
   /// Offset of node indices (within local set)
-  std::vector<size_t> d_offsets;
+  vec_size_t d_offsets;
   /// Offset of node indices (within local set)
-  std::vector<size_t> d_global_offsets;
+  vec_size_t d_global_offsets;
   /// Global offset (i.e. the number of moments before me)
   size_t d_global_offset;
   /// Unique local size (i.e. number of unique responses on local comm)
@@ -198,6 +215,8 @@ private:
   size_t d_number_local_nodes;
   /// Order reduction selector
   int d_order_reduction;
+  /// Map a local moment to the unique moment
+  vec_size_t d_local_to_unique;
 
   //-------------------------------------------------------------------------//
   // IMPLEMENTATION

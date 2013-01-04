@@ -72,6 +72,7 @@ void NodePartitioner::partition(SP_nodelist &nodes)
   // Set local bounds, and determine local unique nodes
   nodes->set_bounds(lower_bound, lower_bound + local_number_nodes);
 
+  // Finalize the nodes.  This indicates the node list is ready to use.
   nodes->finalize();
 
 }
