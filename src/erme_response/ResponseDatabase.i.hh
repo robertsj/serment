@@ -15,6 +15,7 @@
 namespace erme_response
 {
 
+//---------------------------------------------------------------------------//
 // \todo need to consider other interpolation and pin responses
 inline void ResponseDatabase::get(std::string     nodename,
                                   SP_response     response,
@@ -108,6 +109,7 @@ inline void ResponseDatabase::get(std::string     nodename,
 
 }
 
+//---------------------------------------------------------------------------//
 template <class T>
 inline bool ResponseDatabase::read_scalar_attribute
 (hid_t group, const char* name, T &value)

@@ -44,6 +44,7 @@ GlobalSolverPicard::GlobalSolverPicard(SP_db      db,
   else
     THROW("Unknown Picard eigenvalue updater: " + updater);
 
+  // Post conditions
   Ensure(d_MR);
   Ensure(d_innersolver);
 }

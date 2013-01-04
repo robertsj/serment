@@ -15,6 +15,7 @@
 namespace erme_solver
 {
 
+//---------------------------------------------------------------------------//
 void GlobalSolverPicard::solve()
 {
   std::cout << " Picard: solving... " << std::endl;

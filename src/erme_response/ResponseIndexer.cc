@@ -133,6 +133,18 @@ ResponseIndexer::ResponseIndexer(SP_db db, SP_nodelist nodes)
     }
   }
 
+  // Create local to unique local map.
+  d_local_to_unique.resize(number_local_moments(), 0);
+  size_t local = 0;
+  for (size_t node_g = d_nodes->lower_bound();
+       node_g < d_nodes->upper_bound();
+       ++node_g)
+  {
+    size_t node_ug = d_nodes->unique_global_index_from_global(node_g);
+    for (size_t unique = 0; unique < d_sizes[node_ug]; ++unique, ++local)
+      d_local_to_unique[local] = unique;
+  }
+
 }
 
 //---------------------------------------------------------------------------//

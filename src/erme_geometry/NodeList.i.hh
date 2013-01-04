@@ -14,23 +14,23 @@ namespace erme_geometry
 {
 
 //---------------------------------------------------------------------------//
-inline NodeList::SP_node NodeList::node(const int n) const
+inline NodeList::SP_node NodeList::node(const int node_g) const
 {
   // Preconditions
   Require(is_finalized());
-  Require(n < number_global_nodes());
+  Require(node_g < number_global_nodes());
 
-  return d_nodes[d_node_map[n]];
+  return d_nodes[d_node_map[node_g]];
 }
 
 //---------------------------------------------------------------------------//
-inline NodeList::SP_node NodeList::unique_node(const int n) const
+inline NodeList::SP_node NodeList::unique_node(const int node_ug) const
 {
   // Preconditions
   Require(is_finalized());
-  Require(n < number_unique_global_nodes());
+  Require(node_ug < number_unique_global_nodes());
 
-  return d_nodes[n];
+  return d_nodes[node_ug];
 }
 
 //---------------------------------------------------------------------------//
@@ -84,37 +84,39 @@ inline NodeList::size_t NodeList::number_local_surfaces() const
 
 //---------------------------------------------------------------------------//
 inline const NeighborSurface&
-NodeList::neighbor(const size_t n, const size_t s) const
+NodeList::neighbor(const size_t node_g, const size_t s) const
 {
   // Preconditions
-  Require(s < node(n)->number_surfaces());
+  Require(node_g < number_global_nodes());
+  Require(s < node(node_g)->number_surfaces());
 
-  return d_neighbors[n][s];
+  return d_neighbors[node_g][s];
 }
 
 //---------------------------------------------------------------------------//
 // L-to-G
-inline NodeList::size_t NodeList::global_index_from_local(const size_t li) const
+inline NodeList::size_t
+NodeList::global_index_from_local(const size_t node_l) const
 {
   // Preconditions
-  Require(li < d_upper_bound);
+  Require(node_l < d_upper_bound);
 
-  size_t gi = li + d_lower_bound;
+  size_t node_g = node_l + d_lower_bound;
 
   // Postconditions
-  Ensure(gi < number_global_nodes());
-  return gi;
+  Ensure(node_g < number_global_nodes());
+  return node_g;
 }
 //---------------------------------------------------------------------------//
 // G-to-L
-inline int NodeList::local_index_from_global(const size_t gi) const
+inline int NodeList::local_index_from_global(const size_t node_g) const
 {
   // Preconditions
-  Require(gi < number_global_nodes());
+  Require(node_g < number_global_nodes());
 
-  int li = gi - d_lower_bound;
-  if (li >= 0)
-    return li;
+  int node_l = node_g - d_lower_bound;
+  if (node_l >= 0)
+    return node_l;
   else
     return -1;
 }
