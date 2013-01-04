@@ -26,14 +26,6 @@ ResponseIndexer::ResponseIndexer(SP_db db, SP_nodelist nodes)
   // Preconditions
   Require(db);
   Require(d_nodes);
-
-  // Initialize
-  d_sizes.resize(d_nodes->number_unique_global_nodes(), 0);
-  d_offsets.resize(d_nodes->number_local_nodes(), 0);
-  d_global_offsets.resize(d_nodes->number_global_nodes(), 0);
-  d_number_global_nodes = d_nodes->number_global_nodes();
-  d_number_local_nodes = d_nodes->number_unique_local_nodes();
-
   // Dimension required for correct builder
   Insist(db->check("dimension"),
          "Parameter database must specify dimension.");
@@ -44,13 +36,21 @@ ResponseIndexer::ResponseIndexer(SP_db db, SP_nodelist nodes)
   for (int i = 0; i < d_nodes->number_unique_global_nodes(); ++i)
     Require(d_nodes->unique_node(i)->dimension() == dimension);
 
+  // Initialize containers
+  d_sizes.resize(d_nodes->number_unique_global_nodes(), 0);
+  d_offsets.resize(d_nodes->number_local_nodes(), 0);
+  d_global_offsets.resize(d_nodes->number_global_nodes(), 0);
+  d_number_global_nodes = d_nodes->number_global_nodes();
+  d_number_local_nodes = d_nodes->number_unique_local_nodes();
+
   // Get options from database.
   if (db->check("erme_order_reduction"))
     d_order_reduction = db->get<int>("erme_order_reduction");
 
-  // Loop over all nodes.  All processes get all the same info.  This makes
-  // it easier to ensure consistent expansions between nodes.  If this for
-  // some reason becomes a bottleneck, it can be reformulated.
+  // Loop over all unique nodes.  All processes get all the same
+  // info.  This makes it easier to ensure consistent expansions
+  // between nodes.  The build routines return the size of the
+  // unique node, which is recorded.
   for (size_t n = 0; n < d_nodes->number_unique_global_nodes(); n++)
   {
     // Moments size for the node.
@@ -75,50 +75,53 @@ ResponseIndexer::ResponseIndexer(SP_db db, SP_nodelist nodes)
    */
 
   // Number of unique moments, i.e. the number we solve on local comm
-  for (size_t node_ul = 0; node_ul < d_nodes->number_unique_local_nodes(); ++node_ul)
+  for (size_t node_ul = 0;
+       node_ul < d_nodes->number_unique_local_nodes();
+       ++node_ul)
   {
-    // Get global from unique local, and then global unique from global.
-    size_t node_g  = d_nodes->global_index_from_local_unique(node_ul);
-    size_t node_ug = d_nodes->unique_global_index(node_g);
+    // Get the unique global index.
+    size_t node_ug  = d_nodes->unique_global_index_from_unique_local(node_ul);
     Assert(node_ug < d_sizes.size());
-    // Add the size
+    // Add the size to the total unique number of moments.  This
+    // is the number used to work share.
     d_unique_size += d_sizes[node_ug];
   }
 
   // Global size and offsets for each node
   for (size_t node_g = 0; node_g < d_nodes->number_global_nodes() - 1; ++node_g)
   {
-    size_t node_ug = d_nodes->unique_global_index(node_g);
+    size_t node_ug = d_nodes->unique_global_index_from_global(node_g);
     d_global_offsets[node_g + 1] = d_global_offsets[node_g] + d_sizes[node_ug];
   }
   for (size_t node_g = 0; node_g < d_nodes->number_global_nodes(); ++node_g)
   {
-    size_t node_ug = d_nodes->unique_global_index(node_g);
+    size_t node_ug = d_nodes->unique_global_index_from_global(node_g);
     d_global_size += d_sizes[node_ug];
   }
 
   // Compute local sizes, local offsets, and my global offset
   for (size_t node_g = nodes->lower_bound(); node_g < nodes->upper_bound(); ++node_g)
-    d_local_size += d_sizes[d_nodes->unique_global_index(node_g)];
+    d_local_size += d_sizes[d_nodes->unique_global_index_from_global(node_g)];
   for (int node_g = nodes->lower_bound(); node_g < nodes->upper_bound() - 1; ++node_g)
   {
     d_offsets[node_g - d_nodes->lower_bound() + 1] =
       d_offsets[node_g - d_nodes->lower_bound()] +
-        d_sizes[d_nodes->unique_global_index(node_g)];
+        d_sizes[d_nodes->unique_global_index_from_global(node_g)];
   }
-  // \todo Is this right? or should sizes be added?
+  // My global offset (total number of moments before me)
   for (int node_g = 0; node_g < nodes->lower_bound(); ++node_g)
-    d_global_offset += d_global_offsets[node_g];
-  std::cout << " GLOBAL OFFSET = " << d_global_offset << " " << d_unique_size << std::endl;
+  {
+    size_t node_ug = d_nodes->unique_global_index_from_global(node_g);
+    d_global_offset += d_sizes[node_ug];
+  }
+  std::cout << " GLOBAL OFFSET = " << d_global_offset << std::endl;
 
   // Compute the unique local moment to (global node, surface, moment) index
   d_unique_indices.resize(d_unique_size, vec_size_t(3, 0));
   size_t unique_index = 0;
   for (int node_ul = 0; node_ul < nodes->number_unique_local_nodes(); ++node_ul)
   {
-    // Get global from unique local, and then global unique from global.
-    size_t node_g  = d_nodes->global_index_from_local_unique(node_ul);
-    size_t node_ug = d_nodes->unique_global_index(node_g);
+    size_t node_ug  = d_nodes->unique_global_index_from_unique_local(node_ul);
     for (int s = 0; s < d_indices[node_ug].size(); s++)
     {
       for (int m = 0; m < d_indices[node_ug][s].size(); m++, unique_index++)
@@ -143,16 +146,17 @@ void ResponseIndexer::display() const
   for (int node_g = 0; node_g < number_nodes(); ++node_g)
   {
     cout << "  global node " << node_g << endl;
-    size_t node_ug = d_nodes->unique_global_index(node_g);
+    size_t node_ug = d_nodes->unique_global_index_from_global(node_g);
+    Assert(node_ug < d_indices.size());
     for (int s = 0; s < d_indices[node_ug].size(); s++)
     {
 
-      for (int m = 0; m < d_indices[node_g][s].size(); m++)
+      for (int m = 0; m < d_indices[node_ug][s].size(); m++)
       {
         cout << "    "
-             << d_nodes->local_index(node_g) << " "
-             << response_index(node_ug, s, m).nodal << " | "
-             << response_index(node_ug, s, m).node  << " "
+             << d_nodes->local_index_from_global(node_g)           << " "
+             << response_index(node_ug, s, m).nodal    << " | "
+             << response_index(node_ug, s, m).node     << " "
              << response_index(node_ug, s, m).surface  << " | "
              << response_index(node_ug, s, m).energy   << " | "
              << response_index(node_ug, s, m).polar    << " "

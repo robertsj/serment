@@ -94,7 +94,7 @@ NodeList::neighbor(const size_t n, const size_t s) const
 
 //---------------------------------------------------------------------------//
 // L-to-G
-inline NodeList::size_t NodeList::global_index(const size_t li) const
+inline NodeList::size_t NodeList::global_index_from_local(const size_t li) const
 {
   // Preconditions
   Require(li < d_upper_bound);
@@ -107,7 +107,7 @@ inline NodeList::size_t NodeList::global_index(const size_t li) const
 }
 //---------------------------------------------------------------------------//
 // G-to-L
-inline int NodeList::local_index(const size_t gi) const
+inline int NodeList::local_index_from_global(const size_t gi) const
 {
   // Preconditions
   Require(gi < number_global_nodes());
@@ -121,7 +121,7 @@ inline int NodeList::local_index(const size_t gi) const
 //---------------------------------------------------------------------------//
 // G-to-GU
 inline NodeList::size_t
-NodeList::unique_global_index(const size_t node_g) const
+NodeList::unique_global_index_from_global(const size_t node_g) const
 {
   // Preconditions
   Require(node_g < number_global_nodes());
@@ -135,7 +135,7 @@ NodeList::unique_global_index(const size_t node_g) const
 //---------------------------------------------------------------------------//
 // GU-to-LU
 inline NodeList::size_t
-NodeList::unique_local_index(const size_t node_ug) const
+NodeList::unique_local_index_from_unique_global(const size_t node_ug) const
 {
   // Preconditions
   Require(node_ug < number_unique_global_nodes());
@@ -155,12 +155,28 @@ NodeList::unique_local_index(const size_t node_ug) const
 
 //---------------------------------------------------------------------------//
 inline NodeList::size_t
-NodeList::global_index_from_local_unique(const size_t ui) const
+NodeList::global_index_from_unique_local(const size_t ui) const
 {
   Require(ui < d_unique_nodes.size());
   size_t gi = d_unique_nodes[ui];
   Ensure(gi < number_global_nodes());
   return gi;
+}
+
+
+//---------------------------------------------------------------------------//
+inline NodeList::size_t
+NodeList::unique_global_index_from_unique_local(const size_t node_ul) const
+{
+  // Preconditions
+  Require(node_ul < d_unique_nodes.size());
+
+  size_t node_g  = d_unique_nodes[node_ul];
+  size_t node_ug = unique_global_index_from_global(node_g);
+
+  // Postconditions
+  Ensure(node_ug < number_unique_global_nodes());
+  return node_ug;
 }
 
 } // end namespace erme_geometry

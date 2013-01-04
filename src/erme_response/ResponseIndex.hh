@@ -22,9 +22,9 @@ namespace erme_response
  *  @param  s   Node surface index
  *  @param  e   Energy moment order
  *  @param  p   Polar moment order
- *  @param  a   Azimithual moment order
+ *  @param  a   Azimuthal moment order
  *  @param  s0  First spatial dimension order
- *  @param  s1  Second spatial dimenion order
+ *  @param  s1  Second spatial dimension order
  *  @param  eo  Is the combined function even=false or odd=true?
  *  @param  ni  Moment index within the local node
  */
@@ -60,6 +60,7 @@ struct ResponseIndex
 
 } // end namespace erme_response
 
+//---------------------------------------------------------------------------//
 inline std::ostream& operator<< (std::ostream &out,
                                  const erme_response::ResponseIndex &r)
 {
@@ -76,7 +77,7 @@ inline std::ostream& operator<< (std::ostream &out,
   return out;
 }
 
-#endif // RESPONSEINDEX_HH_ 
+#endif // erme_response_RESPONSEINDEX_HH_
 
 //---------------------------------------------------------------------------//
 //              end of file ResponseIndex.hh

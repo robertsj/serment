@@ -8,12 +8,12 @@ message( "++ Adding serment erme_solvers tests." )
 # Create test executables
 #------------------------------------------------------------------------------#
 
-#ADD_EXECUTABLE(test_StateERME				test_StateERME.cc)
-#TARGET_LINK_LIBRARIES(test_StateERME 		erme)
+ADD_EXECUTABLE(test_GlobalSolverPicard				test_GlobalSolverPicard.cc)
+TARGET_LINK_LIBRARIES(test_GlobalSolverPicard 		erme_solver)
 
 #------------------------------------------------------------------------------#
 # Define tests
 #------------------------------------------------------------------------------#
 
-#ADD_TEST(test_StateERME 			test_StateERME 0)
+ADD_TEST(test_GlobalSolverPicard 			test_GlobalSolverPicard 0)
 

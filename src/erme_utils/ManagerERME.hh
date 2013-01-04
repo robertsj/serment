@@ -155,7 +155,8 @@ private:
   SP_L d_L;
   /// Global solver
   SP_solver d_solver;
-
+  /// Is it built?
+  bool d_is_built;
 
 };
 

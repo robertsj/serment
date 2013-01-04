@@ -15,8 +15,10 @@
 namespace erme_utils
 {
 
+//---------------------------------------------------------------------------//
 ManagerERME::ManagerERME(int argc, char *argv[], SP_db db)
   : d_db(db)
+  , d_is_built(false)
 {
   // Preconditions
   Require(db);
@@ -46,13 +48,14 @@ ManagerERME::ManagerERME(int argc, char *argv[], SP_db db)
 
 }
 
-
+//---------------------------------------------------------------------------//
 ManagerERME::SP_manager ManagerERME::Create(int argc, char *argv[], SP_db db)
 {
   SP_manager p(new ManagerERME(argc, argv, db));
   return p;
 }
 
+//---------------------------------------------------------------------------//
 void ManagerERME::build_erme(SP_nodelist nodes)
 {
   // Preconditions
@@ -90,20 +93,24 @@ void ManagerERME::build_erme(SP_nodelist nodes)
   d_L = new erme::LeakageOperator(d_nodes, d_indexer, d_server);
   d_F = new erme::FissionOperator(d_nodes, d_indexer, d_server);
   d_A = new erme::AbsorptionOperator(d_nodes, d_indexer, d_server);
-
+  d_is_built = true;
 }
 
+//---------------------------------------------------------------------------//
 void ManagerERME::solve()
 {
+  // Preconditions
+  Insist(d_is_built, "Must build the manager before using.");
+
   // Create solver
   d_solver = new erme_solver::GlobalSolverPicard(
     d_db, d_indexer, d_server, d_state, d_R, d_M, d_F, d_A, d_L);
 
   // Solve
   d_solver->solve();
-
 }
 
+//---------------------------------------------------------------------------//
 void ManagerERME::finalize()
 {
   /* ... */

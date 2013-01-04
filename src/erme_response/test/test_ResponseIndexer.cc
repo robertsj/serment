@@ -88,9 +88,9 @@ int test_ResponseIndexer(int argc, char *argv[])
       // One local group
       if (Comm::rank() == 0)
       {
-        TEST(indexer.local_to_global(  0) ==   0);
-        TEST(indexer.local_to_global(180) == 180);
-        TEST(indexer.local_to_global(360) == 360);
+        TEST(indexer.local_index_to_global(  0) ==   0);
+        TEST(indexer.local_index_to_global(180) == 180);
+        TEST(indexer.local_index_to_global(360) == 360);
 
       }
     }
@@ -99,13 +99,13 @@ int test_ResponseIndexer(int argc, char *argv[])
       // Two local groups
       if (Comm::rank() == 0 and Comm::local_group() == 0)
       {
-        TEST(indexer.local_to_global(  0) ==   0);
-        TEST(indexer.local_to_global(180) == 180);
+        TEST(indexer.local_index_to_global(  0) ==   0);
+        TEST(indexer.local_index_to_global(180) == 180);
       }
       if (Comm::rank() == 0 and Comm::local_group() == 1)
       {
-        TEST(indexer.local_to_global(  0) == 360);
-        TEST(indexer.local_to_global(180) == 540);
+        TEST(indexer.local_index_to_global(  0) == 360);
+        TEST(indexer.local_index_to_global(180) == 540);
       }
     }
 

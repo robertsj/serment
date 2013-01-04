@@ -13,6 +13,7 @@
 namespace erme_solver
 {
 
+//---------------------------------------------------------------------------//
 GlobalSolverPicard::GlobalSolverPicard(SP_db      db,
                                        SP_indexer indexer,
                                        SP_server  server,

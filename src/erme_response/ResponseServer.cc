@@ -46,7 +46,7 @@ ResponseServer::ResponseServer(SP_nodelist  nodes,
   for (size_t n = 0; n < d_sources.size(); n++)
   {
     // Build the sources
-    size_t n_global = d_nodes->global_index_from_local_unique(n);
+    size_t n_global = d_nodes->global_index_from_unique_local(n);
     d_sources[n] = builder.build(nodes->node(n_global));
     Ensure(d_sources[n]);
 
@@ -156,10 +156,10 @@ void ResponseServer::update_explicit_work_share()
   for (size_t index_ul = start; index_ul < finish; index_ul++)
   {
 
-    const ResponseIndex index_r = d_indexer->response_index(index_ul);
+    const ResponseIndex index_r = d_indexer->response_index_from_unique_local(index_ul);
 
     // Local unique node index
-    int node_ul = d_nodes->unique_local_index(index_r.node);
+    int node_ul = d_nodes->unique_local_index_from_unique_global(index_r.node);
 
     // Compute responses
     Assert(node_ul < d_responses.size());

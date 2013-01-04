@@ -1,14 +1,14 @@
 //----------------------------------*-C++-*----------------------------------//
-/*!
- * \file   StateERME.i.hh
- * \brief  StateERME inline member definitions
- * \author Jeremy Roberts
- * \date   Aug 23, 2012
+/**
+ * @file   StateERME.i.hh
+ * @brief  StateERME inline member definitions
+ * @author Jeremy Roberts
+ * @date   Aug 23, 2012
  */
 //---------------------------------------------------------------------------//
 
-#ifndef STATEERME_I_HH_
-#define STATEERME_I_HH_
+#ifndef erme_STATEERME_I_HH_
+#define erme_STATEERME_I_HH_
 
 namespace erme
 {
@@ -35,11 +35,14 @@ inline double StateERME::lambda() const
 
 inline StateERME::size_t StateERME::local_size() const
 {
+  std::cout << "LOCALSIZE=" << d_local_size << std::endl;
   return d_local_size;
 }
 
 inline StateERME::size_t StateERME::global_size() const
 {
+  std::cout << "GLOBALSIZE=" << d_global_size << std::endl;
+
   return d_global_size;
 }
 
@@ -55,7 +58,7 @@ inline StateERME::Vector& StateERME::moments()
 
 } // end namespace erme
 
-#endif // STATEERME_I_HH_ 
+#endif // erme_STATEERME_I_HH_
 
 //---------------------------------------------------------------------------//
 //              end of file StateERME.i.hh

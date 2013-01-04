@@ -21,6 +21,21 @@ namespace erme_solver
  *  @class GlobalSolverPicard
  *  @brief Solves the problem using Picard (fixed point) iteration
  *
+ *  The eigenvalue response matrix equations can be cast in
+ *  the form of an inner current eigenvalue equation
+ *  @f[
+ *      \mathbf{MR}(k^{n})\mathbf{J} =  \lambda\mathbf{J} \, ,
+ *  @f]
+ *  with the associated @f$ k @f$ eigenvalue update
+ *  @f[
+ *      k^{n+1} = \frac{ \mathbf{F}(k^{n}) }
+ *                     { \mathbf{A}(k^{n}) + mathbf{L}(k^{n}) }
+ *  @f]
+ *  which is a mathematical statement of gains-to-losses.
+ *  These coupled equations represent a fixed-point iteration
+ *  in the nonlinear variable @f$ k @f$.  Steffensen's method
+ *  is easily implemented by extrapolating from three successive
+ *  @f$ k @f$ values and is available as an optional update function.
  */
 class GlobalSolverPicard: public GlobalSolverBase
 {

@@ -20,6 +20,9 @@
 namespace erme_geometry
 {
 
+// Forward declare the partitioner
+class NodePartitioner;
+
 /**
  *  @class NodeList
  *  @brief Container for nodes and indices of their neighbors.
@@ -67,7 +70,7 @@ public:
   typedef std::vector<vec_neighbor>         vec2_neighbor;
 
   //-------------------------------------------------------------------------//
-  // PUBLIC INTERFACE
+  // CONSTRUCTOR & DESTRUCTOR
   //-------------------------------------------------------------------------//
 
   /// Constructor
@@ -75,6 +78,10 @@ public:
 
   /// SP constructor
   static SP_nodelist Create();
+
+  //-------------------------------------------------------------------------//
+  // PUBLIC FUNCTIONS
+  //-------------------------------------------------------------------------//
 
   /**
    *  @brief Set the local node array bounds
@@ -140,56 +147,61 @@ public:
 
   /**
    *  @brief Get the global neighbor index for a node surface
-   *  @param n  Global node index
+   *  @param node_g  Global node index
    *  @param s  Node surface
    */
-  const NeighborSurface& neighbor(const size_t n, const size_t s) const;
+  const NeighborSurface& neighbor(const size_t node_g, const size_t s) const;
 
   /**
    *  @brief Get the global index of a local node
-   *  @param n  Local node index
+   *  @param node_l  Local node index
    */
-  size_t global_index(const size_t n) const;
+  size_t global_index_from_local(const size_t node_l) const;
 
   /**
    *  @brief Get the local index of a global node
-   *  @param n  Global node index
+   *  @param node_g  Global node index
    *
    *  Returns a negative value if the global index
    *  is not within the local range.
    */
-  int local_index(const size_t n) const;
+  int local_index_from_global(const size_t node_g) const;
 
   /**
    *  @brief Get the unique index of a global node
    *  @param n  Global node index
    */
-  size_t unique_global_index(const size_t n) const;
+  size_t unique_global_index_from_global(const size_t node_g) const;
 
   /**
-   *  @brief Get the unique index of a local node
-   *  @param n  Global unique node index
+   *  @brief Get the unique local index from the unique global index
+   *  @param node_ug  Global unique node index
    */
-  size_t unique_local_index(const size_t n) const;
-
+  size_t unique_local_index_from_unique_global(const size_t node_ug) const;
 
   /**
-   *  @brief Get the global index from the unique local
-   *
+   *  @brief Get the global index from the unique local index
+   *  @param node_ul  Unique local index
    */
-  size_t global_index_from_local_unique(const size_t ui) const;
+  size_t global_index_from_unique_local(const size_t node_ul) const;
 
-  /// Signify that all nodes are added
-  void finalize()
-  {
-    d_is_finalized = true;
-  }
+  /**
+   *  @brief Get the unique global index from the unique local index
+   *  @param node_ul  Unique local index
+   */
+  size_t unique_global_index_from_unique_local(const size_t node_ul) const;
 
   /// Have all nodes been added?
   bool is_finalized() const
   {
     return d_is_finalized;
   }
+
+  /// Display all the nodes in the list
+  void display() const;
+
+  /// Let partitioner finalize the node list
+  friend class NodePartitioner;
 
 private:
 
@@ -217,8 +229,18 @@ private:
   bool d_is_finalized;
 
   //-------------------------------------------------------------------------//
+  // IMPLEMENTATION
+  //-------------------------------------------------------------------------//
+
+  /// Signify that all nodes are added.  (The partitioner calls this)
+  void finalize()
+  {
+    d_is_finalized = true;
+  }
+
+  //-------------------------------------------------------------------------//
   // SERIALIZATION
-  //-------------------------------------------------------------------------n//
+  //-------------------------------------------------------------------------//
 
   friend class boost::serialization::access;
 

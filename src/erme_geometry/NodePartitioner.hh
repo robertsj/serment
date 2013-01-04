@@ -10,12 +10,14 @@
 #ifndef erme_geometry_NODEPARTITIONER_HH_
 #define erme_geometry_NODEPARTITIONER_HH_
 
-#include "comm/Comm.hh"
 #include "NodeList.hh"
+#include "comm/Comm.hh"
 #include <string>
 
 namespace erme_geometry
 {
+
+class NodeList;
 
 /**
  *  @class NodePartitioner
