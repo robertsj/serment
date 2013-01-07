@@ -7,8 +7,8 @@
  */
 //---------------------------------------------------------------------------//
 
-#ifndef RESPONSEDATABASE_HH_
-#define RESPONSEDATABASE_HH_
+#ifndef erme_response_RESPONSEDATABASE_HH_
+#define erme_response_RESPONSEDATABASE_HH_
 
 #include "NodeResponse.hh"
 #include "ResponseIndex.hh"
@@ -146,8 +146,6 @@ private:
    */
   map_response d_responses;
 
-
-
   //-------------------------------------------------------------------------//
   // IMPLEMENTATION
   //-------------------------------------------------------------------------//
@@ -168,7 +166,7 @@ private:
 
 #include "ResponseDatabase.i.hh"
 
-#endif // RESPONSEDATABASE_HH_ 
+#endif // erme_response_RESPONSEDATABASE_HH_
 
 //---------------------------------------------------------------------------//
 //              end of file ResponseDatabase.hh

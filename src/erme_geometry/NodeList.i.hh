@@ -107,6 +107,7 @@ NodeList::global_index_from_local(const size_t node_l) const
   Ensure(node_g < number_global_nodes());
   return node_g;
 }
+
 //---------------------------------------------------------------------------//
 // G-to-L
 inline int NodeList::local_index_from_global(const size_t node_g) const
@@ -120,6 +121,7 @@ inline int NodeList::local_index_from_global(const size_t node_g) const
   else
     return -1;
 }
+
 //---------------------------------------------------------------------------//
 // G-to-GU
 inline NodeList::size_t
@@ -134,9 +136,10 @@ NodeList::unique_global_index_from_global(const size_t node_g) const
   Ensure(node_ug < number_unique_global_nodes());
   return node_ug;
 }
+
 //---------------------------------------------------------------------------//
 // GU-to-LU
-inline NodeList::size_t
+inline int
 NodeList::unique_local_index_from_unique_global(const size_t node_ug) const
 {
   // Preconditions
@@ -149,22 +152,8 @@ NodeList::unique_local_index_from_unique_global(const size_t node_ug) const
     if (d_unique_nodes[i] == node_ug) node_lg = i;
   }
 
-  // Postconditions
-  Ensure(node_lg >= 0);
-  return (size_t)node_lg;
+  return node_lg;
 }
-
-
-//---------------------------------------------------------------------------//
-inline NodeList::size_t
-NodeList::global_index_from_unique_local(const size_t ui) const
-{
-  Require(ui < d_unique_nodes.size());
-  size_t gi = d_unique_nodes[ui];
-  Ensure(gi < number_global_nodes());
-  return gi;
-}
-
 
 //---------------------------------------------------------------------------//
 inline NodeList::size_t
@@ -173,8 +162,7 @@ NodeList::unique_global_index_from_unique_local(const size_t node_ul) const
   // Preconditions
   Require(node_ul < d_unique_nodes.size());
 
-  size_t node_g  = d_unique_nodes[node_ul];
-  size_t node_ug = unique_global_index_from_global(node_g);
+  size_t node_ug  = d_unique_nodes[node_ul];
 
   // Postconditions
   Ensure(node_ug < number_unique_global_nodes());

@@ -12,6 +12,7 @@
 namespace erme
 {
 
+//---------------------------------------------------------------------------//
 ResponseMatrix::ResponseMatrix(SP_nodelist nodes,
                                SP_indexer indexer,
                                SP_server server)
@@ -48,6 +49,7 @@ ResponseMatrix::ResponseMatrix(SP_nodelist nodes,
 
 }
 
+//---------------------------------------------------------------------------//
 void ResponseMatrix::update()
 {
   using std::cout;
@@ -62,6 +64,9 @@ void ResponseMatrix::update()
 
     // Get response
     SP_response r = d_server->response(n);
+
+    std::cout << " *** n = " << n << std::endl;
+    //r->display();
 
     // Block indices
     vec_int indices(r->size(), offset);

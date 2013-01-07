@@ -154,36 +154,48 @@ public:
 
   /**
    *  @brief Get the global index of a local node
+   *
+   *  This indexes the nodal map that defines the geometry
+   *  of the problem.
+   *
    *  @param node_l  Local node index
    */
   size_t global_index_from_local(const size_t node_l) const;
 
   /**
    *  @brief Get the local index of a global node
-   *  @param node_g  Global node index
    *
-   *  Returns a negative value if the global index
-   *  is not within the local range.
+   *  Global index translated to the local portion of
+   *  the nodal map. Returns a negative value if the
+   *  global index is not within the local range.
+   *
+   *  @param node_g  Global node index
    */
   int local_index_from_global(const size_t node_g) const;
 
   /**
    *  @brief Get the unique index of a global node
+   *
+   *  This simply returns the nodal map entry.  Hence, the
+   *  entries in the map must correspond to the nodes actually
+   *  defined by the user.
+   *
    *  @param n  Global node index
    */
   size_t unique_global_index_from_global(const size_t node_g) const;
 
   /**
    *  @brief Get the unique local index from the unique global index
-   *  @param node_ug  Global unique node index
+   *
+   *  Starting with the complete nodal map, the portion in this
+   *  local group is sorted and unique elements found.  This
+   *  indexer searches for the location within that sorted
+   *  segment for the given global identifier.  If not found,
+   *  returns negative.
+   *
+   *  @param node_ug  Unique global node index
    */
-  size_t unique_local_index_from_unique_global(const size_t node_ug) const;
-
-  /**
-   *  @brief Get the global index from the unique local index
-   *  @param node_ul  Unique local index
-   */
-  size_t global_index_from_unique_local(const size_t node_ul) const;
+  int unique_local_index_from_unique_global(const size_t node_ug) const;
 
   /**
    *  @brief Get the unique global index from the unique local index

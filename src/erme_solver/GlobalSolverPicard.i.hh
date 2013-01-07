@@ -29,15 +29,17 @@ void GlobalSolverPicard::solve()
   // Set space-angle zeroth order moments to uniform guess.  Note
   // this doesn't actually get used by SLEPc but would will in a
   // hand-coded power iteration.
-  for (int i = 0; i < d_indexer->number_local_moments(); ++i)
-  {
-    erme_response::ResponseIndex ri = d_indexer->response_index_from_local(i);
-    if (ri.azimuth + ri.polar + ri.space0 + ri.space1 == 0) (*d_J0)[i] = 1.0;
-  }
-  // Ensure a normalized initial guess and initialize the responses
-  d_J0->scale(1.0/d_J0->norm(d_J0->L2));
+//  for (int i = 0; i < d_indexer->number_local_moments(); ++i)
+//  {
+//    erme_response::ResponseIndex ri = d_indexer->response_index_from_local(i);
+//    if (ri.azimuth + ri.polar + ri.space0 + ri.space1 == 0) (*d_J0)[i] = 1.0;
+//  }
+//  // Ensure a normalized initial guess and initialize the responses
+//  d_J0->scale(1.0/d_J0->norm(d_J0->L2));
 
+  // Compute initial responses
   update_response(keff);
+  d_R->display(d_R->MATLAB, "R.out");
 
   // Initialize balance parameters
   double loss       = 0;

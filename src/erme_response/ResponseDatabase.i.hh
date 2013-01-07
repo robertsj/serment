@@ -7,8 +7,8 @@
  */
 //---------------------------------------------------------------------------//
 
-#ifndef RESPONSEDATABASE_I_HH_
-#define RESPONSEDATABASE_I_HH_
+#ifndef erme_response_RESPONSEDATABASE_I_HH_
+#define erme_response_RESPONSEDATABASE_I_HH_
 
 #include "Interpolation.hh"
 
@@ -106,7 +106,7 @@ inline void ResponseDatabase::get(std::string     nodename,
   {
     THROW("R(k) = R0 + R1/k ... EXPANSION NOT YET IMPLEMENTED");
   }
-
+  response->display();
 }
 
 //---------------------------------------------------------------------------//
@@ -123,5 +123,4 @@ inline bool ResponseDatabase::read_scalar_attribute
 
 } // end namespace erme_response
 
-
-#endif /* RESPONSEDATABASE_I_HH_ */
+#endif /* erme_response_RESPONSEDATABASE_I_HH_ */

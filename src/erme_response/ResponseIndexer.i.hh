@@ -78,13 +78,18 @@ inline ResponseIndex
 ResponseIndexer::response_index_from_unique_local(const size_t index_ul) const
 {
   // Preconditions
-  std::cout << " UL = " << index_ul << " Usize = "
-            << d_unique_size << " " << d_unique_indices.size()
-            << " " << d_unique_indices[0].size() << std::endl;
   Require(index_ul < d_unique_size);
+
   size_t node_ug = d_unique_indices[index_ul][0];
   size_t surface = d_unique_indices[index_ul][1];
   size_t nindex  = d_unique_indices[index_ul][2];
+
+  std::cout << " index_ul = " << index_ul
+            << " node_ug = " << node_ug
+            << " surface = " << surface
+            << " nindex = " << nindex << std::endl;
+
+  // Postconditions
   Ensure(node_ug < d_indices.size());
   Ensure(surface < d_indices[node_ug].size());
   Ensure(nindex  < d_indices[node_ug][surface].size());

@@ -90,12 +90,52 @@ int test_NodeList(int argc, char *argv[])
   // Test 2D Cartesian
   {
     NodeList::SP_nodelist nodes = cartesian_node_dummy_list_2d();
-
     TEST(nodes->number_global_nodes() == 4);
     TEST(nodes->neighbor(0, CartesianNode::NORTH).neighbor() == 2);
     TEST(nodes->neighbor(0, CartesianNode::NORTH).surface()  == CartesianNode::SOUTH);
     TEST(nodes->neighbor(1, CartesianNode::EAST).neighbor()  == Node::VACUUM);
     TEST(nodes->node(2)->dimension() == 2);
+
+    TEST(nodes->lower_bound() == 0);
+    TEST(nodes->upper_bound() == 4);
+
+    // there are four unique nodes in the list, but two are indexed
+    //   global:  2  2  0  0
+    //    local:  2  2  0  0
+    //       ug:  0  2
+    //       ul:  0  2
+
+    TEST(nodes->local_index_from_global(0) == 0);
+    TEST(nodes->local_index_from_global(1) == 1);
+    TEST(nodes->local_index_from_global(2) == 2);
+    TEST(nodes->local_index_from_global(3) == 3);
+
+    TEST(nodes->global_index_from_local(0) == 0);
+    TEST(nodes->global_index_from_local(1) == 1);
+    TEST(nodes->global_index_from_local(2) == 2);
+    TEST(nodes->global_index_from_local(3) == 3);
+
+    TEST(nodes->unique_global_index_from_global(0) == 2);
+    TEST(nodes->unique_global_index_from_global(1) == 2);
+    TEST(nodes->unique_global_index_from_global(2) == 0);
+    TEST(nodes->unique_global_index_from_global(3) == 0);
+
+    TEST(nodes->unique_global_index_from_unique_local(0) == 0);
+    TEST(nodes->unique_global_index_from_unique_local(1) == 2);
+
+    TEST(nodes->unique_local_index_from_unique_global(0) == 0);
+    TEST(nodes->unique_local_index_from_unique_global(2) == 1);
+
+    for (int i = 0; i < 4; ++i)
+    {
+      cout << "  g=" << i
+           << "  l=" << nodes->local_index_from_global(i)
+           << " ug=" << nodes->unique_global_index_from_global(i)
+           << " ul=" << nodes->unique_local_index_from_unique_global(nodes->unique_global_index_from_global(i))
+           << endl;
+    }
+
+
   }
   return 0;
 }

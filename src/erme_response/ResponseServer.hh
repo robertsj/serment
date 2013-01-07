@@ -93,9 +93,9 @@ private:
   SP_nodelist d_nodes;
   /// Indexer
   SP_indexer d_indexer;
-  /// Sources [size = local number of nodes]
+  /// Sources [size = number of unique local nodes]
   vec_source d_sources;
-  /// Node response functions [size = local number of nodes]
+  /// Node response functions [size = number of unique local nodes]
   vec_response d_responses;
   /// Response database
   SP_rfdb d_rfdb;

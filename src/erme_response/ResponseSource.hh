@@ -1,14 +1,14 @@
 //----------------------------------*-C++-*----------------------------------//
-/*!
- * \file   ResponseSource.hh
- * \brief  ResponseSource class definition
- * \author Jeremy Roberts
- * \date   Aug 28, 2012
+/**
+ *  @file   ResponseSource.hh
+ *  @brief  ResponseSource class definition
+ *  @author Jeremy Roberts
+ *  @date   Aug 28, 2012
  */
 //---------------------------------------------------------------------------//
 
-#ifndef RESPONSESOURCE_HH_
-#define RESPONSESOURCE_HH_
+#ifndef erme_response_RESPONSESOURCE_HH_
+#define erme_response_RESPONSESOURCE_HH_
 
 #include "NodeResponse.hh"
 #include "ResponseIndex.hh"
@@ -19,9 +19,9 @@
 namespace erme_response
 {
 
-/*!
- *  \class ResponseSource
- *  \brief Abstract response source
+/**
+ *  @class ResponseSource
+ *  @brief Abstract response source
  *
  *  A ResponseSource provides its ResponseServer with responses for use
  *  in the global solve.  Each ResponseSource is unique for a given Node.
@@ -50,9 +50,9 @@ public:
   // PUBLIC INTERFACE
   //-------------------------------------------------------------------------//
 
-  /*!
-   *  \brief Constructor
-   *  \param node   Pointer to node object for which this source generates
+  /**
+   *  @brief Constructor
+   *  @param node   Pointer to node object for which this source generates
    *                responses
    */
   ResponseSource(SP_node node)
@@ -76,15 +76,15 @@ public:
   // ABSTRACT INTERFACE
   //-------------------------------------------------------------------------//
 
-  /*!
-   *  \brief Compute a response for the requested incident index
+  /**
+   *  @brief Compute a response for the requested incident index
    *
    *  The client passes the response to be updated and the index of
    *  the corresponding incident condition.  The client is then
    *  responsible for moving data from the sources to the server.
    *
-   *  \param response   Pointer to response object to be updated
-   *  \param index      Response indices
+   *  @param response   Pointer to response object to be updated
+   *  @param index      Response indices
    */
   virtual void compute(SP_response response, ResponseIndex index) = 0;
 
@@ -108,7 +108,7 @@ protected:
 
 } // end namespace erme_response
 
-#endif // RESPONSESOURCE_HH_ 
+#endif // erme_response_RESPONSESOURCE_HH_
 
 //---------------------------------------------------------------------------//
 //              end of file ResponseSource.hh

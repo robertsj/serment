@@ -146,6 +146,8 @@ cartesian_node_dummy_list_2d(int so = 4, int ao = 2, int po = 2)
   // Get four, two-dimensional Cartesian test nodes
   NodeList::SP_node node0(new CartesianNodeDummy(2, so, po, ao, 0));
   NodeList::SP_node node1(new CartesianNodeDummy(2, so, po, ao, 0));
+  NodeList::SP_node node2(new CartesianNodeDummy(2, so, po, ao, 0));
+  NodeList::SP_node node3(new CartesianNodeDummy(2, so, po, ao, 0));
 
   // Create neighbor lists.
   NodeList::vec2_neighbor neighbors(4);
@@ -154,9 +156,9 @@ cartesian_node_dummy_list_2d(int so = 4, int ao = 2, int po = 2)
   NodeList::vec_neighbor neigh2(4, NeighborSurface(Node::VACUUM, 0));
   NodeList::vec_neighbor neigh3(4, NeighborSurface(Node::VACUUM, 0));
   //  --- ---
-  // | 1 | 0 |
+  // | 2 | 2 |
   //  --- ---
-  // | 0 | 1 |   with vacuum on all global surfaces
+  // | 0 | 0 |   with vacuum on all global surfaces
   //  --- ---
   neigh0[CartesianNode::NORTH]  = NeighborSurface(2, CartesianNode::SOUTH);
   neigh0[CartesianNode::EAST]   = NeighborSurface(1, CartesianNode::WEST);
@@ -170,11 +172,13 @@ cartesian_node_dummy_list_2d(int so = 4, int ao = 2, int po = 2)
   // Add nodes
   nodes->add_node(node0);
   nodes->add_node(node1);
+  nodes->add_node(node2);
+  nodes->add_node(node3);
 
   // Node map and neighbors
-  NodeList::vec_int node_map(4, 0);
-  node_map[1] = 1;
-  node_map[2] = 1;
+  NodeList::vec_int node_map(4, 2);
+  node_map[1] = 2;
+  node_map[2] = 0;
   node_map[3] = 0;
   neighbors[0] = neigh0;
   neighbors[1] = neigh1;

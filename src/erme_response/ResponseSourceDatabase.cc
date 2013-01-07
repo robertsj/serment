@@ -12,6 +12,7 @@
 namespace erme_response
 {
 
+//---------------------------------------------------------------------------//
 ResponseSourceDatabase::ResponseSourceDatabase(SP_node node)
   : ResponseSource(node)
   , d_rfdb(ResponseDatabase::Instance())
@@ -19,11 +20,13 @@ ResponseSourceDatabase::ResponseSourceDatabase(SP_node node)
   /* ... */
 }
 
+//---------------------------------------------------------------------------//
 ResponseSourceDatabase::~ResponseSourceDatabase()
 {
   /* ... */
 }
 
+//---------------------------------------------------------------------------//
 void ResponseSourceDatabase::
 compute(SP_response response, ResponseIndex index)
 {
