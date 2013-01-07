@@ -47,7 +47,7 @@ void NodeList::set_bounds(const size_t lb, const size_t ub)
   d_unique_nodes.resize(ub-lb);
   for (int i = lb; i < ub; ++i)
   {
-    std::cout << " unique[" << i - lb << "]=" << d_node_map[i] << std::endl;
+    //std::cout << " unique[" << i - lb << "]=" << d_node_map[i] << std::endl;
     d_unique_nodes[i-lb] = d_node_map[i];
   }
   std::sort(d_unique_nodes.begin(), d_unique_nodes.end());
@@ -55,16 +55,6 @@ void NodeList::set_bounds(const size_t lb, const size_t ub)
     std::unique(d_unique_nodes.begin(), d_unique_nodes.end());
   d_unique_nodes.erase(it, d_unique_nodes.end());
 
-  std::cout << " UNIQUE NODES = " << std::endl;
-  for (int i = 0; i < d_unique_nodes.size(); ++i)
-  {
-    std::cout << " unique[" << i - lb << "]=" << d_unique_nodes[i] << std::endl;
-  }
-
-  for (int i = 0; i < d_unique_nodes.size(); ++i)
-  {
-   // std::cout << " ug = " << i << " ul = " << unique_local_index_from_unique_global(i) << std::endl;
-  }
   // d_unique_nodes now has global indices of nodes this process needs.
 }
 

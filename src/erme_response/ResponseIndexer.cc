@@ -62,7 +62,7 @@ ResponseIndexer::ResponseIndexer(SP_db db, SP_nodelist nodes)
     else
       size = build_3D(d_nodes->node(n), n);
     d_sizes[n] = size;
-    std::cout << " size of node " << n << " is " << size << std::endl;
+    //std::cout << " size of node " << n << " is " << size << std::endl;
   }
 
   /*
@@ -129,11 +129,11 @@ ResponseIndexer::ResponseIndexer(SP_db db, SP_nodelist nodes)
          d_unique_indices[unique_index][0] = node_ug;
          d_unique_indices[unique_index][1] = s;
          d_unique_indices[unique_index][2] = m;
-         std::cout << " node_ul = " << node_ul
-                   << " node_ug = " << node_ug
-                   << "       s = " << s
-                   << "       m = " << m
-                   << std::endl;
+//         std::cout << " node_ul = " << node_ul
+//                   << " node_ug = " << node_ug
+//                   << "       s = " << s
+//                   << "       m = " << m
+//                   << std::endl;
       }
     }
   }
@@ -274,7 +274,7 @@ ResponseIndexer::build_2D(SP_node node, const size_t n)
   using std::cout;
   using std::endl;
 
-  bool db = true;
+  bool db = false;
 
   // Moment index local to a node
   size_t nodal_index = 0;

@@ -106,7 +106,7 @@ inline void ResponseDatabase::get(std::string     nodename,
   {
     THROW("R(k) = R0 + R1/k ... EXPANSION NOT YET IMPLEMENTED");
   }
-  response->display();
+
 }
 
 //---------------------------------------------------------------------------//

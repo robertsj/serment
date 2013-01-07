@@ -97,16 +97,16 @@ public:
 
   /**
    *  @brief Number of moments associated with a node
-   *  @param node_g   Global node index
+   *  @param node_ug   Unique global node index
    */
-  size_t number_node_moments(const size_t node_g) const;
+  size_t number_node_moments(const size_t node_ug) const;
 
   /**
    *  @brief Number of moments on a node surface
-   *  @param node_g   Global node index
+   *  @param node_g   Unique global node index
    *  @param surface  Node surface index
    */
-  size_t number_surface_moments(const size_t node_g,
+  size_t number_surface_moments(const size_t node_ug,
                                 const size_t surface_n) const;
 
   /// Return the number of unique moments of local nodes

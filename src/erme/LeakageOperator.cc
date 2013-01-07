@@ -12,6 +12,7 @@
 namespace erme
 {
 
+//---------------------------------------------------------------------------//
 LeakageOperator::LeakageOperator(SP_nodelist nodes,
                                  SP_indexer indexer,
                                  SP_server server)
@@ -52,8 +53,11 @@ LeakageOperator::LeakageOperator(SP_nodelist nodes,
   // Loop over all nodes
   for (int n = d_nodes->lower_bound(); n < d_nodes->upper_bound(); n++)
   {
+    // Unique node
+    size_t un = nodes->unique_global_index_from_global(n);
+
     // Total moments for this node
-    int size = d_indexer->number_node_moments(n);
+    int size = d_indexer->number_node_moments(un);
 
     // Loop over this nodes surfaces
     for (int s = 0; s < d_nodes->node(n)->number_surfaces(); ++s, ++index_s)
@@ -79,6 +83,7 @@ LeakageOperator::LeakageOperator(SP_nodelist nodes,
 
 }
 
+//---------------------------------------------------------------------------//
 void LeakageOperator::update()
 {
   using std::cout;
@@ -125,6 +130,7 @@ void LeakageOperator::update()
   d_global_leakage.assemble();
 }
 
+//---------------------------------------------------------------------------//
 double LeakageOperator::leakage(linear_algebra::Vector &x)
 {
   // Preconditions
@@ -140,6 +146,7 @@ double LeakageOperator::leakage(linear_algebra::Vector &x)
   return val;
 }
 
+//---------------------------------------------------------------------------//
 void LeakageOperator::display_leakage()
 {
   std::cout << " GLOBAL LEAKAGE: " << std::endl;

@@ -39,6 +39,9 @@ Connect::Connect(SP_nodelist nodes, SP_indexer indexer)
   for (int n = nodes->lower_bound(); n < nodes->upper_bound(); n++)
   {
 
+    // Unique index
+    size_t un = nodes->unique_global_index_from_global(n);
+
     int n_index = 0;
 
     // Loop over node surfaces
@@ -54,12 +57,13 @@ Connect::Connect(SP_nodelist nodes, SP_indexer indexer)
       // expansions.  A geometry preprocessor would be useful.
       if (neigh_n >= 0)
       {
-        Assert(indexer->number_surface_moments(neigh_n, neigh_s)
-               == indexer->number_surface_moments(n, s));
+        size_t neigh_un = nodes->unique_global_index_from_global(neigh_n);
+        Assert(indexer->number_surface_moments(neigh_un, neigh_s)
+               == indexer->number_surface_moments(un, s));
       }
 
       // Loop over all moments on a surface
-      for (int m = 0; m < indexer->number_surface_moments(n, s); ++m, ++n_index)
+      for (int m = 0; m < indexer->number_surface_moments(un, s); ++m, ++n_index)
       {
 
         // Set the row, column, and value.  Note, if the surface is shared,

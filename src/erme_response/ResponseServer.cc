@@ -47,13 +47,13 @@ ResponseServer::ResponseServer(SP_nodelist  nodes,
   {
     // Build the sources
     size_t node_ug =  d_nodes->unique_global_index_from_unique_local(node_ul);
-    d_sources[node_ul] = builder.build(nodes->node(node_ug));
+    d_sources[node_ul] = builder.build(nodes->unique_node(node_ug));
     Assert(d_sources[node_ul]);
 
     // Build the nodal response containers
     d_responses[node_ul] =
         new NodeResponse(d_indexer->number_node_moments(node_ug),
-                         d_nodes->node(node_ug)->number_surfaces());
+                         d_nodes->unique_node(node_ug)->number_surfaces());
   }
 
 }
@@ -87,6 +87,12 @@ void ResponseServer::update(const double keff)
   // Must go back to world, for which the global
   // roots now have the updated response.
   Comm::set(serment_comm::world);
+
+//  for (int i = 0; i < d_sources.size(); i++)
+//  {
+//    std::cout << " RESPONSE " << i << std::endl;
+//    d_responses[i]->display();
+//  }
 
 }
 
@@ -151,9 +157,9 @@ void ResponseServer::update_explicit_work_share()
     start += number_per_process[i];
   size_t finish = start + number_per_process[Comm::rank()];
 
-  std::cout << "   number_responses=" << number_responses
-            << " number_per_process=" << number_per_process[0]
-            << " start and finish=  " << start << " " << finish << std::endl;
+//  std::cout << "   number_responses=" << number_responses
+//            << " number_per_process=" << number_per_process[0]
+//            << " start and finish=  " << start << " " << finish << std::endl;
 
 
 
@@ -166,7 +172,7 @@ void ResponseServer::update_explicit_work_share()
 
     // Local unique node index
     size_t node_ul = d_nodes->unique_local_index_from_unique_global(index_r.node);
-    std::cout << " computing for node ul = " << node_ul << std::endl;
+    //std::cout << " computing for node ul = " << node_ul << std::endl;
 
     // Compute responses
     Assert(node_ul < d_responses.size());
