@@ -30,6 +30,8 @@
 #include "erme_utils/ManagerERME.hh"
 %} // end module pyserment
 
+%include "output.i"
+
 %include "serment_config.h"
 
 // STL
