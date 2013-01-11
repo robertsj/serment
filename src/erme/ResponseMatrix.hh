@@ -1,14 +1,14 @@
 //----------------------------------*-C++-*----------------------------------//
-/*!
- * \file   ResponseMatrix.hh
- * \brief  ResponseMatrix class definition
- * \author Jeremy Roberts
- * \date   Aug 24, 2012
+/**
+ *  @file   ResponseMatrix.hh
+ *  @brief  ResponseMatrix class definition
+ *  @author Jeremy Roberts
+ *  @date   Aug 24, 2012
  */
 //---------------------------------------------------------------------------//
 
-#ifndef RESPONSEMATRIX_HH_
-#define RESPONSEMATRIX_HH_
+#ifndef erme_RESPONSEMATRIX_HH_
+#define erme_RESPONSEMATRIX_HH_
 
 #include "ResponseOperator.hh"
 #include "linear_algebra/Matrix.hh"
@@ -16,12 +16,12 @@
 namespace erme
 {
 
-/*!
- *  \class ResponseMatrix
- *  \brief Response matrix operator
+/**
+ *  @class ResponseMatrix
+ *  @brief Response matrix operator
  */
-/*!
- *  \example erme/test/test_ResponseMatrix
+/**
+ *  @example erme/test/test_ResponseMatrix
  *
  *  Test of ResponseMatrix class
  */
@@ -41,11 +41,11 @@ public:
   // PUBLIC INTERFACE
   //-------------------------------------------------------------------------//
 
-  /*!
-   *  \brief Constructor
-   *  \param nodes    Pointer to node list
-   *  \param indexer  Pointer to response indexer
-   *  \param server   Pointer to response server
+  /**
+   *  @brief Constructor
+   *  @param nodes    Pointer to node list
+   *  @param indexer  Pointer to response indexer
+   *  @param server   Pointer to response server
    */
   ResponseMatrix(SP_nodelist nodes, SP_indexer indexer, SP_server server);
 
@@ -69,7 +69,7 @@ private:
 
 } // end namespace erme
 
-#endif // RESPONSEMATRIX_HH_ 
+#endif // erme_RESPONSEMATRIX_HH_
 
 //---------------------------------------------------------------------------//
 //              end of file ResponseMatrix.hh

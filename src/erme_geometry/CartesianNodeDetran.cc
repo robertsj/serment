@@ -1,9 +1,9 @@
 //----------------------------------*-C++-*----------------------------------//
-/*!
- * \file   CartesianNodeDetran.cc
- * \brief  CartesianNodeDetran member definitions
- * \author Jeremy Roberts
- * \date   Aug 22, 2012
+/**
+ *  @file   CartesianNodeDetran.cc
+ *  @brief  CartesianNodeDetran member definitions
+ *  @author Jeremy Roberts
+ *  @date   Aug 22, 2012
  */
 //---------------------------------------------------------------------------//
 
@@ -15,6 +15,7 @@
 namespace erme_geometry
 {
 
+//---------------------------------------------------------------------------//
 CartesianNodeDetran::CartesianNodeDetran(const size_t  dim,
                                          std::string   nodename,
                                          vec2_size_t   so,
@@ -37,10 +38,22 @@ CartesianNodeDetran::CartesianNodeDetran(const size_t  dim,
   Require(d_mesh->dimension() == dimension());
 }
 
-// Do something better later.
+//---------------------------------------------------------------------------//
 double CartesianNodeDetran::color(Point point)
 {
-  return 0.0;
+  size_t ijk[] = {0, 0, 0};
+  double xyz[] = {point.x(), point.y(), point.z()};
+  for (size_t d = 0; d < d_mesh->dimension(); ++d)
+  {
+    double uvw = 0.0;
+    size_t i;
+    for (i = 0; i < d_mesh->number_cells(d); ++i)
+      if (xyz[d] < uvw + d_mesh->width(d, i)) break;
+    ijk[d] = i;
+  }
+  size_t idx = d_mesh->index(ijk[0], ijk[1], ijk[2]);
+  const vec_int &mat_map = d_mesh->mesh_map("MATERIAL");
+  return mat_map[idx];
 }
 
 } // end namespace erme_geometry

@@ -15,6 +15,7 @@ SET(SRC
     ResponseSourceDummy.cc
     ResponseDatabase.cc
     ResponseSourceDatabase.cc
+    ResponseSourceDetran.cc
 )
 
 #-------------------------------------#

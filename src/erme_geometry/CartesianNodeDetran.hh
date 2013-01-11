@@ -33,8 +33,13 @@ class CartesianNodeDetran: public CartesianNode
 
 public:
 
-  /// Useful typedefs
+  //-------------------------------------------------------------------------//
+  // TYPEDEFS
+  //-------------------------------------------------------------------------//
+
   typedef CartesianNode                             Base;
+  typedef typename Base::SP_node                    SP_base;
+  typedef detran_utilities::SP<CartesianNodeDetran> SP_node;
   typedef detran_utilities::InputDB::SP_input       SP_db;
   typedef detran_material::Material::SP_material    SP_material;
   typedef detran_geometry::Mesh::SP_mesh            SP_mesh;
@@ -63,6 +68,12 @@ public:
   // ABSTRACT INTERFACE
   //-------------------------------------------------------------------------//
 
+  /**
+   *  @brief Color the node based on material index.
+   *
+   *  Note, this is most sensible if all the nodes use the same
+   *  material database.
+   */
   double color(Point point);
 
   //-------------------------------------------------------------------------//

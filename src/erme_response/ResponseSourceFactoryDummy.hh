@@ -7,8 +7,8 @@
  */
 //---------------------------------------------------------------------------//
 
-#ifndef RESPONSESOURCEFACTORYDUMMY_HH_
-#define RESPONSESOURCEFACTORYDUMMY_HH_
+#ifndef erme_response_RESPONSESOURCEFACTORYDUMMY_HH_
+#define erme_response_RESPONSESOURCEFACTORYDUMMY_HH_
 
 #include "erme_geometry/DummyNode.hh"
 #include "ResponseSourceDummy.hh"
@@ -16,6 +16,7 @@
 namespace erme_response
 {
 
+//---------------------------------------------------------------------------//
 inline ResponseSourceFactory::SP_source
 ResponseSourceFactory::build_dummy(SP_node node)
 {
@@ -25,4 +26,4 @@ ResponseSourceFactory::build_dummy(SP_node node)
 
 } // end namespace erme_response
 
-#endif /* RESPONSESOURCEFACTORYDUMMY_HH_ */
+#endif /* erme_response_RESPONSESOURCEFACTORYDUMMY_HH_ */

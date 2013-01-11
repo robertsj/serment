@@ -31,6 +31,11 @@ namespace erme
  *  moments; this applies to some combinations of space and angle basis
  *  functions.  Rotational symmetry can be built into the node connections.
  */
+/**
+ *  @example erme/test/test_Connect
+ *
+ *  Test of Connect class
+ */
 class Connect: public linear_algebra::Matrix
 {
 
@@ -49,9 +54,9 @@ public:
   //-------------------------------------------------------------------------//
 
   /**
-   *  \brief Constructor
-   *  \param nodes    Pointer to list of nodes
-   *  \param indexer  Pointer to response indexer
+   *  @brief Constructor
+   *  @param nodes    Pointer to list of nodes
+   *  @param indexer  Pointer to response indexer
    */
   Connect(SP_nodelist nodes, SP_indexer indexer);
 
