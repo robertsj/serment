@@ -44,6 +44,10 @@ EigenSolver::EigenSolver(SP_matrix A, SP_matrix B)
   ierr = EPSSetWhichEigenpairs(d_solver, EPS_LARGEST_REAL);
   Insist(!ierr, "Error selecting EPS eigenpairs.");
 
+  // Set the tolerances
+  ierr = EPSSetTolerances(d_solver, 1e-12, 1e3);
+  Insist(!ierr, "Error setting EPS tolerances.");
+
   // Then allow for user choice.
   ierr = EPSSetFromOptions(d_solver);
   Insist(!ierr, "Error setting EPS from options.");

@@ -16,6 +16,7 @@
 namespace erme_solver
 {
 
+//---------------------------------------------------------------------------//
 inline double NonlinearResidual::
 compute_norm(Vector &x)
 {
@@ -39,6 +40,7 @@ compute_norm(Vector &x)
   return compute_norm(B, k, l);
 }
 
+//---------------------------------------------------------------------------//
 inline double NonlinearResidual::
 compute_norm(Vector &B, const double k, const double l)
 {
@@ -62,8 +64,16 @@ compute_norm(Vector &B, const double k, const double l)
   double norm_K_sq = std::pow(d_F->dot(B) -
                               k * (d_A->dot(B) + d_L->leakage(B)), 2);
 
+  std::cout << " F  = " << d_F->dot(B)
+            << " A  = " << d_A->dot(B)
+            << " L  = " << d_L->leakage(B) << std::endl;
+
   // Compute square of 0.5( 1 - B' * B)
   double norm_L_sq = std::pow(0.5 - 0.5 * std::pow(B.norm(), 2), 2);
+
+  std::cout << " F_B= " << std::sqrt(norm_B_sq)
+            << " F_K= " << std::sqrt(norm_K_sq)
+            << " F_L= " << std::sqrt(norm_L_sq) << std::endl;
 
   // Return final L2 norm of residual
   return std::sqrt(norm_B_sq + norm_K_sq + norm_L_sq);

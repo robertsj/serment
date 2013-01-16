@@ -44,6 +44,28 @@ Node::~Node()
   /* ... */
 }
 
+
+void Node::display() const
+{
+  std::cout << "----------------------------" << std::endl;
+  std::cout << "NODE" << std::endl;
+  std::cout << "----------------------------" << std::endl;
+  std::cout << "  dimension = " << d_dimension << std::endl;
+  std::cout << "   surfaces = " << d_number_surfaces << std::endl;
+  std::cout << "      name  = " << d_name << std::endl;
+  std::cout << "----------------------------" << std::endl;
+  for (size_t s = 0; s < d_number_surfaces; ++s)
+  {
+    std::cout << "  SURFACE " << s << std::endl;
+    if (d_dimension > 1)
+      std::cout << "    spatial 0 = " << d_spatial_order[s][0] << std::endl;
+    if (d_dimension > 2)
+      std::cout << "    spatial 1 = " << d_spatial_order[s][1] << std::endl;
+    std::cout << "        polar = " << d_polar_order[s] << std::endl;
+    std::cout << "    azimuthal = " << d_azimuthal_order[s] << std::endl;
+  }
+}
+
 } // end namespace detran
 
 //---------------------------------------------------------------------------//

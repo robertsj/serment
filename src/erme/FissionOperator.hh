@@ -7,8 +7,8 @@
  */
 //---------------------------------------------------------------------------//
 
-#ifndef FISSIONOPERATOR_HH_
-#define FISSIONOPERATOR_HH_
+#ifndef erme_FISSIONOPERATOR_HH_
+#define erme_FISSIONOPERATOR_HH_
 
 #include "ResponseOperator.hh"
 #include "linear_algebra/Vector.hh"
@@ -54,24 +54,11 @@ public:
   /// Update the vector data
   void update();
 
-private:
-
-  //-------------------------------------------------------------------------//
-  // PRIVATE DATA
-  //-------------------------------------------------------------------------//
-
-
-  //-------------------------------------------------------------------------//
-  // IMPLEMENTATION
-  //-------------------------------------------------------------------------//
-
-
-
 };
 
 } // end namespace detran
 
-#endif // FISSIONOPERATOR_HH_ 
+#endif // erme_FISSIONOPERATOR_HH_
 
 //---------------------------------------------------------------------------//
 //              end of file FissionOperator.hh

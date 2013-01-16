@@ -114,7 +114,6 @@ ResponseIndexer::ResponseIndexer(SP_db db, SP_nodelist nodes)
     size_t node_ug = d_nodes->unique_global_index_from_global(node_g);
     d_global_offset += d_sizes[node_ug];
   }
-  std::cout << " GLOBAL OFFSET = " << d_global_offset << std::endl;
 
   // Compute the unique local moment to (global node, surface, moment) index
   d_unique_indices.resize(d_unique_size, vec_size_t(3, 0));

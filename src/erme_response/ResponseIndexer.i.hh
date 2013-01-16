@@ -25,11 +25,8 @@ inline ResponseIndexer::size_t
 ResponseIndexer::number_surface_moments(const size_t node_ug,
                                         const size_t surface) const
 {
-  // Preconditions
-  std::cout << " NODE=" << node_ug << " " <<  d_indices.size() << std::endl;
   Require(node_ug < d_indices.size());
   Require(surface < d_indices[node_ug].size());
-
   return d_indices[node_ug][surface].size();
 }
 
@@ -68,12 +65,9 @@ ResponseIndexer::response_index(const size_t node_ug,
                                 const size_t surface,
                                 const size_t index_s) const
 {
-  // Preconditions
-  //size_t node_ug = d_nodes->unique_global_index_from_global(node_g);
   Require(node_ug < d_indices.size());
   Require(surface < d_indices[node_ug].size());
   Require(index_s < d_indices[node_ug][surface].size());
-
   return d_indices[node_ug][surface][index_s];
 }
 
@@ -81,14 +75,12 @@ ResponseIndexer::response_index(const size_t node_ug,
 inline ResponseIndex
 ResponseIndexer::response_index_from_unique_local(const size_t index_ul) const
 {
-  // Preconditions
   Require(index_ul < d_unique_size);
 
   size_t node_ug = d_unique_indices[index_ul][0];
   size_t surface = d_unique_indices[index_ul][1];
   size_t nindex  = d_unique_indices[index_ul][2];
 
-  // Postconditions
   Ensure(node_ug < d_indices.size());
   Ensure(surface < d_indices[node_ug].size());
   Ensure(nindex  < d_indices[node_ug][surface].size());
@@ -99,13 +91,10 @@ ResponseIndexer::response_index_from_unique_local(const size_t index_ul) const
 inline ResponseIndex
 ResponseIndexer::response_index_from_local(const size_t index_l) const
 {
-  // Preconditions
   Require(index_l < number_local_moments());
 
-  // Get local unique moment
   size_t index_ul = local_index_to_unique(index_l);
 
-  // Postconditions
   Ensure(index_ul < d_unique_size);
   return response_index_from_unique_local(index_ul);
 }
@@ -114,9 +103,7 @@ ResponseIndexer::response_index_from_local(const size_t index_l) const
 inline ResponseIndexer::size_t ResponseIndexer::
 nodal_index_to_local(const size_t node_g, const size_t index_n) const
 {
-  // Preconditions
   Require(node_g < d_number_local_nodes);
-
   return index_n + d_offsets[d_nodes->local_index_from_global(node_g)];
 }
 
@@ -124,7 +111,6 @@ nodal_index_to_local(const size_t node_g, const size_t index_n) const
 inline int ResponseIndexer::
 global_index_to_local(const size_t index_g) const
 {
-  // Preconditions
   Require(index_g < d_global_size);
 
   int index_l = index_g - d_global_offset;
@@ -133,7 +119,6 @@ global_index_to_local(const size_t index_g) const
   {
     index_l = -1;
   }
-
   return index_l;
 }
 
@@ -141,16 +126,13 @@ global_index_to_local(const size_t index_g) const
 inline ResponseIndexer::size_t ResponseIndexer::
 nodal_index_to_global(const size_t node_g, const size_t index_n) const
 {
-  // Preconditions
   Require(node_g < d_global_offsets.size());
   size_t node_ug = d_nodes->unique_global_index_from_global(node_g);
   Require(node_ug < d_indices.size());
   Require(index_n < d_sizes[node_ug]);
 
-  size_t index_g = index_n +
-                   d_global_offsets[node_g];
+  size_t index_g = index_n + d_global_offsets[node_g];
 
-  // Postconditions
   Ensure(index_g < d_global_size);
   return index_g;
 }
@@ -159,12 +141,10 @@ nodal_index_to_global(const size_t node_g, const size_t index_n) const
 inline ResponseIndexer::size_t ResponseIndexer::
 local_index_to_global(const size_t index_l) const
 {
-  // Preconditions
   Require(index_l < d_local_size);
 
   size_t index_g = index_l + d_global_offset;
 
-  // Postconditions
   Ensure(index_g < d_global_size);
   return index_g;
 }
@@ -173,12 +153,10 @@ local_index_to_global(const size_t index_l) const
 inline ResponseIndexer::size_t ResponseIndexer::
 local_index_to_unique(const size_t index_l) const
 {
-  // Preconditions
   Require(index_l < d_local_to_unique.size());
 
   size_t index_ul = d_local_to_unique[index_l];
 
-  // Postconditions
   Ensure(index_ul < number_unique_moments());
   return index_ul;
 }

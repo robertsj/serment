@@ -24,10 +24,12 @@ ResponseSourceDetran<D>::ResponseSourceDetran(SP_node node, SP_indexer indexer)
   , d_basis_p(node->number_surfaces())
   , d_spatial_dim(D::dimension, vec_size_t(D::dimension-1))
 {
-  // Preconditions
   Require(node->db());
   Require(node->material());
   Require(node->mesh());
+
+  std::cout << "********* BUILDING DETRAN<" << D::dimension
+            << "> SOURCE FOR NODE " << d_node->name() << std::endl;
 
   d_db = node->db();
   d_material = node->material();
@@ -61,9 +63,8 @@ ResponseSourceDetran<D>::ResponseSourceDetran(SP_node node, SP_indexer indexer)
     d_spatial_dim[2][1] = 1;
   }
 
-  // Basis
   construct_basis();
-
+  d_basis_s[0][0]->basis()->display();
 }
 
 //---------------------------------------------------------------------------//
@@ -73,7 +74,7 @@ compute(SP_response response, const ResponseIndex &index)
 {
   using namespace detran;
 
-  std::cout << "COMPUTING RESPONSE FOR INDEX: " << index << std::endl;
+  //std::cout << "COMPUTING RESPONSE FOR INDEX: " << index << std::endl;
 
   //-------------------------------------------------------------------------//
   // SET INCIDENT CONDITION
@@ -100,7 +101,6 @@ compute(SP_response response, const ResponseIndex &index)
   //-------------------------------------------------------------------------//
 
   d_solver->solve(d_keff);
-  d_solver->state()->display();
 
   //-------------------------------------------------------------------------//
   // EXPAND THE RESPONSE

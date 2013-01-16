@@ -13,6 +13,7 @@
 #include "Node.hh"
 #include "NeighborSurface.hh"
 #include "utilities/SP.hh"
+#include "utilities/Point.hh"
 #include <vector>
 #include <boost/serialization/vector.hpp>
 #include <boost/serialization/access.hpp>
@@ -68,6 +69,8 @@ public:
   typedef std::vector<vec_int>              vec2_int;
   typedef std::vector<NeighborSurface>      vec_neighbor;
   typedef std::vector<vec_neighbor>         vec2_neighbor;
+  typedef detran_utilities::Point           Point;
+  typedef std::vector<Point>                vec_point;
 
   //-------------------------------------------------------------------------//
   // CONSTRUCTOR & DESTRUCTOR
@@ -106,8 +109,11 @@ public:
    *  @brief Set the map of nodes with their neighbors
    *  @param nodal_indices  Indices into the vector of unique nodes
    *  @param neighbor       Neighbor data for each node
+   *  @param origins        Node origins
    */
-  void set_nodal_map(const vec_int &nodes, const vec2_neighbor &neighbors);
+  void set_nodal_map(const vec_int &nodes,
+                     const vec2_neighbor &neighbors,
+                     const vec_point &origins = vec_point(0));
 
   /**
    *  @brief Get a node
@@ -229,6 +235,8 @@ private:
   vec_int d_unique_nodes;
   /// Vector of vectors of node (neighbor, surface) index pairs
   vec2_neighbor d_neighbors;
+  /// Vector of node origins
+  vec_point d_origins;
   /// Starting index of local nodes
   size_t d_lower_bound;
   /// Upper bound of local nodes

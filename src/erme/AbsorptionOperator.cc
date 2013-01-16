@@ -1,10 +1,9 @@
 //----------------------------------*-C++-*----------------------------------//
-/*!
- * \file   AbsorptionOperator.cc
- * \author robertsj
- * \date   Sep 4, 2012
- * \brief  AbsorptionOperator class definition.
- * \note   Copyright (C) 2012 Jeremy Roberts. 
+/**
+ *  @file   AbsorptionOperator.cc
+ *  @author robertsj
+ *  @date   Sep 4, 2012
+ *  @brief  AbsorptionOperator class definition.
  */
 //---------------------------------------------------------------------------//
 
@@ -13,28 +12,24 @@
 namespace erme
 {
 
+//---------------------------------------------------------------------------//
 AbsorptionOperator::AbsorptionOperator(SP_nodelist nodes,
-                                 SP_indexer indexer,
-                                 SP_server server)
+                                       SP_indexer indexer,
+                                       SP_server server)
   : ResponseOperator(nodes, indexer, server)
   , Vector(indexer->number_local_moments())
 {
   /* ... */
 }
 
+//---------------------------------------------------------------------------//
 void AbsorptionOperator::update()
 {
-  using std::cout;
-  using std::endl;
-
   // Offset for a block.  Starts at this vector's lower bound.
   int offset = lower_bound();
 
-  // Loop through nodes
   for (int n = 0; n < d_nodes->number_local_nodes(); n++)
   {
-
-    // Get response
     SP_response r = d_server->response(n);
 
     // Row indices
@@ -49,9 +44,7 @@ void AbsorptionOperator::update()
     offset += indices.size();
   }
 
-  // Assemble after finishing
   assemble();
-
 }
 
 } // end namespace erme

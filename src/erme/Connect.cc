@@ -99,7 +99,7 @@ Connect::Connect(SP_nodelist nodes, SP_indexer indexer)
         else if (neigh_n == erme_geometry::Node::REFLECT)
         {
           // Reflection gets 1.0 or -1.0, depending on polarity of the moment
-          indexer->response_index(n, s, m).even_odd
+          indexer->response_index(un, s, m).even_odd
             == 0 ? value = 1.0 : value = -1.0;
         }
         else if (neigh_n == erme_geometry::Node::VACUUM)

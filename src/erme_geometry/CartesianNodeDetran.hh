@@ -64,6 +64,24 @@ public:
                       SP_material   nodematerial,
                       SP_mesh       nodemesh);
 
+  /// SP constructor
+  static SP_base Create(const size_t  dimension,
+                        std::string   nodename,
+                        vec2_size_t   so,
+                        vec_size_t    po,
+                        vec_size_t    ao,
+                        vec_size_t    eo,
+                        vec_dbl       nodewidth,
+                        SP_db         nodedb,
+                        SP_material   nodematerial,
+                        SP_mesh       nodemesh)
+  {
+    SP_node p(new CartesianNodeDetran(dimension, nodename,
+                                      so, po, ao, eo, nodewidth,
+                                      nodedb, nodematerial, nodemesh));
+    return p;
+  }
+
   //-------------------------------------------------------------------------//
   // ABSTRACT INTERFACE
   //-------------------------------------------------------------------------//

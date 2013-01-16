@@ -25,11 +25,11 @@ ResponseSourceFactory::build_detran(SP_node node, SP_indexer indexer)
   size_t d = detran_node->mesh()->dimension();
 
   SP_source s;
-  if (d == 0)
+  if (d == 1)
     s = new ResponseSourceDetran<detran::_1D>(node, indexer);
-  else if (d == 1)
+  else if (d == 2)
     s = new ResponseSourceDetran<detran::_2D>(node, indexer);
-  else
+  else if (d == 3)
     s = new ResponseSourceDetran<detran::_3D>(node, indexer);
   return s;
 }

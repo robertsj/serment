@@ -16,20 +16,16 @@ namespace erme_geometry
 //---------------------------------------------------------------------------//
 inline NodeList::SP_node NodeList::node(const int node_g) const
 {
-  // Preconditions
   Require(is_finalized());
   Require(node_g < number_global_nodes());
-
   return d_nodes[d_node_map[node_g]];
 }
 
 //---------------------------------------------------------------------------//
 inline NodeList::SP_node NodeList::unique_node(const int node_ug) const
 {
-  // Preconditions
   Require(is_finalized());
   Require(node_ug < number_unique_global_nodes());
-
   return d_nodes[node_ug];
 }
 
@@ -86,10 +82,8 @@ inline NodeList::size_t NodeList::number_local_surfaces() const
 inline const NeighborSurface&
 NodeList::neighbor(const size_t node_g, const size_t s) const
 {
-  // Preconditions
   Require(node_g < number_global_nodes());
   Require(s < node(node_g)->number_surfaces());
-
   return d_neighbors[node_g][s];
 }
 
@@ -112,9 +106,7 @@ NodeList::global_index_from_local(const size_t node_l) const
 // G-to-L
 inline int NodeList::local_index_from_global(const size_t node_g) const
 {
-  // Preconditions
   Require(node_g < number_global_nodes());
-
   int node_l = node_g - d_lower_bound;
   if (node_l >= 0)
     return node_l;
@@ -127,12 +119,10 @@ inline int NodeList::local_index_from_global(const size_t node_g) const
 inline NodeList::size_t
 NodeList::unique_global_index_from_global(const size_t node_g) const
 {
-  // Preconditions
   Require(node_g < number_global_nodes());
 
   size_t node_ug = d_node_map[node_g];
 
-  // Posconditions
   Ensure(node_ug < number_unique_global_nodes());
   return node_ug;
 }
@@ -142,7 +132,6 @@ NodeList::unique_global_index_from_global(const size_t node_g) const
 inline int
 NodeList::unique_local_index_from_unique_global(const size_t node_ug) const
 {
-  // Preconditions
   Require(node_ug < number_unique_global_nodes());
 
   int node_lg = -1;
@@ -151,7 +140,6 @@ NodeList::unique_local_index_from_unique_global(const size_t node_ug) const
     //std::cout << "UNIQUE = " << d_unique_nodes[i] << " ug =" << node_ug << std::endl;
     if (d_unique_nodes[i] == node_ug) node_lg = i;
   }
-
   return node_lg;
 }
 
@@ -159,12 +147,10 @@ NodeList::unique_local_index_from_unique_global(const size_t node_ug) const
 inline NodeList::size_t
 NodeList::unique_global_index_from_unique_local(const size_t node_ul) const
 {
-  // Preconditions
   Require(node_ul < d_unique_nodes.size());
 
   size_t node_ug  = d_unique_nodes[node_ul];
 
-  // Postconditions
   Ensure(node_ug < number_unique_global_nodes());
   return node_ug;
 }

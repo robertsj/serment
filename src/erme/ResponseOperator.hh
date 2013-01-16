@@ -1,14 +1,14 @@
 //----------------------------------*-C++-*----------------------------------//
-/*!
- * \file   ResponseOperator.hh
- * \brief  ResponseOperator class definition
- * \author Jeremy Roberts
- * \date   Aug 24, 2012
+/**
+ *  @file   ResponseOperator.hh
+ *  @brief  ResponseOperator class definition
+ *  @author Jeremy Roberts
+ *  @date   Aug 24, 2012
  */
 //---------------------------------------------------------------------------//
 
-#ifndef RESPONSEOPERATOR_HH_
-#define RESPONSEOPERATOR_HH_
+#ifndef erme_RESPONSEOPERATOR_HH_
+#define erme_RESPONSEOPERATOR_HH_
 
 #include "erme_geometry/NodeList.hh"
 #include "erme_response/ResponseIndexer.hh"
@@ -18,9 +18,9 @@
 namespace erme
 {
 
-/*!
- *  \class ResponseOperator
- *  \brief Base class for response operators
+/**
+ *  @class ResponseOperator
+ *  @brief Base class for response operators
  */
 class ResponseOperator
 {
@@ -40,17 +40,17 @@ public:
   // PUBLIC INTERFACE
   //-------------------------------------------------------------------------//
 
-  /*!
-   *  \brief Constructor
-   *  \param indexer  Pointer to response indexer
-   *  \param server   Pointer to response server
+  /**
+   *  @brief Constructor
+   *  @param indexer  Pointer to node list
+   *  @param indexer  Pointer to response indexer
+   *  @param server   Pointer to response server
    */
   ResponseOperator(SP_nodelist nodes, SP_indexer indexer, SP_server server)
     : d_nodes(nodes)
     , d_indexer(indexer)
     , d_server(server)
   {
-    // Preconditions
     Require(d_nodes);
     Require(d_indexer);
     Require(d_server);
@@ -59,8 +59,8 @@ public:
   /// Virtual Destructor
   virtual ~ResponseOperator(){}
 
-  /*!
-   *  \brief Update responses.
+  /**
+   *  @brief Update responses.
    *
    *  This assumes that the response server is updated.
    */
@@ -69,15 +69,13 @@ public:
 protected:
 
   //-------------------------------------------------------------------------//
-  // PROTECTED DATA
+  // DATA
   //-------------------------------------------------------------------------//
 
   /// Node list
   SP_nodelist d_nodes;
-
   /// Response indexer
   SP_indexer d_indexer;
-
   /// Response server
   SP_server d_server;
 
@@ -85,7 +83,7 @@ protected:
 
 } // end namespace erme
 
-#endif // RESPONSEOPERATOR_HH_ 
+#endif // erme_RESPONSEOPERATOR_HH_
 
 //---------------------------------------------------------------------------//
 //              end of file ResponseOperator.hh

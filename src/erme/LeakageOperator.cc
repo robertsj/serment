@@ -22,7 +22,6 @@ LeakageOperator::LeakageOperator(SP_nodelist nodes,
   , d_global_leakage(nodes->number_local_surfaces(), 0.0)
   , d_L_times_moments(nodes->number_local_surfaces(), 0.0)
 {
-
   vec_int nnz_on_diag(d_nodes->number_local_surfaces(),  0);
   vec_int nnz_off_diag(d_nodes->number_local_surfaces(), 0);
 
@@ -48,7 +47,6 @@ LeakageOperator::LeakageOperator(SP_nodelist nodes,
    *  nonzeros is the number of nodal moments minus one.
    *
    */
-
 
   // Loop over all nodes
   for (int n = d_nodes->lower_bound(); n < d_nodes->upper_bound(); n++)
@@ -133,7 +131,6 @@ void LeakageOperator::update()
 //---------------------------------------------------------------------------//
 double LeakageOperator::leakage(linear_algebra::Vector &x)
 {
-  // Preconditions
   Require(x.local_size() == number_local_columns());
 
   // Compute L * x

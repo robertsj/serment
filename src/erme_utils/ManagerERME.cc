@@ -62,6 +62,11 @@ void ManagerERME::build_erme(SP_nodelist nodes)
   Require(nodes);
   d_nodes = nodes;
 
+  using std::cout;
+  using std::endl;
+
+  cout << "*** BUILDING ERME " << endl;
+
   // Check if this is a database problem
   std::string dbname = "";
   size_t dborder = 1;
@@ -79,15 +84,20 @@ void ManagerERME::build_erme(SP_nodelist nodes)
   partitioner.partition(d_nodes);
 
   // Create indexer
+  cout << "****** BUILDING INDEXER" << endl;
   d_indexer = new erme_response::ResponseIndexer(d_db, d_nodes);
 
   // Create server
-  d_server = new erme_response::ResponseServer(d_nodes, d_indexer, dbname, dborder);
+  cout << "****** BUILDING SERVER" << endl;
+  d_server = new erme_response::
+    ResponseServer(d_nodes, d_indexer, dbname, dborder);
 
   // Create state
+  cout << "****** BUILDING STATE" << endl;
   d_state = new erme::StateERME(d_indexer->number_local_moments());
 
   // Create response operators
+  cout << "****** BUILDING OPERATORS" << endl;
   d_M = new erme::Connect(d_nodes, d_indexer);
   d_R = new erme::ResponseMatrix(d_nodes, d_indexer, d_server);
   d_L = new erme::LeakageOperator(d_nodes, d_indexer, d_server);

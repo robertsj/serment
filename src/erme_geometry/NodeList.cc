@@ -69,8 +69,9 @@ void NodeList::add_node(SP_node node)
 }
 
 //---------------------------------------------------------------------------//
-void NodeList::set_nodal_map(const vec_int &node_map,
-                             const vec2_neighbor &neighbors)
+void NodeList::set_nodal_map(const vec_int          &node_map,
+                             const vec2_neighbor    &neighbors,
+                             const vec_point        &origins)
 {
   // Preconditions
   Insist(node_map.size() == neighbors.size(),
@@ -87,6 +88,7 @@ void NodeList::set_nodal_map(const vec_int &node_map,
 
   d_node_map = node_map;
   d_neighbors = neighbors;
+  d_origins = origins;
 }
 
 //---------------------------------------------------------------------------//

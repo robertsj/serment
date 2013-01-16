@@ -7,8 +7,8 @@
  */
 //---------------------------------------------------------------------------//
 
-#ifndef STATEERME_HH_
-#define STATEERME_HH_
+#ifndef erme_STATEERME_HH_
+#define erme_STATEERME_HH_
 
 #include "linear_algebra/Vector.hh"
 
@@ -89,7 +89,7 @@ private:
 // Inline member definitions
 #include "StateERME.i.hh"
 
-#endif // STATEERME_HH_ 
+#endif // erme_STATEERME_HH_
 
 //---------------------------------------------------------------------------//
 //              end of file StateERME.hh

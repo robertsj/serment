@@ -157,11 +157,6 @@ void ResponseServer::update_explicit_work_share()
     start += number_per_process[i];
   size_t finish = start + number_per_process[Comm::rank()];
 
-//  std::cout << "   number_responses=" << number_responses
-//            << " number_per_process=" << number_per_process[0]
-//            << " start and finish=  " << start << " " << finish << std::endl;
-
-
 
   // Loop over all of my unique local moments
   for (size_t index_ul = start; index_ul < finish; index_ul++)
@@ -199,7 +194,7 @@ void ResponseServer::update_explicit_work_share()
       }
       Comm::sum(&d_responses[n]->fission_response(0), number_moments, 0);
       Comm::sum(&d_responses[n]->absorption_response(0), number_moments, 0);
-      //d_responses[n]->display();
+      d_responses[n]->display();
     }
   }
 

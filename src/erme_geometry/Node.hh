@@ -155,16 +155,7 @@ public:
   /// Energy order for a surface
   size_t energy_order(const size_t s) const;
   /// Pretty print of key characteristics
-  void display() const
-  {
-    std::cout << "--------------------" << std::endl;
-    std::cout << "NODE" << std::endl;
-    std::cout << "--------------------" << std::endl;
-    std::cout << "  dimension = " << d_dimension << std::endl;
-    std::cout << "   surfaces = " << d_number_surfaces << std::endl;
-    std::cout << "      name  = " << d_name << std::endl;
-  }
-
+  void display() const;
 
 private:
 

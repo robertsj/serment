@@ -160,6 +160,8 @@ expand(const detran::BoundaryDiffusion<detran::_1D>  &boundary,
 
   typename Solver_T::SP_state state = d_solver->state();
   const vec_int &mat_map = d_mesh->mesh_map("MATERIAL");
+  response->fission_response(index_i.nodal) = 0.0;
+  response->absorption_response(index_i.nodal) = 0.0;
   for (size_t g = 0; g < d_material->number_groups(); ++g)
   {
     for (size_t i = 0; i < d_mesh->number_cells(); ++i)
@@ -189,7 +191,7 @@ expand(const detran::BoundaryDiffusion<detran::_2D>  &boundary,
   //-------------------------------------------------------------------------//
   // CURRENT RESPONSE
   //-------------------------------------------------------------------------//
-  response->display();
+
   for (size_t surface = 0; surface < 4; ++surface)
   {
     size_t o_s = d_basis_s[surface][0]->order();
@@ -220,7 +222,6 @@ expand(const detran::BoundaryDiffusion<detran::_2D>  &boundary,
     for (size_t m = 0; m < nm; ++m)
     {
       ResponseIndex index_o = d_indexer->response_index(index_i.node, surface, m);
-      std::cout << " in=" << index_i.nodal << " out=" << index_i.nodal << std::endl;
       // Polarity switch saves us from integrating in reverse direction.
       double polarity = std::pow(-1.0, index_o.even_odd);
       response->boundary_response(index_o.nodal, index_i.nodal) =
@@ -234,14 +235,19 @@ expand(const detran::BoundaryDiffusion<detran::_2D>  &boundary,
 
   for (size_t surface = 0; surface < 4; ++surface)
   {
+    size_t dim  = surface / 2;
+    size_t dim0 = d_spatial_dim[dim][0];
+    response->leakage_response(surface, index_i.nodal) = 0.0;
     for (size_t g = 0; g < d_material->number_groups(); ++g)
     {
       const B_T::value_type &bo = boundary(surface, g, boundary.OUT);
       const B_T::value_type &bi = boundary(surface, g, boundary.IN);
+
       for (size_t i = 0; i < bo.size(); ++i)
       {
+        double dx = d_mesh->width(dim0, i);
         response->leakage_response(surface, index_i.nodal) +=
-          B_V::value(bo, i) - B_V::value(bi, i);
+          dx * (B_V::value(bo, i) - B_V::value(bi, i));
       }
     }
   }
@@ -252,6 +258,8 @@ expand(const detran::BoundaryDiffusion<detran::_2D>  &boundary,
 
   typename Solver_T::SP_state state = d_solver->state();
   const vec_int &mat_map = d_mesh->mesh_map("MATERIAL");
+  response->fission_response(index_i.nodal) = 0.0;
+  response->absorption_response(index_i.nodal) = 0.0;
   for (size_t g = 0; g < d_material->number_groups(); ++g)
   {
     for (size_t i = 0; i < d_mesh->number_cells(); ++i)
