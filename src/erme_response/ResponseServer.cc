@@ -47,7 +47,7 @@ ResponseServer::ResponseServer(SP_nodelist  nodes,
   {
     // Build the sources
     size_t node_ug =  d_nodes->unique_global_index_from_unique_local(node_ul);
-    d_sources[node_ul] = builder.build(nodes->unique_node(node_ug));
+    d_sources[node_ul] = builder.build(nodes->unique_node(node_ug), d_indexer);
     Assert(d_sources[node_ul]);
 
     // Build the nodal response containers

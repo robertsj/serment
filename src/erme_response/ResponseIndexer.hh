@@ -120,11 +120,11 @@ public:
 
   /**
    *  @brief Get moment indices from cardinal index within node
-   *  @param node_g       Global index of node
+   *  @param node_gg      Unique global index of node
    *  @param surface_n    Surface index of node
    *  @param index_s      Moment index on surface of node
    */
-  ResponseIndex response_index(const size_t node_g,
+  ResponseIndex response_index(const size_t node_ug,
                                const size_t surface_n,
                                const size_t index_s) const;
 

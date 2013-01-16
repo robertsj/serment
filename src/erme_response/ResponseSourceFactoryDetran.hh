@@ -7,8 +7,8 @@
  */
 //---------------------------------------------------------------------------//
 
-#ifndef RESPONSESOURCEFACTORYDETRAN_HH_
-#define RESPONSESOURCEFACTORYDETRAN_HH_
+#ifndef erme_response_RESPONSESOURCEFACTORYDETRAN_HH_
+#define erme_response_RESPONSESOURCEFACTORYDETRAN_HH_
 
 #include "erme_geometry/CartesianNodeDetran.hh"
 #include "transport/DimensionTraits.hh"
@@ -18,7 +18,7 @@ namespace erme_response
 
 //---------------------------------------------------------------------------//
 inline ResponseSourceFactory::SP_source
-ResponseSourceFactory::build_detran(SP_node node)
+ResponseSourceFactory::build_detran(SP_node node, SP_indexer indexer)
 {
   erme_geometry::CartesianNodeDetran::SP_node detran_node = node;
   Require(detran_node->mesh());
@@ -26,14 +26,14 @@ ResponseSourceFactory::build_detran(SP_node node)
 
   SP_source s;
   if (d == 0)
-    s = new ResponseSourceDetran<detran::_1D>(node);
+    s = new ResponseSourceDetran<detran::_1D>(node, indexer);
   else if (d == 1)
-    s = new ResponseSourceDetran<detran::_2D>(node);
+    s = new ResponseSourceDetran<detran::_2D>(node, indexer);
   else
-    s = new ResponseSourceDetran<detran::_3D>(node);
+    s = new ResponseSourceDetran<detran::_3D>(node, indexer);
   return s;
 }
 
 } // end namespace erme_response
 
-#endif /* RESPONSESOURCEFACTORYDETRAN_HH_ */
+#endif /* erme_response_RESPONSESOURCEFACTORYDETRAN_HH_ */

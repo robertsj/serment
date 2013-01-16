@@ -30,7 +30,6 @@ public:
   //-------------------------------------------------------------------------//
 
   typedef ResponseDatabase::SP_rfdb             SP_rfdb;
-  typedef erme_geometry::Node::SP_node          SP_node;
 
   //-------------------------------------------------------------------------//
   // CONSTRUCTOR & DESTRUCTOR
@@ -40,7 +39,7 @@ public:
    *  @brief Constructor
    *  @param node   Pointer to a response database node
    */
-  ResponseSourceDatabase(SP_node node);
+  ResponseSourceDatabase(SP_node node, SP_indexer indexer);
 
   /// Virtual destructor
   virtual ~ResponseSourceDatabase();
@@ -50,7 +49,7 @@ public:
   //-------------------------------------------------------------------------//
 
   /// Compute a response for the requested incident index
-  void compute(SP_response response, ResponseIndex index);
+  void compute(SP_response response, const ResponseIndex &index);
 
 private:
 

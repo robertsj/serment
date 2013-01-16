@@ -12,6 +12,7 @@
 
 #include "NodeResponse.hh"
 #include "ResponseIndex.hh"
+#include "ResponseIndexer.hh"
 #include "erme_geometry/Node.hh"
 #include "utilities/DBC.hh"
 #include "utilities/SP.hh"
@@ -44,6 +45,7 @@ public:
   typedef detran_utilities::SP<ResponseSource>  SP_source;
   typedef unsigned int                          size_t;
   typedef NodeResponse::SP_response             SP_response;
+  typedef ResponseIndexer::SP_indexer           SP_indexer;
   typedef erme_geometry::Node::SP_node          SP_node;
 
   //-------------------------------------------------------------------------//
@@ -55,12 +57,14 @@ public:
    *  @param node   Pointer to node object for which this source generates
    *                responses
    */
-  ResponseSource(SP_node node)
+  ResponseSource(SP_node node, SP_indexer indexer)
     : d_node(node)
+    , d_indexer(indexer)
     , d_keff(1.0)
   {
     // Preconditions
     Require(node);
+    Require(indexer);
   }
 
   /// Virtual destructor
@@ -86,7 +90,7 @@ public:
    *  @param response   Pointer to response object to be updated
    *  @param index      Response indices
    */
-  virtual void compute(SP_response response, ResponseIndex index) = 0;
+  virtual void compute(SP_response response, const ResponseIndex &index) = 0;
 
 protected:
 
@@ -96,7 +100,8 @@ protected:
 
   /// Node
   SP_node d_node;
-
+  /// Response indexer
+  SP_indexer d_indexer;
   /// K-eigenvalue
   double d_keff;
 

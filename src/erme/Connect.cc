@@ -30,10 +30,11 @@ Connect::Connect(SP_nodelist nodes, SP_indexer indexer)
                            vec_int(indexer->number_local_moments(), 1),
                            vec_int(indexer->number_local_moments(), 1))
 {
+  // Preconditions
+  Require(nodes->number_global_nodes() == indexer->number_nodes());
+
   using std::cout;
   using std::endl;
-
-  Require(nodes->number_global_nodes() == indexer->number_nodes());
 
   // Loop over local nodes
   for (int n = nodes->lower_bound(); n < nodes->upper_bound(); n++)
@@ -51,13 +52,14 @@ Connect::Connect(SP_nodelist nodes, SP_indexer indexer)
       // Get the neighbor node and its surface
       int neigh_n = nodes->neighbor(n, s).neighbor();
       int neigh_s = nodes->neighbor(n, s).surface();
+      size_t neigh_un = 0;
 
       // Nodes should have consistent expansions on shared surfaces.  This
       // is a light check, since order counts can be the same with different
       // expansions.  A geometry preprocessor would be useful.
       if (neigh_n >= 0)
       {
-        size_t neigh_un = nodes->unique_global_index_from_global(neigh_n);
+        neigh_un = nodes->unique_global_index_from_global(neigh_n);
         Assert(indexer->number_surface_moments(neigh_un, neigh_s)
                == indexer->number_surface_moments(un, s));
       }
@@ -72,10 +74,11 @@ Connect::Connect(SP_nodelist nodes, SP_indexer indexer)
         int column   = indexer->nodal_index_to_global(n, n_index);
         double value = 0.0;
 
-        if (nodes->neighbor(n, s).neighbor() >= 0)
+        // If not on the boundary
+        if (neigh_n >= 0)
         {
           // Get neighbor node moment index
-          int neigh_n_index = indexer->response_index(neigh_n, neigh_s, m).nodal;
+          int neigh_n_index = indexer->response_index(neigh_un, neigh_s, m).nodal;
 
           // My row connects to their column.  Note, the matrix is symmetric
           // for most problems, but we let the other process fill the
@@ -93,13 +96,13 @@ Connect::Connect(SP_nodelist nodes, SP_indexer indexer)
 
           value  = 1.0;
         }
-        else if (nodes->neighbor(n, s).neighbor() == erme_geometry::Node::REFLECT)
+        else if (neigh_n == erme_geometry::Node::REFLECT)
         {
           // Reflection gets 1.0 or -1.0, depending on polarity of the moment
           indexer->response_index(n, s, m).even_odd
             == 0 ? value = 1.0 : value = -1.0;
         }
-        else if (nodes->neighbor(n, s).neighbor() == erme_geometry::Node::VACUUM)
+        else if (neigh_n == erme_geometry::Node::VACUUM)
         {
          // value = -2;
         }

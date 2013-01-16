@@ -1,5 +1,5 @@
 //----------------------------------*-C++-*----------------------------------//
-/*@
+/**
  *  @file   NodeResponse.hh
  *  @brief  NodeResponse class definition.
  *  @author Jeremy Roberts
@@ -7,8 +7,8 @@
  */
 //---------------------------------------------------------------------------//
 
-#ifndef NODERESPONSE_HH_
-#define NODERESPONSE_HH_
+#ifndef erme_response_NODERESPONSE_HH_
+#define erme_response_NODERESPONSE_HH_
 
 #include "utilities/DBC.hh"
 #include "utilities/SP.hh"
@@ -139,8 +139,8 @@ private:
   /// Number of surfaces
   const size_t d_number_surfaces;
 
-  /*!
-   *  \brief Boundary function moments [N][N]
+  /**
+   *  @brief Boundary function moments [N][N]
    *
    *  Stored [incoming][outgoing] so that for an incident condition,
    *  all outgoing values are contiguous in memory.
@@ -169,7 +169,7 @@ private:
 
 #include "NodeResponse.i.hh"
 
-#endif // NODERESPONSE_HH_ 
+#endif // erme_response_NODERESPONSE_HH_
 
 //---------------------------------------------------------------------------//
 //              end of file NodeResponse.hh

@@ -40,8 +40,13 @@ inline Node::size_t Node::spatial_order(const size_t s, const size_t d) const
 {
   // Preconditions
   Require(s < d_number_surfaces);
-  Require(d < d_spatial_order[s].size());
-  return d_spatial_order[s][d];
+  size_t v = 0;
+  if (d_spatial_order.size())
+  {
+    Require(d < d_spatial_order[s].size());
+    v = d_spatial_order[s][d];
+  }
+  return v;
 }
 
 //---------------------------------------------------------------------------//

@@ -7,9 +7,10 @@
  */
 //---------------------------------------------------------------------------//
 
-#ifndef RESPONSESOURCEFACTORY_HH_
-#define RESPONSESOURCEFACTORY_HH_
+#ifndef erme_response_RESPONSESOURCEFACTORY_HH_
+#define erme_response_RESPONSESOURCEFACTORY_HH_
 
+#include "ResponseIndexer.hh"
 #include "ResponseSource.hh"
 // Concrete source types
 #include "ResponseSourceDummy.hh"
@@ -33,8 +34,9 @@ public:
   // TYPEDEFS
   //-------------------------------------------------------------------------//
 
-  typedef ResponseSource::SP_source SP_source;
-  typedef ResponseSource::SP_node   SP_node;
+  typedef ResponseSource::SP_source     SP_source;
+  typedef ResponseSource::SP_node       SP_node;
+  typedef ResponseIndexer::SP_indexer   SP_indexer;
 
   //-------------------------------------------------------------------------//
   // PUBLIC INTERFACE
@@ -49,7 +51,7 @@ public:
    *  @param node   Smart pointer to node
    */
   template <typename SP_NODE>
-  SP_source build(SP_NODE node)
+  SP_source build(SP_NODE node, SP_indexer indexer)
   {
     // Preconditions
     Require(node);
@@ -58,11 +60,11 @@ public:
 
     // Try to dynamic-cast to all the node types available
     if (dynamic_cast<erme_geometry::CartesianNodeDummy*>(node.bp()))
-      s = build_dummy(node);
+      s = build_dummy(node, indexer);
     else if(dynamic_cast<erme_geometry::CartesianNodeDetran*>(node.bp()))
-      s = build_detran(node);
+      s = build_detran(node, indexer);
     else if(dynamic_cast<erme_geometry::CartesianNode*>(node.bp()))
-      s = build_database(node);
+      s = build_database(node, indexer);
     else
       THROW("Unsupported response source type");
 
@@ -81,10 +83,10 @@ private:
   // IMPLEMENTATION
   //-------------------------------------------------------------------------//
 
-  SP_source build_detran(SP_node node);
-  SP_source build_dummy(SP_node node);
-  SP_source build_database(SP_node node);
-  //SP_source build_openmc(SP_node node);
+  SP_source build_detran(SP_node node, SP_indexer indexer);
+  SP_source build_dummy(SP_node node, SP_indexer indexer);
+  SP_source build_database(SP_node node, SP_indexer indexer);
+  //SP_source build_openmc(SP_node node, SP_indexer indexer);
 
 };
 
@@ -99,7 +101,7 @@ private:
 #include "ResponseSourceFactoryDetran.hh"
 #include "ResponseSourceFactoryDatabase.hh"
 
-#endif // RESPONSESOURCEFACTORY_HH_ 
+#endif // erme_response_RESPONSESOURCEFACTORY_HH_
 
 //---------------------------------------------------------------------------//
 //              end of file ResponseSourceFactory.hh

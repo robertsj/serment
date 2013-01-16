@@ -1,10 +1,9 @@
 //----------------------------------*-C++-*----------------------------------//
-/*!
- * \file   test_NodeResponse.cc
- * \author Jeremy Roberts
- * \date   Aug 19, 2012
- * \brief  Test of NodeResponse class.
- * \note   Copyright (C) 2012 Jeremy Roberts. 
+/**
+ *  @file   test_NodeResponse.cc
+ *  @author Jeremy Roberts
+ *  @date   Aug 19, 2012
+ *  @brief  Test of NodeResponse class.
  */
 //---------------------------------------------------------------------------//
 
@@ -29,9 +28,9 @@ int main(int argc, char *argv[])
   RUN(argc, argv);
 }
 
-//----------------------------------------------//
+//---------------------------------------------------------------------------//
 // TEST DEFINITIONS
-//----------------------------------------------//
+//---------------------------------------------------------------------------//
 
 // Test of basic public interface
 int test_NodeResponse(int argc, char *argv[])

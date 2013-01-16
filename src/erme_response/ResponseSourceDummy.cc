@@ -7,23 +7,19 @@
  */
 //---------------------------------------------------------------------------//
 
-#ifndef RESPONSESOURCEDUMMY_CC_
-#define RESPONSESOURCEDUMMY_CC_
-
 #include "ResponseSourceDummy.hh"
 
 namespace erme_response
 {
 
-ResponseSourceDummy::ResponseSourceDummy(SP_node node)
-  : ResponseSource(node)
+//---------------------------------------------------------------------------//
+ResponseSourceDummy::ResponseSourceDummy(SP_node node, SP_indexer indexer)
+  : ResponseSource(node, indexer)
 {
   /* ... */
 }
 
 } // end namespace erme_response
-
-#endif // RESPONSESOURCEDUMMY_CC_ 
 
 //---------------------------------------------------------------------------//
 //              end of file ResponseSourceDummy.cc

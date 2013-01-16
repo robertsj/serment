@@ -1,15 +1,14 @@
 //----------------------------------*-C++-*----------------------------------//
-/*!
- * \file   ResponseSourceDummy.hh
- * \author robertsj
- * \date   Aug 31, 2012
- * \brief  ResponseSourceDummy class definition.
- * \note   Copyright (C) 2012 Jeremy Roberts. 
+/**
+ *  @file   ResponseSourceDummy.hh
+ *  @author robertsj
+ *  @date   Aug 31, 2012
+ *  @brief  ResponseSourceDummy class definition.
  */
 //---------------------------------------------------------------------------//
 
-#ifndef RESPONSESOURCEDUMMY_HH_
-#define RESPONSESOURCEDUMMY_HH_
+#ifndef erme_response_RESPONSESOURCEDUMMY_HH_
+#define erme_response_RESPONSESOURCEDUMMY_HH_
 
 #include "NodeResponse.hh"
 #include "ResponseSource.hh"
@@ -18,40 +17,29 @@
 namespace erme_response
 {
 
-/*!
- *  \class ResponseSourceDummy
- *  \brief Fake response source for testing purposes.
+/**
+ *  @class ResponseSourceDummy
+ *  @brief Fake response source for testing purposes.
  */
 class ResponseSourceDummy: public ResponseSource
 {
 
-
 public:
-
-  //-------------------------------------------------------------------------//
-  // TYPEDEFS
-  //-------------------------------------------------------------------------//
-
-  typedef erme_geometry::CartesianNodeDummy::SP_node SP_node;
 
   //-------------------------------------------------------------------------//
   // PUBLIC INTERFACE
   //-------------------------------------------------------------------------//
 
-  /*!
-   *  \brief Constructor
-   */
-  ResponseSourceDummy(SP_node node);
+  ResponseSourceDummy(SP_node node, SP_indexer indexer);
 
   //-------------------------------------------------------------------------//
-  // ABSTRACT INTERFACE
+  // ABSTRACT INTERFACE -- ALL RESPONSE SOURCES MUST IMPLEMENT
   //-------------------------------------------------------------------------//
 
-  void compute(SP_response response, ResponseIndex index)
+  void compute(SP_response response, const ResponseIndex &index)
   {
+    // Preconditions
     Require(response);
-
-    size_t in = index.nodal;
 
     // Easy value to recreate.
     double value = 1000000.0 * index.node +
@@ -62,6 +50,7 @@ public:
                         10.0 * index.space1 +
                          1.0 * index.energy;
 
+    size_t in = index.nodal;
     for (int out = 0; out < response->size(); out++)
     {
       response->boundary_response(out, in) = value + 0.1;
@@ -72,23 +61,10 @@ public:
     {
       response->leakage_response(s, in) = value + 0.4 + 0.01 * s;
     }
-
   }
-
-private:
-
-  //-------------------------------------------------------------------------//
-  // DATA
-  //-------------------------------------------------------------------------//
-
-  //-------------------------------------------------------------------------//
-  // IMPLEMENTATION
-  //-------------------------------------------------------------------------//
-
-
 
 };
 
 } // end namespace erme_response
 
-#endif /* RESPONSESOURCEDUMMY_HH_ */
+#endif /* erme_response_RESPONSESOURCEDUMMY_HH_ */

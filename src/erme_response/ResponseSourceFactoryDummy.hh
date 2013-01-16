@@ -18,9 +18,9 @@ namespace erme_response
 
 //---------------------------------------------------------------------------//
 inline ResponseSourceFactory::SP_source
-ResponseSourceFactory::build_dummy(SP_node node)
+ResponseSourceFactory::build_dummy(SP_node node, SP_indexer indexer)
 {
-  SP_source s(new ResponseSourceDummy(node));
+  SP_source s(new ResponseSourceDummy(node, indexer));
   return s;
 }
 

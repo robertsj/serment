@@ -164,8 +164,8 @@ void ResponseIndexer::display() const
   {
     size_t node_ug = d_nodes->unique_global_index_from_global(node_g);
     cout << "  global node " << node_g
-         << " unique global = " << node_ug
-         << " unique local = " << d_nodes->unique_local_index_from_unique_global(node_ug)
+         << " | unique global  " << node_ug
+         << " | unique local " << d_nodes->unique_local_index_from_unique_global(node_ug)
          << endl;
 
     Assert(node_ug < d_indices.size());
@@ -175,16 +175,16 @@ void ResponseIndexer::display() const
       for (int m = 0; m < d_indices[node_ug][s].size(); m++)
       {
         cout << "    "
-             << d_nodes->local_index_from_global(node_g)           << " "
-             << response_index(node_g, s, m).nodal    << " | "
-             << response_index(node_g, s, m).node     << " "
-             << response_index(node_g, s, m).surface  << " | "
-             << response_index(node_g, s, m).energy   << " | "
-             << response_index(node_g, s, m).polar    << " "
-             << response_index(node_g, s, m).azimuth  << " | "
-             << response_index(node_g, s, m).space0   << " "
-             << response_index(node_g, s, m).space1   << " | "
-             << response_index(node_g, s, m).even_odd << " |" << endl;
+             << d_nodes->local_index_from_global(node_g) << " "
+             << response_index(node_ug, s, m).nodal    << " | "
+             << response_index(node_ug, s, m).node     << " "
+             << response_index(node_ug, s, m).surface  << " | "
+             << response_index(node_ug, s, m).energy   << " | "
+             << response_index(node_ug, s, m).polar    << " "
+             << response_index(node_ug, s, m).azimuth  << " | "
+             << response_index(node_ug, s, m).space0   << " "
+             << response_index(node_ug, s, m).space1   << " | "
+             << response_index(node_ug, s, m).even_odd << " |" << endl;
       } // end surface moment
     } // end surface
   } // end node
@@ -341,7 +341,7 @@ ResponseIndexer::build_2D(SP_node node, const size_t n)
 ResponseIndexer::size_t
 ResponseIndexer::build_1D(SP_node node, const size_t n)
 {
-  bool db = false;
+  bool db = true;
   size_t nodal_index = 0;
 
   if(db) std::cout << " node  = " << n << std::endl;

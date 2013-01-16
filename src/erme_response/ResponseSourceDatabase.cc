@@ -13,8 +13,9 @@ namespace erme_response
 {
 
 //---------------------------------------------------------------------------//
-ResponseSourceDatabase::ResponseSourceDatabase(SP_node node)
-  : ResponseSource(node)
+ResponseSourceDatabase::
+ResponseSourceDatabase(SP_node node, SP_indexer indexer)
+  : ResponseSource(node, indexer)
   , d_rfdb(ResponseDatabase::Instance())
 {
   /* ... */
@@ -28,7 +29,7 @@ ResponseSourceDatabase::~ResponseSourceDatabase()
 
 //---------------------------------------------------------------------------//
 void ResponseSourceDatabase::
-compute(SP_response response, ResponseIndex index)
+compute(SP_response response, const ResponseIndex &index)
 {
   d_rfdb->get(d_node->name(), response, index, d_keff);
 }

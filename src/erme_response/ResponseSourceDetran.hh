@@ -49,22 +49,30 @@ public:
   typedef typename Solver_T::SP_quadrature              SP_quadrature;
   typedef detran_angle::ProductQuadrature               ProductQuadrature;
   typedef detran_utilities::SP<ProductQuadrature>       SP_productquadrature;
+  typedef detran_utilities::vec_int                     vec_int;
+  typedef detran_utilities::vec_dbl                     vec_dbl;
+  typedef detran_utilities::vec2_dbl                    vec2_dbl;
+  typedef detran_utilities::vec_size_t                  vec_size_t;
+  typedef detran_utilities::vec2_size_t                 vec2_size_t;
 
   //-------------------------------------------------------------------------//
-  // PUBLIC INTERFACE
+  // CONSTRUCTOR & DESTRUCTOR
   //-------------------------------------------------------------------------//
 
   /// Constructor
-  ResponseSourceDetran(SP_node node);
+  ResponseSourceDetran(SP_node node, SP_indexer indexer);
 
   //-------------------------------------------------------------------------//
   // ABSTRACT INTERFACE
   //-------------------------------------------------------------------------//
 
-  void compute(SP_response response, ResponseIndex index)
-  {
-    /* ... */
-  }
+  void compute(SP_response response, const ResponseIndex &index);
+
+  //-------------------------------------------------------------------------//
+  // PUBLIC FUNCTIONS
+  //-------------------------------------------------------------------------//
+
+  SP_solver solver() {return d_solver;}
 
 private:
 
@@ -80,7 +88,7 @@ private:
   SP_mesh d_mesh;
   /// Detran solver
   SP_solver d_solver;
-  /// Quadrature
+  /// Detran quadrature
   SP_quadrature d_quadrature;
   /// Energy basis [number surfaces]
   vec_basis d_basis_e;
@@ -90,6 +98,8 @@ private:
   vec_basis d_basis_a;
   /// Polar basis [number surfaces]
   vec_basis d_basis_p;
+  /// Spatial dimensions in play for given axis
+  vec2_size_t d_spatial_dim;
 
   //-------------------------------------------------------------------------//
   // IMPLEMENTATION
@@ -97,11 +107,23 @@ private:
 
   /**
    *  @brief Set the boundary condition for a given incident order
-   *  @param boundary   Pointer to boundary flux container
+   *  @param boundary   Reference to boundary flux container
    *  @param index      The response index that defines the boundary condition
    */
   template <class B>
-  void set_boundary(B& boundary, ResponseIndex index);
+  void set_boundary(B& boundary, const ResponseIndex &index);
+
+  /**
+   *  @brief Expand the flux and boundary responses
+   *  @param boundary   Pointer to boundary flux container
+   *  @param response   Pointer to response container
+   *  @param index      The response index that defines the boundary condition
+   */
+  template <class B>
+  void expand(const B& boundary, SP_response response, const ResponseIndex &index);
+
+  /// Expand the flux-responses
+  void expand_flux(SP_response response, const ResponseIndex &index);
 
   /// Construct the basis
   void construct_basis();

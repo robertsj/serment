@@ -26,6 +26,7 @@ ResponseIndexer::number_surface_moments(const size_t node_ug,
                                         const size_t surface) const
 {
   // Preconditions
+  std::cout << " NODE=" << node_ug << " " <<  d_indices.size() << std::endl;
   Require(node_ug < d_indices.size());
   Require(surface < d_indices[node_ug].size());
 
@@ -63,12 +64,12 @@ ResponseIndexer::number_global_moments() const
 
 //---------------------------------------------------------------------------//
 inline ResponseIndex
-ResponseIndexer::response_index(const size_t node_g,
+ResponseIndexer::response_index(const size_t node_ug,
                                 const size_t surface,
                                 const size_t index_s) const
 {
   // Preconditions
-  size_t node_ug = d_nodes->unique_global_index_from_global(node_g);
+  //size_t node_ug = d_nodes->unique_global_index_from_global(node_g);
   Require(node_ug < d_indices.size());
   Require(surface < d_indices[node_ug].size());
   Require(index_s < d_indices[node_ug][surface].size());
@@ -86,11 +87,6 @@ ResponseIndexer::response_index_from_unique_local(const size_t index_ul) const
   size_t node_ug = d_unique_indices[index_ul][0];
   size_t surface = d_unique_indices[index_ul][1];
   size_t nindex  = d_unique_indices[index_ul][2];
-
-//  std::cout << " index_ul = " << index_ul
-//            << " node_ug = " << node_ug
-//            << " surface = " << surface
-//            << " nindex = " << nindex << std::endl;
 
   // Postconditions
   Ensure(node_ug < d_indices.size());
