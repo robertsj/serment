@@ -19,6 +19,8 @@
 namespace erme_response
 {
 
+// \todo Need to consolidate code where possible
+
 //---------------------------------------------------------------------------//
 template <class D>
 template <class B>
@@ -42,7 +44,6 @@ set_boundary(detran::BoundaryDiffusion<detran::_1D>& boundary,
   using namespace detran;
   for (size_t g = 0; g < d_material->number_groups(); ++g)
   {
-    std::cout << " g = " << g << std::endl;
     BoundaryTraits<_1D>::value_type
       &b = boundary(index.surface, g, boundary.IN);
     Assert(d_basis_e[index.surface]);
@@ -67,7 +68,7 @@ set_boundary(detran::BoundaryDiffusion<detran::_2D>& boundary,
   }
   for (size_t g = 0; g < d_material->number_groups(); ++g)
   {
-    double P_e = sign * (*d_basis_e[index.surface])(index.energy, g);
+    double P_e = (*d_basis_e[index.surface])(index.energy, g);
     size_t dim  = index.surface / 2;
     size_t dim0 = d_spatial_dim[dim][0];
     BoundaryTraits<_2D>::value_type
@@ -75,7 +76,8 @@ set_boundary(detran::BoundaryDiffusion<detran::_2D>& boundary,
     for (size_t i = 0; i < d_mesh->number_cells(dim0); ++i)
     {
       double P_s0 = (*d_basis_s[index.surface][0])(index.space0, i);
-      BoundaryValue<_2D>::value(b, i, 0) =  P_e * P_s0;
+      BoundaryValue<_2D>::value(b, i, 0) =  sign * P_e * P_s0;
+      //std::cout << " inc current = " << sign * P_e * P_s0 << std::endl;
     }
   }
 }
@@ -151,10 +153,11 @@ expand(const detran::BoundaryDiffusion<detran::_1D>  &boundary,
 
   for (size_t surface = 0; surface < 2; ++surface)
   {
+    response->leakage_response(surface, index_i.nodal) = 0.0;
     for (size_t g = 0; g < d_material->number_groups(); ++g)
     {
-      const B_T::value_type &bo = boundary(g, surface, boundary.OUT);
-      const B_T::value_type &bi = boundary(g, surface, boundary.IN);
+      const B_T::value_type &bo = boundary(surface, g, boundary.OUT);
+      const B_T::value_type &bi = boundary(surface, g, boundary.IN);
       response->leakage_response(surface, index_i.nodal) +=
         (B_V::value(bo, 0, 0) - B_V::value(bi, 0, 0));
     }
@@ -212,9 +215,16 @@ expand(const detran::BoundaryDiffusion<detran::_2D>  &boundary,
     for (size_t g = 0; g < n_g; ++g)
     {
       const B_T::value_type &b = boundary(surface, g, boundary.OUT);
+      for (int i = 0; i < 10; ++i)
+      {
+        std::cout << " out curr = " << BoundaryValue<_2D>::value(b, i, 0) << std::endl;
+      }
       d_basis_s[surface][0]->transform(b, Rs);
       for (size_t s = 0; s < Rs.size(); ++s)
+      {
         R[s][g] = Rs[s];
+        //std::cout << " R[" << s << "][" << g << "] = " <<  R[s][g] << std::endl;
+      }
     }
     // Expand the result in energy, [spatial moments][energy moments]
     for (size_t s = 0; s <= o_s; ++s)

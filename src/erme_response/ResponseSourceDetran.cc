@@ -43,7 +43,7 @@ ResponseSourceDetran<D>::ResponseSourceDetran(SP_node node, SP_indexer indexer)
   d_solver->setup();       // Constructs quadrature, etc.
   d_solver->set_solver();  // Constructs the actual mg solver
 
-  // Quadrature
+  // Quadrature.  Remember, this may be NULL.
   d_quadrature = d_solver->quadrature();
 
   // Spatial dimensions in play.  For example, when expanding
@@ -64,7 +64,6 @@ ResponseSourceDetran<D>::ResponseSourceDetran(SP_node node, SP_indexer indexer)
   }
 
   construct_basis();
-  d_basis_s[0][0]->basis()->display();
 }
 
 //---------------------------------------------------------------------------//
@@ -158,7 +157,8 @@ void ResponseSourceDetran<D>::construct_basis()
       for (size_t dim01 = 0; dim01 < D::dimension - 1; ++dim01)
       {
         d_basis_s[s][dim01] = new detran_orthog::
-          DLP(d_node->spatial_order(s, dim01), d_mesh->number_cells(dim));
+          DLP(d_node->spatial_order(s, dim01),
+              d_mesh->number_cells(dim), true);
       }
     }
   }

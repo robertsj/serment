@@ -23,10 +23,8 @@ ResponseIndexer::ResponseIndexer(SP_db db, SP_nodelist nodes)
   , d_local_size(0)
   , d_global_size(0)
 {
-  // Preconditions
   Require(db);
   Require(d_nodes);
-  // Dimension required for correct builder
   Insist(db->check("dimension"),
          "Parameter database must specify dimension.");
   int dimension = db->get<int>("dimension");
@@ -56,11 +54,11 @@ ResponseIndexer::ResponseIndexer(SP_db db, SP_nodelist nodes)
     // Moments size for the node.
     size_t size = 0;
     if (dimension == 1)
-      size = build_1D(d_nodes->node(n), n);
+      size = build_1D(d_nodes->unique_node(n), n);
     else if (dimension == 2)
-      size = build_2D(d_nodes->node(n), n);
+      size = build_2D(d_nodes->unique_node(n), n);
     else
-      size = build_3D(d_nodes->node(n), n);
+      size = build_3D(d_nodes->unique_node(n), n);
     d_sizes[n] = size;
     //std::cout << " size of node " << n << " is " << size << std::endl;
   }
@@ -170,7 +168,6 @@ void ResponseIndexer::display() const
     Assert(node_ug < d_indices.size());
     for (int s = 0; s < d_indices[node_ug].size(); s++)
     {
-
       for (int m = 0; m < d_indices[node_ug][s].size(); m++)
       {
         cout << "    "
@@ -273,7 +270,7 @@ ResponseIndexer::build_2D(SP_node node, const size_t n)
   using std::cout;
   using std::endl;
 
-  bool db = false;
+  bool db = true;
 
   // Moment index local to a node
   size_t nodal_index = 0;
