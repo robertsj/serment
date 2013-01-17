@@ -52,6 +52,7 @@ public:
   typedef detran_utilities::vec_int                     vec_int;
   typedef detran_utilities::vec_dbl                     vec_dbl;
   typedef detran_utilities::vec2_dbl                    vec2_dbl;
+  typedef detran_utilities::vec3_dbl                    vec3_dbl;
   typedef detran_utilities::vec_size_t                  vec_size_t;
   typedef detran_utilities::vec2_size_t                 vec2_size_t;
 

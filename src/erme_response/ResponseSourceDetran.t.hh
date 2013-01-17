@@ -61,8 +61,10 @@ set_boundary(detran::BoundaryDiffusion<detran::_2D>& boundary,
 {
   using namespace detran;
   double sign = 1.0;
-  if ((index.surface == d_mesh->WEST or
-       index.surface == d_mesh->NORTH) and index.space0 % 2)
+  if ((index.surface == d_mesh->WEST  or
+       index.surface == d_mesh->NORTH or
+       index.surface == d_mesh->TOP)  and
+      ((index.space0 + index.space1) % 2))
   {
     sign = -1.0;
   }
@@ -77,7 +79,6 @@ set_boundary(detran::BoundaryDiffusion<detran::_2D>& boundary,
     {
       double P_s0 = (*d_basis_s[index.surface][0])(index.space0, i);
       BoundaryValue<_2D>::value(b, i, 0) =  sign * P_e * P_s0;
-      //std::cout << " inc current = " << sign * P_e * P_s0 << std::endl;
     }
   }
 }
@@ -90,6 +91,14 @@ set_boundary(detran::BoundaryDiffusion<detran::_3D>& boundary,
              const ResponseIndex &index)
 {
   using namespace detran;
+  double sign = 1.0;
+  if ((index.surface == d_mesh->WEST  or
+       index.surface == d_mesh->NORTH or
+       index.surface == d_mesh->TOP)  and
+      ((index.space0 + index.space1) % 2))
+  {
+    sign = -1.0;
+  }
   for (size_t g = 0; g < d_material->number_groups(); ++g)
   {
     double P_e = (*d_basis_e[index.surface])(index.energy, g);
@@ -104,7 +113,7 @@ set_boundary(detran::BoundaryDiffusion<detran::_3D>& boundary,
       for (size_t j = 0; j < d_mesh->number_cells(dim1); ++j)
       {
         double P_s1 = (*d_basis_s[index.surface][1])(index.space1, j);
-        BoundaryValue<_3D>::value(b, i, j) = P_e * P_s0 * P_s1;
+        BoundaryValue<_3D>::value(b, i, j) = sign * P_e * P_s0 * P_s1;
       }
     }
   }
@@ -215,15 +224,10 @@ expand(const detran::BoundaryDiffusion<detran::_2D>  &boundary,
     for (size_t g = 0; g < n_g; ++g)
     {
       const B_T::value_type &b = boundary(surface, g, boundary.OUT);
-      for (int i = 0; i < 10; ++i)
-      {
-        std::cout << " out curr = " << BoundaryValue<_2D>::value(b, i, 0) << std::endl;
-      }
       d_basis_s[surface][0]->transform(b, Rs);
       for (size_t s = 0; s < Rs.size(); ++s)
       {
         R[s][g] = Rs[s];
-        //std::cout << " R[" << s << "][" << g << "] = " <<  R[s][g] << std::endl;
       }
     }
     // Expand the result in energy, [spatial moments][energy moments]
@@ -249,11 +253,6 @@ expand(const detran::BoundaryDiffusion<detran::_2D>  &boundary,
       double poo = std::pow(sign, index_o.space0);
       response->boundary_response(index_o.nodal, index_i.nodal) =
         poo * R[index_o.space0][index_o.energy];
-//      if (index_o.nodal == 1 and index_i.nodal == 1)
-//      {
-//        std::cout << index_i << index_o << " poo = " << poo << std::endl;
-//        THROW("lalala");
-//      }
     }
   }
 
@@ -314,10 +313,127 @@ expand(const detran::BoundaryDiffusion<detran::_3D>  &boundary,
   typedef BoundaryTraits<_3D> B_T;
   typedef BoundaryValue<_3D> B_V;
 
+  //-------------------------------------------------------------------------//
+  // CURRENT RESPONSE
+  //-------------------------------------------------------------------------//
+
   for (size_t surface = 0; surface < 6; ++surface)
   {
+    size_t o_s0 = d_basis_s[surface][0]->order();
+    size_t o_s1 = d_basis_s[surface][1]->order();
+    size_t o_e  = d_basis_e[surface]->order();
+    size_t n_g  = d_material->number_groups();
 
+    size_t dim  = surface / 2;
+    size_t dim0 = d_spatial_dim[dim][0];
+    size_t dim1 = d_spatial_dim[dim][1];
+
+    // Temporary response container
+    vec3_dbl R(o_s0 + 1, vec2_dbl(o_s1 + 1, vec_dbl(n_g, 0.0)));
+
+    for (size_t g = 0; g < n_g; ++g)
+    {
+      const B_T::value_type &b = boundary(surface, g, boundary.OUT);
+
+      // Expand the first spatial variable
+      vec2_dbl R_s0m_s1(o_s0 + 1, vec_dbl(b.size(), 0.0));
+      vec_dbl s0m(o_s0 + 1, 0);
+      for (size_t i = 0; i < b.size(); ++i) // For all s1
+      {
+        d_basis_s[surface][0]->transform(b[i], s0m);
+        for (size_t j = 0; j < s0m.size(); ++j)
+          R_s0m_s1[j][i] = s0m[j];
+      }
+      // Expand the second spatial variable
+      vec_dbl s1m(o_s1 + 1, 0);
+      for (size_t i = 0; i < R_s0m_s1.size(); ++i) // for all s0m
+      {
+        d_basis_s[surface][1]->transform(R_s0m_s1[i], s1m);
+        for (size_t j = 0; j < s1m.size(); ++j)
+          R[i][j][g] = s1m[j];
+      }
+    }
+    // Expand the result in energy
+    for (size_t i = 0; i < R.size(); ++i)
+    {
+      for (size_t j = 0; j < R[0].size(); ++j)
+      {
+        vec_dbl R_g(o_e + 1, 0.0);
+        d_basis_e[surface]->transform(R[i][j], R_g);
+        R[i][j] = R_g;
+      }
+    }
+
+    // Sign switch saves us from integrating in reverse direction.  This
+    // assumes, of course, that basis functions are strictly even/odd.
+    double sign = 1;
+    if (surface == d_mesh->EAST  or
+        surface == d_mesh->SOUTH or
+        surface == d_mesh->BOTTOM)
+    {
+      sign = -1;
+    }
+    // Fill the response container with only the *needed* values
+    size_t nm = d_indexer->number_surface_moments(index_i.node, surface);
+    for (size_t m = 0; m < nm; ++m)
+    {
+      ResponseIndex index_o =
+        d_indexer->response_index(index_i.node, surface,m);
+      double poo = std::pow(sign, index_o.space0 + index_o.space1);
+      response->boundary_response(index_o.nodal, index_i.nodal) =
+        poo * R[index_o.space0][index_o.space1][index_o.energy];
+    }
   }
+
+  //-------------------------------------------------------------------------//
+  // LEAKAGE RESPONSE
+  //-------------------------------------------------------------------------//
+
+  for (size_t surface = 0; surface < 6; ++surface)
+  {
+    size_t dim  = surface / 2;
+    size_t dim0 = d_spatial_dim[dim][0];
+    size_t dim1 = d_spatial_dim[dim][1];
+    response->leakage_response(surface, index_i.nodal) = 0.0;
+    for (size_t g = 0; g < d_material->number_groups(); ++g)
+    {
+      const B_T::value_type &bo = boundary(surface, g, boundary.OUT);
+      const B_T::value_type &bi = boundary(surface, g, boundary.IN);
+
+      for (size_t i = 0; i < bo.size(); ++i)
+      {
+        double dx = d_mesh->width(dim1, i);
+        for (size_t j = 0; j < bo[0].size(); ++j)
+        {
+          double dy = d_mesh->width(dim0, j);
+          double da = dx * dy;
+          response->leakage_response(surface, index_i.nodal) +=
+            da * (B_V::value(bo, i, j) - B_V::value(bi, i, j));
+        }
+      }
+    }
+  }
+
+  //-------------------------------------------------------------------------//
+  // FISSION & ABSORPTION
+  //-------------------------------------------------------------------------//
+
+  typename Solver_T::SP_state state = d_solver->state();
+  const vec_int &mat_map = d_mesh->mesh_map("MATERIAL");
+  response->fission_response(index_i.nodal) = 0.0;
+  response->absorption_response(index_i.nodal) = 0.0;
+  for (size_t g = 0; g < d_material->number_groups(); ++g)
+  {
+    for (size_t i = 0; i < d_mesh->number_cells(); ++i)
+    {
+      double phi_times_volume = d_mesh->volume(i) * state->phi(g)[i];
+      response->fission_response(index_i.nodal) +=
+         phi_times_volume * d_material->nu_sigma_f(mat_map[i], g);
+      response->absorption_response(index_i.nodal) +=
+         phi_times_volume * d_material->sigma_a(mat_map[i], g);
+    }
+  }
+
 }
 
 
@@ -329,8 +445,8 @@ expand(const detran::BoundaryDiffusion<detran::_3D>  &boundary,
 template <>
 template <>
 void ResponseSourceDetran<detran::_1D>::
-set_boundary(detran::BoundarySN<detran::_1D>& boundary,
-             const ResponseIndex &index)
+set_boundary(detran::BoundarySN<detran::_1D>   &boundary,
+             const ResponseIndex               &index)
 {
 
 }
