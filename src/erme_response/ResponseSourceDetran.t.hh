@@ -59,9 +59,15 @@ set_boundary(detran::BoundaryDiffusion<detran::_2D>& boundary,
              const ResponseIndex &index)
 {
   using namespace detran;
+  double sign = 1.0;
+  if ((index.surface == d_mesh->WEST or
+       index.surface == d_mesh->NORTH) and index.space0 % 2)
+  {
+    sign = -1.0;
+  }
   for (size_t g = 0; g < d_material->number_groups(); ++g)
   {
-    double P_e = (*d_basis_e[index.surface])(index.energy, g);
+    double P_e = sign * (*d_basis_e[index.surface])(index.energy, g);
     size_t dim  = index.surface / 2;
     size_t dim0 = d_spatial_dim[dim][0];
     BoundaryTraits<_2D>::value_type
@@ -69,7 +75,7 @@ set_boundary(detran::BoundaryDiffusion<detran::_2D>& boundary,
     for (size_t i = 0; i < d_mesh->number_cells(dim0); ++i)
     {
       double P_s0 = (*d_basis_s[index.surface][0])(index.space0, i);
-      BoundaryValue<_2D>::value(b, i, 0) = P_e * P_s0;
+      BoundaryValue<_2D>::value(b, i, 0) =  P_e * P_s0;
     }
   }
 }
@@ -217,15 +223,27 @@ expand(const detran::BoundaryDiffusion<detran::_2D>  &boundary,
       d_basis_e[surface]->transform(R[s], R_g);
       R[s] = R_g;
     }
+    // Sign switch saves us from integrating in reverse direction.  This
+    // assumes, of course, that basis functions are strictly even/odd.
+    double sign = 1;
+    if (surface == d_mesh->EAST or surface == d_mesh->SOUTH or
+        surface == d_mesh->BOTTOM)
+    {
+      sign = -1;
+    }
     // Fill the response container with only the *needed* values
     size_t nm = d_indexer->number_surface_moments(index_i.node, surface);
     for (size_t m = 0; m < nm; ++m)
     {
       ResponseIndex index_o = d_indexer->response_index(index_i.node, surface, m);
-      // Polarity switch saves us from integrating in reverse direction.
-      double polarity = std::pow(-1.0, index_o.even_odd);
+      double poo = std::pow(sign, index_o.space0);
       response->boundary_response(index_o.nodal, index_i.nodal) =
-        polarity * R[index_o.space0][index_o.energy];
+        poo * R[index_o.space0][index_o.energy];
+//      if (index_o.nodal == 1 and index_i.nodal == 1)
+//      {
+//        std::cout << index_i << index_o << " poo = " << poo << std::endl;
+//        THROW("lalala");
+//      }
     }
   }
 
