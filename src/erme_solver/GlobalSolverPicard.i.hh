@@ -39,11 +39,11 @@ void GlobalSolverPicard::solve()
 
   // Compute initial responses
   update_response(keff);
-  d_R->display(d_R->MATLAB, "R.out");
-  d_M->display(d_R->MATLAB, "M.out");
-  d_L->display(d_L->MATLAB, "L.out");
-  d_F->display();
-  d_A->display();
+//  d_R->display(d_R->MATLAB, "R.out");
+//  d_M->display(d_R->MATLAB, "M.out");
+//  d_L->display(d_L->MATLAB, "L.out");
+//  d_F->display();
+//  d_A->display();
   // Initialize balance parameters
   double loss       = 0;
   double gain       = 0;
@@ -97,11 +97,11 @@ void GlobalSolverPicard::solve()
 
     // Update the responses
     update_response(keff);
-    d_R->display(d_R->MATLAB, "R.out");
-    d_M->display(d_R->MATLAB, "M.out");
-    d_L->display(d_L->MATLAB, "L.out");
-    d_F->display();
-    d_A->display();
+//    d_R->display(d_R->MATLAB, "R.out");
+//    d_M->display(d_R->MATLAB, "M.out");
+//    d_L->display(d_L->MATLAB, "L.out");
+//    d_F->display();
+//    d_A->display();
     // Compute the norm of the nonlinear residual.
     norm = d_residual->compute_norm(*d_J0, keff, lambda);
 

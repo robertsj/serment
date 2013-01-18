@@ -13,6 +13,7 @@
 namespace erme_geometry
 {
 
+//---------------------------------------------------------------------------//
 CartesianNodeDummy::CartesianNodeDummy(const size_t dim,
                                        const size_t so,
                                        const size_t po,
@@ -28,7 +29,6 @@ CartesianNodeDummy::CartesianNodeDummy(const size_t dim,
 {
   /* ... */
 }
-
 
 } // end namespace erme_geometry
 

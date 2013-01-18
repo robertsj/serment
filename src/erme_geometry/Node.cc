@@ -1,9 +1,9 @@
 //----------------------------------*-C++-*----------------------------------//
-/*!
- * \file   Node.cc
- * \brief  Node 
- * \author Jeremy Roberts
- * \date   Aug 22, 2012
+/**
+ *  @file   Node.cc
+ *  @brief  Node
+ *  @author Jeremy Roberts
+ *  @date   Aug 22, 2012
  */
 //---------------------------------------------------------------------------//
 
@@ -29,7 +29,6 @@ Node::Node(const size_t  dimension,
   , d_azimuthal_order(ao)
   , d_energy_order(eo)
 {
-  // Preconditions
   Require(d_dimension > 0 and d_dimension <= 3);
   Require(d_number_surfaces > 0);
   Require(d_spatial_order.size()    == d_number_surfaces);
@@ -44,7 +43,7 @@ Node::~Node()
   /* ... */
 }
 
-
+//---------------------------------------------------------------------------//
 void Node::display() const
 {
   std::cout << "----------------------------" << std::endl;

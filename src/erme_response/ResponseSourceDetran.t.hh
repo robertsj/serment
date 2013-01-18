@@ -87,8 +87,8 @@ set_boundary(detran::BoundaryDiffusion<detran::_2D>& boundary,
 template <>
 template <>
 void ResponseSourceDetran<detran::_3D>::
-set_boundary(detran::BoundaryDiffusion<detran::_3D>& boundary,
-             const ResponseIndex &index)
+set_boundary(detran::BoundaryDiffusion<detran::_3D>  &boundary,
+             const ResponseIndex                     &index)
 {
   using namespace detran;
   double sign = 1.0;
@@ -106,7 +106,7 @@ set_boundary(detran::BoundaryDiffusion<detran::_3D>& boundary,
     size_t dim0 = d_spatial_dim[dim][0];
     size_t dim1 = d_spatial_dim[dim][1];
     BoundaryTraits<_3D>::value_type
-      &b = boundary(g, index.surface, boundary.IN);
+      &b = boundary(index.surface, g, boundary.IN);
     for (size_t i = 0; i < d_mesh->number_cells(dim0); ++i)
     {
       double P_s0 = (*d_basis_s[index.surface][0])(index.space0, i);

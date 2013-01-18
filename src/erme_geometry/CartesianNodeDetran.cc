@@ -31,15 +31,17 @@ CartesianNodeDetran::CartesianNodeDetran(const size_t  dim,
   , d_material(nodematerial)
   , d_mesh(nodemesh)
 {
-  // Preconditions
   Require(d_db);
   Require(d_material);
   Require(d_mesh);
   Require(d_mesh->dimension() == dimension());
+  Require(detran_utilities::soft_equiv(d_mesh->total_width_x(), width(0)));
+  Require(detran_utilities::soft_equiv(d_mesh->total_width_y(), width(1)));
+  Require(detran_utilities::soft_equiv(d_mesh->total_width_z(), width(2)));
 }
 
 //---------------------------------------------------------------------------//
-double CartesianNodeDetran::color(Point point)
+double CartesianNodeDetran::color(Point point, std::string key)
 {
   size_t ijk[] = {0, 0, 0};
   double xyz[] = {point.x(), point.y(), point.z()};
@@ -52,8 +54,10 @@ double CartesianNodeDetran::color(Point point)
     ijk[d] = i;
   }
   size_t idx = d_mesh->index(ijk[0], ijk[1], ijk[2]);
-  const vec_int &mat_map = d_mesh->mesh_map("MATERIAL");
-  return mat_map[idx];
+  Insist(d_mesh->mesh_map_exists(key),
+         "Key used for CartesianNodeDetran coloring does not exist!");
+  const vec_int &mat_map = d_mesh->mesh_map(key);
+  return (double)mat_map[idx];
 }
 
 } // end namespace erme_geometry

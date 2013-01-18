@@ -85,7 +85,7 @@ public:
   }
 
   /// Return the color associated with the spatial coordinate.
-  virtual double color(Point point) = 0;
+  virtual double color(Point point, std::string key = "MATERIAL") = 0;
 
 private:
 

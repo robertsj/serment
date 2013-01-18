@@ -64,13 +64,7 @@ public:
                         vec_size_t    po,
                         vec_size_t    ao,
                         vec_size_t    eo,
-                        vec_dbl       nodewidth)
-  {
-    SP_node p(new CartesianNode(dimension, nodename,
-                                so, po, ao, eo, nodewidth));
-    return p;
-  }
-
+                        vec_dbl       nodewidth);
 
   //-------------------------------------------------------------------------//
   // ABSTRACT INTERFACE
@@ -80,38 +74,19 @@ public:
    *  @brief Return the area of a node surface
    *  @param surface    Surface index
    */
-  double area(const size_t surface) const
-  {
-    Require(surface < number_surfaces());
-    if (surface == 0 or surface == 1)
-      return d_width[1] * d_width[2];
-    if (surface == 2 or surface == 3)
-      return d_width[0] * d_width[2];
-    return d_width[0] * d_width[1];
-  }
+  double area(const size_t surface) const;
 
   /// Return the volume of the node
-  double volume() const
-  {
-    return d_width[0] * d_width[1] * d_width[2];
-  }
+  double volume() const;
 
   /// Default color.  Am I in the box or not?
-  virtual double color(Point point)
-  {
-    Point point_local = point;
-    if ( (point_local.x() < 0.0) or
-         (point_local.y() < 0.0) or
-         (point_local.z() < 0.0) or
-         (point_local.x() > d_width[0]) or
-         (point_local.y() > d_width[1]) or
-         (point_local.z() > d_width[2]) )
-    {
-      return -1.0;
-    }
-    return (double) 1.0;
-  }
+  double color(Point point, std::string = "MATERIAL");
 
+  //-------------------------------------------------------------------------//
+  // PUBLIC FUNCTIONS
+  //-------------------------------------------------------------------------//
+
+  double width(const size_t dim) const;
 
 private:
 

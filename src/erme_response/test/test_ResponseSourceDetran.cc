@@ -74,7 +74,7 @@ int test_ResponseSourceDetran_1D_DIFF(int argc, char *argv[])
   // Mesh
   vec_int fm(1, 10);
   vec_dbl cm(2, 0);
-  cm[1] = 1.0;
+  cm[1] = 10.0;
   vec_int mt(1, 0);
   detran_geometry::Mesh::SP_mesh mesh;
   mesh = detran_geometry::Mesh1D::Create(fm, cm, mt);
@@ -188,11 +188,11 @@ int test_ResponseSourceDetran_2D_DIFF(int argc, char *argv[])
   // Mesh
   vec_int fm(1, 10);
   vec_dbl cm(2, 0);
-  cm[1] = 1.0;
+  cm[1] = 10.0;
   vec_int mt(1, 0);
   detran_geometry::Mesh::SP_mesh mesh;
   mesh = detran_geometry::Mesh2D::Create(fm, fm, cm, cm, mt);
-
+  mesh->display();
   // Material
   detran_material::Material::SP_material mat;
   mat = detran_material::Material::Create(1, 2);
@@ -211,7 +211,7 @@ int test_ResponseSourceDetran_2D_DIFF(int argc, char *argv[])
   vec_size_t  ao(4, 0);
   vec_size_t  po(4, 0);
   vec_size_t  eo(4, 1);
-  vec_dbl     width(3, 1.0); width[0] = 10.0;
+  vec_dbl     width(3, 10.0); width[2] = 1.0;
   typename Source_T::SP_node node(new erme_geometry::
     CartesianNodeDetran(2, "lala", so, ao, po, eo, width, db, mat, mesh));
 

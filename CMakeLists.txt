@@ -31,6 +31,13 @@ list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/tools/CMake")
 # USER OPTIONS
 #------------------------------------------------------------------------------#
 
+## Pedantic
+#set(CMAKE_CXX_FLAGS_DEBUG "-g -O0 -Wextra -Wall -ansi -pedantic" CACHE STRING 
+#    "Flags used by the CXX compiler during normal builds." FORCE)
+
+## Verbose build
+#set(CMAKE_VERBOSE_MAKEFILE ON)
+
 # Set the default build type (debug)
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Debug CACHE STRING
@@ -140,40 +147,40 @@ include_directories( "${PROJECT_BINARY_DIR}/config" )
 
 option( USE_TESTING "Build testing" OFF )
 if ( SERMENT_ENABLE_TEST )
-    SET ( CTEST_INITIAL_CACHE "
-      COVERAGE_COMMAND:FILEPATH=/usr/bin/gcov
-    " )
-    # need for coverage -- probably a cleaner way to set this up.
-    set( CMAKE_CXX_FLAGS_DEBUG        
-         "-g -O0  -fprofile-arcs -ftest-coverage" CACHE STRING 
-         "Choose"
-         FORCE
-    )
-    set( CMAKE_CXX_FLAGS        
-         "-g -O0  -fprofile-arcs -ftest-coverage" CACHE STRING
-         "Choose"
-         FORCE
-    )
-    set( CMAKE_C_FLAGS_DEBUG          
-         "-g -O0  -fprofile-arcs -ftest-coverage" CACHE STRING
-         "Choose"
-         FORCE
-    )
-    set( CMAKE_EXE_LINKER_FLAGS 
-         "-g -O0  -fprofile-arcs -ftest-coverage" CACHE STRING
-         "Choose"
-         FORCE
-    )
-    set( CTEST_MEMORYCHECK_COMMAND 
-       /home/robertsj/opt/valgrind/3.6.1/bin/valgrind CACHE STRING 
-       "Set the memory checking command."
-       FORCE
-    )
-    set( CTEST_MEMORYCHECK_COMMAND_OPTIONS 
-       "--tool=memcheck --leak-check=full" CACHE STRING 
-       "Set the memory checking command options."
-       FORCE
-    ) 
+#    SET ( CTEST_INITIAL_CACHE "
+#      COVERAGE_COMMAND:FILEPATH=/usr/bin/gcov
+#    " )
+#    # need for coverage -- probably a cleaner way to set this up.
+#    set( CMAKE_CXX_FLAGS_DEBUG        
+#         "-g -O0  -fprofile-arcs -ftest-coverage" CACHE STRING 
+#         "Choose"
+#         FORCE
+#    )
+#    set( CMAKE_CXX_FLAGS        
+#         "-g -O0  -fprofile-arcs -ftest-coverage" CACHE STRING
+#         "Choose"
+#         FORCE
+#    )
+#    set( CMAKE_C_FLAGS_DEBUG          
+#         "-g -O0  -fprofile-arcs -ftest-coverage" CACHE STRING
+#         "Choose"
+#         FORCE
+#    )
+#    set( CMAKE_EXE_LINKER_FLAGS 
+#         "-g -O0  -fprofile-arcs -ftest-coverage" CACHE STRING
+#         "Choose"
+#         FORCE
+#    )
+#    set( CTEST_MEMORYCHECK_COMMAND 
+#       /home/robertsj/opt/valgrind/3.6.1/bin/valgrind CACHE STRING 
+#       "Set the memory checking command."
+#       FORCE
+#    )
+#    set( CTEST_MEMORYCHECK_COMMAND_OPTIONS 
+#       "--tool=memcheck --leak-check=full" CACHE STRING 
+#       "Set the memory checking command options."
+#       FORCE
+#    ) 
     enable_testing()
     include(CTest)
     include_directories(src/linear_algebra/test)

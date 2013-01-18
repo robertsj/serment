@@ -92,6 +92,13 @@ void NodeList::set_nodal_map(const vec_int          &node_map,
 }
 
 //---------------------------------------------------------------------------//
+NodeList::Point NodeList::origin(const size_t node_g) const
+{
+  Require(node_g < number_global_nodes());
+  return d_origins[node_g];
+}
+
+//---------------------------------------------------------------------------//
 void NodeList::display() const
 {
   if (serment_comm::Comm::rank() == 0)

@@ -215,6 +215,9 @@ public:
     return d_is_finalized;
   }
 
+  /// Return the origin of a global node
+  Point origin(const size_t node_g) const;
+
   /// Display all the nodes in the list
   void display() const;
 

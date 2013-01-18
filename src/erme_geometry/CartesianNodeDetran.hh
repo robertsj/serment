@@ -7,8 +7,8 @@
  */
 //---------------------------------------------------------------------------//
 
-#ifndef CARTESIANNODEDETRAN_HH_
-#define CARTESIANNODEDETRAN_HH_
+#ifndef erme_geometry_CARTESIANNODEDETRAN_HH_
+#define erme_geometry_CARTESIANNODEDETRAN_HH_
 
 #include "CartesianNode.hh"
 #include "utilities/InputDB.hh"
@@ -92,7 +92,7 @@ public:
    *  Note, this is most sensible if all the nodes use the same
    *  material database.
    */
-  double color(Point point);
+  double color(Point point, std::string key = "MATERIAL");
 
   //-------------------------------------------------------------------------//
   // DETRAN-SPECIFIC INTERFACE
@@ -147,9 +147,7 @@ private:
 
 } // end namespace erme_geometry
 
-//BOOST_CLASS_EXPORT_KEY(erme_geometry::CartesianNodeDetran)
-
-#endif // CARTESIANNODEDETRAN_HH_ 
+#endif // erme_geometry_CARTESIANNODEDETRAN_HH_
 
 //---------------------------------------------------------------------------//
 //              end of file CartesianNodeDetran.hh
