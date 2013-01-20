@@ -16,7 +16,8 @@ namespace erme_response
 
 //---------------------------------------------------------------------------//
 template <class D>
-ResponseSourceDetran<D>::ResponseSourceDetran(SP_node node, SP_indexer indexer)
+ResponseSourceDetran<D>::ResponseSourceDetran(SP_node node,
+                                              SP_indexer indexer)
   : ResponseSource(node, indexer)
   , d_basis_e(node->number_surfaces())
   , d_basis_s(node->number_surfaces(), vec_basis(D::dimension-1))
@@ -83,7 +84,7 @@ compute(SP_response response, const ResponseIndex &index)
   if (d_solver->discretization() == d_solver->DIFF)
   {
     typename BoundaryDiffusion<D>::SP_boundary b = d_solver->boundary();
-    set_boundary(*b, index);
+    //set_boundary(*b, index);
   }
   else if (d_solver->discretization() == d_solver->SN)
   {
@@ -108,12 +109,12 @@ compute(SP_response response, const ResponseIndex &index)
   if (d_solver->discretization() == d_solver->DIFF)
   {
     typename BoundaryDiffusion<D>::SP_boundary b = d_solver->boundary();
-    expand(*b, response, index);
+    //expand(*b, response, index);
   }
   else if (d_solver->discretization() == d_solver->SN)
   {
     typename BoundarySN<D>::SP_boundary b = d_solver->boundary();
-    //expand(*b, index, response);
+    expand(*b, index, response);
   }
   else if (d_solver->discretization() == d_solver->MOC)
   {
@@ -204,12 +205,57 @@ void ResponseSourceDetran<D>::construct_basis()
 }
 
 //---------------------------------------------------------------------------//
+template <class D>
+void ResponseSourceDetran<D>::expand_flux(SP_response           response,
+                                          const ResponseIndex  &index_i)
+{
+  //-------------------------------------------------------------------------//
+  // FISSION & ABSORPTION
+  //-------------------------------------------------------------------------//
+
+  typename Solver_T::SP_state state = d_solver->state();
+  const vec_int &mat_map = d_mesh->mesh_map("MATERIAL");
+  response->fission_response(index_i.nodal) = 0.0;
+  response->absorption_response(index_i.nodal) = 0.0;
+  for (size_t g = 0; g < d_material->number_groups(); ++g)
+  {
+    for (size_t i = 0; i < d_mesh->number_cells(); ++i)
+    {
+      double phi_times_volume = d_mesh->volume(i) * state->phi(g)[i];
+      response->fission_response(index_i.nodal) +=
+         phi_times_volume * d_material->nu_sigma_f(mat_map[i], g);
+      response->absorption_response(index_i.nodal) +=
+         phi_times_volume * d_material->sigma_a(mat_map[i], g);
+    }
+  }
+}
+
+//---------------------------------------------------------------------------//
 // EXPLICIT INSTANTIATIONS
 //---------------------------------------------------------------------------//
 
 template class ResponseSourceDetran<detran::_1D>;
 template class ResponseSourceDetran<detran::_2D>;
 template class ResponseSourceDetran<detran::_3D>;
+
+//template <>
+//template <>
+//void ResponseSourceDetran<detran::_1D>::
+//expand(const detran::BoundarySN<detran::_1D>  &boundary,
+//       SP_response                             response,
+//       const ResponseIndex                     &index_i);
+//template <>
+//template <>
+//void ResponseSourceDetran<detran::_2D>::
+//expand(const detran::BoundarySN<detran::_2D>  &boundary,
+//       SP_response                             response,
+//       const ResponseIndex                     &index_i);
+//template <>
+//template <>
+//void ResponseSourceDetran<detran::_3D>::
+//expand(const detran::BoundarySN<detran::_3D>  &boundary,
+//       SP_response                             response,
+//       const ResponseIndex                     &index_i);
 
 } // end namespace erme_response
 

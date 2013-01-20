@@ -173,24 +173,10 @@ expand(const detran::BoundaryDiffusion<detran::_1D>  &boundary,
   }
 
   //-------------------------------------------------------------------------//
-  // FISSION & ABSORPTION
+  // FLUX RESPONSES
   //-------------------------------------------------------------------------//
 
-  typename Solver_T::SP_state state = d_solver->state();
-  const vec_int &mat_map = d_mesh->mesh_map("MATERIAL");
-  response->fission_response(index_i.nodal) = 0.0;
-  response->absorption_response(index_i.nodal) = 0.0;
-  for (size_t g = 0; g < d_material->number_groups(); ++g)
-  {
-    for (size_t i = 0; i < d_mesh->number_cells(); ++i)
-    {
-      double phi_times_volume = d_mesh->volume(i) * state->phi(g)[i];
-      response->fission_response(index_i.nodal) +=
-         phi_times_volume * d_material->nu_sigma_f(mat_map[i], g);
-      response->absorption_response(index_i.nodal) +=
-         phi_times_volume * d_material->sigma_a(mat_map[i], g);
-    }
-  }
+  expand_flux(response, index_i);
 
 }
 
@@ -280,24 +266,10 @@ expand(const detran::BoundaryDiffusion<detran::_2D>  &boundary,
   }
 
   //-------------------------------------------------------------------------//
-  // FISSION & ABSORPTION
+  // FLUX RESPONSES
   //-------------------------------------------------------------------------//
 
-  typename Solver_T::SP_state state = d_solver->state();
-  const vec_int &mat_map = d_mesh->mesh_map("MATERIAL");
-  response->fission_response(index_i.nodal) = 0.0;
-  response->absorption_response(index_i.nodal) = 0.0;
-  for (size_t g = 0; g < d_material->number_groups(); ++g)
-  {
-    for (size_t i = 0; i < d_mesh->number_cells(); ++i)
-    {
-      double phi_times_volume = d_mesh->volume(i) * state->phi(g)[i];
-      response->fission_response(index_i.nodal) +=
-         phi_times_volume * d_material->nu_sigma_f(mat_map[i], g);
-      response->absorption_response(index_i.nodal) +=
-         phi_times_volume * d_material->sigma_a(mat_map[i], g);
-    }
-  }
+  expand_flux(response, index_i);
 
 }
 
@@ -415,24 +387,10 @@ expand(const detran::BoundaryDiffusion<detran::_3D>  &boundary,
   }
 
   //-------------------------------------------------------------------------//
-  // FISSION & ABSORPTION
+  // FLUX RESPONSES
   //-------------------------------------------------------------------------//
 
-  typename Solver_T::SP_state state = d_solver->state();
-  const vec_int &mat_map = d_mesh->mesh_map("MATERIAL");
-  response->fission_response(index_i.nodal) = 0.0;
-  response->absorption_response(index_i.nodal) = 0.0;
-  for (size_t g = 0; g < d_material->number_groups(); ++g)
-  {
-    for (size_t i = 0; i < d_mesh->number_cells(); ++i)
-    {
-      double phi_times_volume = d_mesh->volume(i) * state->phi(g)[i];
-      response->fission_response(index_i.nodal) +=
-         phi_times_volume * d_material->nu_sigma_f(mat_map[i], g);
-      response->absorption_response(index_i.nodal) +=
-         phi_times_volume * d_material->sigma_a(mat_map[i], g);
-    }
-  }
+  expand_flux(response, index_i);
 
 }
 
@@ -446,8 +404,108 @@ template <>
 template <>
 void ResponseSourceDetran<detran::_1D>::
 set_boundary(detran::BoundarySN<detran::_1D>   &boundary,
-             const ResponseIndex               &index)
+             const ResponseIndex               &index_i)
 {
+  std::cout << "SETTING SOURCE: " << index_i << std::endl;
+  using namespace detran;
+  size_t octant = d_quadrature->incident_octant(index_i.surface)[0];
+  for (size_t g = 0; g < d_material->number_groups(); ++g)
+  {
+    double P_e = (*d_basis_e[index_i.surface])(index_i.energy, g);
+    for (size_t p = 0; p < d_quadrature->number_angles_octant(); ++p)
+    {
+      BoundaryTraits<_1D>::value_type
+        &b = boundary(index_i.surface, octant, p, g);
+      // \todo This is hard-coding an angular flux expansion
+      double P_p = (*d_basis_p[index_i.surface])(index_i.polar, p);
+      BoundaryValue<_1D>::value(b) =  P_e * P_p;
+    }
+  }
+}
+
+//---------------------------------------------------------------------------//
+template <>
+template <>
+void ResponseSourceDetran<detran::_1D>::
+expand(const detran::BoundarySN<detran::_1D>  &boundary,
+       SP_response                             response,
+       const ResponseIndex                     &index_i)
+{
+  using namespace detran;
+  typedef BoundaryTraits<_1D> B_T;
+  typedef BoundaryValue<_1D> B_V;
+  THROW("lalala");
+  //-------------------------------------------------------------------------//
+  // CURRENT RESPONSE
+  //-------------------------------------------------------------------------//
+
+  for (size_t surface = 0; surface < 2; ++surface)
+  {
+    size_t o_p = d_basis_p[surface]->order();
+    size_t o_e = d_basis_e[surface]->order();
+    size_t n_g = d_material->number_groups();
+    size_t octant = d_quadrature->outgoing_octant(surface)[0];
+
+    // Temporary response container
+    vec2_dbl R(o_p + 1, vec_dbl(n_g, 0.0));
+    vec_dbl Rp(o_p + 1, 0);
+
+    // First expand in angle, [angle moments][energy groups]
+    for (size_t g = 0; g < n_g; ++g)
+    {
+      vec_dbl psi_g(d_quadrature->number_angles_octant(), 0.0);
+      for (size_t p = 0; p < d_quadrature->number_angles_octant(); ++p)
+      {
+        // \todo This hardcodes an expansion of the angular flux
+        psi_g[p] = boundary(surface, octant, p, g);
+      }
+      d_basis_p[surface]->transform(psi_g, Rp);
+      for (size_t p = 0; p < Rp.size(); ++p)
+      {
+        R[p][g] = Rp[p];
+      }
+    }
+    // Expand the result in energy, [angle moments][energy moments]
+    for (size_t p = 0; p <= o_p; ++p)
+    {
+      vec_dbl R_g(o_e + 1, 0.0);
+      d_basis_e[surface]->transform(R[p], R_g);
+      R[p] = R_g;
+    }
+    // Fill the response container with only the *needed* values
+    size_t nm = d_indexer->number_surface_moments(index_i.node, surface);
+    for (size_t m = 0; m < nm; ++m)
+    {
+      ResponseIndex index_o = d_indexer->response_index(index_i.node, surface, m);
+      response->boundary_response(index_o.nodal, index_i.nodal) =
+        R[index_o.space0][index_o.energy];
+    }
+  }
+
+  //-------------------------------------------------------------------------//
+  // LEAKAGE RESPONSE
+  //-------------------------------------------------------------------------//
+
+  for (size_t surface = 0; surface < 2; ++surface)
+  {
+    size_t octant = d_quadrature->outgoing_octant(surface)[0];
+    response->leakage_response(surface, index_i.nodal) = 0.0;
+    for (size_t g = 0; g < d_material->number_groups(); ++g)
+    {
+      for (size_t p = 0; p < d_quadrature->number_angles_octant(); ++p)
+      {
+        const B_T::value_type &psi_p = boundary(surface, g, octant, p);
+        double w = d_quadrature->weight(p);
+        response->leakage_response(surface, index_i.nodal) += w * psi_p;
+      }
+    }
+  }
+
+  //-------------------------------------------------------------------------//
+  // FLUX RESPONSES
+  //-------------------------------------------------------------------------//
+
+  expand_flux(response, index_i);
 
 }
 
@@ -464,9 +522,32 @@ set_boundary(detran::BoundarySN<detran::_2D>& boundary,
 //---------------------------------------------------------------------------//
 template <>
 template <>
+void ResponseSourceDetran<detran::_2D>::
+expand(const detran::BoundarySN<detran::_2D>  &boundary,
+       SP_response                             response,
+       const ResponseIndex                     &index_i)
+{
+
+}
+
+
+//---------------------------------------------------------------------------//
+template <>
+template <>
 void ResponseSourceDetran<detran::_3D>::
 set_boundary(detran::BoundarySN<detran::_3D>& boundary,
              const ResponseIndex &index)
+{
+
+}
+
+//---------------------------------------------------------------------------//
+template <>
+template <>
+void ResponseSourceDetran<detran::_3D>::
+expand(const detran::BoundarySN<detran::_3D>  &boundary,
+       SP_response                             response,
+       const ResponseIndex                     &index_i)
 {
 
 }
@@ -484,6 +565,7 @@ set_boundary(detran::BoundaryMOC<detran::_2D>& boundary,
 {
   THROW("NOT IMPLEMENTED");
 }
+
 
 
 

@@ -1,9 +1,9 @@
 //----------------------------------*-C++-*----------------------------------//
-/*!
- * \file   NodeResponse.cc
- * \brief  NodeResponse member definitions
- * \author Jeremy Roberts
- * \date   Aug 28, 2012
+/**
+ *  @file   NodeResponse.cc
+ *  @brief  NodeResponse member definitions
+ *  @author Jeremy Roberts
+ *  @date   Aug 28, 2012
  */
 //---------------------------------------------------------------------------//
 
@@ -13,6 +13,7 @@
 namespace erme_response
 {
 
+//---------------------------------------------------------------------------//
 NodeResponse::NodeResponse(const size_t N, const size_t number_surfaces)
   : d_N(N)
   , d_number_surfaces(number_surfaces)
@@ -25,7 +26,7 @@ NodeResponse::NodeResponse(const size_t N, const size_t number_surfaces)
   Require(d_number_surfaces > 1);
 }
 
-
+//---------------------------------------------------------------------------//
 void NodeResponse::display() const
 {
   printf("\n");
