@@ -15,8 +15,8 @@ namespace erme_response
 {
 
 //---------------------------------------------------------------------------//
-template <class D>
-ResponseSourceDetran<D>::ResponseSourceDetran(SP_node node,
+template <class B>
+ResponseSourceDetran<B>::ResponseSourceDetran(SP_node node,
                                               SP_indexer indexer)
   : ResponseSource(node, indexer)
   , d_basis_e(node->number_surfaces())
@@ -68,8 +68,8 @@ ResponseSourceDetran<D>::ResponseSourceDetran(SP_node node,
 }
 
 //---------------------------------------------------------------------------//
-template <class D>
-void ResponseSourceDetran<D>::
+template <class B>
+void ResponseSourceDetran<B>::
 compute(SP_response response, const ResponseIndex &index)
 {
   using namespace detran;
@@ -81,20 +81,8 @@ compute(SP_response response, const ResponseIndex &index)
   //-------------------------------------------------------------------------//
 
   d_solver->boundary()->clear();
-  if (d_solver->discretization() == d_solver->DIFF)
-  {
-    typename BoundaryDiffusion<D>::SP_boundary b = d_solver->boundary();
-    //set_boundary(*b, index);
-  }
-  else if (d_solver->discretization() == d_solver->SN)
-  {
-    typename BoundarySN<D>::SP_boundary b = d_solver->boundary();
-    set_boundary(*b, index);
-  }
-  else if (d_solver->discretization() == d_solver->MOC)
-  {
-    THROW("NOT IMPLEMENTED");
-  }
+  typename Boundary_T::SP_boundary b = d_solver->boundary();
+  set_boundary(*b, index);
 
   //-------------------------------------------------------------------------//
   // SOLVE THE RESPONSE EQUATION
@@ -106,25 +94,13 @@ compute(SP_response response, const ResponseIndex &index)
   // EXPAND THE RESPONSE
   //-------------------------------------------------------------------------//
 
-  if (d_solver->discretization() == d_solver->DIFF)
-  {
-    typename BoundaryDiffusion<D>::SP_boundary b = d_solver->boundary();
-    //expand(*b, response, index);
-  }
-  else if (d_solver->discretization() == d_solver->SN)
-  {
-    typename BoundarySN<D>::SP_boundary b = d_solver->boundary();
-    expand(*b, index, response);
-  }
-  else if (d_solver->discretization() == d_solver->MOC)
-  {
-    THROW("NOT IMPLEMENTED");
-  }
+  expand(*b, response, index);
+
 }
 
 //---------------------------------------------------------------------------//
-template <class D>
-void ResponseSourceDetran<D>::construct_basis()
+template <class B>
+void ResponseSourceDetran<B>::construct_basis()
 {
   // @todo MOC is not incorporated yet
 
@@ -151,15 +127,22 @@ void ResponseSourceDetran<D>::construct_basis()
 
   // Loop over major dimension, direction (+/-), and secondary dimensions
   size_t s = 0;
-  for (size_t dim = 0; dim < D::dimension; ++dim)
+  for (size_t dim = 0; dim < D::dimension; ++dim) // INCIDENT DIMENSION
   {
-    for (size_t dir = 0; dir < 2; ++dir, ++s)
+    for (size_t dir = 0; dir < 2; ++dir, ++s)     // LEFT or RIGHT
     {
-      for (size_t dim01 = 0; dim01 < D::dimension - 1; ++dim01)
+      for (size_t dim01 = 0; dim01 < D::dimension - 1; ++dim01) // FREE DIMENSIONS
       {
+        size_t fd = d_spatial_dim[dim][dim01];
         d_basis_s[s][dim01] = new detran_orthog::
           DLP(d_node->spatial_order(s, dim01),
-              d_mesh->number_cells(dim), true);
+              d_mesh->number_cells(fd), true);
+        std::cout << " s=" << s
+                  << " dim = " << dim
+                  << " dim01=" << dim01
+                  << " fd = " << fd
+                  << std::endl;
+        d_basis_s[s][dim01]->basis()->display();
       }
     }
   }
@@ -192,7 +175,7 @@ void ResponseSourceDetran<D>::construct_basis()
   for (size_t s = 0; s < d_node->number_surfaces(); ++s)
     d_basis_p[s] = new detran_orthog::DLP(d_node->polar_order(s), np);
 
-  if (D::dimension > 1)
+  if (B::D_T::dimension > 1)
   {
     // Azimuth
     string basis_a_type = "dlp";
@@ -205,8 +188,8 @@ void ResponseSourceDetran<D>::construct_basis()
 }
 
 //---------------------------------------------------------------------------//
-template <class D>
-void ResponseSourceDetran<D>::expand_flux(SP_response           response,
+template <class B>
+void ResponseSourceDetran<B>::expand_flux(SP_response           response,
                                           const ResponseIndex  &index_i)
 {
   //-------------------------------------------------------------------------//
@@ -234,28 +217,13 @@ void ResponseSourceDetran<D>::expand_flux(SP_response           response,
 // EXPLICIT INSTANTIATIONS
 //---------------------------------------------------------------------------//
 
-template class ResponseSourceDetran<detran::_1D>;
-template class ResponseSourceDetran<detran::_2D>;
-template class ResponseSourceDetran<detran::_3D>;
-
-//template <>
-//template <>
-//void ResponseSourceDetran<detran::_1D>::
-//expand(const detran::BoundarySN<detran::_1D>  &boundary,
-//       SP_response                             response,
-//       const ResponseIndex                     &index_i);
-//template <>
-//template <>
-//void ResponseSourceDetran<detran::_2D>::
-//expand(const detran::BoundarySN<detran::_2D>  &boundary,
-//       SP_response                             response,
-//       const ResponseIndex                     &index_i);
-//template <>
-//template <>
-//void ResponseSourceDetran<detran::_3D>::
-//expand(const detran::BoundarySN<detran::_3D>  &boundary,
-//       SP_response                             response,
-//       const ResponseIndex                     &index_i);
+template class ResponseSourceDetran<detran::BoundaryDiffusion<detran::_1D> >;
+template class ResponseSourceDetran<detran::BoundaryDiffusion<detran::_2D> >;
+template class ResponseSourceDetran<detran::BoundaryDiffusion<detran::_3D> >;
+template class ResponseSourceDetran<detran::BoundarySN<detran::_1D> >;
+//template class ResponseSourceDetran<detran::BoundarySN<detran::_2D> >;
+//template class ResponseSourceDetran<detran::BoundarySN<detran::_3D> >;
+//template class ResponseSourceDetran<detran::BoundaryMOC<detran::_2D> >;
 
 } // end namespace erme_response
 

@@ -56,6 +56,7 @@ void Node::display() const
   for (size_t s = 0; s < d_number_surfaces; ++s)
   {
     std::cout << "  SURFACE " << s << std::endl;
+    std::cout << "       energy = " << d_energy_order[s] << std::endl;
     if (d_dimension > 1)
       std::cout << "    spatial 0 = " << d_spatial_order[s][0] << std::endl;
     if (d_dimension > 2)

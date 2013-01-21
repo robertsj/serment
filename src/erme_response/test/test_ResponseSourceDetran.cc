@@ -11,6 +11,7 @@
 #define TEST_LIST                               \
         FUNC(test_ResponseSourceDetran_1D_DIFF) \
         FUNC(test_ResponseSourceDetran_2D_DIFF) \
+        FUNC(test_ResponseSourceDetran_3D_DIFF) \
         FUNC(test_ResponseSourceDetran_1D_SN)   \
 
 #include "utilities/TestDriver.hh"
@@ -53,7 +54,8 @@ int test_ResponseSourceDetran_1D_DIFF(int argc, char *argv[])
   //-------------------------------------------------------------------------//
 
   typedef serment_comm::Comm Comm;
-  typedef ResponseSourceDetran<detran::_1D> Source_T;
+  typedef BoundaryDiffusion<_1D> Boundary_T;
+  typedef ResponseSourceDetran<Boundary_T> Source_T;
 
   Comm::initialize(argc, argv);
   if (Comm::size() > 1) return 0;
@@ -144,8 +146,8 @@ int test_ResponseSourceDetran_1D_DIFF(int argc, char *argv[])
 
   // Solver
   typename Source_T::SP_solver solver = source.solver();
-  BoundaryDiffusion<_1D>::SP_boundary b = solver->boundary();
-  BoundaryDiffusion<_1D> &boundary = *b;
+  Boundary_T::SP_boundary b = solver->boundary();
+  Boundary_T &boundary = *b;
 
   source.update(1.0);
 
@@ -167,7 +169,8 @@ int test_ResponseSourceDetran_2D_DIFF(int argc, char *argv[])
   //-------------------------------------------------------------------------//
 
   typedef serment_comm::Comm Comm;
-  typedef ResponseSourceDetran<detran::_2D> Source_T;
+  typedef BoundaryDiffusion<_2D> Boundary_T;
+  typedef ResponseSourceDetran<Boundary_T> Source_T;
 
   Comm::initialize(argc, argv);
   if (Comm::size() > 1) return 0;
@@ -208,7 +211,7 @@ int test_ResponseSourceDetran_2D_DIFF(int argc, char *argv[])
   mat->finalize();
 
   // Node
-  vec2_size_t so(4, vec_size_t(1, 1));
+  vec2_size_t so(4, vec_size_t(1, 0));
   vec_size_t  ao(4, 0);
   vec_size_t  po(4, 0);
   vec_size_t  eo(4, 1);
@@ -250,7 +253,7 @@ int test_ResponseSourceDetran_2D_DIFF(int argc, char *argv[])
   indexer->display();
 
   // Dummy response -- 4 surfaces x 2 spatial moments x 2 groups
-  detran_utilities::size_t N = 4 * 2 * 2;
+  detran_utilities::size_t N = 4 * 1 * 2;
   NodeResponse::SP_response response(new NodeResponse(N, 4));
 
   // Source
@@ -258,8 +261,132 @@ int test_ResponseSourceDetran_2D_DIFF(int argc, char *argv[])
 
   // Solver
   typename Source_T::SP_solver solver = source.solver();
-  BoundaryDiffusion<_2D>::SP_boundary b = solver->boundary();
-  BoundaryDiffusion<_2D> &boundary = *b;
+  Boundary_T::SP_boundary b = solver->boundary();
+  Boundary_T &boundary = *b;
+
+  source.update(1.0);
+
+  for (int i = 0; i < indexer->number_node_moments(0); ++i)
+  {
+    ResponseIndex index = indexer->response_index_from_unique_local(i);
+    std::cout << " INDEX = " << index << std::endl;
+    source.compute(response, index);
+  }
+  response->display();
+  return 0;
+}
+
+int test_ResponseSourceDetran_3D_DIFF(int argc, char *argv[])
+{
+
+  //-------------------------------------------------------------------------//
+  // SETUP COMM
+  //-------------------------------------------------------------------------//
+
+  typedef serment_comm::Comm Comm;
+  typedef BoundaryDiffusion<_3D> Boundary_T;
+  typedef ResponseSourceDetran<Boundary_T> Source_T;
+
+  Comm::initialize(argc, argv);
+  if (Comm::size() > 1) return 0;
+  int number_local_comm = 1;
+  Comm::setup_communicators(number_local_comm);
+
+  linear_algebra::initialize(argc, argv);
+
+  //-------------------------------------------------------------------------//
+  // SETUP DETRAN NODE
+  //-------------------------------------------------------------------------//
+
+  // Input
+  InputDB::SP_input db(new InputDB());
+  db->put<int>("number_groups", 2);
+  db->put<int>("dimension", 3);
+  db->put<std::string>("equation", "diffusion");
+
+  // Mesh
+  vec_int fm(1, 5); vec_int fm0(1, 5); vec_int fm1(1, 5);
+  vec_dbl cm(2, 0);
+  cm[1] = 10.0;
+  vec_int mt(1, 0);
+  detran_geometry::Mesh::SP_mesh mesh;
+  mesh = detran_geometry::Mesh3D::Create(fm, fm0, fm1, cm, cm, cm, mt);
+  mesh->display();
+  // Material
+  detran_material::Material::SP_material mat;
+  mat = detran_material::Material::Create(1, 2);
+  mat->set_sigma_t(0, 0, 1.0);
+  mat->set_sigma_t(0, 1, 1.0);
+  mat->set_sigma_s(0, 1, 0, 0.5);
+  mat->set_sigma_s(0, 0, 1, 0.5);
+  mat->set_sigma_f(0, 0, 0.5);
+  mat->set_chi(0, 0,     1.0);
+  mat->compute_diff_coef();
+  mat->compute_sigma_a();
+  mat->finalize();
+
+  // Node
+  vec2_size_t so(6, vec_size_t(2, 0));
+  vec_size_t  ao(6, 0);
+  vec_size_t  po(6, 0);
+  vec_size_t  eo(6, 1);
+  vec_dbl     width(3, 10.0);
+  typename Source_T::SP_node node(new erme_geometry::
+    CartesianNodeDetran(3, "lala", so, ao, po, eo, width, db, mat, mesh));
+
+  //-------------------------------------------------------------------------//
+  // NODELIST
+  //-------------------------------------------------------------------------//
+
+  /*
+   *  0 0
+   *  0 0
+   */
+
+  NodeList::vec2_neighbor
+   neighbors(4, NodeList::vec_neighbor(6, NeighborSurface(Node::REFLECT, 0)));
+  neighbors[0][CartesianNode::EAST]  = NeighborSurface(1, CartesianNode::WEST);
+  neighbors[1][CartesianNode::WEST]  = NeighborSurface(0, CartesianNode::EAST);
+  neighbors[1][CartesianNode::NORTH] = NeighborSurface(3, CartesianNode::SOUTH);
+  neighbors[3][CartesianNode::SOUTH] = NeighborSurface(1, CartesianNode::NORTH);
+  neighbors[0][CartesianNode::NORTH] = NeighborSurface(2, CartesianNode::SOUTH);
+  neighbors[2][CartesianNode::SOUTH] = NeighborSurface(0, CartesianNode::NORTH);
+  neighbors[2][CartesianNode::EAST]  = NeighborSurface(3, CartesianNode::WEST);
+  neighbors[3][CartesianNode::WEST]  = NeighborSurface(2, CartesianNode::EAST);
+
+  // Create a map [0, 0, 0]
+  NodeList::vec_int nodemap(4, 0);
+
+  // Node list
+  NodeList::SP_nodelist nodes = NodeList::Create();
+  nodes->add_node(node);
+  nodes->set_nodal_map(nodemap, neighbors);
+
+  // Partition
+  NodePartitioner P;
+  P.partition(nodes);
+
+  //-------------------------------------------------------------------------//
+  // RESPONSE AND SOURCE
+  //-------------------------------------------------------------------------//
+
+  // Indexer
+  db->put<int>("erme_order_reduction", 0);
+  ResponseIndexer::SP_indexer indexer(new ResponseIndexer(db, nodes));
+
+  indexer->display();
+
+  // Dummy response -- 6 surfaces x 2 spatial moments x 2 groups
+  detran_utilities::size_t N = 6 * 1 * 2;
+  NodeResponse::SP_response response(new NodeResponse(N, 6));
+
+  // Source
+  Source_T source(node, indexer);
+
+  // Solver
+  typename Source_T::SP_solver solver = source.solver();
+  Boundary_T::SP_boundary b = solver->boundary();
+  Boundary_T &boundary = *b;
 
   source.update(1.0);
 
@@ -275,13 +402,13 @@ int test_ResponseSourceDetran_2D_DIFF(int argc, char *argv[])
 
 int test_ResponseSourceDetran_1D_SN(int argc, char *argv[])
 {
-
   //-------------------------------------------------------------------------//
   // SETUP COMM
   //-------------------------------------------------------------------------//
 
   typedef serment_comm::Comm Comm;
-  typedef ResponseSourceDetran<detran::_1D> Source_T;
+  typedef BoundarySN<_1D> Boundary_T;
+  typedef ResponseSourceDetran<Boundary_T> Source_T;
 
   Comm::initialize(argc, argv);
   if (Comm::size() > 1) return 0;
@@ -375,6 +502,7 @@ int test_ResponseSourceDetran_1D_SN(int argc, char *argv[])
   typename Source_T::SP_solver solver = source.solver();
   BoundarySN<_1D>::SP_boundary b = solver->boundary();
   BoundarySN<_1D> &boundary = *b;
+  nodes->display();
 
   source.update(1.0);
 

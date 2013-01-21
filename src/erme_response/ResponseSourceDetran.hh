@@ -14,6 +14,9 @@
 #include "erme_geometry/CartesianNodeDetran.hh"
 #include "orthog/OrthogonalBasis.hh"
 #include "solvers/FixedSourceManager.hh"
+#include "boundary/BoundaryDiffusion.hh"
+#include "boundary/BoundarySN.hh"
+#include "boundary/BoundaryMOC.hh"
 #include "boundary/BoundaryBase.hh"
 #include "boundary/BoundaryTraits.hh"
 #include "angle/ProductQuadrature.hh"
@@ -24,8 +27,9 @@ namespace erme_response
 /**
  *  @class ResponseSourceDetran
  *  @brief Compute responses using Detran
+ *  @tparam B   Boundary type
  */
-template <class D>
+template <class B>
 class ResponseSourceDetran: public ResponseSource
 {
 
@@ -42,9 +46,12 @@ public:
   typedef detran_orthog::OrthogonalBasis::SP_basis      SP_basis;
   typedef std::vector<SP_basis>                         vec_basis;
   typedef std::vector<vec_basis>                        vec2_basis;
-  typedef detran::BoundaryBase<D>                       Boundary_T;
+  typedef B                                             Boundary_T;
   typedef typename Boundary_T::SP_boundary              SP_boundary;
+  typedef typename B::D_T                               D;
   typedef detran::FixedSourceManager<D>                 Solver_T;
+  typedef detran::BoundaryTraits<D>                     BoundaryTraits_T;
+  typedef detran::BoundaryValue<D>                      BoundaryValue_T;
   typedef typename detran_utilities::SP<Solver_T>       SP_solver;
   typedef typename Solver_T::SP_quadrature              SP_quadrature;
   typedef detran_angle::ProductQuadrature               ProductQuadrature;
@@ -111,7 +118,6 @@ private:
    *  @param boundary   Reference to boundary flux container
    *  @param index      The response index that defines the boundary condition
    */
-  template <class B>
   void set_boundary(B& boundary, const ResponseIndex &index);
 
   /**
@@ -120,7 +126,6 @@ private:
    *  @param response   Pointer to response container
    *  @param index      The response index that defines the boundary condition
    */
-  template <class B>
   void expand(const B& boundary, SP_response response, const ResponseIndex &index);
 
   /// Expand the flux-responses

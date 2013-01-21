@@ -22,10 +22,17 @@ namespace erme_response
 // \todo Need to consolidate code where possible
 
 //---------------------------------------------------------------------------//
-template <class D>
 template <class B>
-void ResponseSourceDetran<D>::set_boundary(B& boundary,
+void ResponseSourceDetran<B>::set_boundary(B& boundary,
                                            const ResponseIndex &index)
+{
+  THROW("NOT IMPLEMENTED");
+}
+//---------------------------------------------------------------------------//
+template <class B>
+void ResponseSourceDetran<B>::expand(const B             &boundary,
+                                     SP_response          response,
+                                     const ResponseIndex &index_i)
 {
   THROW("NOT IMPLEMENTED");
 }
@@ -36,28 +43,21 @@ void ResponseSourceDetran<D>::set_boundary(B& boundary,
 
 //---------------------------------------------------------------------------//
 template <>
-template <>
-void ResponseSourceDetran<detran::_1D>::
-set_boundary(detran::BoundaryDiffusion<detran::_1D>& boundary,
-             const ResponseIndex &index)
+void ResponseSourceDetran<detran::BoundaryDiffusion<detran::_1D> >::
+set_boundary(Boundary_T &boundary, const ResponseIndex &index)
 {
-  using namespace detran;
   for (size_t g = 0; g < d_material->number_groups(); ++g)
   {
-    BoundaryTraits<_1D>::value_type
-      &b = boundary(index.surface, g, boundary.IN);
+    BoundaryTraits_T::value_type &b = boundary(index.surface, g, boundary.IN);
     Assert(d_basis_e[index.surface]);
-    BoundaryValue<_1D>::value(b, 0, 0) =
-      (*d_basis_e[index.surface])(index.energy, g);
+    BoundaryValue_T::value(b, 0, 0) = (*d_basis_e[index.surface])(index.energy, g);
   }
 }
 
 //---------------------------------------------------------------------------//
 template <>
-template <>
-void ResponseSourceDetran<detran::_2D>::
-set_boundary(detran::BoundaryDiffusion<detran::_2D>& boundary,
-             const ResponseIndex &index)
+void ResponseSourceDetran<detran::BoundaryDiffusion<detran::_2D> >::
+set_boundary(Boundary_T &boundary, const ResponseIndex &index)
 {
   using namespace detran;
   double sign = 1.0;
@@ -85,10 +85,8 @@ set_boundary(detran::BoundaryDiffusion<detran::_2D>& boundary,
 
 //---------------------------------------------------------------------------//
 template <>
-template <>
-void ResponseSourceDetran<detran::_3D>::
-set_boundary(detran::BoundaryDiffusion<detran::_3D>  &boundary,
-             const ResponseIndex                     &index)
+void ResponseSourceDetran<detran::BoundaryDiffusion<detran::_3D> >::
+set_boundary(Boundary_T &boundary, const ResponseIndex &index)
 {
   using namespace detran;
   double sign = 1.0;
@@ -107,30 +105,36 @@ set_boundary(detran::BoundaryDiffusion<detran::_3D>  &boundary,
     size_t dim1 = d_spatial_dim[dim][1];
     BoundaryTraits<_3D>::value_type
       &b = boundary(index.surface, g, boundary.IN);
-    for (size_t i = 0; i < d_mesh->number_cells(dim0); ++i)
+//    std::cout << " 0=" << b.size()
+//              << " 1=" << b[0].size()
+//              << " dim =" << dim
+//              << " dim0=" << dim0
+//              << " dim1=" << dim1
+//              << std::endl;
+    for (size_t j = 0; j < d_mesh->number_cells(dim1); ++j)
     {
-      double P_s0 = (*d_basis_s[index.surface][0])(index.space0, i);
-      for (size_t j = 0; j < d_mesh->number_cells(dim1); ++j)
+      double P_s1 = (*d_basis_s[index.surface][1])(index.space1, j);
+      for (size_t i = 0; i < d_mesh->number_cells(dim0); ++i)
       {
-        double P_s1 = (*d_basis_s[index.surface][1])(index.space1, j);
+        double P_s0 = (*d_basis_s[index.surface][0])(index.space0, i);
+
         BoundaryValue<_3D>::value(b, i, j) = sign * P_e * P_s0 * P_s1;
       }
     }
   }
+  //std::cout << " VALUE SET " << std::endl;
 }
 
 //---------------------------------------------------------------------------//
 template <>
-template <>
-void ResponseSourceDetran<detran::_1D>::
-expand(const detran::BoundaryDiffusion<detran::_1D>  &boundary,
-       SP_response                                    response,
-       const ResponseIndex                           &index_i)
+void ResponseSourceDetran<detran::BoundaryDiffusion<detran::_1D> >::
+expand(const Boundary_T    &boundary,
+       SP_response          response,
+       const ResponseIndex &index_i)
 {
   using namespace detran;
   typedef BoundaryTraits<_1D> B_T;
   typedef BoundaryValue<_1D> B_V;
-
 
   //-------------------------------------------------------------------------//
   // CURRENT RESPONSE
@@ -182,11 +186,10 @@ expand(const detran::BoundaryDiffusion<detran::_1D>  &boundary,
 
 //---------------------------------------------------------------------------//
 template <>
-template <>
-void ResponseSourceDetran<detran::_2D>::
-expand(const detran::BoundaryDiffusion<detran::_2D>  &boundary,
-       SP_response                                    response,
-       const ResponseIndex                           &index_i)
+void ResponseSourceDetran<detran::BoundaryDiffusion<detran::_2D> >::
+expand(const Boundary_T    &boundary,
+       SP_response          response,
+       const ResponseIndex &index_i)
 {
   using namespace detran;
   typedef BoundaryTraits<_2D> B_T;
@@ -275,15 +278,15 @@ expand(const detran::BoundaryDiffusion<detran::_2D>  &boundary,
 
 //---------------------------------------------------------------------------//
 template <>
-template <>
-void ResponseSourceDetran<detran::_3D>::
-expand(const detran::BoundaryDiffusion<detran::_3D>  &boundary,
-       SP_response                                    response,
-       const ResponseIndex                           &index_i)
+void ResponseSourceDetran<detran::BoundaryDiffusion<detran::_3D> >::
+expand(const Boundary_T    &boundary,
+       SP_response          response,
+       const ResponseIndex &index_i)
 {
   using namespace detran;
   typedef BoundaryTraits<_3D> B_T;
   typedef BoundaryValue<_3D> B_V;
+  //std::cout << " EXPANDING " << std::endl;
 
   //-------------------------------------------------------------------------//
   // CURRENT RESPONSE
@@ -312,10 +315,17 @@ expand(const detran::BoundaryDiffusion<detran::_3D>  &boundary,
       vec_dbl s0m(o_s0 + 1, 0);
       for (size_t i = 0; i < b.size(); ++i) // For all s1
       {
+//        std::cout << " b.size=" << b[i].size()
+//                  << " basis[" << surface << "][0].size "
+//                  << d_basis_s[surface][0]->basis()->number_rows() << " "
+//                  << d_basis_s[surface][0]->basis()->number_columns() << " "
+//                  << " s0m size = " << s0m.size() << std::endl;
         d_basis_s[surface][0]->transform(b[i], s0m);
         for (size_t j = 0; j < s0m.size(); ++j)
           R_s0m_s1[j][i] = s0m[j];
+        //THROW("lala");
       }
+
       // Expand the second spatial variable
       vec_dbl s1m(o_s1 + 1, 0);
       for (size_t i = 0; i < R_s0m_s1.size(); ++i) // for all s0m
@@ -325,6 +335,7 @@ expand(const detran::BoundaryDiffusion<detran::_3D>  &boundary,
           R[i][j][g] = s1m[j];
       }
     }
+
     // Expand the result in energy
     for (size_t i = 0; i < R.size(); ++i)
     {
@@ -372,12 +383,12 @@ expand(const detran::BoundaryDiffusion<detran::_3D>  &boundary,
       const B_T::value_type &bo = boundary(surface, g, boundary.OUT);
       const B_T::value_type &bi = boundary(surface, g, boundary.IN);
 
-      for (size_t i = 0; i < bo.size(); ++i)
+      for (size_t j = 0; j < bo.size(); ++j)
       {
-        double dx = d_mesh->width(dim1, i);
-        for (size_t j = 0; j < bo[0].size(); ++j)
+        double dx = d_mesh->width(dim1, j);
+        for (size_t i = 0; i < bo[0].size(); ++i)
         {
-          double dy = d_mesh->width(dim0, j);
+          double dy = d_mesh->width(dim0, i);
           double da = dx * dy;
           response->leakage_response(surface, index_i.nodal) +=
             da * (B_V::value(bo, i, j) - B_V::value(bi, i, j));
@@ -401,10 +412,8 @@ expand(const detran::BoundaryDiffusion<detran::_3D>  &boundary,
 
 //---------------------------------------------------------------------------//
 template <>
-template <>
-void ResponseSourceDetran<detran::_1D>::
-set_boundary(detran::BoundarySN<detran::_1D>   &boundary,
-             const ResponseIndex               &index_i)
+void ResponseSourceDetran<detran::BoundarySN<detran::_1D> >::
+set_boundary(Boundary_T &boundary, const ResponseIndex &index_i)
 {
   std::cout << "SETTING SOURCE: " << index_i << std::endl;
   using namespace detran;
@@ -425,16 +434,15 @@ set_boundary(detran::BoundarySN<detran::_1D>   &boundary,
 
 //---------------------------------------------------------------------------//
 template <>
-template <>
-void ResponseSourceDetran<detran::_1D>::
-expand(const detran::BoundarySN<detran::_1D>  &boundary,
-       SP_response                             response,
-       const ResponseIndex                     &index_i)
+void ResponseSourceDetran<detran::BoundarySN<detran::_1D> >::
+expand(const Boundary_T    &boundary,
+       SP_response          response,
+       const ResponseIndex &index_i)
 {
   using namespace detran;
   typedef BoundaryTraits<_1D> B_T;
   typedef BoundaryValue<_1D> B_V;
-  THROW("lalala");
+
   //-------------------------------------------------------------------------//
   // CURRENT RESPONSE
   //-------------------------------------------------------------------------//
@@ -494,7 +502,7 @@ expand(const detran::BoundarySN<detran::_1D>  &boundary,
     {
       for (size_t p = 0; p < d_quadrature->number_angles_octant(); ++p)
       {
-        const B_T::value_type &psi_p = boundary(surface, g, octant, p);
+        const B_T::value_type &psi_p = boundary(surface, octant, p, g);
         double w = d_quadrature->weight(p);
         response->leakage_response(surface, index_i.nodal) += w * psi_p;
       }
@@ -509,62 +517,62 @@ expand(const detran::BoundarySN<detran::_1D>  &boundary,
 
 }
 
-//---------------------------------------------------------------------------//
-template <>
-template <>
-void ResponseSourceDetran<detran::_2D>::
-set_boundary(detran::BoundarySN<detran::_2D>& boundary,
-             const ResponseIndex &index)
-{
-
-}
-
-//---------------------------------------------------------------------------//
-template <>
-template <>
-void ResponseSourceDetran<detran::_2D>::
-expand(const detran::BoundarySN<detran::_2D>  &boundary,
-       SP_response                             response,
-       const ResponseIndex                     &index_i)
-{
-
-}
-
-
-//---------------------------------------------------------------------------//
-template <>
-template <>
-void ResponseSourceDetran<detran::_3D>::
-set_boundary(detran::BoundarySN<detran::_3D>& boundary,
-             const ResponseIndex &index)
-{
-
-}
-
-//---------------------------------------------------------------------------//
-template <>
-template <>
-void ResponseSourceDetran<detran::_3D>::
-expand(const detran::BoundarySN<detran::_3D>  &boundary,
-       SP_response                             response,
-       const ResponseIndex                     &index_i)
-{
-
-}
-
-//---------------------------------------------------------------------------//
-// MOC SPECIALIZATIONS
-//---------------------------------------------------------------------------//
-
-//---------------------------------------------------------------------------//
-template <>
-template <>
-void ResponseSourceDetran<detran::_2D>::
-set_boundary(detran::BoundaryMOC<detran::_2D>& boundary,
-             const ResponseIndex &index)
-{
-  THROW("NOT IMPLEMENTED");
-}
+////---------------------------------------------------------------------------//
+//template <>
+//template <>
+//void ResponseSourceDetran<detran::_2D>::
+//set_boundary(detran::BoundarySN<detran::_2D>& boundary,
+//             const ResponseIndex &index)
+//{
+//
+//}
+//
+////---------------------------------------------------------------------------//
+//template <>
+//template <>
+//void ResponseSourceDetran<detran::_2D>::
+//expand(const detran::BoundarySN<detran::_2D>  &boundary,
+//       SP_response                             response,
+//       const ResponseIndex                     &index_i)
+//{
+//
+//}
+//
+//
+////---------------------------------------------------------------------------//
+//template <>
+//template <>
+//void ResponseSourceDetran<detran::_3D>::
+//set_boundary(detran::BoundarySN<detran::_3D>& boundary,
+//             const ResponseIndex &index)
+//{
+//
+//}
+//
+////---------------------------------------------------------------------------//
+//template <>
+//template <>
+//void ResponseSourceDetran<detran::_3D>::
+//expand(const detran::BoundarySN<detran::_3D>  &boundary,
+//       SP_response                             response,
+//       const ResponseIndex                     &index_i)
+//{
+//
+//}
+//
+////---------------------------------------------------------------------------//
+//// MOC SPECIALIZATIONS
+////---------------------------------------------------------------------------//
+//
+////---------------------------------------------------------------------------//
+//template <>
+//template <>
+//void ResponseSourceDetran<detran::_2D>::
+//set_boundary(detran::BoundaryMOC<detran::_2D>& boundary,
+//             const ResponseIndex &index)
+//{
+//  THROW("NOT IMPLEMENTED");
+//}
 
 
 
