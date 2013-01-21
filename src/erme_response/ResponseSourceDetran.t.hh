@@ -415,7 +415,7 @@ template <>
 void ResponseSourceDetran<detran::BoundarySN<detran::_1D> >::
 set_boundary(Boundary_T &boundary, const ResponseIndex &index_i)
 {
-  std::cout << "SETTING SOURCE: " << index_i << std::endl;
+  //std::cout << "SETTING SOURCE: " << index_i << std::endl;
   using namespace detran;
   size_t octant = d_quadrature->incident_octant(index_i.surface)[0];
   for (size_t g = 0; g < d_material->number_groups(); ++g)
@@ -427,6 +427,7 @@ set_boundary(Boundary_T &boundary, const ResponseIndex &index_i)
         &b = boundary(index_i.surface, octant, p, g);
       // \todo This is hard-coding an angular flux expansion
       double P_p = (*d_basis_p[index_i.surface])(index_i.polar, p);
+      std::cout << " in b = " << P_e * P_p << std::endl;
       BoundaryValue<_1D>::value(b) =  P_e * P_p;
     }
   }
@@ -439,14 +440,11 @@ expand(const Boundary_T    &boundary,
        SP_response          response,
        const ResponseIndex &index_i)
 {
-  using namespace detran;
-  typedef BoundaryTraits<_1D> B_T;
-  typedef BoundaryValue<_1D> B_V;
 
   //-------------------------------------------------------------------------//
   // CURRENT RESPONSE
   //-------------------------------------------------------------------------//
-
+  //d_solver->state()->display();
   for (size_t surface = 0; surface < 2; ++surface)
   {
     size_t o_p = d_basis_p[surface]->order();
@@ -466,10 +464,15 @@ expand(const Boundary_T    &boundary,
       {
         // \todo This hardcodes an expansion of the angular flux
         psi_g[p] = boundary(surface, octant, p, g);
+        std::cout << " g=" << g << " p=" << psi_g[p] << std::endl;
       }
       d_basis_p[surface]->transform(psi_g, Rp);
+      vec_dbl tmp(d_quadrature->number_angles_octant(), 0);
+      d_basis_p[surface]->inverse(Rp, psi_g);
+
       for (size_t p = 0; p < Rp.size(); ++p)
       {
+        std::cout << " p=" << p << " psi=" << psi_g[p] << std::endl;
         R[p][g] = Rp[p];
       }
     }
@@ -502,9 +505,12 @@ expand(const Boundary_T    &boundary,
     {
       for (size_t p = 0; p < d_quadrature->number_angles_octant(); ++p)
       {
-        const B_T::value_type &psi_p = boundary(surface, octant, p, g);
+        const BoundaryTraits_T::value_type &psi_p =
+          boundary(surface, octant, p, g);
+        std::cout << " g=" << g << " p=" << p << " psi=" << psi_p << std::endl;
         double w = d_quadrature->weight(p);
-        response->leakage_response(surface, index_i.nodal) += w * psi_p;
+        double mu = d_quadrature->mu(0, p);
+        response->leakage_response(surface, index_i.nodal) += mu * w * psi_p;
       }
     }
   }
@@ -514,31 +520,30 @@ expand(const Boundary_T    &boundary,
   //-------------------------------------------------------------------------//
 
   expand_flux(response, index_i);
+  response->display();
+  THROW("lala");
+}
+
+//---------------------------------------------------------------------------//
+template <>
+void ResponseSourceDetran<detran::BoundarySN<detran::_2D> >::
+set_boundary(Boundary_T &boundary, const ResponseIndex &index)
+{
 
 }
 
-////---------------------------------------------------------------------------//
-//template <>
-//template <>
-//void ResponseSourceDetran<detran::_2D>::
-//set_boundary(detran::BoundarySN<detran::_2D>& boundary,
-//             const ResponseIndex &index)
-//{
-//
-//}
-//
-////---------------------------------------------------------------------------//
-//template <>
-//template <>
-//void ResponseSourceDetran<detran::_2D>::
-//expand(const detran::BoundarySN<detran::_2D>  &boundary,
-//       SP_response                             response,
-//       const ResponseIndex                     &index_i)
-//{
-//
-//}
-//
-//
+
+//---------------------------------------------------------------------------//
+template <>
+void ResponseSourceDetran<detran::BoundarySN<detran::_2D> >::
+expand(const Boundary_T    &boundary,
+       SP_response          response,
+       const ResponseIndex &index_i)
+{
+
+}
+
+
 ////---------------------------------------------------------------------------//
 //template <>
 //template <>

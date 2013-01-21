@@ -337,21 +337,24 @@ ResponseIndexer::build_2D(SP_node node, const size_t n)
 ResponseIndexer::size_t
 ResponseIndexer::build_1D(SP_node node, const size_t n)
 {
+  using std::cout;
+  using std::endl;
+
   bool db = true;
   size_t nodal_index = 0;
 
-  if(db) std::cout << " node  = " << n << std::endl;
+  if (db) cout << "NODE = " << n << endl;
   vec2_index surface_indices;
   for (size_t s = 0; s < node->number_surfaces(); s++)
   {
-    if(db) std::cout << " surface  = " << s << std::endl;
+    if (db) cout << "SURFACE " << s << endl;
     vec_index moment_indices;
     for (size_t e = 0; e <= node->energy_order(s); e++)
     {
-      if(db) std::cout << " energy  = " << e << std::endl;
+      if (db) cout << "  energy order " << e << endl;
       for (size_t p = 0; p <= node->polar_order(s); p++)
       {
-        if(db) std::cout << " polar  = " << p << std::endl;
+        if (db) cout << "    polar order " << p << endl;
 
         // Add the index
         moment_indices.push_back(

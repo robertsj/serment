@@ -137,12 +137,12 @@ void ResponseSourceDetran<B>::construct_basis()
         d_basis_s[s][dim01] = new detran_orthog::
           DLP(d_node->spatial_order(s, dim01),
               d_mesh->number_cells(fd), true);
-        std::cout << " s=" << s
-                  << " dim = " << dim
-                  << " dim01=" << dim01
-                  << " fd = " << fd
-                  << std::endl;
-        d_basis_s[s][dim01]->basis()->display();
+//        std::cout << " s=" << s
+//                  << " dim = " << dim
+//                  << " dim01=" << dim01
+//                  << " fd = " << fd
+//                  << std::endl;
+//        d_basis_s[s][dim01]->basis()->display();
       }
     }
   }
@@ -153,6 +153,30 @@ void ResponseSourceDetran<B>::construct_basis()
   //-------------------------------------------------------------------------//
   // ANGLE
   //-------------------------------------------------------------------------//
+
+  /*
+   * Here, we need to do a bit more logic. If we do the DLP approach, then
+   * a split of the polar and azimuth is useful.  In 1-D, it's only polar.
+   * In 2-D, the split is the same on all sides (we just need to iterate
+   * over the correct azimuths).  In 3-D, things change a bit.  On the
+   * vertical surfaces, we have a half-azimuthal range and a full
+   * polar range.  On the horizontal surfaces, it's a full azimuthal
+   * range and a half polar range.  Note, in this way, the "polar" vs
+   * "azimuthal" distinction is with respect to the *actual* geometry,
+   * not with respect to the incident surface coordinates.
+   *
+   * If we go the route of continuous polynomials, it seems much more
+   * straightforward to employ the local coordinate system.  Then, the
+   * polar angle is with respect to the incident normal.  Then in 1-D,
+   * it's just the Jacobi polynomial.  In 2-D/3-D, it's the Jacobi
+   * polynomial and Legendre in the azimuth.  As long as we use a
+   * quadrature that integrates these exactly, we should be fine.
+   * It might be necessary to define a product quad with Legendre
+   * in the azimuth, or we could just use level symmetric.  My guess is
+   * the accuracy to integrate the Jacobi/Legendre moments is similar
+   * to that needed for spherical harmonics.
+   *
+   */
 
   size_t np = 0;
   size_t na = 0;
@@ -173,7 +197,7 @@ void ResponseSourceDetran<B>::construct_basis()
   if (d_db->check("basis_p_type"))
     basis_p_type = d_db->get<string>("basis_p_type");
   for (size_t s = 0; s < d_node->number_surfaces(); ++s)
-    d_basis_p[s] = new detran_orthog::DLP(d_node->polar_order(s), np);
+    d_basis_p[s] = new detran_orthog::DLP(d_node->polar_order(s), np, true);
 
   if (B::D_T::dimension > 1)
   {

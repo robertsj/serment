@@ -1,10 +1,9 @@
 //----------------------------------*-C++-*----------------------------------//
-/*!
- * \file   Matrix.cc
- * \author robertsj
- * \date   Aug 20, 2012
- * \brief  Matrix member definitions.
- * \note   Copyright (C) 2012 Jeremy Roberts. 
+/**
+ *  @file   Matrix.cc
+ *  @author robertsj
+ *  @date   Aug 20, 2012
+ *  @brief  Matrix member definitions.
  */
 //---------------------------------------------------------------------------//
 
@@ -13,6 +12,7 @@
 namespace linear_algebra
 {
 
+//---------------------------------------------------------------------------//
 Matrix::Matrix(const size_type m,
                const size_type n,
                const vec_int &number_nonzeros,
@@ -47,7 +47,7 @@ Matrix::Matrix(const size_type m,
   Ensure(!ierr);
 }
 
-
+//---------------------------------------------------------------------------//
 Matrix::Matrix(const size_type m,
                const size_type n)
   : MatrixBase(m, n)
@@ -55,14 +55,14 @@ Matrix::Matrix(const size_type m,
   /* ... */
 }
 
-
+//---------------------------------------------------------------------------//
 void Matrix::
 preallocate(const vec_int &number_nonzeros,
             const vec_int &number_nonzeros_off)
 {
   // Preconditions
   Require(number_nonzeros.size() > 0);
-  Require(number_nonzeros_off.size() > 0);
+  Require(number_nonzeros.size() == number_nonzeros_off.size());
 
   // Create appropriate matrix type.
   PetscErrorCode ierr;
@@ -77,8 +77,13 @@ preallocate(const vec_int &number_nonzeros,
   }
   else
   {
+    // All nonzeros get lumped into one vector.
+    vec_int total_number_nonzeros(number_nonzeros);
+    for (size_t i = 0; i < number_nonzeros.size(); ++i)
+      total_number_nonzeros[i] += number_nonzeros_off[i];
+
     ierr = MatSetType(d_A, MATSEQAIJ);
-    ierr = MatSeqAIJSetPreallocation(d_A, PETSC_NULL, &number_nonzeros[0]);
+    ierr = MatSeqAIJSetPreallocation(d_A, PETSC_NULL, &total_number_nonzeros[0]);
   }
 
   // Set the local/global size along with row bounds.
