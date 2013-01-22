@@ -196,8 +196,22 @@ void ResponseSourceDetran<B>::construct_basis()
   string basis_p_type = "dlp";
   if (d_db->check("basis_p_type"))
     basis_p_type = d_db->get<string>("basis_p_type");
+  std::cout << " POLAR TYPE = " << basis_p_type << std::endl;
   for (size_t s = 0; s < d_node->number_surfaces(); ++s)
-    d_basis_p[s] = new detran_orthog::DLP(d_node->polar_order(s), np, true);
+  {
+    if (basis_p_type == "dlp")
+    {
+      d_basis_p[s] = new detran_orthog::DLP(d_node->polar_order(s), np, true);
+    }
+    else if (basis_p_type == "jacobi")
+    {
+      vec_dbl mu = d_quadrature->cosines(d_quadrature->MU);
+      vec_dbl wt = d_quadrature->weights();
+      d_basis_p[s] =
+        new detran_orthog::Jacobi01(d_node->polar_order(s), mu, wt, 0.0, 1.0);
+    }
+    //THROW("lala");
+  }
 
   if (B::D_T::dimension > 1)
   {

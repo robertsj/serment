@@ -427,7 +427,8 @@ set_boundary(Boundary_T &boundary, const ResponseIndex &index_i)
         &b = boundary(index_i.surface, octant, p, g);
       // \todo This is hard-coding an angular flux expansion
       double P_p = (*d_basis_p[index_i.surface])(index_i.polar, p);
-      std::cout << " in b = " << P_e * P_p << std::endl;
+      std::cout << " INCIDENT b[" << index_i.surface
+                << " , " << p << "] = " << P_e * P_p << std::endl;
       BoundaryValue<_1D>::value(b) =  P_e * P_p;
     }
   }
@@ -464,15 +465,19 @@ expand(const Boundary_T    &boundary,
       {
         // \todo This hardcodes an expansion of the angular flux
         psi_g[p] = boundary(surface, octant, p, g);
-        std::cout << " g=" << g << " p=" << psi_g[p] << std::endl;
+        std::cout << " OUTGOING b[" << surface
+                  << " , " << p << "] = " << psi_g[p] << std::endl;
       }
       d_basis_p[surface]->transform(psi_g, Rp);
       vec_dbl tmp(d_quadrature->number_angles_octant(), 0);
-      d_basis_p[surface]->inverse(Rp, psi_g);
+      d_basis_p[surface]->inverse(Rp, tmp);
 
       for (size_t p = 0; p < Rp.size(); ++p)
       {
-        std::cout << " p=" << p << " psi=" << psi_g[p] << std::endl;
+        std::cout << " OUTGOING 2 b[" << surface
+                  << " , " << p << "] = " << tmp[p] << std::endl;
+        std::cout << " COEFvb[" << surface
+                  << " , " << p << "] = " << Rp[p] << std::endl;
         R[p][g] = Rp[p];
       }
     }
@@ -489,7 +494,7 @@ expand(const Boundary_T    &boundary,
     {
       ResponseIndex index_o = d_indexer->response_index(index_i.node, surface, m);
       response->boundary_response(index_o.nodal, index_i.nodal) =
-        R[index_o.space0][index_o.energy];
+        R[index_o.polar][index_o.energy];
     }
   }
 
@@ -507,7 +512,6 @@ expand(const Boundary_T    &boundary,
       {
         const BoundaryTraits_T::value_type &psi_p =
           boundary(surface, octant, p, g);
-        std::cout << " g=" << g << " p=" << p << " psi=" << psi_p << std::endl;
         double w = d_quadrature->weight(p);
         double mu = d_quadrature->mu(0, p);
         response->leakage_response(surface, index_i.nodal) += mu * w * psi_p;
@@ -520,8 +524,7 @@ expand(const Boundary_T    &boundary,
   //-------------------------------------------------------------------------//
 
   expand_flux(response, index_i);
-  response->display();
-  THROW("lala");
+
 }
 
 //---------------------------------------------------------------------------//
