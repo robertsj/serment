@@ -104,6 +104,10 @@ void ManagerERME::build_erme(SP_nodelist nodes)
   d_F = new erme::FissionOperator(d_nodes, d_indexer, d_server);
   d_A = new erme::AbsorptionOperator(d_nodes, d_indexer, d_server);
   d_is_built = true;
+
+  // Postprocessor
+  d_postprocess = new PostProcess(d_db, d_nodes, d_indexer, d_server, d_state,
+                                  d_R, d_M, d_F, d_A, d_L);
 }
 
 //---------------------------------------------------------------------------//

@@ -1,14 +1,15 @@
 //----------------------------------*-C++-*----------------------------------//
-/*!
- * \file   Vector.cc
- * \brief  Vector member definitions
- * \author Jeremy Roberts
- * \date   Aug 19, 2012
+/**
+ *  @file   Vector.cc
+ *  @brief  Vector member definitions
+ *  @author Jeremy Roberts
+ *  @date   Aug 19, 2012
  */
 //---------------------------------------------------------------------------//
 
 #include "Vector.hh"
 
+//---------------------------------------------------------------------------//
 namespace linear_algebra
 {
 
@@ -53,11 +54,13 @@ Vector::Vector(const size_type m, const double val)
   Ensure(d_upper_bound - d_lower_bound == d_local_size);
 }
 
+//---------------------------------------------------------------------------//
 Vector::~Vector()
 {
   VecDestroy(&d_V);
 }
 
+//---------------------------------------------------------------------------//
 void Vector::assemble()
 {
   if (!d_is_assembled)
@@ -68,6 +71,7 @@ void Vector::assemble()
   }
 }
 
+//---------------------------------------------------------------------------//
 void Vector::display() const
 {
   VecView(d_V, PETSC_VIEWER_STDOUT_WORLD);

@@ -77,7 +77,9 @@ int test_Vector_actual()
   for (int i = 0; i < X.local_size(); i++)
     TEST(detran_utilities::soft_equiv(X[i], 2.0));
 
-  //X.display();
+  Vector V(X);
+  for (int i = 0; i < V.local_size(); i++)
+    TEST(detran_utilities::soft_equiv(V[i], 2.0));
 
   return 0;
 }

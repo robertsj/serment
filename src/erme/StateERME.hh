@@ -53,6 +53,7 @@ public:
   StateERME(const size_t size);
 
   // SETTERS
+  void update(const Vector &v, const double k, const double l);
   void set_k(const double k_val);
   void set_lambda(const double lambda_val);
 

@@ -192,6 +192,9 @@ void ResponseSourceDetran<B>::construct_basis()
     na = 2 * q->number_azimuths_octant();
   }
 
+  // Determine whether to expand angular flux or angular current
+
+
   // Polar
   string basis_p_type = "dlp";
   if (d_db->check("basis_p_type"))
@@ -210,6 +213,7 @@ void ResponseSourceDetran<B>::construct_basis()
       d_basis_p[s] =
         new detran_orthog::Jacobi01(d_node->polar_order(s), mu, wt, 0.0, 1.0);
     }
+
     //THROW("lala");
   }
 

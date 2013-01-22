@@ -39,11 +39,11 @@ void GlobalSolverPicard::solve()
 
   // Compute initial responses
   update_response(keff);
-  d_R->display(d_R->MATLAB, "R.out");
-  d_M->display(d_R->MATLAB, "M.out");
-  d_L->display(d_L->MATLAB, "L.out");
-  d_F->display();
-  d_A->display();
+//  d_R->display(d_R->MATLAB, "R.out");
+//  d_M->display(d_R->MATLAB, "M.out");
+//  d_L->display(d_L->MATLAB, "L.out");
+//  d_F->display();
+//  d_A->display();
   // Initialize balance parameters
   double loss       = 0;
   double gain       = 0;
@@ -113,6 +113,23 @@ void GlobalSolverPicard::solve()
 
   } // end outers
 
+  vec_dbl fd(d_indexer->number_nodes(), 0.0);
+  size_t j = 0;
+  double sum_fd;
+  for (size_t node_g = 0; node_g < fd.size(); ++node_g)
+  {
+    for (size_t i = 0; i < d_indexer->number_node_moments(0); ++i, ++j)
+    {
+      fd[node_g] += (*d_F)[j] * (*d_J0)[j];
+    }
+    sum_fd += fd[node_g];
+  }
+
+  for (size_t i = 0; i < fd.size(); ++i)
+  {
+    std::printf(" %5i %12.9f \n", i, fd[i]/sum_fd);
+  }
+
   std::printf(" FINAL POWER ITERATION EIGENVALUES: \n");
   std::printf(" **** FINAL KEFF        = %12.9f \n", keff);
   std::printf(" **** FINAL LAMBDA      = %12.9f \n", lambda);
@@ -120,6 +137,7 @@ void GlobalSolverPicard::solve()
   std::printf(" **** INNER ITERATIONS  = %8i \n", innertot);
 
   // Update the state
+  d_state->update(*d_J0, keff, lambda);
 
   return;
 

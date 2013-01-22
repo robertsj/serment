@@ -23,6 +23,15 @@ StateERME::StateERME(const size_t size)
   d_global_size = d_boundary_moments.global_size();
 }
 
+//---------------------------------------------------------------------------//
+void StateERME::update(const Vector &v, const double k, const double l)
+{
+  Require(v.local_size() == d_boundary_moments.local_size());
+  d_boundary_moments.copy(v);
+  d_k = k;
+  d_lambda = l;
+}
+
 } // end namespace erme
 
 //---------------------------------------------------------------------------//

@@ -49,7 +49,6 @@ inline Vector::Vector(const Vector& V)
   // Postconditions
   Ensure(!ierr);
   Ensure(d_upper_bound - d_lower_bound == d_local_size);
-
 }
 
 // Value Setting

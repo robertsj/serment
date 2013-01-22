@@ -28,6 +28,7 @@
 #include "linear_algebra/LinearAlgebraSetup.hh"
 // Manager
 #include "erme_utils/ManagerERME.hh"
+#include "erme_utils/PostProcess.hh"
 %} // end module pyserment
 
 %include "output.i"
@@ -75,6 +76,10 @@
 // PETSc/SLEPc initialization
 %include "linear_algebra/LinearAlgebraSetup.hh"
 
+
 // Manager
+%include "erme_utils/PostProcess.hh"
+%template(PostProcessSP)          detran_utilities::SP<erme_utils::PostProcess>;
 %include "erme_utils/ManagerERME.hh"
 %template(ManagerERMESP)          detran_utilities::SP<erme_utils::ManagerERME>;
+

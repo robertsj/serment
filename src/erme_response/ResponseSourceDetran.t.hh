@@ -427,11 +427,12 @@ set_boundary(Boundary_T &boundary, const ResponseIndex &index_i)
         &b = boundary(index_i.surface, octant, p, g);
       // \todo This is hard-coding an angular flux expansion
       double P_p = (*d_basis_p[index_i.surface])(index_i.polar, p);
-      std::cout << " INCIDENT b[" << index_i.surface
-                << " , " << p << "] = " << P_e * P_p << std::endl;
+//      std::cout << " INCIDENT b[" << index_i.surface
+//                << " , " << p << "] = " << P_e * P_p << std::endl;
       BoundaryValue<_1D>::value(b) =  P_e * P_p;
     }
   }
+
 }
 
 //---------------------------------------------------------------------------//
@@ -465,8 +466,8 @@ expand(const Boundary_T    &boundary,
       {
         // \todo This hardcodes an expansion of the angular flux
         psi_g[p] = boundary(surface, octant, p, g);
-        std::cout << " OUTGOING b[" << surface
-                  << " , " << p << "] = " << psi_g[p] << std::endl;
+//        std::cout << " OUTGOING b[" << surface
+//                  << " , " << p << "] = " << psi_g[p] << std::endl;
       }
       d_basis_p[surface]->transform(psi_g, Rp);
       vec_dbl tmp(d_quadrature->number_angles_octant(), 0);
@@ -474,10 +475,10 @@ expand(const Boundary_T    &boundary,
 
       for (size_t p = 0; p < Rp.size(); ++p)
       {
-        std::cout << " OUTGOING 2 b[" << surface
-                  << " , " << p << "] = " << tmp[p] << std::endl;
-        std::cout << " COEFvb[" << surface
-                  << " , " << p << "] = " << Rp[p] << std::endl;
+//        std::cout << " OUTGOING 2 b[" << surface
+//                  << " , " << p << "] = " << tmp[p] << std::endl;
+//        std::cout << " COEFvb[" << surface
+//                  << " , " << p << "] = " << Rp[p] << std::endl;
         R[p][g] = Rp[p];
       }
     }

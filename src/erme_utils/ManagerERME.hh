@@ -43,6 +43,7 @@
  */
 //---------------------------------------------------------------------------//
 
+#include "PostProcess.hh"
 #include "erme/StateERME.hh"
 #include "erme/ResponseMatrix.hh"
 #include "erme/Connect.hh"
@@ -79,6 +80,7 @@ public:
   //-------------------------------------------------------------------------//
 
   typedef detran_utilities::SP<ManagerERME>           SP_manager;
+  typedef PostProcess::SP_postprocess                 SP_postprocess;
   typedef detran_utilities::InputDB::SP_input         SP_db;
   typedef erme::StateERME::SP_state                   SP_state;
   typedef erme::ResponseMatrix::SP_responsematrix     SP_R;
@@ -124,6 +126,12 @@ public:
   /// Return the indexer
   SP_indexer indexer() const { return d_indexer; }
 
+  /// Return the postprocessor
+  SP_postprocess postprocess() const { return d_postprocess; }
+
+  double get_keff() const { return d_state->k(); }
+  double get_lambda() const { return d_state->lambda(); }
+
   /// Close libraries, etc.
   void finalize();
 
@@ -157,7 +165,8 @@ private:
   SP_solver d_solver;
   /// Is it built?
   bool d_is_built;
-
+  ///
+  SP_postprocess d_postprocess;
 };
 
 } // end namespace erme_utils

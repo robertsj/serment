@@ -10,6 +10,7 @@ SET(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
 SET(SRC
     ManagerERME.cc
+    PostProcess.cc
 )
 
 #-------------------------------------#

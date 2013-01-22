@@ -136,7 +136,7 @@ public:
 
   /**
    *  @brief Get moment indices from local cardinal index
-   *  @param index_ul     Moment index within local moments
+   *  @param index_l      Moment index within local moments
    */
   ResponseIndex response_index_from_local(const size_t index_l) const;
 

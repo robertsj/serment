@@ -42,10 +42,17 @@ int test_StateERME(int argc, char *argv[])
   // Create node list
   StateERME state(10);
 
+  linear_algebra::Vector v(10, 1.0);
+
   state.set_k(1.12);
   state.set_lambda(1.13);
   TEST(soft_equiv(state.k(),      1.12));
   TEST(soft_equiv(state.lambda(), 1.13));
+
+  state.update(v, 2.0, 3.0);
+
+  TEST(soft_equiv(state.k(),      2.0));
+  TEST(soft_equiv(state.lambda(), 3.0));
 
   return 0;
 
