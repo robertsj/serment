@@ -8,6 +8,7 @@
 //---------------------------------------------------------------------------//
 
 #include "ResponseSourceDetran.hh"
+#include "ResponseSourceDetranDiffusion.t.hh"
 #include "ResponseSourceDetran.t.hh"
 #include "orthog/detran_orthog.hh"
 
@@ -23,6 +24,7 @@ ResponseSourceDetran<B>::ResponseSourceDetran(SP_node node,
   , d_basis_s(node->number_surfaces(), vec_basis(D::dimension-1))
   , d_basis_a(node->number_surfaces())
   , d_basis_p(node->number_surfaces())
+  , d_angular_flux(true)
   , d_spatial_dim(D::dimension, vec_size_t(D::dimension-1))
 {
   Require(node->db());
@@ -39,12 +41,11 @@ ResponseSourceDetran<B>::ResponseSourceDetran(SP_node node,
   // Ensure we compute boundary fluxes
   d_db->put<int>("compute_boundary_flux", 1);
 
-  // Create the solver
+  // Create the solver and extract the boundary and quadrature
   d_solver = new Solver_T(d_db, d_material, d_mesh, true);
   d_solver->setup();       // Constructs quadrature, etc.
   d_solver->set_solver();  // Constructs the actual mg solver
-
-  // Quadrature.  Remember, this may be NULL.
+  d_B = d_solver->boundary();
   d_quadrature = d_solver->quadrature();
 
   // Spatial dimensions in play.  For example, when expanding
@@ -72,30 +73,11 @@ template <class B>
 void ResponseSourceDetran<B>::
 compute(SP_response response, const ResponseIndex &index)
 {
-  using namespace detran;
-
   //std::cout << "COMPUTING RESPONSE FOR INDEX: " << index << std::endl;
-
-  //-------------------------------------------------------------------------//
-  // SET INCIDENT CONDITION
-  //-------------------------------------------------------------------------//
-
   d_solver->boundary()->clear();
-  typename Boundary_T::SP_boundary b = d_solver->boundary();
-  set_boundary(*b, index);
-
-  //-------------------------------------------------------------------------//
-  // SOLVE THE RESPONSE EQUATION
-  //-------------------------------------------------------------------------//
-
+  set_boundary(index);
   d_solver->solve(d_keff);
-
-  //-------------------------------------------------------------------------//
-  // EXPAND THE RESPONSE
-  //-------------------------------------------------------------------------//
-
-  expand(*b, response, index);
-
+  expand(response, index);
 }
 
 //---------------------------------------------------------------------------//
@@ -137,12 +119,6 @@ void ResponseSourceDetran<B>::construct_basis()
         d_basis_s[s][dim01] = new detran_orthog::
           DLP(d_node->spatial_order(s, dim01),
               d_mesh->number_cells(fd), true);
-//        std::cout << " s=" << s
-//                  << " dim = " << dim
-//                  << " dim01=" << dim01
-//                  << " fd = " << fd
-//                  << std::endl;
-//        d_basis_s[s][dim01]->basis()->display();
       }
     }
   }
@@ -178,66 +154,93 @@ void ResponseSourceDetran<B>::construct_basis()
    *
    */
 
-  size_t np = 0;
-  size_t na = 0;
-
-  if (D::dimension == 1)
-  {
-    np = d_quadrature->number_angles_octant();
-  }
-  else
-  {
-    SP_productquadrature q = d_quadrature;
-    np = q->number_polar_octant();
-    na = 2 * q->number_azimuths_octant();
-  }
-
   // Determine whether to expand angular flux or angular current
-
+  if (d_db->check("erme_angular_expansion"))
+    d_angular_flux = d_db->get<int>("erme_angular_expansion");
 
   // Polar
   string basis_p_type = "dlp";
   if (d_db->check("basis_p_type"))
     basis_p_type = d_db->get<string>("basis_p_type");
   std::cout << " POLAR TYPE = " << basis_p_type << std::endl;
-  for (size_t s = 0; s < d_node->number_surfaces(); ++s)
+
+  if (B::D_T::dimension == 1)
   {
+    size_t np = d_quadrature->number_angles_octant();
+    for (size_t s = 0; s < d_node->number_surfaces(); ++s)
+    {
+      if (basis_p_type == "dlp")
+      {
+        d_basis_p[s] = new detran_orthog::
+          DLP(d_node->polar_order(s), np, true);
+      }
+      else if (basis_p_type == "jacobi")
+      {
+        vec_dbl mu = d_quadrature->cosines(d_quadrature->MU);
+        vec_dbl wt = d_quadrature->weights();
+        d_basis_p[s] = new detran_orthog::
+          Jacobi01(d_node->polar_order(s), mu, wt, 0.0, 1.0);
+      }
+      else if (basis_p_type == "legendre")
+      {
+        vec_dbl mu = d_quadrature->cosines(d_quadrature->MU);
+        vec_dbl wt = d_quadrature->weights();
+        d_basis_p[s] = new detran_orthog::
+          CLP(d_node->polar_order(s), mu, wt, 0.0, 1.0);
+      }
+    }
+  }
+  else if (B::D_T::dimension == 2)
+  {
+    // Azimuth
+    string basis_a_type = "dlp";
+    if (d_db->check("basis_a_type"))
+      basis_a_type = d_db->get<string>("basis_a_type");
+
     if (basis_p_type == "dlp")
     {
-      d_basis_p[s] = new detran_orthog::DLP(d_node->polar_order(s), np, true);
+      // Use DLP for the *physical* polar and azimuth.
+      SP_productquadrature q = d_quadrature;
+      size_t np = q->number_polar_octant();
+      size_t na = 2 * q->number_azimuths_octant();
+      for (size_t s = 0; s < d_node->number_surfaces(); ++s)
+      {
+        d_basis_p[s] = new detran_orthog::DLP(d_node->polar_order(s),     np, true);
+        d_basis_a[s] = new detran_orthog::DLP(d_node->azimuthal_order(s), na, true);
+      }
     }
     else if (basis_p_type == "jacobi")
     {
-      vec_dbl mu = d_quadrature->cosines(d_quadrature->MU);
+      // Use Jacobi for the polar w/r to the incident.
+      size_t axis = s / 2;
+      vec_dbl mu = d_quadrature->cosines(axis);
       vec_dbl wt = d_quadrature->weights();
-      d_basis_p[s] =
-        new detran_orthog::Jacobi01(d_node->polar_order(s), mu, wt, 0.0, 1.0);
+      d_basis_p[s] = new detran_orthog::
+        Jacobi01(d_node->polar_order(s), mu, wt, 0.0, 1.0);
+    }
+    else
+    {
+      THROW("INVALID BASIS");
     }
 
-    //THROW("lala");
   }
-
-  if (B::D_T::dimension > 1)
+  if (B::D_T::dimension == 3)
   {
     // Azimuth
     string basis_a_type = "dlp";
     if (d_db->check("basis_a_type"))
       basis_a_type = d_db->get<string>("basis_a_type");
     for (size_t s = 0; s < d_node->number_surfaces(); ++s)
-      d_basis_a[s] = new detran_orthog::DLP(d_node->azimuthal_order(s), na);
+      d_basis_a[s] = new detran_orthog::DLP(d_node->azimuthal_order(s), 0);
   }
 
 }
 
 //---------------------------------------------------------------------------//
 template <class B>
-void ResponseSourceDetran<B>::expand_flux(SP_response           response,
-                                          const ResponseIndex  &index_i)
+void ResponseSourceDetran<B>::expand(SP_response response,
+                                     const ResponseIndex &index_i)
 {
-  //-------------------------------------------------------------------------//
-  // FISSION & ABSORPTION
-  //-------------------------------------------------------------------------//
-
   typename Solver_T::SP_state state = d_solver->state();
   const vec_int &mat_map = d_mesh->mesh_map("MATERIAL");
   response->fission_response(index_i.nodal) = 0.0;
@@ -253,6 +256,7 @@ void ResponseSourceDetran<B>::expand_flux(SP_response           response,
          phi_times_volume * d_material->sigma_a(mat_map[i], g);
     }
   }
+  expand_boundary(response, index_i);
 }
 
 //---------------------------------------------------------------------------//

@@ -96,6 +96,8 @@ private:
   SP_mesh d_mesh;
   /// Detran solver
   SP_solver d_solver;
+  /// Detran boundary
+  SP_boundary d_B;
   /// Detran quadrature
   SP_quadrature d_quadrature;
   /// Energy basis [number surfaces]
@@ -106,8 +108,11 @@ private:
   vec_basis d_basis_a;
   /// Polar basis [number surfaces]
   vec_basis d_basis_p;
+  /// Flag for expanding in angular flux (or the current)
+  bool d_angular_flux;
   /// Spatial dimensions in play for given axis
   vec2_size_t d_spatial_dim;
+
 
   //-------------------------------------------------------------------------//
   // IMPLEMENTATION
@@ -118,7 +123,7 @@ private:
    *  @param boundary   Reference to boundary flux container
    *  @param index      The response index that defines the boundary condition
    */
-  void set_boundary(B& boundary, const ResponseIndex &index);
+  void set_boundary(const ResponseIndex &index);
 
   /**
    *  @brief Expand the flux and boundary responses
@@ -126,10 +131,10 @@ private:
    *  @param response   Pointer to response container
    *  @param index      The response index that defines the boundary condition
    */
-  void expand(const B& boundary, SP_response response, const ResponseIndex &index);
+  void expand(SP_response response, const ResponseIndex &index);
 
   /// Expand the flux-responses
-  void expand_flux(SP_response response, const ResponseIndex &index);
+  void expand_boundary(SP_response response, const ResponseIndex &index);
 
   /// Construct the basis
   void construct_basis();
