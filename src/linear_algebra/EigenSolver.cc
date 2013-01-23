@@ -41,7 +41,7 @@ EigenSolver::EigenSolver(SP_matrix A, SP_matrix B)
   // Set the solver type to krylovschur and one largest eigenvalue.
   ierr = EPSSetType(d_solver, EPSKRYLOVSCHUR);
   Insist(!ierr, "Error defaulting EPS to EPSKRYLOVSCHUR.");
-  ierr = EPSSetWhichEigenpairs(d_solver, EPS_LARGEST_REAL);
+  ierr = EPSSetWhichEigenpairs(d_solver, EPS_LARGEST_MAGNITUDE);
   Insist(!ierr, "Error selecting EPS eigenpairs.");
 
   // Set the tolerances
@@ -87,6 +87,10 @@ double EigenSolver::solve(SP_vector x)
                          &d_lambda, &d_lambda_imaginary,
                          x->V(), d_x_imaginary->V());
   Insist(!ierr, "Error getting eigenpair.");
+
+  // @todo Temporary check for NaN
+  volatile double tmp = d_lambda;
+  Insist(!(tmp != tmp), "NaN encountered in SLEPc...");
 
   // Return the eigenvalue
   return d_lambda;

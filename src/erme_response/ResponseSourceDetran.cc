@@ -77,6 +77,7 @@ compute(SP_response response, const ResponseIndex &index)
   d_solver->boundary()->clear();
   set_boundary(index);
   d_solver->solve(d_keff);
+  //THROW("lala");
   expand(response, index);
 }
 
@@ -122,7 +123,7 @@ void ResponseSourceDetran<B>::construct_basis()
       }
     }
   }
-
+  d_basis_s[0][0]->basis()->display();
   // Skip angular stuff if diffusion.
   if (d_solver->discretization() == d_solver->DIFF) return;
 
@@ -207,17 +208,18 @@ void ResponseSourceDetran<B>::construct_basis()
       {
         d_basis_p[s] = new detran_orthog::DLP(d_node->polar_order(s),     np, true);
         d_basis_a[s] = new detran_orthog::DLP(d_node->azimuthal_order(s), na, true);
+        d_basis_a[s]->basis()->display();
       }
     }
-    else if (basis_p_type == "jacobi")
-    {
-      // Use Jacobi for the polar w/r to the incident.
-      size_t axis = s / 2;
-      vec_dbl mu = d_quadrature->cosines(axis);
-      vec_dbl wt = d_quadrature->weights();
-      d_basis_p[s] = new detran_orthog::
-        Jacobi01(d_node->polar_order(s), mu, wt, 0.0, 1.0);
-    }
+//    else if (basis_p_type == "jacobi")
+//    {
+//      // Use Jacobi for the polar w/r to the incident.
+//      size_t axis = s / 2;
+//      vec_dbl mu = d_quadrature->cosines(axis);
+//      vec_dbl wt = d_quadrature->weights();
+//      d_basis_p[s] = new detran_orthog::
+//        Jacobi01(d_node->polar_order(s), mu, wt, 0.0, 1.0);
+//    }
     else
     {
       THROW("INVALID BASIS");
@@ -267,7 +269,7 @@ template class ResponseSourceDetran<detran::BoundaryDiffusion<detran::_1D> >;
 template class ResponseSourceDetran<detran::BoundaryDiffusion<detran::_2D> >;
 template class ResponseSourceDetran<detran::BoundaryDiffusion<detran::_3D> >;
 template class ResponseSourceDetran<detran::BoundarySN<detran::_1D> >;
-//template class ResponseSourceDetran<detran::BoundarySN<detran::_2D> >;
+template class ResponseSourceDetran<detran::BoundarySN<detran::_2D> >;
 //template class ResponseSourceDetran<detran::BoundarySN<detran::_3D> >;
 //template class ResponseSourceDetran<detran::BoundaryMOC<detran::_2D> >;
 

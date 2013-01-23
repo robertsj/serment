@@ -115,6 +115,13 @@ inline double Vector::dot(Vector &x)
   double val;
   ierr = VecDot(d_V, x.V(), &val);
 
+  if (ierr)
+  {
+    std::cout << " BAD VECTORS!!! " << std::endl;
+    this->display();
+    x.display();
+  }
+
   // Postconditions
   Ensure(!ierr);
   return val;

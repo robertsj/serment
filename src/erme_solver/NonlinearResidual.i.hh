@@ -61,9 +61,10 @@ compute_norm(Vector &B, const double k, const double l)
   double norm_B_sq = std::pow(F_B.norm(), 2);
 
   // Compute square of (F - k * L) * B
+  std::cout << " ---> " << std::endl;
   double norm_K_sq = std::pow(d_F->dot(B) -
                               k * (d_A->dot(B) + d_L->leakage(B)), 2);
-
+  std::cout << " <--- " << std::endl;
 //  std::cout << " F  = " << d_F->dot(B)
 //            << " A  = " << d_A->dot(B)
 //            << " L  = " << d_L->leakage(B) << std::endl;

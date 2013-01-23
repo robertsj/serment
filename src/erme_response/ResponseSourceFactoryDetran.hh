@@ -56,7 +56,7 @@ ResponseSourceFactory::build_detran(SP_node node, SP_indexer indexer)
   {
     if (discretization == 0)
     {
-     // s = new ResponseSourceDetran<BoundarySN<_2D> >(node, indexer);
+      s = new ResponseSourceDetran<BoundarySN<_2D> >(node, indexer);
     }
     else if (discretization == 1)
     {

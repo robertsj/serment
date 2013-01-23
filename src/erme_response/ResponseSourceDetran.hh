@@ -60,6 +60,8 @@ public:
   typedef detran_utilities::vec_dbl                     vec_dbl;
   typedef detran_utilities::vec2_dbl                    vec2_dbl;
   typedef detran_utilities::vec3_dbl                    vec3_dbl;
+  typedef detran_utilities::vec4_dbl                    vec4_dbl;
+  typedef detran_utilities::vec5_dbl                    vec5_dbl;
   typedef detran_utilities::vec_size_t                  vec_size_t;
   typedef detran_utilities::vec2_size_t                 vec2_size_t;
 
@@ -138,6 +140,19 @@ private:
 
   /// Construct the basis
   void construct_basis();
+
+  /// Sign to avoid integrating space variables in reverse.
+  int spatial_sign(const size_t surface)
+  {
+    double sign = 1;
+    if (surface == d_mesh->EAST  or
+        surface == d_mesh->SOUTH or
+        surface == d_mesh->BOTTOM)
+    {
+      sign = -1;
+    }
+    return sign;
+  }
 
 };
 

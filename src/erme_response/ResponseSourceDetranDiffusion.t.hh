@@ -290,13 +290,8 @@ expand_boundary(SP_response          response,
 
     // Sign switch saves us from integrating in reverse direction.  This
     // assumes, of course, that basis functions are strictly even/odd.
-    double sign = 1;
-    if (surface == d_mesh->EAST  or
-        surface == d_mesh->SOUTH or
-        surface == d_mesh->BOTTOM)
-    {
-      sign = -1;
-    }
+    double sign = spatial_sign(surface);
+
     // Fill the response container with only the *needed* values
     size_t nm = d_indexer->number_surface_moments(index_i.node, surface);
     for (size_t m = 0; m < nm; ++m)
