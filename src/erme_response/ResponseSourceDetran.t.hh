@@ -169,25 +169,23 @@ set_boundary(const ResponseIndex &index_i)
    */
   for (size_t g = 0; g < d_material->number_groups(); ++g)
   {
-    std::cout << " g = " << g << std::endl;
+    //std::cout << " g = " << g << std::endl;
     double P_e = (*d_basis_e[index_i.surface])(index_i.energy, g);
     size_t a = 0;
     for (size_t oo = 0; oo < 2; ++oo)
     {
       size_t o = q->incident_octant(index_i.surface)[oo];
-      std::cout << "   o = " << o << std::endl;
+      // std::cout << "   o = " << o << std::endl;
       int a0 = az[index_i.surface][oo][0];
-      int a1 = az[index_i.surface][oo][2];
-      int da = az[index_i.surface][oo][1];
       for (size_t aa = 0; aa < q->number_azimuths_octant(); ++aa, ++a)
       {
         size_t aaa = aa; // aaa is the index into quad
         if (a0) aaa = a0 - aa;
-        std::cout << "     aaa = " << aaa << " " << q->number_azimuths_octant() << std::endl;
+        // std::cout << "     aaa = " << aaa << " " << q->number_azimuths_octant() << std::endl;
         double P_a = (*d_basis_a[index_i.surface])(index_i.azimuth, a);
         for (size_t p = 0; p < q->number_polar_octant(); ++p)
         {
-          std::cout << "       p = " << p << std::endl;
+          // std::cout << "       p = " << p << std::endl;
           double P_p = (*d_basis_p[index_i.surface])(index_i.polar, p);
           size_t angle = q->angle(aaa, p);
           BoundaryTraits_T::value_type &b = B(index_i.surface, o, angle, g);
@@ -243,7 +241,10 @@ expand_boundary(SP_response          response,
     size_t n_g = d_material->number_groups();
 
     // Temporary response containers
-    vec4_dbl R(o_s + 1, vec3_dbl(o_p + 1, vec2_dbl(o_a + 1, vec_dbl(n_g, 0.0))));
+    vec4_dbl R(o_s + 1,
+               vec3_dbl(o_p + 1,
+                        vec2_dbl(o_a + 1,
+                                 vec_dbl(n_g, 0.0))));
 
     // First expand in angle, [angle moments][energy groups]
     for (size_t g = 0; g < n_g; ++g)
@@ -259,9 +260,6 @@ expand_boundary(SP_response          response,
         for (size_t oo = 0; oo < 2; ++oo)
         {
           size_t o = q->outgoing_octant(surface)[oo];
-
-          std::cout << " SURFACE = " << surface << " outgoing octant = " << o << std::endl;
-
           int a0 = az[surface][oo][0];
 
           for (size_t aa = 0; aa < q->number_azimuths_octant(); ++aa, ++a)
@@ -282,7 +280,6 @@ expand_boundary(SP_response          response,
               d_basis_s[surface][0]->transform(b, R_s);
               for (size_t s = 0; s < R_s.size(); ++s)
               {
-                std::cout << " a=" << a << " p=" << p << " s=" << s << " val=" << R_s[s] << std::endl;
                 R_s_p[s][p] = R_s[s];
               }
 
@@ -360,15 +357,13 @@ expand_boundary(SP_response          response,
             double dx = d_mesh->width(dim0, s);
             response->leakage_response(surface, index_i.nodal) +=
               mu * w * dx * BoundaryValue_T::value(psi, s);
-            std::cout << "SRF = " << surface << " dim=" << dim
-                      << " o=" << o << " a=" << a << " s=" << s << " val=" << BoundaryValue_T::value(psi, s) << std::endl;
           }
         }
       }
     }
 
   } // end surface
-  response->display();
+
 }
 
 

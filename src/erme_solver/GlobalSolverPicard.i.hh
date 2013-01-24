@@ -39,11 +39,11 @@ void GlobalSolverPicard::solve()
 
   // Compute initial responses
   update_response(keff);
-  d_R->display(d_R->MATLAB, "R.out");
-  d_M->display(d_R->MATLAB, "M.out");
-  d_L->display(d_L->MATLAB, "L.out");
-  d_F->display();
-  d_A->display();
+//  d_R->display(d_R->MATLAB, "R.out");
+//  d_M->display(d_R->MATLAB, "M.out");
+//  d_L->display(d_L->MATLAB, "L.out");
+//  d_F->display();
+//  d_A->display();
   // Initialize balance parameters
   double loss       = 0;
   double gain       = 0;
@@ -75,17 +75,9 @@ void GlobalSolverPicard::solve()
     //-----------------------------------------------------------------------//
 
     // Compute gains and losses.
-    std::cout << " gain " << std::endl;
-    d_F->display();
-    d_J0->display();
-    d_R->display(d_R->MATLAB, "R.out");
-    d_M->display(d_R->MATLAB, "M.out");
     gain        = d_F->dot(*d_J0);
-    std::cout << " abs " << std::endl;
     absorption  = d_A->dot(*d_J0);
-    std::cout << " leak " << std::endl;
     leakage     = d_L->leakage(*d_J0);
-    std::cout << " done " << std::endl;
     loss        = absorption + leakage;
 
 //    std::cout << " GAIN = "     << gain << std::endl;

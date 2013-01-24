@@ -123,7 +123,7 @@ void ResponseSourceDetran<B>::construct_basis()
       }
     }
   }
-  d_basis_s[0][0]->basis()->display();
+
   // Skip angular stuff if diffusion.
   if (d_solver->discretization() == d_solver->DIFF) return;
 
@@ -211,15 +211,76 @@ void ResponseSourceDetran<B>::construct_basis()
         d_basis_a[s]->basis()->display();
       }
     }
-//    else if (basis_p_type == "jacobi")
-//    {
-//      // Use Jacobi for the polar w/r to the incident.
-//      size_t axis = s / 2;
-//      vec_dbl mu = d_quadrature->cosines(axis);
-//      vec_dbl wt = d_quadrature->weights();
-//      d_basis_p[s] = new detran_orthog::
-//        Jacobi01(d_node->polar_order(s), mu, wt, 0.0, 1.0);
-//    }
+    else if (basis_p_type == "legendre")
+    {
+      // Use continuous Legendre for the polar and azimuth.
+      SP_productquadrature q = d_quadrature;
+      size_t np = q->number_polar_octant();
+      size_t na = 2 * q->number_azimuths_octant();
+      vec_dbl xi(np, 0);
+      vec_dbl w_p(np, 0);
+      for (size_t p = 0; p < np; ++p)
+      {
+        xi[p]  = q->cos_theta(p);
+        w_p[p] = q->polar_weight(p);
+      }
+      vec_dbl phi(na, 0);
+      vec_dbl w_a(na, 0);
+      for (size_t a = 0; a < na/2; ++a)
+      {
+        phi[a]      = q->phi(a);
+        phi[na-a-1] = detran_utilities::pi - q->phi(a);
+        w_a[a]      = q->azimuth_weight(a);
+        w_a[na-a-1] = q->azimuth_weight(a);
+      }
+      for (size_t s = 0; s < d_node->number_surfaces(); ++s)
+      {
+        d_basis_p[s] = new detran_orthog::
+          CLP(d_node->polar_order(s), xi, w_p, 0.0, 1.0);
+        d_basis_a[s] = new detran_orthog::
+          CLP(d_node->azimuthal_order(s), phi, w_a, 0.0, detran_utilities::pi);
+      }
+    }
+    else if (basis_p_type == "cheby")
+    {
+      // Using chebyshev type 2 in polar and gauss legendre in azimuth.
+      // Note, this better use DTN in polar!
+      SP_productquadrature q = d_quadrature;
+      size_t np = q->number_polar_octant();
+      size_t na = 2 * q->number_azimuths_octant();
+      vec_dbl xi(np, 0);
+      vec_dbl w_p(np, 0);
+      for (size_t p = 0; p < np; ++p)
+      {
+        xi[p]  = q->cos_theta(p);
+        w_p[p] = q->polar_weight(p);
+      }
+      vec_dbl phi(na, 0);
+      vec_dbl w_a(na, 0);
+      for (size_t a = 0; a < na/2; ++a)
+      {
+        phi[a]      = q->phi(a);
+        phi[na-a-1] = detran_utilities::pi - q->phi(a);
+        w_a[a]      = q->azimuth_weight(a);
+        w_a[na-a-1] = q->azimuth_weight(a);
+      }
+      for (size_t s = 0; s < d_node->number_surfaces(); ++s)
+      {
+        d_basis_p[s] = new detran_orthog::
+          ChebyshevU(d_node->polar_order(s), xi, w_p, 0.0, 1.0);
+        d_basis_a[s] = new detran_orthog::
+          CLP(d_node->azimuthal_order(s), phi, w_a, 0.0, detran_utilities::pi);
+      }
+    }
+    else if (basis_p_type == "jacobi")
+    {
+      // Use Jacobi for the polar w/r to the incident.
+      size_t axis = s / 2;
+      vec_dbl mu = d_quadrature->cosines(axis);
+      vec_dbl wt = d_quadrature->weights();
+      d_basis_p[s] = new detran_orthog::
+        Jacobi01(d_node->polar_order(s), mu, wt, 0.0, 1.0);
+    }
     else
     {
       THROW("INVALID BASIS");
