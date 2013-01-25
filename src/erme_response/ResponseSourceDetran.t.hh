@@ -155,10 +155,10 @@ set_boundary(const ResponseIndex &index_i)
   int na = q->number_azimuths_octant();
 
   //                    octant 0        octant 1
-  int az[4][2][3] = { {{0,     1, na}, {na-1, -1, -1}},    // west
-                      {{0,     1, na}, {na-1, -1, -1}},    // east
-                      {{na-1, -1, -1}, {0,     1, na}},    // south
-                      {{na-1, -1, -1}, {0,     1, na}} };  // north
+  int az[4][2][3] = { {{na-1, -1, -1}, {0,     1, na}},    // west
+                      {{na-1, -1, -1}, {0,     1, na}},    // east
+                      {{0,     1, na}, {na-1, -1, -1}},    // south
+                      {{0,     1, na}, {na-1, -1, -1}} };  // north
 
   /*
    *  Need a clean way to loop over azimuths in right order.  Detran

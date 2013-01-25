@@ -230,8 +230,8 @@ void ResponseSourceDetran<B>::construct_basis()
       {
         phi[a]      = q->phi(a);
         phi[na-a-1] = detran_utilities::pi - q->phi(a);
-        w_a[a]      = q->azimuth_weight(a);
-        w_a[na-a-1] = q->azimuth_weight(a);
+        w_a[a]      = q->azimuth_weight(a) * 2.0 /  1.570796326794897;;
+        w_a[na-a-1] = q->azimuth_weight(a) * 2.0 /  1.570796326794897;
       }
       for (size_t s = 0; s < d_node->number_surfaces(); ++s)
       {
@@ -261,8 +261,8 @@ void ResponseSourceDetran<B>::construct_basis()
       {
         phi[a]      = q->phi(a);
         phi[na-a-1] = detran_utilities::pi - q->phi(a);
-        w_a[a]      = q->azimuth_weight(a);
-        w_a[na-a-1] = q->azimuth_weight(a);
+        w_a[a]      = q->azimuth_weight(a) /  1.570796326794897;
+        w_a[na-a-1] = q->azimuth_weight(a) /  1.570796326794897;
       }
       for (size_t s = 0; s < d_node->number_surfaces(); ++s)
       {
@@ -275,6 +275,8 @@ void ResponseSourceDetran<B>::construct_basis()
     else if (basis_p_type == "jacobi")
     {
       // Use Jacobi for the polar w/r to the incident.
+      // Note, this one
+
       size_t axis = s / 2;
       vec_dbl mu = d_quadrature->cosines(axis);
       vec_dbl wt = d_quadrature->weights();

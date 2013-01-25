@@ -270,7 +270,7 @@ ResponseIndexer::build_2D(SP_node node, const size_t n)
   using std::cout;
   using std::endl;
 
-  bool db = true;
+  bool db = false;
 
   // Moment index local to a node
   size_t nodal_index = 0;
