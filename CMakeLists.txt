@@ -130,6 +130,12 @@ if(SERMENT_ENABLE_PYTHON)
   set(CMAKE_SWIG_FLAGS "-verbose")
 endif()
 
+if(SERMENT_ENABLE_GPERFTOOLS)
+  set(GPERFTOOLS_LIBRARIES "/home/robertsj/opt/gperftools/lib/libprofiler.so")
+  set(GPERFTOOLS_INCLUDE   "/home/robertsj/opt/gperftools/include")
+  include_directories(${GPERFTOOLS_INCLUDE})
+endif()
+
 #------------------------------------------------------------------------------#
 # CONFIGURATION
 #------------------------------------------------------------------------------#

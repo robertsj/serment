@@ -243,8 +243,6 @@ void ResponseSourceDetran<B>::construct_basis()
     }
     else if (basis_p_type == "cheby")
     {
-      // Using chebyshev type 2 in polar and gauss legendre in azimuth.
-      // Note, this better use DTN in polar!
       SP_productquadrature q = d_quadrature;
       size_t np = q->number_polar_octant();
       size_t na = 2 * q->number_azimuths_octant();
@@ -254,23 +252,33 @@ void ResponseSourceDetran<B>::construct_basis()
       {
         xi[p]  = q->cos_theta(p);
         w_p[p] = q->polar_weight(p);
+        std::cout << " p = " << p << " w = " << w_p[p] << std::endl;
       }
-      vec_dbl phi(na, 0);
+      vec_dbl cos_phi(na, 0);
+      vec_dbl sin_phi(na, 0);
       vec_dbl w_a(na, 0);
       for (size_t a = 0; a < na/2; ++a)
       {
-        phi[a]      = q->phi(a);
-        phi[na-a-1] = detran_utilities::pi - q->phi(a);
-        w_a[a]      = q->azimuth_weight(a) /  1.570796326794897;
-        w_a[na-a-1] = q->azimuth_weight(a) /  1.570796326794897;
+        cos_phi[a]      = q->cos_phi(a);
+        cos_phi[na-a-1] = -q->cos_phi(a);
+        sin_phi[a]      = q->sin_phi(a);
+        sin_phi[na-a-1] = q->sin_phi(a);
+        std::cout << " a = " << a << " cos_phi = " << q->cos_phi(a) << std::endl;
+        w_a[a]      = q->sin_phi(a) * q->azimuth_weight(a);// /  1.570796326794897;
+        w_a[na-a-1] = q->sin_phi(a) * q->azimuth_weight(a);// /  1.570796326794897;
       }
       for (size_t s = 0; s < d_node->number_surfaces(); ++s)
       {
         d_basis_p[s] = new detran_orthog::
-          ChebyshevU(d_node->polar_order(s), xi, w_p, 0.0, 1.0);
+          ChebyshevU(d_node->polar_order(s), xi, w_p, -1.0, 1.0, true);
         d_basis_a[s] = new detran_orthog::
-          CLP(d_node->azimuthal_order(s), phi, w_a, 0.0, detran_utilities::pi);
+          CLP(d_node->azimuthal_order(s), cos_phi, w_a, -1.0, 1.0);
       }
+      d_basis_p[0]->weights()->display();
+      d_basis_p[0]->basis()->display();
+      d_basis_a[0]->weights()->display();
+      d_basis_a[0]->basis()->display();
+
     }
     else if (basis_p_type == "jacobi")
     {
