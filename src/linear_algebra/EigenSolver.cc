@@ -15,6 +15,8 @@ namespace linear_algebra
 EigenSolver::EigenSolver(SP_matrix A, SP_matrix B)
   : d_A(A)
   , d_B(B)
+  , d_maximum_iterations(1000)
+  , d_tolerance(1e-14)
 {
   // Preconditions
   Require(A);
@@ -45,7 +47,7 @@ EigenSolver::EigenSolver(SP_matrix A, SP_matrix B)
   Insist(!ierr, "Error selecting EPS eigenpairs.");
 
   // Set the tolerances
-  ierr = EPSSetTolerances(d_solver, 1e-12, 1e3);
+  ierr = EPSSetTolerances(d_solver, d_tolerance, d_maximum_iterations);
   Insist(!ierr, "Error setting EPS tolerances.");
 
   // Then allow for user choice.

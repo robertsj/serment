@@ -77,6 +77,7 @@ compute(SP_response response, const ResponseIndex &index)
   d_solver->boundary()->clear();
   set_boundary(index);
   d_solver->solve(d_keff);
+  d_solver->state()->display();
   //THROW("lala");
   expand(response, index);
 }

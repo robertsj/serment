@@ -36,14 +36,14 @@ GlobalSolverPicard::GlobalSolverPicard(SP_db      db,
   // Check if we are using a non-default keff update
   std::string updater = "default";
   if (d_db->check("picard_update"))
-    std::string updater = d_db->get<std::string>("picard_update");
+    updater = d_db->get<std::string>("picard_update");
   if (updater == "default")
     d_update = new EigenvalueUpdate();
   else if (updater == "steffensen")
     d_update = new SteffensenUpdate();
   else
     THROW("Unknown Picard eigenvalue updater: " + updater);
-
+  std::cout << "Using eigenvalue updater: " << updater << std::endl;
   // Post conditions
   Ensure(d_MR);
   Ensure(d_innersolver);

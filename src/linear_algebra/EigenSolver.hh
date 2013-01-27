@@ -44,7 +44,8 @@ public:
    *  @param A  Pointer to left hand operator
    *  @param P  Pointer to right hand operator (possibly null)
    */
-  EigenSolver(SP_matrix A, SP_matrix B = SP_matrix(0));
+  EigenSolver(SP_matrix A,
+              SP_matrix B = SP_matrix(0));
 
   /**
    *  @brief Solve the eigenvalue problem
@@ -73,6 +74,10 @@ private:
   double d_lambda_imaginary;
   /// Number of iterations
   int d_number_iterations;
+  /// Maximum number of iterations
+  int d_maximum_iterations;
+  /// Tolerance
+  double d_tolerance;
 
   //-------------------------------------------------------------------------//
   // IMPLEMENTATION

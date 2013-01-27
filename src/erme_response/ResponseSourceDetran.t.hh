@@ -153,6 +153,7 @@ set_boundary(const ResponseIndex &index_i)
   size_t dim0 = d_spatial_dim[dim][0];
 
   int na = q->number_azimuths_octant();
+  q->display();
 
   //                    octant 0        octant 1
   int az[4][2][3] = { {{na-1, -1, -1}, {0,     1, na}},    // west
@@ -214,10 +215,10 @@ expand_boundary(SP_response          response,
   int na = q->number_azimuths_octant();
 
   //                    octant 0        octant 1
-  int az[4][2][3] = { {{0,     1, na}, {na-1, -1, -1}},    // west
-                      {{0,     1, na}, {na-1, -1, -1}},    // east
-                      {{na-1, -1, -1}, {0,     1, na}},    // south
-                      {{na-1, -1, -1}, {0,     1, na}} };  // north
+  int az[4][2][3] = { {{na-1, -1, -1}, {0,     1, na}},    // west
+                      {{na-1, -1, -1}, {0,     1, na}},    // east
+                      {{0,     1, na}, {na-1, -1, -1}},    // south
+                      {{0,     1, na}, {na-1, -1, -1}} };  // north
 
   for (size_t surface = 0; surface < 4; ++surface)
   {
@@ -275,7 +276,7 @@ expand_boundary(SP_response          response,
 
               const BoundaryTraits_T::value_type &b = B(surface, o, angle, g);
               vec_dbl R_s(o_s + 1, 0);
-
+              std::cout << " surface=" << surface << " b=" << b[0] << std::endl;
               // EXPAND S
               d_basis_s[surface][0]->transform(b, R_s);
               for (size_t s = 0; s < R_s.size(); ++s)
