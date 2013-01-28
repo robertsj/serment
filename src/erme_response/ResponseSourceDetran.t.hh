@@ -89,8 +89,7 @@ expand_boundary(SP_response          response,
       for (size_t p = 0; p < d_quadrature->number_angles_octant(); ++p)
       {
         psi_g[p] = B(surface, octant, p, g);
-        if (!d_angular_flux)
-          psi_g[p] *= d_quadrature->mu(0, p);
+        if (!d_angular_flux) psi_g[p] *= d_quadrature->mu(0, p);
       }
       d_basis_p[surface]->transform(psi_g, Rp);
       for (size_t p = 0; p < Rp.size(); ++p)
@@ -153,7 +152,6 @@ set_boundary(const ResponseIndex &index_i)
   size_t dim0 = d_spatial_dim[dim][0];
 
   int na = q->number_azimuths_octant();
-  q->display();
 
   //                    octant 0        octant 1
   int az[4][2][3] = { {{na-1, -1, -1}, {0,     1, na}},    // west
@@ -176,24 +174,27 @@ set_boundary(const ResponseIndex &index_i)
     for (size_t oo = 0; oo < 2; ++oo)
     {
       size_t o = q->incident_octant(index_i.surface)[oo];
-      // std::cout << "   o = " << o << std::endl;
-      int a0 = az[index_i.surface][oo][0];
+      //std::cout << "   o = " << o << std::endl;
+      int a0 = az[index_i.surface][oo][1];
       for (size_t aa = 0; aa < q->number_azimuths_octant(); ++aa, ++a)
       {
-        size_t aaa = aa; // aaa is the index into quad
-        if (a0) aaa = a0 - aa;
-        // std::cout << "     aaa = " << aaa << " " << q->number_azimuths_octant() << std::endl;
+        size_t aaa = aa;
+        if (a0 == -1) aaa = q->number_azimuths_octant() - aa - 1;
+
+        //std::cout << "     aaa = " << aaa << " " << q->number_azimuths_octant() << " " << a0 << std::endl;
         double P_a = (*d_basis_a[index_i.surface])(index_i.azimuth, a);
         for (size_t p = 0; p < q->number_polar_octant(); ++p)
         {
-          // std::cout << "       p = " << p << std::endl;
+          //std::cout << "       p = " << p << std::endl;
           double P_p = (*d_basis_p[index_i.surface])(index_i.polar, p);
           size_t angle = q->angle(aaa, p);
           BoundaryTraits_T::value_type &b = B(index_i.surface, o, angle, g);
           for (size_t i = 0; i < d_mesh->number_cells(dim0); ++i)
           {
             double P_s0 = (*d_basis_s[index_i.surface][0])(index_i.space0, i);
-            BoundaryValue_T::value(b, i) = sign * P_s0 * P_p * P_a * P_e;
+            double val = sign * P_s0 * P_p * P_a * P_e;
+            if (!d_angular_flux) val /= q->cosines(dim)[angle];
+            BoundaryValue_T::value(b, i) = val;
           }
         }
       }
@@ -261,12 +262,12 @@ expand_boundary(SP_response          response,
         for (size_t oo = 0; oo < 2; ++oo)
         {
           size_t o = q->outgoing_octant(surface)[oo];
-          int a0 = az[surface][oo][0];
+          int a0 = az[surface][oo][1];
 
           for (size_t aa = 0; aa < q->number_azimuths_octant(); ++aa, ++a)
           {
-            size_t aaa = 0;
-            if (a0) aaa = a0 - aa;
+            size_t aaa = aa;
+            if (a0 == -1) aaa = q->number_azimuths_octant() - aa - 1;
 
             vec2_dbl R_s_p(o_s + 1, vec_dbl(q->number_polar_octant(), 0));
 
@@ -276,11 +277,12 @@ expand_boundary(SP_response          response,
 
               const BoundaryTraits_T::value_type &b = B(surface, o, angle, g);
               vec_dbl R_s(o_s + 1, 0);
-              std::cout << " surface=" << surface << " b=" << b[0] << std::endl;
+              //std::cout << " surface=" << surface << " b=" << b[0] << std::endl;
               // EXPAND S
               d_basis_s[surface][0]->transform(b, R_s);
               for (size_t s = 0; s < R_s.size(); ++s)
               {
+                if (!d_angular_flux) R_s[s] *= q->cosines(dim)[angle];
                 R_s_p[s][p] = R_s[s];
               }
 

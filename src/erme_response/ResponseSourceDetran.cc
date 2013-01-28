@@ -76,8 +76,16 @@ compute(SP_response response, const ResponseIndex &index)
   //std::cout << "COMPUTING RESPONSE FOR INDEX: " << index << std::endl;
   d_solver->boundary()->clear();
   set_boundary(index);
+//  std::cout << "********* OUTGOING BOUNDARY *********** " << std::endl;
+//  d_B->display(false);
+//  std::cout << "********* INCIDENT BOUNDARY *********** " << std::endl;
+//  d_B->display(true);
   d_solver->solve(d_keff);
-  d_solver->state()->display();
+//  d_solver->state()->display();
+//  std::cout << "********* OUTGOING BOUNDARY *********** " << std::endl;
+//  d_B->display(false);
+//  std::cout << "********* INCIDENT BOUNDARY *********** " << std::endl;
+//  d_B->display(true);
   //THROW("lala");
   expand(response, index);
 }
@@ -164,7 +172,7 @@ void ResponseSourceDetran<B>::construct_basis()
   string basis_p_type = "dlp";
   if (d_db->check("basis_p_type"))
     basis_p_type = d_db->get<string>("basis_p_type");
-  std::cout << " POLAR TYPE = " << basis_p_type << std::endl;
+  //std::cout << " POLAR TYPE = " << basis_p_type << std::endl;
 
   if (B::D_T::dimension == 1)
   {
@@ -209,7 +217,6 @@ void ResponseSourceDetran<B>::construct_basis()
       {
         d_basis_p[s] = new detran_orthog::DLP(d_node->polar_order(s),     np, true);
         d_basis_a[s] = new detran_orthog::DLP(d_node->azimuthal_order(s), na, true);
-        d_basis_a[s]->basis()->display();
       }
     }
     else if (basis_p_type == "legendre")
@@ -253,7 +260,7 @@ void ResponseSourceDetran<B>::construct_basis()
       {
         xi[p]  = q->cos_theta(p);
         w_p[p] = q->polar_weight(p);
-        std::cout << " p = " << p << " w = " << w_p[p] << std::endl;
+        //std::cout << " p = " << p << " w = " << w_p[p] << std::endl;
       }
       vec_dbl cos_phi(na, 0);
       vec_dbl sin_phi(na, 0);
@@ -264,7 +271,7 @@ void ResponseSourceDetran<B>::construct_basis()
         cos_phi[na-a-1] = -q->cos_phi(a);
         sin_phi[a]      = q->sin_phi(a);
         sin_phi[na-a-1] = q->sin_phi(a);
-        std::cout << " a = " << a << " cos_phi = " << q->cos_phi(a) << std::endl;
+        //std::cout << " a = " << a << " cos_phi = " << q->cos_phi(a) << std::endl;
         w_a[a]      = q->sin_phi(a) * q->azimuth_weight(a);// /  1.570796326794897;
         w_a[na-a-1] = q->sin_phi(a) * q->azimuth_weight(a);// /  1.570796326794897;
       }
@@ -275,10 +282,10 @@ void ResponseSourceDetran<B>::construct_basis()
         d_basis_a[s] = new detran_orthog::
           CLP(d_node->azimuthal_order(s), cos_phi, w_a, -1.0, 1.0);
       }
-      d_basis_p[0]->weights()->display();
-      d_basis_p[0]->basis()->display();
-      d_basis_a[0]->weights()->display();
-      d_basis_a[0]->basis()->display();
+//      d_basis_p[0]->weights()->display();
+//      d_basis_p[0]->basis()->display();
+//      d_basis_a[0]->weights()->display();
+//      d_basis_a[0]->basis()->display();
 
     }
     else if (basis_p_type == "jacobi")

@@ -1,10 +1,9 @@
 //----------------------------------*-C++-*----------------------------------//
-/*!
- * \file   test_Communicator.cc
- * \author Jeremy Roberts
- * \date   Aug 19, 2012
- * \brief  Test of communicator creation and use.
- * \note   Copyright (C) 2012 Jeremy Roberts. 
+/**
+ *  @file   test_Communicator.cc
+ *  @author Jeremy Roberts
+ *  @date   Aug 19, 2012
+ *  @brief  Test of communicator creation and use.
  */
 //---------------------------------------------------------------------------//
 
