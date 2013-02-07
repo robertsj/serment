@@ -39,8 +39,8 @@ void GlobalSolverPicard::solve()
 
   // Compute initial responses
   update_response(keff);
-//  d_R->display(d_R->MATLAB, "R.out");
-//  d_M->display(d_R->MATLAB, "M.out");
+  //d_R->display(d_R->MATLAB, "R.out");
+  //d_M->display(d_R->MATLAB, "M.out");
 //  d_L->display(d_L->MATLAB, "L.out");
 //  d_F->display();
 //  d_A->display();

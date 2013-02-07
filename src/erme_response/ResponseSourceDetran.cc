@@ -41,6 +41,14 @@ ResponseSourceDetran<B>::ResponseSourceDetran(SP_node node,
   // Ensure we compute boundary fluxes
   d_db->put<int>("compute_boundary_flux", 1);
 
+  // We use a fixed boundary.
+//  d_db->put<std::string>("bc_west",     "fixed");
+//  d_db->put<std::string>("bc_east",     "fixed");
+//  d_db->put<std::string>("bc_south",    "fixed");
+//  d_db->put<std::string>("bc_north",    "fixed");
+//  d_db->put<std::string>("bc_bottom",   "fixed");
+//  d_db->put<std::string>("bc_top",      "fixed");
+
   // Create the solver and extract the boundary and quadrature
   d_solver = new Solver_T(d_db, d_material, d_mesh, true);
   d_solver->setup();       // Constructs quadrature, etc.
@@ -75,6 +83,7 @@ compute(SP_response response, const ResponseIndex &index)
 {
   //std::cout << "COMPUTING RESPONSE FOR INDEX: " << index << std::endl;
   d_solver->boundary()->clear();
+  d_solver->boundary()->clear_bc();
   set_boundary(index);
 //  std::cout << "********* OUTGOING BOUNDARY *********** " << std::endl;
 //  d_B->display(false);

@@ -14,6 +14,7 @@
 #include "boundary/BoundarySN.hh"
 #include "boundary/BoundaryMOC.hh"
 #include "boundary/BoundaryTraits.hh"
+#include "boundary/FixedBoundary.hh"
 
 namespace erme_response
 {
@@ -39,11 +40,14 @@ void ResponseSourceDetran<B>::expand_boundary(SP_response          response,
 //---------------------------------------------------------------------------//
 
 //---------------------------------------------------------------------------//
+// fixed boundary
 template <>
 void ResponseSourceDetran<detran::BoundarySN<detran::_1D> >::
 set_boundary(const ResponseIndex &index_i)
 {
   Boundary_T &B = *d_B;
+  typedef detran::FixedBoundary<detran::_1D> Fixed_T;
+  Fixed_T &BC = *dynamic_cast<Fixed_T*>(B.bc(index_i.surface).bp());
   size_t octant = d_quadrature->incident_octant(index_i.surface)[0];
   for (size_t g = 0; g < d_material->number_groups(); ++g)
   {
@@ -53,11 +57,31 @@ set_boundary(const ResponseIndex &index_i)
       double P_p = (*d_basis_p[index_i.surface])(index_i.polar, p);
       double val = P_e * P_p;
       if (!d_angular_flux) val /= d_quadrature->mu(0, p);
-      B(index_i.surface, octant, p, g) =  val;
+      BC(0, p, g) =  val;
+      //B(index_i.surface, octant, p, g) = val;
     }
   }
 }
-
+// old boundary
+//template <>
+//void ResponseSourceDetran<detran::BoundarySN<detran::_1D> >::
+//set_boundary(const ResponseIndex &index_i)
+//{
+//  Boundary_T &B = *d_B;
+//  typedef detran::FixedBoundary<detran::_1D> Fixed_T;
+//  size_t octant = d_quadrature->incident_octant(index_i.surface)[0];
+//  for (size_t g = 0; g < d_material->number_groups(); ++g)
+//  {
+//    double P_e = (*d_basis_e[index_i.surface])(index_i.energy, g);
+//    for (size_t p = 0; p < d_quadrature->number_angles_octant(); ++p)
+//    {
+//      double P_p = (*d_basis_p[index_i.surface])(index_i.polar, p);
+//      double val = P_e * P_p;
+//      if (!d_angular_flux) val /= d_quadrature->mu(0, p);
+//      B(index_i.surface, octant, p, g) = val;
+//    }
+//  }
+//}
 //---------------------------------------------------------------------------//
 template <>
 void ResponseSourceDetran<detran::BoundarySN<detran::_1D> >::
@@ -129,7 +153,7 @@ expand_boundary(SP_response          response,
       }
     }
   }
-
+  //response->display();
 }
 
 //---------------------------------------------------------------------------//
