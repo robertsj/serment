@@ -81,6 +81,7 @@ set_boundary(const ResponseIndex &index_i)
 //      B(index_i.surface, octant, p, g) = val;
 //    }
 //  }
+//  //B.display(true);
 //}
 //---------------------------------------------------------------------------//
 template <>
@@ -153,7 +154,8 @@ expand_boundary(SP_response          response,
       }
     }
   }
-  //response->display();
+  response->display();
+  THROW("lala");
 }
 
 //---------------------------------------------------------------------------//

@@ -85,16 +85,17 @@ compute(SP_response response, const ResponseIndex &index)
   d_solver->boundary()->clear();
   d_solver->boundary()->clear_bc();
   set_boundary(index);
+  //THROW("lala");
 //  std::cout << "********* OUTGOING BOUNDARY *********** " << std::endl;
 //  d_B->display(false);
 //  std::cout << "********* INCIDENT BOUNDARY *********** " << std::endl;
 //  d_B->display(true);
   d_solver->solve(d_keff);
-//  d_solver->state()->display();
-//  std::cout << "********* OUTGOING BOUNDARY *********** " << std::endl;
-//  d_B->display(false);
-//  std::cout << "********* INCIDENT BOUNDARY *********** " << std::endl;
-//  d_B->display(true);
+  d_solver->state()->display();
+  std::cout << "********* OUTGOING BOUNDARY *********** " << std::endl;
+  d_B->display(false);
+  std::cout << "********* INCIDENT BOUNDARY *********** " << std::endl;
+  d_B->display(true);
   //THROW("lala");
   expand(response, index);
 }
