@@ -154,8 +154,8 @@ expand_boundary(SP_response          response,
       }
     }
   }
-  response->display();
-  THROW("lala");
+//  response->display();
+//  THROW("lala");
 }
 
 //---------------------------------------------------------------------------//

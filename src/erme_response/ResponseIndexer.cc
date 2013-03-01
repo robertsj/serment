@@ -340,7 +340,7 @@ ResponseIndexer::build_1D(SP_node node, const size_t n)
   using std::cout;
   using std::endl;
 
-  bool db = true;
+  bool db = false;
   size_t nodal_index = 0;
 
   if (db) cout << "NODE = " << n << endl;

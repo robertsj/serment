@@ -91,13 +91,15 @@ compute(SP_response response, const ResponseIndex &index)
 //  std::cout << "********* INCIDENT BOUNDARY *********** " << std::endl;
 //  d_B->display(true);
   d_solver->solve(d_keff);
-  d_solver->state()->display();
-  std::cout << "********* OUTGOING BOUNDARY *********** " << std::endl;
-  d_B->display(false);
-  std::cout << "********* INCIDENT BOUNDARY *********** " << std::endl;
-  d_B->display(true);
-  //THROW("lala");
+//  d_solver->state()->display();
+//  std::cout << "********* OUTGOING BOUNDARY *********** " << std::endl;
+//  d_B->display(false);
+//  std::cout << "********* INCIDENT BOUNDARY *********** " << std::endl;
+//  d_B->display(true);
+
   expand(response, index);
+  response->display();
+  THROW("lala");
 }
 
 //---------------------------------------------------------------------------//
