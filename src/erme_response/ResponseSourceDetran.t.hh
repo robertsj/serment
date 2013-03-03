@@ -164,6 +164,9 @@ void ResponseSourceDetran<detran::BoundarySN<detran::_2D> >::
 set_boundary(const ResponseIndex &index_i)
 {
   Boundary_T &B = *d_B;
+  typedef detran::FixedBoundary<detran::_2D> Fixed_T;
+  Fixed_T &BC = *dynamic_cast<Fixed_T*>(B.bc(index_i.surface).bp());
+
   double sign = 1.0;
   if ((index_i.surface == d_mesh->WEST   or
        index_i.surface == d_mesh->NORTH) and
@@ -214,7 +217,7 @@ set_boundary(const ResponseIndex &index_i)
           //std::cout << "       p = " << p << std::endl;
           double P_p = (*d_basis_p[index_i.surface])(index_i.polar, p);
           size_t angle = q->angle(aaa, p);
-          BoundaryTraits_T::value_type &b = B(index_i.surface, o, angle, g);
+          BoundaryTraits_T::value_type &b = BC(oo, angle, g);
           for (size_t i = 0; i < d_mesh->number_cells(dim0); ++i)
           {
             double P_s0 = (*d_basis_s[index_i.surface][0])(index_i.space0, i);
@@ -228,6 +231,75 @@ set_boundary(const ResponseIndex &index_i)
   }
 }
 
+// OLD
+//template <>
+//void ResponseSourceDetran<detran::BoundarySN<detran::_2D> >::
+//set_boundary(const ResponseIndex &index_i)
+//{
+//  Boundary_T &B = *d_B;
+//  double sign = 1.0;
+//  if ((index_i.surface == d_mesh->WEST   or
+//       index_i.surface == d_mesh->NORTH) and
+//      (index_i.space0) % 2 )
+//  {
+//    sign = -1.0;
+//  }
+//
+//  SP_productquadrature q = d_quadrature;
+//
+//  size_t dim  = index_i.surface / 2;
+//  size_t dim0 = d_spatial_dim[dim][0];
+//
+//  int na = q->number_azimuths_octant();
+//
+//  //                    octant 0        octant 1
+//  int az[4][2][3] = { {{na-1, -1, -1}, {0,     1, na}},    // west
+//                      {{na-1, -1, -1}, {0,     1, na}},    // east
+//                      {{0,     1, na}, {na-1, -1, -1}},    // south
+//                      {{0,     1, na}, {na-1, -1, -1}} };  // north
+//
+//  /*
+//   *  Need a clean way to loop over azimuths in right order.  Detran
+//   *  product quads are guaranteed to give angles such that for each
+//   *  polar level, mu goes from 0 : 1.  In that way, octant 1 is
+//   *  correctly ordered for incident on the left (going left to right),
+//   *  but octant 4 must be reversed in azimuth.
+//   */
+//  for (size_t g = 0; g < d_material->number_groups(); ++g)
+//  {
+//    //std::cout << " g = " << g << std::endl;
+//    double P_e = (*d_basis_e[index_i.surface])(index_i.energy, g);
+//    size_t a = 0;
+//    for (size_t oo = 0; oo < 2; ++oo)
+//    {
+//      size_t o = q->incident_octant(index_i.surface)[oo];
+//      //std::cout << "   o = " << o << std::endl;
+//      int a0 = az[index_i.surface][oo][1];
+//      for (size_t aa = 0; aa < q->number_azimuths_octant(); ++aa, ++a)
+//      {
+//        size_t aaa = aa;
+//        if (a0 == -1) aaa = q->number_azimuths_octant() - aa - 1;
+//
+//        //std::cout << "     aaa = " << aaa << " " << q->number_azimuths_octant() << " " << a0 << std::endl;
+//        double P_a = (*d_basis_a[index_i.surface])(index_i.azimuth, a);
+//        for (size_t p = 0; p < q->number_polar_octant(); ++p)
+//        {
+//          //std::cout << "       p = " << p << std::endl;
+//          double P_p = (*d_basis_p[index_i.surface])(index_i.polar, p);
+//          size_t angle = q->angle(aaa, p);
+//          BoundaryTraits_T::value_type &b = B(index_i.surface, o, angle, g);
+//          for (size_t i = 0; i < d_mesh->number_cells(dim0); ++i)
+//          {
+//            double P_s0 = (*d_basis_s[index_i.surface][0])(index_i.space0, i);
+//            double val = sign * P_s0 * P_p * P_a * P_e;
+//            if (!d_angular_flux) val /= q->cosines(dim)[angle];
+//            BoundaryValue_T::value(b, i) = val;
+//          }
+//        }
+//      }
+//    }
+//  }
+//}
 
 //---------------------------------------------------------------------------//
 template <>

@@ -98,8 +98,8 @@ compute(SP_response response, const ResponseIndex &index)
 //  d_B->display(true);
 
   expand(response, index);
-  response->display();
-  THROW("lala");
+//  response->display();
+//  THROW("lala");
 }
 
 //---------------------------------------------------------------------------//
