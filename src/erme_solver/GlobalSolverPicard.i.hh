@@ -55,6 +55,7 @@ void GlobalSolverPicard::solve()
 
   // Compute the initial residual norm
   double norm = d_residual->compute_norm(*d_J0, keff, lambda);
+  d_residual_norms.push_back(norm);
 
   //-------------------------------------------------------------------------//
   // OUTER ITERATIONS
@@ -104,6 +105,7 @@ void GlobalSolverPicard::solve()
 //    d_A->display();
     // Compute the norm of the nonlinear residual.
     norm = d_residual->compute_norm(*d_J0, keff, lambda);
+    d_residual_norms.push_back(norm);
 
     printf(" PICARD IT: %3i NORM: %8.6e LAMBDA: %12.9f KEFF: %12.9f INNERS %8i \n",
            it, norm, lambda, keff, innertot);
@@ -125,10 +127,10 @@ void GlobalSolverPicard::solve()
     sum_fd += fd[node_g];
   }
 
-  for (size_t i = 0; i < fd.size(); ++i)
-  {
-    std::printf(" %5i %12.9f \n", i, fd[i]/sum_fd);
-  }
+//  for (size_t i = 0; i < fd.size(); ++i)
+//  {
+//    std::printf(" %5i %12.9f \n", i, fd[i]/sum_fd);
+//  }
 
   std::printf(" FINAL POWER ITERATION EIGENVALUES: \n");
   std::printf(" **** FINAL KEFF        = %12.9f \n", keff);

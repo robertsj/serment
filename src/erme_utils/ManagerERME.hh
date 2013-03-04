@@ -93,6 +93,7 @@ public:
   typedef erme_response::ResponseServer::SP_server    SP_server;
   typedef erme_response::ResponseIndexer::SP_indexer  SP_indexer;
   typedef erme_solver::GlobalSolverBase::SP_solver    SP_solver;
+  typedef detran_utilities::vec_dbl                   vec_dbl;
 
   //-------------------------------------------------------------------------//
   // CONSTRUCTOR & DESTRUCTOR
@@ -131,6 +132,7 @@ public:
 
   double get_keff() const { return d_state->k(); }
   double get_lambda() const { return d_state->lambda(); }
+  vec_dbl get_residual_norms() const { return d_solver->residual_norms(); }
 
   /// Close libraries, etc.
   void finalize();

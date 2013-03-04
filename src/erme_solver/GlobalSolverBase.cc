@@ -65,6 +65,12 @@ GlobalSolverBase(SP_db db,
 GlobalSolverBase::~GlobalSolverBase()
 { /* ... */ }
 
+//---------------------------------------------------------------------------//
+GlobalSolverBase::vec_dbl GlobalSolverBase::residual_norms() const
+{
+  return d_residual_norms;
+}
+
 } // end namespace erme_solver
 
 //---------------------------------------------------------------------------//

@@ -31,7 +31,15 @@ GlobalSolverPicard::GlobalSolverPicard(SP_db      db,
   d_MR = new OperatorMR(d_R, d_M);
 
   // Create inner eigensolver
-  d_innersolver = new linear_algebra::EigenSolver(d_MR);
+  int inner_max_iters = 1e5;
+  if (d_db->check("erme_inner_max_iters"))
+    inner_max_iters = d_db->get<int>("erme_inner_max_iters");
+  double inner_tolerance = 1e-10;
+  if (d_db->check("erme_inner_tolerance"))
+    inner_tolerance = d_db->get<double>("erme_inner_tolerance");
+  d_innersolver = new linear_algebra::EigenSolver(d_MR,
+                                                  linear_algebra::Matrix::SP_matrix(0),
+                                                  inner_max_iters, inner_tolerance);
 
   // Check if we are using a non-default keff update
   std::string updater = "default";

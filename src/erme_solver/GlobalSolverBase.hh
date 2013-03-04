@@ -88,6 +88,9 @@ public:
   /// Solve
   virtual void solve() = 0;
 
+  /// Get the residuals
+  vec_dbl residual_norms() const;
+
 protected:
 
   //-------------------------------------------------------------------------//

@@ -45,7 +45,9 @@ public:
    *  @param P  Pointer to right hand operator (possibly null)
    */
   EigenSolver(SP_matrix A,
-              SP_matrix B = SP_matrix(0));
+              SP_matrix B = SP_matrix(0),
+              int max_iters = 1e5,
+              double tolerance = 1e-10);
 
   /**
    *  @brief Solve the eigenvalue problem
