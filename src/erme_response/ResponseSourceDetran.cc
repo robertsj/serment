@@ -42,12 +42,12 @@ ResponseSourceDetran<B>::ResponseSourceDetran(SP_node node,
   d_db->put<int>("compute_boundary_flux", 1);
 
   // We use a fixed boundary.
-//  d_db->put<std::string>("bc_west",     "fixed");
-//  d_db->put<std::string>("bc_east",     "fixed");
-//  d_db->put<std::string>("bc_south",    "fixed");
-//  d_db->put<std::string>("bc_north",    "fixed");
-//  d_db->put<std::string>("bc_bottom",   "fixed");
-//  d_db->put<std::string>("bc_top",      "fixed");
+  d_db->put<std::string>("bc_west",     "fixed");
+  d_db->put<std::string>("bc_east",     "fixed");
+  d_db->put<std::string>("bc_south",    "fixed");
+  d_db->put<std::string>("bc_north",    "fixed");
+  d_db->put<std::string>("bc_bottom",   "fixed");
+  d_db->put<std::string>("bc_top",      "fixed");
 
   // Create the solver and extract the boundary and quadrature
   d_solver = new Solver_T(d_db, d_material, d_mesh, true);
