@@ -85,14 +85,15 @@ void NodeList::set_nodal_map(const vec_int          &node_map,
     Insist(neighbors[i].size() == d_nodes[node_map[i]]->number_surfaces(),
            "Size of node neighbor vector inconsistent with surface count.");
   }
-
+  Insist((origins.size() == node_map.size()) or (origins.size() == 0),
+         "If used, the origin vector must be the same size as the Node map");
   d_node_map = node_map;
   d_neighbors = neighbors;
   d_origins = origins;
 }
 
 //---------------------------------------------------------------------------//
-NodeList::Point NodeList::origin(const size_t node_g) const
+const NodeList::Point& NodeList::origin(const size_t node_g) const
 {
   Require(node_g < number_global_nodes());
   return d_origins[node_g];

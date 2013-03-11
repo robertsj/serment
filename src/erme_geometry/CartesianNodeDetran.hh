@@ -92,7 +92,7 @@ public:
    *  Note, this is most sensible if all the nodes use the same
    *  material database.
    */
-  double color(Point point, std::string key = "MATERIAL");
+  double color(detran_utilities::Point point, std::string key = "MATERIAL");
 
   //-------------------------------------------------------------------------//
   // DETRAN-SPECIFIC INTERFACE

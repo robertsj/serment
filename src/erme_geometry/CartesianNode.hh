@@ -80,7 +80,7 @@ public:
   double volume() const;
 
   /// Default color.  Am I in the box or not?
-  double color(Point point, std::string = "MATERIAL");
+  double color(detran_utilities::Point point, std::string = "MATERIAL");
 
   //-------------------------------------------------------------------------//
   // PUBLIC FUNCTIONS

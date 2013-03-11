@@ -32,3 +32,4 @@ try :
 except ImportError :
   print "Could not import Numpy.  While not critical, you're"
   print "better off with it!"
+

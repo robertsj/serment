@@ -135,7 +135,7 @@ public:
   virtual double volume() const = 0;
 
   /// Return a color
-  virtual double color(Point point, std::string key = "MATERIAL") = 0;
+  virtual double color(detran_utilities::Point point, std::string key = "MATERIAL") = 0;
 
   //-------------------------------------------------------------------------//
   // PUBLIC INTERFACE

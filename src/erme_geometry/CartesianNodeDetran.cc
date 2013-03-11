@@ -43,21 +43,42 @@ CartesianNodeDetran::CartesianNodeDetran(const size_t  dim,
 //---------------------------------------------------------------------------//
 double CartesianNodeDetran::color(Point point, std::string key)
 {
-  size_t ijk[] = {0, 0, 0};
+  int ijk[] = {0, 0, 0};
   double xyz[] = {point.x(), point.y(), point.z()};
+  bool inside = true;
   for (size_t d = 0; d < d_mesh->dimension(); ++d)
   {
+    ijk[d] = -1;
+    if (xyz[d] < 0.0)
+    {
+      inside = false;
+      break;
+    }
     double uvw = 0.0;
     size_t i;
     for (i = 0; i < d_mesh->number_cells(d); ++i)
-      if (xyz[d] < uvw + d_mesh->width(d, i)) break;
-    ijk[d] = i;
+    {
+      if (xyz[d] < uvw + d_mesh->width(d, i))
+      {
+        ijk[d] = i;
+        break;
+      }
+    }
+    if (ijk[d] == -1)
+    {
+      ijk[d] = 0;
+      inside = false;
+    }
   }
-  size_t idx = d_mesh->index(ijk[0], ijk[1], ijk[2]);
-  Insist(d_mesh->mesh_map_exists(key),
-         "Key used for CartesianNodeDetran coloring does not exist!");
-  const vec_int &mat_map = d_mesh->mesh_map(key);
-  return (double)mat_map[idx];
+  if (inside)
+  {
+    size_t idx = d_mesh->index(ijk[0], ijk[1], ijk[2]);
+    Insist(d_mesh->mesh_map_exists(key),
+           "Key used for CartesianNodeDetran coloring does not exist!");
+    const vec_int &mat_map = d_mesh->mesh_map(key);
+    return (double)mat_map[idx];
+  }
+  return -1.0;
 }
 
 } // end namespace erme_geometry

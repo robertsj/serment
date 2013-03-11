@@ -70,7 +70,7 @@ public:
   typedef std::vector<NeighborSurface>      vec_neighbor;
   typedef std::vector<vec_neighbor>         vec2_neighbor;
   typedef detran_utilities::Point           Point;
-  typedef std::vector<Point>                vec_point;
+  typedef std::vector<detran_utilities::Point>                vec_point;
 
   //-------------------------------------------------------------------------//
   // CONSTRUCTOR & DESTRUCTOR
@@ -119,13 +119,13 @@ public:
    *  @brief Get a node
    *  @param n  Index into vector of unique nodes via the global index
    */
-  SP_node node(const int n) const;
+  SP_node node(const int node_g) const;
 
   /**
    *  @brief Get a node
    *  @param n  Index into vector of unique nodes via the cardinal index
    */
-  SP_node unique_node(const int n) const;
+  SP_node unique_node(const int node_ug) const;
 
   /**
    *  @brief Get a node.  Returns null pointer if not found.
@@ -216,7 +216,7 @@ public:
   }
 
   /// Return the origin of a global node
-  Point origin(const size_t node_g) const;
+  const detran_utilities::Point& origin(const size_t node_g) const;
 
   /// Display all the nodes in the list
   void display() const;

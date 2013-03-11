@@ -2,7 +2,7 @@
 # src/pyerme/CMakeLists.txt
 #------------------------------------------------------------------------------#
 
-SET_SOURCE_FILES_PROPERTIES(serment.i PROPERTIES CPLUSPLUS ON)
+set_source_files_properties(serment.i PROPERTIES CPLUSPLUS ON)
 SWIG_ADD_MODULE(pyserment python serment.i)
 SWIG_LINK_LIBRARIES(pyserment
                     ${PYTHON_LIBRARIES} 
@@ -12,14 +12,14 @@ SWIG_LINK_LIBRARIES(pyserment
                     erme_utils)
 
 # Install the module and library
-INSTALL(FILES ${CMAKE_BINARY_DIR}/src/pyerme/pyserment.py
+install(FILES ${CMAKE_BINARY_DIR}/src/pyerme/pyserment.py
         DESTINATION ${CMAKE_INSTALL_PREFIX}/python/serment)
-INSTALL(FILES ${CMAKE_BINARY_DIR}/src/pyerme/_pyserment.so
+install(FILES ${CMAKE_BINARY_DIR}/src/pyerme/_pyserment.so
         DESTINATION ${CMAKE_INSTALL_PREFIX}/python/serment)
         
 # Install the helper initialization file
-INSTALL_FILES(/python/serment __init__.py)
+install_files(/python/serment .py)
 
 # add the utilities
-#add_subdirectory(pydetranutils)
+#add_subdirectory(pyermeutilities)
 

@@ -47,23 +47,33 @@
 
 // Geometry
 %include "erme_geometry/NeighborSurface.hh"
-%template(vec_neighbor)  std::vector<erme_geometry::NeighborSurface>;
-%template(vec2_neighbor) std::vector<std::vector<erme_geometry::NeighborSurface> >;
-
 %include "erme_geometry/Node.hh"
 %include "erme_geometry/CartesianNode.hh"
 %include "erme_geometry/DummyNode.hh"
 %include "erme_geometry/CartesianNodeDetran.hh"
-%include "erme_geometry/NodeFactory.hh"
-%include "erme_geometry/NodeFactoryDetran.hh"
 %include "erme_geometry/NodeList.hh"
 %include "erme_geometry/NodePartitioner.hh"
-//// Smart pointer templates
+// Smart pointer templates
+%template(NodeListSP)             detran_utilities::SP<erme_geometry::NodeList>;
 %template(NodeSP)                 detran_utilities::SP<erme_geometry::Node>;
 %template(CartesianNodeSP)        detran_utilities::SP<erme_geometry::CartesianNode>;
 %template(CartesianNodeDummySP)   detran_utilities::SP<erme_geometry::CartesianNodeDummy>;
 %template(CartesianNodeDetranSP)  detran_utilities::SP<erme_geometry::CartesianNodeDetran>;
-%template(NodeListSP)             detran_utilities::SP<erme_geometry::NodeList>;
+// Vector templates
+%template(vec_neighbor)  std::vector<erme_geometry::NeighborSurface>;
+%template(vec2_neighbor) std::vector<std::vector<erme_geometry::NeighborSurface> >;
+%template(vec_point)     std::vector<detran_utilities::Point>;
+
+%inline
+{
+// Case base node as CartesianNode
+detran_utilities::SP<erme_geometry::CartesianNode> 
+as_cartesian_node(detran_utilities::SP<erme_geometry::Node> *n)
+{
+  return detran_utilities::SP<erme_geometry::CartesianNode>(*n);
+}
+} // end inline
+
 
 // Response
 %include "NodeResponse.hh"
