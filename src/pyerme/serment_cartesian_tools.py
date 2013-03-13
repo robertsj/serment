@@ -165,19 +165,25 @@ def plot_slice(nodes, dims=[1.0, 1.0, 1.0], n=100) :
     x = np.linspace(0, dims[0], n)
   
   elif D == 2 :
+
+    plotter = PPMPlotter()
+    plotter.initialize(n, n, "serment.ppm")
+    
     x = np.linspace(0, dims[0], n)
     y = np.linspace(0, dims[1], n)
-    c = np.zeros(len(x))
-    for i in range(0, n) :
-      p = Point(x[i], y[i], 0.0)
-      print p
-      for j in range(0, nodes.number_global_nodes()) :
-        p2 = p - nodes.origin(j)
-        print "color =", nodes.node(j).color(p2)
-        if nodes.node(j).color(p2) > 0.0 :
-          c[i] = nodes.node(j).color(p2)
- 
-  #else :
+    X, Y = np.meshgrid(x, y)
+    c = -1.0*np.ones(n**2)
+    for j in range(0, n) :
+      for i in range(0, n) :
+        p1 = Point(X[j][i], Y[j][i], 0.0)   
+        for k in range(0, nodes.number_global_nodes()) :
+          p2 = p1 - nodes.origin(k)
+          if nodes.node(k).color(p2) >= 0.0 :
+            c[i+j*n] = nodes.node(k).color(p2)
+            plotter.set_pixel(i, n-j-1, c[i+j*n])
+            break
+    plotter.write()
+  
     
   
 

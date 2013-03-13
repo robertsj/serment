@@ -43,9 +43,16 @@ int test_CartesianNodeDetran(int argc, char *argv[])
 {
   typedef CartesianNodeDetran Node_T;
 
-  Node_T::SP_node node = cartesian_node_detran(1);
+  Node_T::SP_node node = cartesian_node_detran(2);
+  node->mesh()->display();
 
-  cout << "Color = " << node->color(Node_T::Point(0.5, 0, 0)) << endl;
+  // 10 cm x 10 cm box.  Pick some points in and out of this.
+  // Remember, this means the color must be nonnegative if inside
+  // the node.
+  TEST(node->color(Node_T::Point( 5.0, 5.0, 0.0)) >= 0.0);
+  TEST(node->color(Node_T::Point(15.0, 5.0, 0.0)) <= 0.0);
+  TEST(node->color(Node_T::Point( 0.0, 0.0, 0.0)) >= 0.0);
+  TEST(node->color(Node_T::Point(10.0, 0.0, 0.0)) <= 0.0);
   return 0;
 }
 

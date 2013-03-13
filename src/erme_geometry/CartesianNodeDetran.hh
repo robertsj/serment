@@ -143,6 +143,9 @@ private:
     ar & d_mesh;
   }
 
+  /// Find cell.  Given a 3-D point within the mesh, fine the mesh cell.
+  size_t find_cell(Point p);
+
 };
 
 } // end namespace erme_geometry
