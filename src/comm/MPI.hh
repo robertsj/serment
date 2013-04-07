@@ -7,8 +7,8 @@
  */
 //---------------------------------------------------------------------------//
 
-#ifndef MPI_HH_
-#define MPI_HH_
+#ifndef serment_comm_MPI_HH_
+#define serment_comm_MPI_HH_
 
 #include "MPI_Traits.hh"
 #include "utilities/DBC.hh"
@@ -25,17 +25,13 @@ namespace serment_comm
 
 typedef MPI_Comm Communicator_t;
 
-/*!
- *  All processes, i.e. MPI_COMM_WORLD
- */
+/// All processes, i.e. MPI_COMM_WORLD
 extern Communicator_t world;
 
-/*!
- *  Subset of world that includes processes solving global problem
- */
+/// Subset of world that includes processes solving global problem
 extern Communicator_t global;
 
-/*!
+/**
  *  Partitioning of world such that each local root is part of
  *  global.  Processes in local participate as response sources, and
  *  the root process participates as a response server for the global
@@ -382,7 +378,7 @@ inline void Comm::partition(unsigned int &global_count,
 
 } // end namespace serment_comm
 
-#endif // MPI_HH_ 
+#endif // serment_comm_MPI_HH_
 
 //---------------------------------------------------------------------------//
 //              end of file MPI.hh

@@ -1,14 +1,14 @@
 //----------------------------------*-C++-*----------------------------------//
 /**
- * \file   Comm.hh
- * \brief  Comm 
- * \author Jeremy Roberts
- * \date   Aug 21, 2012
+ *  @file   Comm.hh
+ *  @brief  Comm
+ *  @author Jeremy Roberts
+ *  @date   Aug 21, 2012
  */
 //---------------------------------------------------------------------------//
 
-#ifndef COMM_HH_
-#define COMM_HH_
+#ifndef serment_comm_COMM_HH_
+#define serment_comm_COMM_HH_
 
 // Configuration
 #include "serment_config.h"
@@ -121,14 +121,14 @@ public:
   //---------------------------------------------------------------------------//
 
   /**
-   * \brief Get the rank of the current processor.
+   *  @brief Get the rank of the current processor.
    *
    * The rank is determined by the current communicator.
    */
   static int rank();
 
   /**
-   * \brief Get the number of processors used for this job.
+   *  @brief Get the number of processors used for this job.
    *
    * The number of processes is determined by the current communicator.
    */
@@ -151,22 +151,22 @@ public:
   //---------------------------------------------------------------------------//
 
   /**
-   * \brief Do a point-to-point, blocking send.
-   * \param buffer
-   * \param size
-   * \param destination
-   * \param tag
+   *  @brief Do a point-to-point, blocking send.
+   *  @param buffer
+   *  @param size
+   *  @param destination
+   *  @param tag
    */
   template<class T>
   static int send(const T *buffer, int size, int destination,
              int tag = Comm_Traits<T*>::tag);
 
   /**
-   * \brief Do a point-to-point, blocking receive.
-   * \param buffer
-   * \param size
-   * \param source
-   * \param tag
+   *  @brief Do a point-to-point, blocking receive.
+   *  @param buffer
+   *  @param size
+   *  @param source
+   *  @param tag
    */
   template<class T>
   static int receive(T *buffer, int size, int source,
@@ -177,10 +177,10 @@ public:
   //---------------------------------------------------------------------------//
 
   /**
-   * \brief Do a root-to-all broadcast.
-   * \param buffer
-   * \param size
-   * \param root
+   *  @brief Do a root-to-all broadcast.
+   *  @param buffer
+   *  @param size
+   *  @param root
    */
   template<class T>
   static int broadcast(T *buffer, int size, int root = 0);
@@ -292,16 +292,12 @@ private:
 
   /// Are the communicators built?
   static bool d_is_comm_built;
-
   /// Am I on the global comm?
   static bool d_is_global;
-
   /// Stored time information
   static double d_time;
-
   /// Rank in world
   static int d_world_rank;
-
   /// Local group (= to color)
   static int d_local_group;
 
@@ -315,7 +311,7 @@ private:
 #include "Serial.hh"
 #endif
 
-#endif // COMM_HH_ 
+#endif // serment_comm_COMM_HH_
 
 //---------------------------------------------------------------------------//
 //              end of file Comm.hh

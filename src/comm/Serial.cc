@@ -1,9 +1,9 @@
 //----------------------------------*-C++-*----------------------------------//
-/*!
- * \file   Serial.cc
- * \brief  Serial comm implementation member definitions.
- * \author Jeremy Roberts
- * \date   Aug 21, 2012
+/**
+ *  @file   Serial.cc
+ *  @brief  Serial comm implementation member definitions.
+ *  @author Jeremy Roberts
+ *  @date   Aug 21, 2012
  */
 //---------------------------------------------------------------------------//
 
@@ -45,9 +45,9 @@ void Comm::finalize()
 // COMMUNICATORS
 //---------------------------------------------------------------------------//
 
-/*!
- *  \brief Create communicators
- *  \param N  Number of local groups to create
+/**
+ *  @brief Create communicators
+ *  @param N  Number of local groups to create
  */
 void Comm::setup_communicators(const unsigned int N)
 {

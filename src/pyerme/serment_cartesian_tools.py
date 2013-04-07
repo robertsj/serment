@@ -49,6 +49,18 @@ def build_model(nodes, nodal_map, global_bc) :
     node_list.add_node(node)
   neighbors = vec2_neighbor()
 
+  # Create an index list that omits the negative entries
+  indices = -np.ones(nz*ny*nx, 'i')
+  nodal_map_vec = vec_int(int(number_nodes), 0)
+  count = 0
+  for k in range(0, nz) :
+    for j in range(0, ny) :
+      for i in range(0, nx) :
+        if nodal_map[k][j][i] < 0 : continue
+        indices[index(i,j,k,nx,ny)] = count
+        nodal_map_vec[count] = int(nodal_map[k][j][i])
+        count += 1
+
   # Fill out the neighbor list
   count = 0
   for k in range(0, nz) :
@@ -64,48 +76,64 @@ def build_model(nodes, nodal_map, global_bc) :
         # this should be enough to allow jagged boundaries
         node_index = nodal_map[k][j][i]
         if node_index < 0 :
-          break
+          continue
         count += 1
         tmp_neigh = vec_neighbor(2*D, NeighborSurface(Node.VACUUM, 0))
 
         if i == 0 :
           tmp_neigh[CartesianNode.WEST] = bc[CartesianNode.WEST]
         else : # my west is their east
-          tmp_neigh[CartesianNode.WEST] = NeighborSurface(neighbor_index[0], CartesianNode.EAST)
+          if indices[index(i-1, j, k, nx, ny)] < 0 : 
+            tmp_neigh[CartesianNode.WEST] = bc[CartesianNode.WEST]
+          else :
+            tmp_neigh[CartesianNode.WEST] = NeighborSurface(int(indices[index(i-1, j, k, nx, ny)]), CartesianNode.EAST)
+        
         if i == nx - 1:
           tmp_neigh[CartesianNode.EAST] = bc[CartesianNode.EAST]
         else : # my east is their west
-          tmp_neigh[CartesianNode.EAST] = NeighborSurface(neighbor_index[1], CartesianNode.WEST)
+          if indices[index(i+1, j, k, nx, ny)] < 0 :
+            tmp_neigh[CartesianNode.EAST] = bc[CartesianNode.EAST]
+          else :
+            tmp_neigh[CartesianNode.EAST] = NeighborSurface(int(indices[index(i+1, j, k, nx, ny)]), CartesianNode.WEST)
 
         if (D > 1) :
           if j == 0 :
             tmp_neigh[CartesianNode.SOUTH] = bc[CartesianNode.SOUTH]
           else : # my south is their north
-            tmp_neigh[CartesianNode.SOUTH] = NeighborSurface(neighbor_index[2], CartesianNode.NORTH)
+            if indices[index(i, j-1, k, nx, ny)] < 0 :
+              tmp_neigh[CartesianNode.SOUTH] = bc[CartesianNode.SOUTH]
+            else :
+              tmp_neigh[CartesianNode.SOUTH] = NeighborSurface(int(indices[index(i, j-1, k, nx, ny)]), CartesianNode.NORTH)
           if j == ny - 1:
             tmp_neigh[CartesianNode.NORTH] = bc[CartesianNode.NORTH]
           else : # my north is their south
-            tmp_neigh[CartesianNode.NORTH] = NeighborSurface(neighbor_index[3], CartesianNode.SOUTH)
+            if indices[index(i, j+1, k, nx, ny)] < 0 :
+              tmp_neigh[CartesianNode.NORTH] = bc[CartesianNode.NORTH]
+            else :
+              tmp_neigh[CartesianNode.NORTH] = NeighborSurface(int(indices[index(i, j+1, k, nx, ny)]), CartesianNode.SOUTH)
 
         if (D > 2) :
           if k == 0 :
             tmp_neigh[CartesianNode.BOTTOM] = bc[CartesianNode.BOTTOM]
           else : # my bottom is their top
-            tmp_neigh[CartesianNode.BOTTOM] = NeighborSurface(neighbor_index[4], CartesianNode.TOP)
+            if indices[index(i, j, k+1, nx, ny)] < 0 :
+              tmp_neigh[CartesianNode.BOTTOM] = bc[CartesianNode.BOTTOM]
+            else :
+              tmp_neigh[CartesianNode.BOTTOM] = NeighborSurface(int(indices[index(i, j, k+1, nx, ny)]), CartesianNode.TOP)
           if k == nz - 1:
             tmp_neigh[CartesianNode.TOP] = bc[CartesianNode.TOP]
           else : # my top is their bottom
-            tmp_neigh[CartesianNode.TOP] = NeighborSurface(neighbor_index[5], CartesianNode.BOTTOM)
+            if indices[index(i, j, k-1, nx, ny)] < 0 :
+              tmp_neigh[CartesianNode.TOP] = bc[CartesianNode.TOP]
+            else :
+              tmp_neigh[CartesianNode.TOP] = NeighborSurface(int(indices[index(i, j, k-1, nx, ny)]), CartesianNode.BOTTOM)
 
         neighbors.push_back(tmp_neigh)
 
   assert(count == number_nodes)
-  origins = compute_origins(nodes, nodal_map)  
-
-  nodal_map_vec = vec_int(int(number_nodes), 0)
-  nodal_map = nodal_map.reshape(number_nodes)
-  for i in range(0, number_nodes) :
-    nodal_map_vec[i] = int(nodal_map[i])
+  origins = compute_origins(nodes, nodal_map, nodal_map_vec)  
+  print origins.size()
+  assert(origins.size() == number_nodes)
 
   node_list.set_nodal_map(nodal_map_vec, neighbors, origins)
   P = NodePartitioner()
@@ -113,41 +141,60 @@ def build_model(nodes, nodal_map, global_bc) :
 
   return node_list
 
-def compute_origins(nodes, nodal_map) :
+def compute_origins(nodes, nodal_map, nodal_map_vec) :
   """ Ensure that nodal widths are consistent.  Then, compute 
       origins of each node.
   """
   nx = np.size(nodal_map, 2)
   ny = np.size(nodal_map, 1)
   nz = np.size(nodal_map, 0)
-
+  
   number_nodes = sum(nodal_map.flatten() >= 0)
   origins = vec_point()
-  n = 0
+
+  WZ = -np.ones(nz)
+  WY = -np.ones(ny)
+  WX = -np.ones(nx)
+  for k in range(0, nz) :
+    for j in range(0, ny) :
+      for i in range(0, nx) :
+        if nodal_map[k][j][i] < 0 : continue
+        W = as_cartesian_node(nodes[nodal_map[k][j][i]]).width(2)
+        if (WZ[k] < 0) : WZ[k] = W
+        assert(WZ[k] == W)
+  for j in range(0, ny) :
+    for k in range(0, nz) :
+      for i in range(0, nx) :
+        if nodal_map[k][j][i] < 0 : continue
+        W = as_cartesian_node(nodes[nodal_map[k][j][i]]).width(1)
+        if (WY[j] < 0) : WY[j] = W
+        assert(WY[j] == W)
+  for i in range(0, nx) :
+    for j in range(0, ny) :
+      for k in range(0, nz) :
+        if nodal_map[k][j][i] < 0 : continue
+        W = as_cartesian_node(nodes[nodal_map[k][j][i]]).width(0)
+        if (WX[i] < 0) : WX[i] = W
+        assert(WX[i] == W)
+  c = 0
   Z = 0.0
   for k in range(0, nz) :
+    assert(WZ[k] > 0.0)
     Y = 0.0
     for j in range(0, ny) :
-      X = 0.0 
+      assert(WY[j] > 0.0)
+      X = 0.0
       for i in range(0, nx) : 
-        if nodal_map[k][j][i] < 0 : break
-        # this makes sure each node in a plane (XY, YZ, or XZ) has 
-        # identical measurement in the transverse direction
-        node = as_cartesian_node(nodes[nodal_map[k][j][i]])
-        if i == 0 : WX = node.width(0)
-        if j == 0 : WY = node.width(1)
-        if k == 0 : WZ = node.width(2)
-        assert(node.width(0) == WX)
-        assert(node.width(1) == WY)
-        assert(node.width(2) == WZ)
-        # add the origin 
-        origins.push_back(Point(X, Y, Z))
-        X += WX
-        # increment the node index
-        n += 1
-      Y += WY
-    Z += WZ
-  print "ORIGIN", origins[0]
+        assert(WX[i] > 0.0)
+        if nodal_map[k][j][i] >= 0 : 
+          #print X, Y, Z, nodal_map[k][j][i], nodal_map_vec[c]
+          origins.push_back(Point(X, Y, Z))
+          c += 1
+  
+        X += WX[i]
+      Y += WY[j]
+    Z += WZ[k]
+
   return origins
 
 def index(i, j, k, nx, ny) :
