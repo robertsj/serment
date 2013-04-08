@@ -1,10 +1,10 @@
 //----------------------------------*-C++-*----------------------------------//
-/*!
- * \file   test_NodePartitioner.cc
- * \author Jeremy Roberts
- * \date   Aug 19, 2012
- * \brief  Test of test_NodePartitioner class.
- * \note   Copyright (C) 2012 Jeremy Roberts. 
+/**
+ *  @file   test_NodePartitioner.cc
+ *  @author Jeremy Roberts
+ *  @date   Aug 19, 2012
+ *  @brief  Test of test_NodePartitioner class.
+ *  @note   Copyright (C) 2012 Jeremy Roberts.
  */
 //---------------------------------------------------------------------------//
 
@@ -16,8 +16,6 @@
 #include "erme_geometry/NodePartitioner.hh"
 #include "erme_geometry/test/nodelist_fixture.hh"
 #include <iostream>
-
-// Setup
 
 using namespace erme_geometry;
 using namespace detran_test;

@@ -35,6 +35,9 @@ int main(int argc, char *argv[])
 // Test of basic public interface
 int test_NodeList(int argc, char *argv[])
 {
+  // Initialize Comm
+  serment_comm::Comm::initialize(argc, argv);
+
   // Single process only
   if (!(serment_comm::Comm::rank() == 0)) return 0;
 
