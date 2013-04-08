@@ -57,12 +57,13 @@ inline void Comm::set(const C &new_communicator)
 inline void Comm::free()
 {
   communicator = world;
-  int ierr;
+  int ierr = 0;
   if (d_is_comm_built)
   {
     ierr = MPI_Comm_free(&local);
     if (d_is_global)
       ierr = MPI_Comm_free(&global);
+    d_is_comm_built = false;
   }
   Ensure(!ierr);
 }

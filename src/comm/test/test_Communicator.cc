@@ -72,7 +72,7 @@ int test_Communicator(int argc, char *argv[])
 
   // Switch to world.
   Comm::set(world);
-  cout << "W=" << W << " G=" << G << " L=" << L << endl;
+  cout << "RANK = " << Comm::rank() << "W=" << W << " G=" << G << " L=" << L << endl;
 
   if (Comm::rank() == 0)
   {
@@ -130,6 +130,8 @@ int test_Communicator(int argc, char *argv[])
       TEST(W == 4 and G == 2 and L == 0);
     }
   }
+
+  cout << " RANK " << Comm::rank() << " is done." << endl;
 
   // Free the comm.
   Comm::free();

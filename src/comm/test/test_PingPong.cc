@@ -85,6 +85,8 @@ int test_PingPong_sendreceive(int argc, char *argv[])
     TEST(l == 2000);
     TEST(soft_equiv(f, 2.5f));
     TEST(soft_equiv(d, 3.5));
+
+    cout << "rank 0 is done" << endl;
   }
 
   // receive and send on node 1
@@ -118,6 +120,7 @@ int test_PingPong_sendreceive(int argc, char *argv[])
     Comm::send(&f, 1, 0);
     Comm::send(&d, 1, 0);
 
+    cout << "rank 1 is done" << endl;
   }
 
   // Finalize Comm
@@ -193,7 +196,7 @@ int test_PingPong_bandwidth(int argc, char *argv[])
       // 2 way * 64 bit/double * 1.0e6 bit/MB
       double ms = (double) count * 128 / 1.0e6;
       double bw = (double) number_trials * ms / etime;
-      cout << ms << "  " << bw << endl;
+      std::printf(" %12.4f  %12.4f \n", ms, bw);
     }
 
   } // end sizes

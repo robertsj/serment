@@ -1,10 +1,10 @@
 //----------------------------------*-C++-*----------------------------------//
-/*!
- * \file   test_GlobalReduction.cc
- * \author Jeremy Roberts
- * \date   Aug 19, 2012
- * \brief  Test of Vector class.
- * \note   Copyright (C) 2012 Jeremy Roberts. 
+/**
+ *  @file   test_GlobalReduction.cc
+ *  @author Jeremy Roberts
+ *  @date   Aug 19, 2012
+ *  @brief  Test of Comm global reduction functions
+ *  @note   Copyright (C) 2012 Jeremy Roberts.
  */
 //---------------------------------------------------------------------------//
 
@@ -22,7 +22,6 @@
 #include <iostream>
 #include <vector>
 #include <mpi.h>
-// Setup
 
 using namespace serment_comm;
 using namespace detran_test;
