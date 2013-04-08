@@ -218,37 +218,15 @@ int test_ResponseIndexer_zeroth_order(int argc, char *argv[])
 
   TEST(indexer.number_nodes()           == 4);
   TEST(indexer.number_node_moments(0)   == 4);
-  //std::cout << " num g mom =  " << indexer.number_global_moments() << std::endl;
   TEST(indexer.number_global_moments()  == 16);
-  if (Comm::size() == 1)
+
+  if (Comm::size() < 3)
   {
     TEST(indexer.number_local_moments() == 16);
   }
-  else if (Comm::size() == 2)
-  {
-    TEST(indexer.number_local_moments() == 8);
-  }
-  else if (Comm::size() == 2)
-  {
-    if (Comm::rank() == 2)
-    {
-      TEST(indexer.number_local_moments() == 4);
-    }
-    else
-    {
-      TEST(indexer.number_local_moments() == 8);
-    }
-  }
   else
   {
-    if (Comm::rank() < 4)
-    {
-      TEST(indexer.number_local_moments() == 4);
-    }
-    else
-    {
-      TEST(indexer.number_local_moments() == 0);
-    }
+    TEST(indexer.number_local_moments() == 8);
   }
 
   Comm::finalize();

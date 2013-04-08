@@ -17,7 +17,6 @@
 #include "erme_geometry/NodePartitioner.hh"
 #include <iostream>
 
-// Setup
 #include "erme_geometry/test/nodelist_fixture.hh"
 
 using namespace erme_response;
@@ -74,6 +73,8 @@ int test_ResponseServer(int argc, char *argv[])
   // WORLD
   //-------------------------------------------------------------------------//
 
+  if (Comm::world_rank() == 0) cout << "*** WORLD ***" << endl;
+
   // Get the node list, 2 unique in the following map: [1 0; 0 1]
   erme_geometry::NodeList::SP_nodelist nodes;
   if (Comm::rank() == 0)
@@ -82,6 +83,8 @@ int test_ResponseServer(int argc, char *argv[])
   // Partition the nodes
   erme_geometry::NodePartitioner partitioner;
   partitioner.partition(nodes);
+
+  if (Comm::world_rank() == 0) cout << "*** PARTITION ***" << endl;
 
   // Create parameter database
   ResponseIndexer::SP_db db(new detran_utilities::InputDB());
@@ -94,9 +97,15 @@ int test_ResponseServer(int argc, char *argv[])
   // Create server
   ResponseServer server(nodes, indexer);
 
+  if (Comm::world_rank() == 0) cout << "*** SERVER ***" << endl;
+  std::cout << " my rank is " << Comm::rank() << std::endl;
+
   // Update
   server.update(1.0);
+  return 0;
   Comm::global_barrier();
+  return 0;
+  if (Comm::world_rank() == 0) cout << "*** UPDATE ***" << endl;
 
   //-------------------------------------------------------------------------//
   // LOCAL
@@ -104,6 +113,9 @@ int test_ResponseServer(int argc, char *argv[])
 
   // Switch to local
   Comm::set(serment_comm::local);
+
+  if (Comm::world_rank() == 0) cout << "*** LOCAL ***" << endl;
+
 
   // Only root process has data at this point
   if (Comm::world_rank() == 0)

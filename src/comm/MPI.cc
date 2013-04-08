@@ -53,9 +53,9 @@ void Comm::finalize()
 //---------------------------------------------------------------------------//
 
 
-/*!
- *  \brief Create communicators
- *  \param N  Number of local groups to create
+/**
+ *  @brief Create communicators
+ *  @param N  Number of local groups to create
  */
 void Comm::setup_communicators(const unsigned int N)
 {

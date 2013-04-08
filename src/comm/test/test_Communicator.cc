@@ -131,6 +131,15 @@ int test_Communicator(int argc, char *argv[])
     }
   }
 
+  // Testing broadcast
+  int data = 0;
+  if (Comm::rank() == 0)
+  {
+    data = 1;
+  }
+  Comm::broadcast(&data, 1, 0);
+  TEST(data == 1);
+
   cout << " RANK " << Comm::rank() << " is done." << endl;
 
   // Free the comm.
