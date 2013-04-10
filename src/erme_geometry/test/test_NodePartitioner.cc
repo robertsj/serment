@@ -46,8 +46,7 @@ int test_NodePartitioner(int argc, char *argv[])
   // Setup communicators.  We use one local communicator for 1 or 2
   // processes; otherwise, we use two local communicators.
   int number_local_comm = 1;
-  if (Comm::size() > 2)
-    number_local_comm = 2;
+  if (Comm::size() > 2) number_local_comm = 2;
   Comm::setup_communicators(number_local_comm);
 
   // Ensure we've got the right local groups.
@@ -83,6 +82,7 @@ int test_NodePartitioner(int argc, char *argv[])
 
   // Partition nodes
   partitioner.partition(nodes);
+
   // Must be back in world.
   TEST(serment_comm::communicator == serment_comm::world);
 

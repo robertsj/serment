@@ -1,26 +1,26 @@
 //----------------------------------*-C++-*----------------------------------//
-/*!
- * \file   MPI_Traits.hh
- * \brief  MPI_Traits 
- * \author Jeremy Roberts
- * \date   Aug 20, 2012
- * \note   Largely unchanged from Denovo.
+/**
+ *  @file   MPI_Traits.hh
+ *  @brief  MPI_Traits
+ *  @author Jeremy Roberts
+ *  @date   Aug 20, 2012
+ *  @note   Largely unchanged from Denovo.
  */
 //---------------------------------------------------------------------------//
 
-#ifndef MPI_TRAITS_HH_
-#define MPI_TRAITS_HH_
+#ifndef serment_comm_MPI_TRAITS_HH_
+#define serment_comm_MPI_TRAITS_HH_
 
 #include <mpi.h>
 
 namespace serment_comm
 {
 
-/*!
- * \struct MPI_Traits
+/**
+ * @struct MPI_Traits
  *
- * \brief Provide a generic way to get MPI_Datatype arguments for MPI function
- * calls.
+ * @brief Provide a generic way to get MPI_Datatype arguments for MPI function
+ *        calls.
  *
  * This struct provides a generic programming--common way to get MPI_Datatype
  * arguments for MPI function calls. The static function, element_type(),

@@ -20,6 +20,7 @@
 #include "erme_geometry/test/nodelist_fixture.hh"
 
 using namespace erme_response;
+using namespace erme_geometry;
 using namespace detran_test;
 using detran_utilities::soft_equiv;
 using std::cout;
@@ -73,18 +74,13 @@ int test_ResponseServer(int argc, char *argv[])
   // WORLD
   //-------------------------------------------------------------------------//
 
-  if (Comm::world_rank() == 0) cout << "*** WORLD ***" << endl;
-
-  // Get the node list, 2 unique in the following map: [1 0; 0 1]
-  erme_geometry::NodeList::SP_nodelist nodes;
-  if (Comm::rank() == 0)
-    nodes = erme_geometry::cartesian_node_dummy_list_2d(0, 0, 0);
+  // Get the node list.
+  NodeList::SP_nodelist nodes;
+  if (Comm::rank() == 0) nodes = cartesian_node_dummy_list_2d(0, 0, 0);
 
   // Partition the nodes
-  erme_geometry::NodePartitioner partitioner;
+  NodePartitioner partitioner;
   partitioner.partition(nodes);
-
-  if (Comm::world_rank() == 0) cout << "*** PARTITION ***" << endl;
 
   // Create parameter database
   ResponseIndexer::SP_db db(new detran_utilities::InputDB());
@@ -97,15 +93,12 @@ int test_ResponseServer(int argc, char *argv[])
   // Create server
   ResponseServer server(nodes, indexer);
 
-  if (Comm::world_rank() == 0) cout << "*** SERVER ***" << endl;
-  std::cout << " my rank is " << Comm::rank() << std::endl;
 
   // Update
   server.update(1.0);
-  return 0;
   Comm::global_barrier();
-  return 0;
-  if (Comm::world_rank() == 0) cout << "*** UPDATE ***" << endl;
+
+  server.response(0)->display();
 
   //-------------------------------------------------------------------------//
   // LOCAL
@@ -113,9 +106,6 @@ int test_ResponseServer(int argc, char *argv[])
 
   // Switch to local
   Comm::set(serment_comm::local);
-
-  if (Comm::world_rank() == 0) cout << "*** LOCAL ***" << endl;
-
 
   // Only root process has data at this point
   if (Comm::world_rank() == 0)
@@ -141,9 +131,10 @@ int test_ResponseServer(int argc, char *argv[])
                            100.0 * index.space0 +
                             10.0 * index.space1 +
                              1.0 * index.energy;
+
         for (int out = 0; out < r->size(); out++)
         {
-          //cout << " out = " << out << " br =  " << r->boundary_response(out, in) << " ref = " << value + 0.1 << endl;
+          //cout << " out = " << out << " " << in << " br =  " << r->boundary_response(out, in) << " ref = " << value + 0.1 << endl;
           TEST(soft_equiv(r->boundary_response(out, in), value + 0.1));
         }
         TEST(soft_equiv(r->fission_response(in),    value + 0.2));

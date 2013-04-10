@@ -71,10 +71,10 @@ void ResponseServer::update(const double keff)
 
   // Switch to local communicator.
   Comm::set(serment_comm::local);
-  double k = keff;
 
   // Broadcast new keff to local communicator.  The local root
   // must have it from the global solve.
+  double k = keff;
   Comm::broadcast(&k, 1, 0);
 
   // Update sources
@@ -150,11 +150,10 @@ void ResponseServer::update_explicit_work_share()
   }
 
   // Find my start and finish
-  std::cout << " my rank is " << Comm::rank() << std::endl;
-  return;
-  //Comm::broadcast(&number_responses, 1, 0);
-  //Comm::broadcast(&number_per_process[0], number_per_process.size(), 0);
-  return;
+
+  Comm::broadcast(&number_responses, 1, 0);
+  Comm::broadcast(&number_per_process[0], number_per_process.size(), 0);
+
   size_t start = 0;
   for (int i = 0; i < Comm::rank(); i++)
     start += number_per_process[i];

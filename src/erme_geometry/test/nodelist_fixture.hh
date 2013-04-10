@@ -77,10 +77,6 @@ cartesian_node_detran_list_2d()
   neighbors[3] = neigh3;
   nodes->set_nodal_map(node_map, neighbors);
 
-  // Partition
-  NodePartitioner P;
-  P.partition(nodes);
-
   return nodes;
 }
 
@@ -128,10 +124,6 @@ cartesian_node_dummy_list_1d()
   neighbors[3] = neigh3;
   nodes->set_nodal_map(node_map, neighbors);
 
-  // Partition
-  NodePartitioner P;
-  P.partition(nodes);
-
   return nodes;
 }
 
@@ -156,9 +148,9 @@ cartesian_node_dummy_list_2d(int so = 4, int ao = 2, int po = 2)
   NodeList::vec_neighbor neigh2(4, NeighborSurface(Node::VACUUM, 0));
   NodeList::vec_neighbor neigh3(4, NeighborSurface(Node::VACUUM, 0));
   //  --- ---
-  // | 2 | 2 |
+  // | 0 | 1 |
   //  --- ---
-  // | 0 | 0 |   with vacuum on all global surfaces
+  // | 2 | 3 |   with vacuum on all global surfaces
   //  --- ---
   neigh0[CartesianNode::NORTH]  = NeighborSurface(2, CartesianNode::SOUTH);
   neigh0[CartesianNode::EAST]   = NeighborSurface(1, CartesianNode::WEST);
@@ -176,19 +168,15 @@ cartesian_node_dummy_list_2d(int so = 4, int ao = 2, int po = 2)
   nodes->add_node(node3);
 
   // Node map and neighbors
-  NodeList::vec_int node_map(4, 2);
-  node_map[1] = 2;
-  node_map[2] = 0;
-  node_map[3] = 0;
+  NodeList::vec_int node_map(4, 0);
+  node_map[1] = 1;
+  node_map[2] = 2;
+  node_map[3] = 3;
   neighbors[0] = neigh0;
   neighbors[1] = neigh1;
   neighbors[2] = neigh2;
   neighbors[3] = neigh3;
   nodes->set_nodal_map(node_map, neighbors);
-
-  // Partition
-  NodePartitioner P;
-  P.partition(nodes);
 
   return nodes;
 }
@@ -235,10 +223,6 @@ cartesian_node_dummy_list_3d()
   neighbors[3] = neigh3;
   nodes->set_nodal_map(node_map, neighbors);
 
-  // Partition
-  NodePartitioner P;
-  P.partition(nodes);
-
   return nodes;
 }
 
@@ -284,10 +268,6 @@ cartesian_node_dummy_list_2d_variable(int so, int N)
       if (j < N-1) neighbors[n][CartesianNode::NORTH] = NeighborSurface(i + (j+1)*N, CartesianNode::SOUTH);
     }
   }
-
-  // Partition
-  NodePartitioner P;
-  P.partition(nodes);
 
   return nodes;
 }
@@ -351,10 +331,6 @@ cartesian_node_dummy_list_3d_variable(int so, int N)
     }
   }
   nodes->set_nodal_map(node_map, neighbors);
-
-  // Partition
-  NodePartitioner P;
-  P.partition(nodes);
 
   return nodes;
 }

@@ -43,7 +43,6 @@ NodePartitioner::NodePartitioner()
 //---------------------------------------------------------------------------//
 void NodePartitioner::partition(SP_nodelist &nodes)
 {
-
   size_t number_nodes = 0;
   size_t local_number_nodes = 0;
   size_t lower_bound = 0;

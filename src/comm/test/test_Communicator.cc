@@ -132,13 +132,17 @@ int test_Communicator(int argc, char *argv[])
   }
 
   // Testing broadcast
-  int data = 0;
+  int i_data = 0;
+  double d_data = 0.0;
   if (Comm::rank() == 0)
   {
-    data = 1;
+    i_data = 1;
+    d_data = 1.23;
   }
-  Comm::broadcast(&data, 1, 0);
-  TEST(data == 1);
+  Comm::broadcast(&i_data, 1, 0);
+  Comm::broadcast(&d_data, 1, 0);
+  TEST(i_data == 1);
+  TEST(detran_utilities::soft_equiv(d_data, 1.23));
 
   cout << " RANK " << Comm::rank() << " is done." << endl;
 
