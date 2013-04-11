@@ -155,36 +155,39 @@ void ResponseIndexer::display() const
 {
   using std::cout;
   using std::endl;
-  cout << endl << "RESPONSE INDICES" << endl << endl;
-
-  for (int node_g = 0; node_g < number_nodes(); ++node_g)
+  if (serment_comm::Comm::rank() == 0)
   {
-    size_t node_ug = d_nodes->unique_global_index_from_global(node_g);
-    cout << "  global node " << node_g
-         << " | unique global  " << node_ug
-         << " | unique local " << d_nodes->unique_local_index_from_unique_global(node_ug)
-         << endl;
-
-    Assert(node_ug < d_indices.size());
-    for (int s = 0; s < d_indices[node_ug].size(); s++)
+    cout << endl << "RESPONSE INDICES" << endl << endl;
+    for (int node_g = 0; node_g < number_nodes(); ++node_g)
     {
-      for (int m = 0; m < d_indices[node_ug][s].size(); m++)
+      size_t node_ug = d_nodes->unique_global_index_from_global(node_g);
+      cout << "  global node " << node_g
+           << " | unique global  " << node_ug
+           << " | unique local "
+           << d_nodes->unique_local_index_from_unique_global(node_ug)
+           << endl;
+
+      Assert(node_ug < d_indices.size());
+      for (int s = 0; s < d_indices[node_ug].size(); s++)
       {
-        cout << "    "
-             << d_nodes->local_index_from_global(node_g) << " "
-             << response_index(node_ug, s, m).nodal    << " | "
-             << response_index(node_ug, s, m).node     << " "
-             << response_index(node_ug, s, m).surface  << " | "
-             << response_index(node_ug, s, m).energy   << " | "
-             << response_index(node_ug, s, m).polar    << " "
-             << response_index(node_ug, s, m).azimuth  << " | "
-             << response_index(node_ug, s, m).space0   << " "
-             << response_index(node_ug, s, m).space1   << " | "
-             << response_index(node_ug, s, m).even_odd << " |" << endl;
-      } // end surface moment
-    } // end surface
-  } // end node
-  cout << endl;
+        for (int m = 0; m < d_indices[node_ug][s].size(); m++)
+        {
+          cout << "    "
+               << d_nodes->local_index_from_global(node_g) << " "
+               << response_index(node_ug, s, m).nodal    << " | "
+               << response_index(node_ug, s, m).node     << " "
+               << response_index(node_ug, s, m).surface  << " | "
+               << response_index(node_ug, s, m).energy   << " | "
+               << response_index(node_ug, s, m).polar    << " "
+               << response_index(node_ug, s, m).azimuth  << " | "
+               << response_index(node_ug, s, m).space0   << " "
+               << response_index(node_ug, s, m).space1   << " | "
+               << response_index(node_ug, s, m).even_odd << " |" << endl;
+        } // end surface moment
+      } // end surface
+    } // end node
+    cout << endl;
+  }
 }
 
 

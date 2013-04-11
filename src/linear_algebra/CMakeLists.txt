@@ -24,6 +24,7 @@ ADD_LIBRARY(linear_algebra
             SHARED
             ${SRC} 
 )
+MESSAGE(" petsc =  ${PETSC_LIBRARIES}")
 TARGET_LINK_LIBRARIES(linear_algebra
                       serment_comm
                       ${Detran_LIBRARIES}

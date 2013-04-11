@@ -29,6 +29,7 @@ ADD_LIBRARY(erme_response
 TARGET_LINK_LIBRARIES( erme_response
                        erme_geometry
                        serment_comm
+                       linear_algebra
                        ${Detran_LIBRARIES}  
                        ${HDF5_LIBRARIES}             
 )
