@@ -19,12 +19,13 @@ SET(SRC
 #-------------------------------------#
 # SHARED LIBRARY
 #-------------------------------------#
-
+message("detran = ${Detran_LIBRARIES}")
 ADD_LIBRARY(linear_algebra
             SHARED
             ${SRC} 
 )
 TARGET_LINK_LIBRARIES(linear_algebra
+                      serment_comm
                       ${Detran_LIBRARIES}
                       ${PETSC_LIBRARIES}
                       ${SLEPC_LIBRARIES}

@@ -19,26 +19,53 @@ find_path(Detran_INCLUDE_DIR
           PATHS ${Detran_DIR}/include 
                 ${Detran_INC}
 )
-
-find_library(Detran_LIBRARY
-             NAMES detran 
-             PATHS ${Detran_DIR}/lib
-                   ${Detran_LIB}
-)
+find_library(Detran_utilities NAMES utilities PATHS ${Detran_DIR}/lib ${Detran_LIB})
+find_library(Detran_callow    NAMES callow    PATHS ${Detran_DIR}/lib ${Detran_LIB})
+find_library(Detran_angle     NAMES angle     PATHS ${Detran_DIR}/lib ${Detran_LIB})
+find_library(Detran_orthog    NAMES orthog    PATHS ${Detran_DIR}/lib ${Detran_LIB})
+find_library(Detran_geometry  NAMES geometry  PATHS ${Detran_DIR}/lib ${Detran_LIB})
+find_library(Detran_material  NAMES material  PATHS ${Detran_DIR}/lib ${Detran_LIB})
+find_library(Detran_boundary  NAMES boundary  PATHS ${Detran_DIR}/lib ${Detran_LIB})
+find_library(Detran_transport NAMES transport PATHS ${Detran_DIR}/lib ${Detran_LIB})
+find_library(Detran_solvers   NAMES solvers   PATHS ${Detran_DIR}/lib ${Detran_LIB})
+find_library(Detran_ioutils   NAMES ioutils   PATHS ${Detran_DIR}/lib ${Detran_LIB})
 
 # handle the QUIETLY and REQUIRED arguments and set Detran_FOUND to TRUE if 
 # all listed variables are TRUE
 include(FindPackageHandleStandardArgs)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(Detran 
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(Detran
   "Detran could not be found.  Try setting Detran_DIR or Detran_LIB and Detran_INC."
-  Detran_LIBRARY Detran_INCLUDE_DIR)
+  Detran_INCLUDE_DIR 
+  Detran_utilities
+  Detran_callow
+  Detran_angle
+  Detran_orthog
+  Detran_geometry
+  Detran_material 
+  Detran_boundary 
+  Detran_transport 
+  Detran_solvers
+  Detran_ioutils
+)
 
 if(DETRAN_FOUND)
   mark_as_advanced(Detran_INCLUDE_DIR Detran_LIBRARY)
-  set(Detran_LIBRARIES ${Detran_LIBRARY})
+  set(Detran_LIBRARIES ${Detran_utilities} 
+                       ${Detran_callow} 
+                       ${Detran_angle} 
+                       ${Detran_orthog} 
+                       ${Detran_geometry} 
+                       ${Detran_material} 
+                       ${Detran_boundary} 
+                       ${Detran_transport} 
+                       ${Detran_solvers}
+                       ${Detran_ioutils}
+  )
   message("Detran IS FOUND")
 else(DETRAN_FOUND)
   message("Detran NOT FOUND")
 endif(DETRAN_FOUND)
+
+message("DETRAN LIBRARIES ARE ${Detran_LIBRARIES}")
 
 
