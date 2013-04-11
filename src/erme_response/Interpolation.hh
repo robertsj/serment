@@ -23,8 +23,8 @@ namespace erme_response
 inline double
 interpolate_linear(double x, double x0, double x1, double r0, double r1)
 {
-//  double r = (r1 - r0) * (x - x0) / (x1 - x0) + r0;
-//  std::cout << " x0 x1 r0 r1 = " << x0 << " " << x1 << " " << r0 << " " << r1 << " " << x << " " << x << " " << r << std::endl;
+  double r = (r1 - r0) * (x - x0) / (x1 - x0) + r0;
+  //std::cout << " x0 x1 r0 r1 = " << x0 << " " << x1 << " " << r0 << " " << r1 << " " << x << " " << x << " " << r << std::endl;
   return  (r1 - r0) * (x - x0) / (x1 - x0) + r0;
 }
 
@@ -281,6 +281,7 @@ interpolate(double xi,
   detran_utilities::size_t n = x.size();
 
   double ri;
+
   if (n == 1)
     ri = r[0];
   else if (n == 2)

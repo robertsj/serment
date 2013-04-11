@@ -4,6 +4,8 @@
  *  @author Jeremy Roberts
  *  @date   Oct 1, 2012
  *  @brief  Test of ResponseDatabase class.
+ *
+ *  @todo   Add switch between R~k, R~1/k, and 1/R~1/k
  */
 //---------------------------------------------------------------------------//
 
@@ -87,8 +89,10 @@ int test_ResponseDatabase(int argc, char *argv[])
     db->get("node2", rf, ResponseIndex(0,0,0,0,0,0,0,0,1), 1.0); // right side
 
     // Test interpolated values
-    double ref0 = 0.5 * (1.521990 + 0.610188);
-    double ref1 = 0.5 * (0.842184 + 0.0004057);
+    // double ref0 = 0.5*(0.610188+1.521990)
+    // double ref1 = 0.5 * (0.842184 + 0.0004057);
+    double ref0 = (0.610188-1.521990)/(1.0/1.1-1.0/0.9)*(1.0-1.0/0.9)+1.521990;
+    double ref1 = (0.0004057-0.842184)/(1.0/1.1-1.0/0.9)*(1.0-1.0/0.9)+0.842184;
     TEST(soft_equiv(rf->boundary_response(0, 0), ref0, 1e-5));
     TEST(soft_equiv(rf->boundary_response(1, 0), ref1, 1e-5));
     TEST(soft_equiv(rf->boundary_response(0, 1), ref1, 1e-5));
@@ -103,8 +107,10 @@ int test_ResponseDatabase(int argc, char *argv[])
     db->get("node3", rf, ResponseIndex(0,0,0,0,0,0,0,0,1), 1.05); // right side
 
     // Test interpolated values
-    double ref0 = 0.5 * (0.9375 + 0.6101880);
-    double ref1 = 0.5 * (0.0625 + 0.0004057);
+//    double ref0 = 0.5 * (0.9375 + 0.6101880);
+//    double ref1 = 0.5 * (0.0625 + 0.0004057);
+    double ref0 = (0.6101880-0.9375)/(1.0/1.1-1.0/1.0)*(1.0/1.05-1.0/1.0)+0.9375;
+    double ref1 = (0.0004057-0.0625)/(1.0/1.1-1.0/1.0)*(1.0/1.05-1.0/1.0)+0.0625;
     TEST(soft_equiv(rf->boundary_response(0, 0), ref0, 1e-5));
     TEST(soft_equiv(rf->boundary_response(1, 0), ref1, 1e-5));
     TEST(soft_equiv(rf->boundary_response(0, 1), ref1, 1e-5));
@@ -119,9 +125,13 @@ int test_ResponseDatabase(int argc, char *argv[])
       db->get("node4", rf, ResponseIndex(0,0,0,0,0,0,0,0,i), 1.05);
 
     // Test interpolated values
-    double ref0 = 0.5 * (0.362366  + 0.349561);
+//    double ref0 = 0.5 * (0.362366  + 0.349561);
+//    double ref2 = 6.18677641e-02;
+
+    double ref0 = (0.349561 - 0.362366)/(1.0/1.1-1.0/1.0)*(1.0/1.05-1.0/1.0)+0.362366;
+    double ref2 = (0.0606089-0.0631266)/(1.0/1.1-1.0/1.0)*(1.0/1.05-1.0/1.0)+0.0631266;
     double ref1 = 0;
-    double ref2 = 6.18677641e-02;
+
     TEST(soft_equiv(rf->boundary_response(0, 0), ref0, 1e-5));
     TEST(soft_equiv(rf->boundary_response(1, 0), ref1, 1e-5));
     TEST(soft_equiv(rf->boundary_response(0, 1), ref1, 1e-5));

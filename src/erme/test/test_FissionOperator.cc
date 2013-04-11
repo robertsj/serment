@@ -97,7 +97,7 @@ int test_FissionOperator(int argc, char *argv[])
    *  locally, and interpolate/expand on-the-fly.
    */
   server->update(1.0);
-  return 0;
+
   // Create R only on the global communicator
   if (Comm::is_global())
   {

@@ -23,10 +23,13 @@ ManagerERME::ManagerERME(int argc, char *argv[], SP_db db)
   // Preconditions
   Require(db);
 
-  std::cout << "Constructing ManagerERME" << std::endl;
-
   // Initialize comm
   serment_comm::Comm::initialize(argc, argv);
+
+  if (serment_comm::Comm::rank() == 0)
+  {
+    std::cout << "Constructing ManagerERME" << std::endl;
+  }
 
   // Check the desired local group structure
   int local = 1;
@@ -65,7 +68,7 @@ void ManagerERME::build_erme(SP_nodelist nodes)
   using std::cout;
   using std::endl;
 
-  cout << "*** BUILDING ERME " << endl;
+  if (serment_comm::Comm::rank() == 0) cout << "*** BUILDING ERME " << endl;
 
   // Check if this is a database problem
   std::string dbname = "";
@@ -84,20 +87,20 @@ void ManagerERME::build_erme(SP_nodelist nodes)
   partitioner.partition(d_nodes);
 
   // Create indexer
-  cout << "****** BUILDING INDEXER" << endl;
+  if (serment_comm::Comm::rank() == 0) cout << "****** BUILDING INDEXER" << endl;
   d_indexer = new erme_response::ResponseIndexer(d_db, d_nodes);
 
   // Create server
-  cout << "****** BUILDING SERVER" << endl;
+  if (serment_comm::Comm::rank() == 0) cout << "****** BUILDING SERVER" << endl;
   d_server = new erme_response::
     ResponseServer(d_nodes, d_indexer, dbname, dborder);
 
   // Create state
-  cout << "****** BUILDING STATE" << endl;
+  if (serment_comm::Comm::rank() == 0) cout << "****** BUILDING STATE" << endl;
   d_state = new erme::StateERME(d_indexer->number_local_moments());
 
   // Create response operators
-  cout << "****** BUILDING OPERATORS" << endl;
+  if (serment_comm::Comm::rank() == 0) cout << "****** BUILDING OPERATORS" << endl;
   d_M = new erme::Connect(d_nodes, d_indexer);
   d_R = new erme::ResponseMatrix(d_nodes, d_indexer, d_server);
   d_L = new erme::LeakageOperator(d_nodes, d_indexer, d_server);

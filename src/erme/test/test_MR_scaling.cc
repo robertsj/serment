@@ -70,15 +70,17 @@ int test_MR_scaling(int argc, char *argv[])
   int nl;   // number of local groups
   int id;   // test id
   int nt;   // number steps for timing loop
+  int print;// print flag
 
   po::options_description desc("Allowed options");
   desc.add_options()
     ("help", "show this display")
     ("so", po::value< int >(&so)->default_value(0), "spatial order (block size = 4 * so)")
-    ("nn", po::value< int >(&nn)->default_value(2), "problem dimension, nn * nn nodes")
-    ("nl", po::value< int >(&nl)->default_value(Comm::size()), "number of local groups (must be <= number processes")
+    ("nn", po::value< int >(&nn)->default_value(2), "problem dimension, nn^3 nodes")
+    ("nl", po::value< int >(&nl)->default_value(Comm::size()), "number of local groups (must be <= number processes)")
     ("id", po::value< int >(&id)->default_value(0), "test id")
     ("nt", po::value< int >(&nt)->default_value(1), "number of timing steps")
+    ("print", po::value< int >(&print)->default_value(0), "print the matrices")
   ;
 
   po::variables_map vm;
@@ -181,8 +183,11 @@ int test_MR_scaling(int argc, char *argv[])
     R.update();
 
     // Write to binary for inspection in MATLAB
-    M.display(ResponseMatrix::BINARY, "connectivity2.out");
-    R.display(ResponseMatrix::BINARY, "response_matrix2.out");
+    if (print)
+    {
+      M.display(ResponseMatrix::BINARY, "connectivity2.out");
+      R.display(ResponseMatrix::BINARY, "response_matrix2.out");
+    }
 
     // Create vectors.
     linear_algebra::Vector x(indexer->number_local_moments(), 1.0);
@@ -210,9 +215,11 @@ int test_MR_scaling(int argc, char *argv[])
     }
     standard_deviation = std::sqrt(standard_deviation / nt);
 
+
     if (Comm::rank() == 0)
     {
-      printf("%5i %5i %5i %5i %8i %12.8e  %12.8e \n", np, nl,
+      printf("   np    nl    nn^3   bs       gs      avgt              std\n");
+      printf("%5i %5i %5i   %5i %8i %12.8e  %12.8e \n", np, nl,
         nn*nn*nn, bs, gs, average_time, standard_deviation);
     }
 

@@ -18,7 +18,8 @@ namespace erme_solver
 //---------------------------------------------------------------------------//
 void GlobalSolverPicard::solve()
 {
-  std::cout << " Picard: solving... " << std::endl;
+  if (serment_comm::Comm::rank() == 0)
+    std::cout << " Picard: solving... " << std::endl;
 
   // Get initial keff guess
   double keff = 1.0;
@@ -26,19 +27,24 @@ void GlobalSolverPicard::solve()
     keff = d_db->get<double>("erme_initial_keff");
   // Start lambda at unity
   double lambda = 1.0;
+
   // Set space-angle zeroth order moments to uniform guess.  Note
   // this doesn't actually get used by SLEPc but would will in a
   // hand-coded power iteration.
-//  for (int i = 0; i < d_indexer->number_local_moments(); ++i)
-//  {
-//    erme_response::ResponseIndex ri = d_indexer->response_index_from_local(i);
-//    if (ri.azimuth + ri.polar + ri.space0 + ri.space1 == 0) (*d_J0)[i] = 1.0;
-//  }
-//  // Ensure a normalized initial guess and initialize the responses
-//  d_J0->scale(1.0/d_J0->norm(d_J0->L2));
+  for (int i = 0; i < d_indexer->number_local_moments(); ++i)
+  {
+    erme_response::ResponseIndex ri = d_indexer->response_index_from_local(i);
+    if (ri.azimuth + ri.polar + ri.space0 + ri.space1 == 0) (*d_J0)[i] = 1.0;
+  }
+  // Ensure a normalized initial guess and initialize the responses
+  d_J0->scale(1.0/d_J0->norm(d_J0->L2));
+
 
   // Compute initial responses
   update_response(keff);
+
+  return;
+
   //d_R->display(d_R->MATLAB, "R.out");
   //d_M->display(d_R->MATLAB, "M.out");
 //  d_L->display(d_L->MATLAB, "L.out");

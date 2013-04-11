@@ -39,7 +39,8 @@ int test_NodeList(int argc, char *argv[])
   serment_comm::Comm::initialize(argc, argv);
 
   // Single process only
-  if (!(serment_comm::Comm::rank() == 0)) return 0;
+  if (serment_comm::Comm::size() == 0)
+  {
 
   // Test 1D Cartesian
   {
@@ -78,21 +79,70 @@ int test_NodeList(int argc, char *argv[])
     cout << " number global unique nodes = " << nodes->number_unique_global_nodes() << endl;
     cout << " number local unique nodes = " << nodes->number_unique_local_nodes() << endl;
 
-    //
     TEST(nodes->number_global_nodes() == 3);
     TEST(nodes->number_local_nodes()  == 3);
     TEST(nodes->number_unique_global_nodes()  == 1);
     TEST(nodes->number_unique_local_nodes()   == 1);
 
-//    TEST(nodes->number_global_nodes() == 3);
-//    TEST(nodes->neighbor(0, CartesianNode::NORTH).neighbor() == 2);
-//    TEST(nodes->neighbor(0, CartesianNode::NORTH).surface()  == CartesianNode::SOUTH);
-//    TEST(nodes->neighbor(1, CartesianNode::EAST).neighbor()  == Node::VACUUM);
-//    TEST(nodes->node(2)->dimension() == 2);
   }
   // Test 2D Cartesian
   {
-    NodeList::SP_nodelist nodes = cartesian_node_dummy_list_2d();
+    // Orders
+    int so = 4;
+    int ao = 2;
+    int po = 2;
+
+    // Create node list
+    NodeList::SP_nodelist nodes(new NodeList());
+
+    // Get four, two-dimensional Cartesian test nodes
+    NodeList::SP_node node0(new CartesianNodeDummy(2, so, po, ao, 0));
+    NodeList::SP_node node1(new CartesianNodeDummy(2, so, po, ao, 0));
+    NodeList::SP_node node2(new CartesianNodeDummy(2, so, po, ao, 0));
+    NodeList::SP_node node3(new CartesianNodeDummy(2, so, po, ao, 0));
+
+    // Create neighbor lists.
+    NodeList::vec2_neighbor neighbors(4);
+    NodeList::vec_neighbor neigh0(4, NeighborSurface(Node::VACUUM, 0));
+    NodeList::vec_neighbor neigh1(4, NeighborSurface(Node::VACUUM, 0));
+    NodeList::vec_neighbor neigh2(4, NeighborSurface(Node::VACUUM, 0));
+    NodeList::vec_neighbor neigh3(4, NeighborSurface(Node::VACUUM, 0));
+
+    //  --- ---
+    // | 2 | 2 |
+    //  --- ---
+    // | 0 | 0 |   with vacuum on all global surfaces
+    //  --- ---
+    neigh0[CartesianNode::NORTH]  = NeighborSurface(2, CartesianNode::SOUTH);
+    neigh0[CartesianNode::EAST]   = NeighborSurface(1, CartesianNode::WEST);
+    neigh1[CartesianNode::WEST]   = NeighborSurface(0, CartesianNode::EAST);
+    neigh1[CartesianNode::NORTH]  = NeighborSurface(3, CartesianNode::SOUTH);
+    neigh2[CartesianNode::SOUTH]  = NeighborSurface(0, CartesianNode::NORTH);
+    neigh2[CartesianNode::EAST]   = NeighborSurface(3, CartesianNode::WEST);
+    neigh3[CartesianNode::SOUTH]  = NeighborSurface(1, CartesianNode::NORTH);
+    neigh3[CartesianNode::WEST]   = NeighborSurface(2, CartesianNode::EAST);
+
+    // Add nodes
+    nodes->add_node(node0);
+    nodes->add_node(node1);
+    nodes->add_node(node2);
+    nodes->add_node(node3);
+
+    // Node map and neighbors
+    NodeList::vec_int node_map(4, 2);
+    node_map[1] = 2;
+    node_map[2] = 0;
+    node_map[3] = 0;
+    neighbors[0] = neigh0;
+    neighbors[1] = neigh1;
+    neighbors[2] = neigh2;
+    neighbors[3] = neigh3;
+    nodes->set_nodal_map(node_map, neighbors);
+
+    // Partition
+    NodePartitioner P;
+    P.partition(nodes);
+
     TEST(nodes->number_global_nodes() == 4);
     TEST(nodes->neighbor(0, CartesianNode::NORTH).neighbor() == 2);
     TEST(nodes->neighbor(0, CartesianNode::NORTH).surface()  == CartesianNode::SOUTH);
@@ -140,6 +190,12 @@ int test_NodeList(int argc, char *argv[])
 
 
   }
+
+  } // single process only
+
+  // Finalize Comm
+  serment_comm::Comm::finalize();
+
   return 0;
 }
 
