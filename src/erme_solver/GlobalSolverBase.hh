@@ -139,6 +139,7 @@ protected:
     d_R->update();
     d_F->update();
     d_A->update();
+    //d_R->display(d_R->STDOUT);
     d_L->update();
   }
 

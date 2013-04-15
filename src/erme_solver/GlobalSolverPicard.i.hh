@@ -39,17 +39,15 @@ void GlobalSolverPicard::solve()
   // Ensure a normalized initial guess and initialize the responses
   d_J0->scale(1.0/d_J0->norm(d_J0->L2));
 
-
   // Compute initial responses
   update_response(keff);
 
-  return;
-
-  //d_R->display(d_R->MATLAB, "R.out");
-  //d_M->display(d_R->MATLAB, "M.out");
+//  d_R->display(d_R->MATLAB, "R.out");
+//  d_M->display(d_R->MATLAB, "M.out");
 //  d_L->display(d_L->MATLAB, "L.out");
 //  d_F->display();
 //  d_A->display();
+
   // Initialize balance parameters
   double loss       = 0;
   double gain       = 0;
@@ -87,10 +85,12 @@ void GlobalSolverPicard::solve()
     leakage     = d_L->leakage(*d_J0);
     loss        = absorption + leakage;
 
-//    std::cout << " GAIN = "     << gain << std::endl;
-//    std::cout << " ABS = "      << absorption << std::endl;
-//    std::cout << " leakage = "  << leakage << std::endl;
-
+    if (serment_comm::Comm::world_rank() == 0)
+    {
+			std::cout << " GAIN = "     << gain << std::endl;
+			std::cout << " ABS = "      << absorption << std::endl;
+			std::cout << " leakage = "  << leakage << std::endl;
+    }
 //    d_R->display(d_L->BINARY, "R.out");
 //    d_M->display(d_L->BINARY, "M.out");
 //    d_L->display(d_L->BINARY, "L.out");
@@ -113,36 +113,43 @@ void GlobalSolverPicard::solve()
     norm = d_residual->compute_norm(*d_J0, keff, lambda);
     d_residual_norms.push_back(norm);
 
-    printf(" PICARD IT: %3i NORM: %8.6e LAMBDA: %12.9f KEFF: %12.9f INNERS %8i \n",
-           it, norm, lambda, keff, innertot);
+    if (serment_comm::Comm::world_rank() == 0)
+    {
+    	printf(" PICARD IT: %3i NORM: %8.6e LAMBDA: %12.9f KEFF: %12.9f INNERS %8i \n",
+        it, norm, lambda, keff, innertot);
+    }
+
 
     // Check convergence
     if (norm < d_tolerance) break;
 
   } // end outers
 
-  vec_dbl fd(d_indexer->number_nodes(), 0.0);
-  size_t j = 0;
-  double sum_fd;
-  for (size_t node_g = 0; node_g < fd.size(); ++node_g)
-  {
-    for (size_t i = 0; i < d_indexer->number_node_moments(0); ++i, ++j)
-    {
-      fd[node_g] += (*d_F)[j] * (*d_J0)[j];
-    }
-    sum_fd += fd[node_g];
-  }
+//  vec_dbl fd(d_indexer->number_nodes(), 0.0);
+//  size_t j = 0;
+//  double sum_fd;
+//  for (size_t node_g = 0; node_g < fd.size(); ++node_g)
+//  {
+//    for (size_t i = 0; i < d_indexer->number_node_moments(0); ++i, ++j)
+//    {
+//      fd[node_g] += (*d_F)[j] * (*d_J0)[j];
+//    }
+//    sum_fd += fd[node_g];
+//  }
 
 //  for (size_t i = 0; i < fd.size(); ++i)
 //  {
 //    std::printf(" %5i %12.9f \n", i, fd[i]/sum_fd);
 //  }
 
-  std::printf(" FINAL POWER ITERATION EIGENVALUES: \n");
-  std::printf(" **** FINAL KEFF        = %12.9f \n", keff);
-  std::printf(" **** FINAL LAMBDA      = %12.9f \n", lambda);
-  std::printf(" **** OUTER ITERATIONS  = %8i \n", it);
-  std::printf(" **** INNER ITERATIONS  = %8i \n", innertot);
+  if (serment_comm::Comm::world_rank() == 0)
+  {
+		std::printf(" FINAL PICARD ITERATION EIGENVALUES: \n");
+		std::printf(" **** FINAL KEFF        = %12.9f \n", keff);
+		std::printf(" **** FINAL LAMBDA      = %12.9f \n", lambda);
+		std::printf(" **** OUTER ITERATIONS  = %8i \n", it);
+		std::printf(" **** INNER ITERATIONS  = %8i \n", innertot);
+  }
 
   // Update the state
   d_state->update(*d_J0, keff, lambda);

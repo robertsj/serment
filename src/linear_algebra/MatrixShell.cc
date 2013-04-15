@@ -23,6 +23,7 @@ MatrixShell::MatrixShell(const size_type m,
   PetscErrorCode ierr;
   ierr = MatSetType(d_A, MATSHELL);
   ierr = MatShellSetContext(d_A, context);
+  ierr = MatSetUp(d_A);
 
   // Set the local/global size along with row bounds.
   set_sizes_and_bounds();

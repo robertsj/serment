@@ -24,7 +24,7 @@ public:
 
   MyMatrixShell(const size_type m, const size_type n)
   :  MatrixShell(m, n, this)
-  ,  d_B(m, n, vec_int(m, 3), vec_int(m, 0))
+  ,  d_B(m, n, vec_int(m, 3), vec_int(m, 1))
   {
 
     for (int row = d_B.lower_bound(); row < d_B.upper_bound(); row++)

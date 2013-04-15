@@ -19,32 +19,13 @@ Matrix::Matrix(const size_type m,
                const vec_int &number_nonzeros_off)
   : MatrixBase(m, n)
 {
+
   // Preconditions
   Require(number_nonzeros.size() > 0);
   Require(number_nonzeros_off.size() > 0);
 
-  // Create appropriate matrix type.
-  PetscErrorCode ierr;
-  int size;
-  ierr = MPI_Comm_size(PETSC_COMM_WORLD, &size);
-  if (size > 1)
-  {
-    ierr = MatSetType(d_A, MATMPIAIJ);
-    ierr = MatMPIAIJSetPreallocation(d_A,
-                                     PETSC_NULL, &number_nonzeros[0],
-                                     PETSC_NULL, &number_nonzeros_off[0]);
-  }
-  else
-  {
-    ierr = MatSetType(d_A, MATSEQAIJ);
-    ierr = MatSeqAIJSetPreallocation(d_A, PETSC_NULL, &number_nonzeros[0]);
-  }
+  preallocate(number_nonzeros, number_nonzeros_off);
 
-  // Set the local/global size along with row bounds.
-  set_sizes_and_bounds();
-
-  // Postconditions
-  Ensure(!ierr);
 }
 
 //---------------------------------------------------------------------------//
@@ -85,6 +66,8 @@ preallocate(const vec_int &number_nonzeros,
     ierr = MatSetType(d_A, MATSEQAIJ);
     ierr = MatSeqAIJSetPreallocation(d_A, PETSC_NULL, &total_number_nonzeros[0]);
   }
+  ierr = MatSetOption(d_A, MAT_NEW_NONZERO_ALLOCATION_ERR, PETSC_FALSE);
+
 
   // Set the local/global size along with row bounds.
   set_sizes_and_bounds();

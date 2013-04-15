@@ -7,8 +7,8 @@
  */
 //---------------------------------------------------------------------------//
 
-#ifndef LEAKAGEOPERATOR_HH_
-#define LEAKAGEOPERATOR_HH_
+#ifndef erme_LEAKAGEOPERATOR_HH_
+#define erme_LEAKAGEOPERATOR_HH_
 
 #include "ResponseOperator.hh"
 #include "linear_algebra/Matrix.hh"
@@ -25,8 +25,8 @@ namespace erme
  *
  *  Test of LeakageOperator class
  */
-class LeakageOperator: public linear_algebra::Matrix,
-                       public ResponseOperator
+class LeakageOperator: public ResponseOperator,
+                       public linear_algebra::Matrix
 {
 
 public:
@@ -83,7 +83,7 @@ private:
 } // end namespace erme
 
 
-#endif // LEAKAGEOPERATOR_HH_ 
+#endif // erme_LEAKAGEOPERATOR_HH_
 
 //---------------------------------------------------------------------------//
 //              end of file LeakageOperator.hh

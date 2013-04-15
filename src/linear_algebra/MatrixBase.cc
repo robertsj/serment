@@ -19,10 +19,12 @@ MatrixBase::MatrixBase(const size_type m,
                        const size_type n)
   : d_number_local_rows(m)
   , d_number_local_columns(n)
+  , d_number_global_rows(0)
+  , d_number_global_columns(0)
+  , d_lower_bound(0)
+  , d_upper_bound(0)
   , d_is_assembled(false)
 {
-  using std::cout;
-  using std::endl;
   // Preconditions
   Require(m > 0);
   Require(n > 0);
@@ -32,7 +34,7 @@ MatrixBase::MatrixBase(const size_type m,
   ierr = MatSetSizes(d_A, m, n, PETSC_DETERMINE, PETSC_DETERMINE);
 
   // Postconditions
-  Require(!ierr);
+  Ensure(!ierr);
 }
 
 MatrixBase::~MatrixBase()
@@ -94,7 +96,7 @@ void MatrixBase::set_sizes_and_bounds()
   d_number_global_columns = ngc;
 
   // Postconditions
-  Require(!ierr);
+  Ensure(!ierr);
   Ensure(d_upper_bound - d_lower_bound == d_number_local_rows);
 }
 

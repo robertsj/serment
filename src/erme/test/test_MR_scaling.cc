@@ -168,6 +168,7 @@ int test_MR_scaling(int argc, char *argv[])
   double average_time = 0.0;
   double standard_deviation = 0.0;
   int np = Comm::size();
+
   // Create R only on the global communicator
   if (Comm::is_global())
   {

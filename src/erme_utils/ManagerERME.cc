@@ -101,16 +101,22 @@ void ManagerERME::build_erme(SP_nodelist nodes)
 
   // Create response operators
   if (serment_comm::Comm::rank() == 0) cout << "****** BUILDING OPERATORS" << endl;
-  d_M = new erme::Connect(d_nodes, d_indexer);
-  d_R = new erme::ResponseMatrix(d_nodes, d_indexer, d_server);
-  d_L = new erme::LeakageOperator(d_nodes, d_indexer, d_server);
-  d_F = new erme::FissionOperator(d_nodes, d_indexer, d_server);
-  d_A = new erme::AbsorptionOperator(d_nodes, d_indexer, d_server);
+
+  // Operators live on global communicator
+  if (serment_comm::Comm::is_global())
+  {
+		d_M = new erme::Connect(d_nodes, d_indexer);
+		d_R = new erme::ResponseMatrix(d_nodes, d_indexer, d_server);
+		d_L = new erme::LeakageOperator(d_nodes, d_indexer, d_server);
+		d_F = new erme::FissionOperator(d_nodes, d_indexer, d_server);
+		d_A = new erme::AbsorptionOperator(d_nodes, d_indexer, d_server);
+  }
+  //d_L->display(d_L->STDOUT);
   d_is_built = true;
 
   // Postprocessor
-  d_postprocess = new PostProcess(d_db, d_nodes, d_indexer, d_server, d_state,
-                                  d_R, d_M, d_F, d_A, d_L);
+//  d_postprocess = new PostProcess(d_db, d_nodes, d_indexer, d_server, d_state,
+//                                  d_R, d_M, d_F, d_A, d_L);
 }
 
 //---------------------------------------------------------------------------//

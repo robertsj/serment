@@ -78,6 +78,7 @@ find_package(PETSc REQUIRED)
 include_directories(${PETSC_INCLUDES})
 add_definitions(${PETSC_DEFINITIONS})
 message("PETSc library = ${PETSC_LIBRARIES}")
+find_package(MPI REQUIRED)
 
 # SLEPc (required)
 find_package(SLEPc REQUIRED)

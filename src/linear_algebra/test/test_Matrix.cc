@@ -61,8 +61,8 @@ int test_Matrix_actual()
 
   // Create Matrix
   Matrix::size_type n = 5;
-  Matrix::vec_int dnnz(5, 3);
-  Matrix::vec_int odnnz(5, 0); // Nothing outside of my row-column block
+  Matrix::vec_int dnnz(5, 3);  // At most 3 elements in local block
+  Matrix::vec_int odnnz(5, 1); // At most 1 element outside local block
   Matrix A(n, n, dnnz, odnnz);
   TEST(A.number_local_rows() == n);
   TEST(A.number_local_columns() == n);

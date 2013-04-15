@@ -14,8 +14,8 @@ namespace erme
 
 //---------------------------------------------------------------------------//
 LeakageOperator::LeakageOperator(SP_nodelist nodes,
-                                 SP_indexer indexer,
-                                 SP_server server)
+                                 SP_indexer  indexer,
+                                 SP_server   server)
   : ResponseOperator(nodes, indexer, server)
   , Matrix(nodes->number_local_surfaces(),
            indexer->number_local_moments())
@@ -24,9 +24,6 @@ LeakageOperator::LeakageOperator(SP_nodelist nodes,
 {
   vec_int nnz_on_diag(d_nodes->number_local_surfaces(),  0);
   vec_int nnz_off_diag(d_nodes->number_local_surfaces(), 0);
-
-  int index_s = 0;
-  int index_m = 0;
 
   /*
    *  Note that the L operator has the form for a two 1D nodes
@@ -48,6 +45,9 @@ LeakageOperator::LeakageOperator(SP_nodelist nodes,
    *
    */
 
+  int index_s = 0;
+  int index_m = 0;
+
   // Loop over all nodes
   for (int n = d_nodes->lower_bound(); n < d_nodes->upper_bound(); n++)
   {
@@ -63,7 +63,7 @@ LeakageOperator::LeakageOperator(SP_nodelist nodes,
 
       Assert(index_s < nnz_on_diag.size());
       nnz_on_diag[index_s] = 1;
-      nnz_off_diag[index_s] = size - 1;
+      nnz_off_diag[index_s] = size - 1 + 1;
 
       // Check for leakage
       if (d_nodes->neighbor(n, s).neighbor() == erme_geometry::Node::VACUUM)
@@ -78,7 +78,7 @@ LeakageOperator::LeakageOperator(SP_nodelist nodes,
 
   // Preallocate.  This also computes the bounds and such.
   preallocate(nnz_on_diag, nnz_off_diag);
-
+  assemble();
 }
 
 //---------------------------------------------------------------------------//
@@ -107,7 +107,8 @@ void LeakageOperator::update()
 
     // Converting the first nodal moment to the global
     // moment yields the offset for the column indices
-    int column_offset = d_indexer->nodal_index_to_global(n, 0);
+    int ng = d_nodes->global_index_from_local(n);
+    int column_offset = d_indexer->nodal_index_to_global(ng, 0);
 
     // Insert each column (corresponding to an incident moment)
     for (int in = 0; in < r->size(); in++)

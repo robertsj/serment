@@ -162,21 +162,15 @@ void ResponseServer::update_explicit_work_share()
 
     // Local unique node index
     size_t node_ul = d_nodes->unique_local_index_from_unique_global(index_r.node);
-    std::cout << " computing for node ul = " << node_ul << " response " << index_r << std::endl;
 
     // Compute responses
     Assert(node_ul < d_responses.size());
     Assert(node_ul < d_sources.size());
 
-    //d_responses[node_ul]->display();
-
     d_sources[node_ul]->compute(d_responses[node_ul], index_r);
 
   }
   Comm::global_barrier();
-
-
-  return;
 
   // A simple way to gather the results on 0 is to reduce on the
   // arrays of each nodal response.  Note, this probably makes the
@@ -194,7 +188,6 @@ void ResponseServer::update_explicit_work_share()
       }
       Comm::sum(&d_responses[n]->fission_response(0), number_moments, 0);
       Comm::sum(&d_responses[n]->absorption_response(0), number_moments, 0);
-      //d_responses[n]->display();
     }
   }
 

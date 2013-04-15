@@ -12,12 +12,16 @@
 namespace linear_algebra
 {
 
+//---------------------------------------------------------------------------//
 EigenSolver::EigenSolver(SP_matrix A,
                          SP_matrix B,
                          int max_iters,
                          double tolerance)
   : d_A(A)
   , d_B(B)
+  , d_lambda(0.0)
+  , d_lambda_imaginary(0.0)
+  , d_number_iterations(0)
   , d_maximum_iterations(max_iters)
   , d_tolerance(tolerance)
 {
@@ -64,6 +68,7 @@ EigenSolver::EigenSolver(SP_matrix A,
   Ensure(!ierr);
 }
 
+//---------------------------------------------------------------------------//
 double EigenSolver::solve(SP_vector x)
 {
   // Preconditions

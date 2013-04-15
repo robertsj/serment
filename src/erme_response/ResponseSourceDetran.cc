@@ -31,8 +31,7 @@ ResponseSourceDetran<B>::ResponseSourceDetran(SP_node node,
   Require(node->material());
   Require(node->mesh());
 
-  std::cout << "********* BUILDING DETRAN<" << D::dimension
-            << "> SOURCE FOR NODE " << d_node->name() << std::endl;
+  //std::cout << "********* BUILDING DETRAN<" << D::dimension << "> SOURCE FOR NODE " << d_node->name() << std::endl;
 
   d_db = node->db();
   d_material = node->material();
@@ -81,13 +80,13 @@ template <class B>
 void ResponseSourceDetran<B>::
 compute(SP_response response, const ResponseIndex &index)
 {
-  std::cout << "COMPUTING RESPONSE FOR INDEX: " << index << std::endl;
+  //std::cout << "COMPUTING RESPONSE FOR INDEX: " << index << std::endl;
   d_solver->boundary()->clear();
   d_solver->boundary()->clear_bc();
   set_boundary(index);
 
   //THROW("lala");
-  std::cout << "********* OUTGOING BOUNDARY *********** " << std::endl;
+//  std::cout << "********* OUTGOING BOUNDARY *********** " << std::endl;
 //  d_B->display(false);
 //  std::cout << "********* INCIDENT BOUNDARY *********** " << std::endl;
 //  d_B->display(true);
@@ -346,14 +345,12 @@ void ResponseSourceDetran<B>::expand(SP_response response,
     for (size_t i = 0; i < d_mesh->number_cells(); ++i)
     {
       double phi_times_volume = d_mesh->volume(i) * state->phi(g)[i];
-      std::cout << " i =" << i << " mat=" << mat_map[i] << " nodal=" <<index_i.nodal << " " <<  response->size() << std::endl;
-//      response->fission_response(index_i.nodal) +=
-//         phi_times_volume * d_material->nu_sigma_f(mat_map[i], g);
-//      response->absorption_response(index_i.nodal) +=
-//         phi_times_volume * d_material->sigma_a(mat_map[i], g);
+      response->fission_response(index_i.nodal) +=
+        phi_times_volume * d_material->nu_sigma_f(mat_map[i], g);
+      response->absorption_response(index_i.nodal) +=
+         phi_times_volume * d_material->sigma_a(mat_map[i], g);
     }
   }
-  return;
   expand_boundary(response, index_i);
 }
 

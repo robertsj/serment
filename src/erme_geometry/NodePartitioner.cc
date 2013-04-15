@@ -111,6 +111,7 @@ void NodePartitioner::broadcast_nodes(SP_nodelist &nodes)
   {
     // Receive the archive
     Comm::broadcast(&d_buffer_size, 1, 0);
+    d_buffer.reserve(d_buffer_size);
     Comm::broadcast((char*)d_buffer.data(), d_buffer_size, 0);
 
     // Setup buffer and archive
