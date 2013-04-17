@@ -112,6 +112,9 @@ public:
   double& leakage_response(const size_t surface,
                            const size_t in);
 
+  /// Clear all the responses
+  void clear();
+
   /// Return moment size
   size_t size() const
   {

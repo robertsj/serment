@@ -15,11 +15,7 @@
 #include "erme_response/ResponseIndexer.hh"
 #include "erme_response/ResponseServer.hh"
 #include "erme/StateERME.hh"
-#include "erme/ResponseMatrix.hh"
-#include "erme/Connect.hh"
-#include "erme/FissionOperator.hh"
-#include "erme/AbsorptionOperator.hh"
-#include "erme/LeakageOperator.hh"
+#include "erme/ResponseContainer.hh"
 #include "utilities/DBC.hh"
 #include "utilities/SP.hh"
 #include "utilities/Definitions.hh"
@@ -44,21 +40,22 @@ public:
   // TYPEDEFS
   //-------------------------------------------------------------------------//
 
-  typedef detran_utilities::SP<GlobalSolverBase>      SP_solver;
-  typedef detran_utilities::InputDB::SP_input         SP_db;
-  typedef erme_response::ResponseIndexer::SP_indexer  SP_indexer;
-  typedef erme_response::ResponseServer::SP_server    SP_server;
-  typedef erme::StateERME::SP_state                   SP_state;
-  typedef erme::ResponseMatrix::SP_responsematrix     SP_R;
-  typedef erme::Connect::SP_connect                   SP_M;
-  typedef erme::FissionOperator::SP_fission           SP_F;
-  typedef erme::AbsorptionOperator::SP_absorption     SP_A;
-  typedef erme::LeakageOperator::SP_leakage           SP_L;
-  typedef OperatorMR::SP_MR                           SP_MR;
-  typedef NonlinearResidual::SP_residual              SP_residual;
-  typedef linear_algebra::Vector::SP_vector           SP_vector;
-  typedef detran_utilities::vec_dbl                   vec_dbl;
-  typedef detran_utilities::vec_int                   vec_int;
+  typedef detran_utilities::SP<GlobalSolverBase>      		SP_solver;
+  typedef detran_utilities::InputDB::SP_input         		SP_db;
+  typedef erme_response::ResponseIndexer::SP_indexer  		SP_indexer;
+  typedef erme_response::ResponseServer::SP_server    		SP_server;
+  typedef erme::StateERME::SP_state                   		SP_state;
+  typedef erme::ResponseContainer::SP_responsecontainer		SP_responsecontainer;
+  typedef erme::ResponseMatrix::SP_responsematrix     		SP_R;
+  typedef erme::Connect::SP_connect                   		SP_M;
+  typedef erme::FissionOperator::SP_fission           		SP_F;
+  typedef erme::AbsorptionOperator::SP_absorption     		SP_A;
+  typedef erme::LeakageOperator::SP_leakage           		SP_L;
+  typedef OperatorMR::SP_MR                           		SP_MR;
+  typedef NonlinearResidual::SP_residual              		SP_residual;
+  typedef linear_algebra::Vector::SP_vector           		SP_vector;
+  typedef detran_utilities::vec_dbl                   		vec_dbl;
+  typedef detran_utilities::vec_int                   		vec_int;
 
   //-------------------------------------------------------------------------//
   // PUBLIC INTERFACE
@@ -66,21 +63,17 @@ public:
 
   /**
    *  @brief Constructor
-   *  @param db       Pointer to parameter database
-   *  @param indexer  Pointer to response indexer
-   *  @param server   Pointer to response server
-   *  @param state    Pointer to state vector
-   *  @param R        Pointer to response matrix
-   *  @param M        Pointer to connectivity matrix
-   *  @param F        Pointer to fission operator
-   *  @param A        Pointer to absorption operator
-   *  @param L        Pointer to leakage operator
+   *  @param db       	Pointer to parameter database
+   *  @param indexer  	Pointer to response indexer
+   *  @param server   	Pointer to response server
+   *  @param state    	Pointer to state vector
+   *  @param responses	Container of the responses
    */
-  GlobalSolverBase(SP_db db,
-                   SP_indexer indexer,
-                   SP_server server,
-                   SP_state state,
-                   SP_R R, SP_M M, SP_F F, SP_A A, SP_L L);
+  GlobalSolverBase(SP_db 									db,
+                   SP_indexer 						indexer,
+                   SP_server 							server,
+                   SP_state 							state,
+                   SP_responsecontainer 	responses);
 
   /// Pure virtual destructor
   virtual ~GlobalSolverBase() = 0;
@@ -135,12 +128,15 @@ protected:
   {
     /// Give the server the new keff
     d_server->update(keff);
+
     /// Fill the operators with updated values
-    d_R->update();
-    d_F->update();
-    d_A->update();
-    //d_R->display(d_R->STDOUT);
-    d_L->update();
+    if (serment_comm::Comm::is_global())
+    {
+			d_R->update();
+			d_F->update();
+			d_A->update();
+			d_L->update();
+    }
   }
 
   /// Monitor the convergence

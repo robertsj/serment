@@ -60,6 +60,9 @@ int test_GlobalSolverPicard(int argc, char *argv[])
   // This sets the PETSc communicator to global
   linear_algebra::initialize(argc, argv);
 
+  // New scope so PETSc doesn't puke
+  {
+
   //-------------------------------------------------------------------------//
   // SETUP NODES AND PARTITION
   //-------------------------------------------------------------------------//
@@ -79,8 +82,9 @@ int test_GlobalSolverPicard(int argc, char *argv[])
 
   // Create parameter database
   erme_response::ResponseIndexer::SP_db db(new detran_utilities::InputDB());
-  db->put<int>("dimension", 2);
-  db->put<int>("erme_order_reduction", 3);
+  db->put<int>("dimension", 							2);
+  db->put<int>("erme_order_reduction", 		3);
+  db->put<int>("erme_maximum_iterations", 5);
 
   // Create indexer
   erme_response::ResponseIndexer::SP_indexer
@@ -95,25 +99,20 @@ int test_GlobalSolverPicard(int argc, char *argv[])
   // SETUP STATE AND OPERATORS AND SOLVER
   //-------------------------------------------------------------------------//
 
-  if (Comm::is_global())
-  {
-    // Create state
-    Solver::SP_state
-      state(new erme::StateERME(indexer->number_local_moments()));
+  // Create state
+  Solver::SP_state state(new erme::StateERME(indexer->number_local_moments()));
+  std::cout << "local size = " << state->local_size() << std::endl;
 
-    // Create response operators
-    Solver::SP_M M(new erme::Connect(nodes, indexer));
-    Solver::SP_R R(new erme::ResponseMatrix(nodes, indexer, server));
-    Solver::SP_L L(new erme::LeakageOperator(nodes, indexer, server));
-    Solver::SP_F F(new erme::FissionOperator(nodes, indexer, server));
-    Solver::SP_A A(new erme::AbsorptionOperator(nodes, indexer, server));
+  // Create response operators
+  Solver::SP_responsecontainer
+    responses(new erme::ResponseContainer(nodes, indexer, server));
 
-    // Solver
-    Solver::SP_solver solver(new Solver(db, indexer, server, state,
-                                        R, M, F, A, L));
+  // Solver
+  Solver::SP_solver solver(new Solver(db, indexer, server, state, responses));
 
-    solver->solve();
-  }
+  solver->solve();
+
+  } // end extra scope for petsc
 
   //-------------------------------------------------------------------------//
   // WRAP UP

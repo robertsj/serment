@@ -93,12 +93,15 @@ int test_ResponseServer(int argc, char *argv[])
   // Create server
   ResponseServer server(nodes, indexer);
 
-
   // Update
   server.update(1.0);
   Comm::global_barrier();
 
-  server.response(0)->display();
+//  if (Comm::world_rank() == 2)
+//  {
+//		server.response(0)->display();
+//		server.response(1)->display();
+//  }
 
   //-------------------------------------------------------------------------//
   // LOCAL
@@ -134,7 +137,8 @@ int test_ResponseServer(int argc, char *argv[])
 
         for (int out = 0; out < r->size(); out++)
         {
-          //cout << " out = " << out << " " << in << " br =  " << r->boundary_response(out, in) << " ref = " << value + 0.1 << endl;
+          //cout << " out = " << out << " " << in << " br =  "
+        	//     << r->boundary_response(out, in) << " ref = " << value + 0.1 << endl;
           TEST(soft_equiv(r->boundary_response(out, in), value + 0.1));
         }
         TEST(soft_equiv(r->fission_response(in),    value + 0.2));

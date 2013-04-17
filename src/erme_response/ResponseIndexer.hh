@@ -180,6 +180,8 @@ public:
 
   //-------------------------------------------------------------------------//
 
+  SP_nodelist nodes() const;
+
   /// Display the indices in a nice format
   void display() const;
 

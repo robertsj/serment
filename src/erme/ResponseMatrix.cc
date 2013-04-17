@@ -66,8 +66,6 @@ void ResponseMatrix::update()
     // Get response
     SP_response r = d_server->response(n);
 
-    //r->display();
-
     // Block indices
     vec_int indices(r->size(), offset);
     for (size_type i = 0; i < indices.size(); i++)

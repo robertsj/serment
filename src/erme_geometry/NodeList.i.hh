@@ -18,6 +18,7 @@ inline NodeList::SP_node NodeList::node(const int node_g) const
 {
   Require(is_finalized());
   Require(node_g < number_global_nodes());
+
   return d_nodes[d_node_map[node_g]];
 }
 
@@ -26,6 +27,7 @@ inline NodeList::SP_node NodeList::unique_node(const int node_ug) const
 {
   Require(is_finalized());
   Require(node_ug < number_unique_global_nodes());
+
   return d_nodes[node_ug];
 }
 
@@ -84,6 +86,7 @@ NodeList::neighbor(const size_t node_g, const size_t s) const
 {
   Require(node_g < number_global_nodes());
   Require(s < node(node_g)->number_surfaces());
+
   return d_neighbors[node_g][s];
 }
 
@@ -92,12 +95,10 @@ NodeList::neighbor(const size_t node_g, const size_t s) const
 inline NodeList::size_t
 NodeList::global_index_from_local(const size_t node_l) const
 {
-  // Preconditions
   Require(node_l < d_upper_bound);
 
   size_t node_g = node_l + d_lower_bound;
 
-  // Postconditions
   Ensure(node_g < number_global_nodes());
   return node_g;
 }
@@ -107,8 +108,9 @@ NodeList::global_index_from_local(const size_t node_l) const
 inline int NodeList::local_index_from_global(const size_t node_g) const
 {
   Require(node_g < number_global_nodes());
+
   int node_l = node_g - d_lower_bound;
-  if (node_l >= 0)
+  if ((node_l >= 0) and (node_g < d_upper_bound))
     return node_l;
   else
     return -1;

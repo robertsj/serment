@@ -22,18 +22,18 @@ ManagerERME::ManagerERME(int argc, char *argv[], SP_db db)
 {
   // Preconditions
   Require(db);
+  using serment_comm::Comm;
+  using std::cout;
+  using std::endl;
 
   // Initialize comm
-  serment_comm::Comm::initialize(argc, argv);
+  Comm::initialize(argc, argv);
 
-  if (serment_comm::Comm::rank() == 0)
-  {
-    std::cout << "Constructing ManagerERME" << std::endl;
-  }
+  if (Comm::world_rank() == 0) cout << "Constructing ManagerERME" << endl;
 
   // Check the desired local group structure
   int local = 1;
-  if (serment_comm::Comm::rank() == 0)
+  if (Comm::world_rank() == 0)
   {
     if (d_db->check("comm_local_groups"))
     {
@@ -43,12 +43,11 @@ ManagerERME::ManagerERME(int argc, char *argv[], SP_db db)
   }
 
   // Broadcast local group count and setup comm groups
-  serment_comm::Comm::broadcast(&local, 1, 0);
-  serment_comm::Comm::setup_communicators(local);
+  Comm::broadcast(&local, 1, 0);
+  Comm::setup_communicators(local);
 
   // Initialize linear algebra system
   linear_algebra::initialize(argc, argv);
-
 }
 
 //---------------------------------------------------------------------------//
@@ -64,11 +63,11 @@ void ManagerERME::build_erme(SP_nodelist nodes)
   // Preconditions
   Require(nodes);
   d_nodes = nodes;
-
   using std::cout;
   using std::endl;
+  using serment_comm::Comm;
 
-  if (serment_comm::Comm::rank() == 0) cout << "*** BUILDING ERME " << endl;
+  if (Comm::rank() == 0) cout << "*** BUILDING ERME " << endl;
 
   // Check if this is a database problem
   std::string dbname = "";
@@ -87,31 +86,24 @@ void ManagerERME::build_erme(SP_nodelist nodes)
   partitioner.partition(d_nodes);
 
   // Create indexer
-  if (serment_comm::Comm::rank() == 0) cout << "****** BUILDING INDEXER" << endl;
+  if (Comm::rank() == 0) cout << "****** BUILDING INDEXER" << endl;
   d_indexer = new erme_response::ResponseIndexer(d_db, d_nodes);
 
   // Create server
-  if (serment_comm::Comm::rank() == 0) cout << "****** BUILDING SERVER" << endl;
+  if (Comm::rank() == 0) cout << "****** BUILDING SERVER" << endl;
   d_server = new erme_response::
     ResponseServer(d_nodes, d_indexer, dbname, dborder);
 
   // Create state
-  if (serment_comm::Comm::rank() == 0) cout << "****** BUILDING STATE" << endl;
+  if (Comm::rank() == 0) cout << "****** BUILDING STATE" << endl;
   d_state = new erme::StateERME(d_indexer->number_local_moments());
 
   // Create response operators
-  if (serment_comm::Comm::rank() == 0) cout << "****** BUILDING OPERATORS" << endl;
+  if (Comm::rank() == 0) cout << "****** BUILDING OPERATORS" << endl;
 
-  // Operators live on global communicator
-  if (serment_comm::Comm::is_global())
-  {
-		d_M = new erme::Connect(d_nodes, d_indexer);
-		d_R = new erme::ResponseMatrix(d_nodes, d_indexer, d_server);
-		d_L = new erme::LeakageOperator(d_nodes, d_indexer, d_server);
-		d_F = new erme::FissionOperator(d_nodes, d_indexer, d_server);
-		d_A = new erme::AbsorptionOperator(d_nodes, d_indexer, d_server);
-  }
-  //d_L->display(d_L->STDOUT);
+  // Operators and live on global communicator
+  if (Comm::is_global())
+  	d_responses = new erme::ResponseContainer(d_nodes, d_indexer, d_server);
   d_is_built = true;
 
   // Postprocessor
@@ -127,7 +119,7 @@ void ManagerERME::solve()
 
   // Create solver
   d_solver = new erme_solver::GlobalSolverPicard(
-    d_db, d_indexer, d_server, d_state, d_R, d_M, d_F, d_A, d_L);
+    d_db, d_indexer, d_server, d_state, d_responses);
 
   // Solve
   d_solver->solve();

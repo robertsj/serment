@@ -58,17 +58,17 @@ public:
 
   /**
    *  @brief Constructor
-   *  @param server Pointer to response server
-   *  @param state  Pointer to state vector
-   *  @param R      Pointer to response matrix
-   *  @param M      Pointer to connectivity matrix
-   *  @param F      Pointer to fission operator
-   *  @param A      Pointer to absorption operator
-   *  @param L      Pointer to leakage operator
+   *  @param db       	Pointer to parameter database
+   *  @param indexer  	Pointer to response indexer
+   *  @param server   	Pointer to response server
+   *  @param state    	Pointer to state vector
+   *  @param responses	Container of the responses
    */
-  GlobalSolverPicard(SP_db db, SP_indexer indexer, SP_server server,
-                     SP_state state,
-                     SP_R R, SP_M M, SP_F F, SP_A A, SP_L L);
+  GlobalSolverPicard(SP_db 								db,
+  		               SP_indexer 					indexer,
+  		               SP_server 						server,
+                     SP_state 						state,
+                     SP_responsecontainer	responses);
 
   /// Virtual destructor
   virtual ~GlobalSolverPicard(){}

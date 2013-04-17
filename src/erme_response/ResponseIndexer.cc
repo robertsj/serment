@@ -190,6 +190,11 @@ void ResponseIndexer::display() const
   }
 }
 
+//---------------------------------------------------------------------------//
+ResponseIndexer::SP_nodelist ResponseIndexer::nodes() const
+{
+	return d_nodes;
+}
 
 //---------------------------------------------------------------------------//
 // IMPLEMENTATION

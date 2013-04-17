@@ -49,7 +49,7 @@ PostProcess::vec_dbl PostProcess::nodal_fission_density(const double norm)
     int un = d_nodes->unique_global_index_from_global(n);
     for (int m = 0; m < d_indexer->number_node_moments(un); ++m, ++i)
     {
-      fd[n] += (*d_F)[i] * d_state->moments()[i];
+      fd[n] += (*d_F)[i] * (*d_state->moments())[i];
     }
   }
   serment_comm::Comm::global_sum(&fd[0], N);

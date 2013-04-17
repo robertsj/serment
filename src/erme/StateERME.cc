@@ -14,22 +14,31 @@ namespace erme
 
 //---------------------------------------------------------------------------//
 StateERME::StateERME(const size_t size)
-  : d_boundary_moments(size, 0.0)
-  , d_local_size(size)
+  : d_local_size(0)
   , d_k(1.0)
   , d_lambda(1.0)
 {
-  Require(size == d_boundary_moments.local_size());
-  d_global_size = d_boundary_moments.global_size();
+  if (serment_comm::Comm::is_global())
+  {
+  	d_boundary_moments = new Vector(size, 0.0);
+    d_global_size = d_boundary_moments->global_size();
+    d_local_size = size;
+  }
+  serment_comm::Comm::broadcast(&d_global_size, 1, 0);
 }
 
 //---------------------------------------------------------------------------//
-void StateERME::update(const Vector &v, const double k, const double l)
+void StateERME::update(SP_vector v, const double k, const double l)
 {
-  Require(v.local_size() == d_boundary_moments.local_size());
-  d_boundary_moments.copy(v);
+	if (serment_comm::Comm::is_global())
+	{
+		Require(v);
+		(*d_boundary_moments).copy(*v);
+	}
   d_k = k;
   d_lambda = l;
+  serment_comm::Comm::broadcast(&d_k, 1, 0);
+  serment_comm::Comm::broadcast(&d_lambda, 1, 0);
 }
 
 } // end namespace erme

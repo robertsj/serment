@@ -89,6 +89,20 @@ NodeResponse::leakage_response(const size_t surface,
   );
 }
 
+//-------------------------------------------------------------------------//
+inline void NodeResponse::clear()
+{
+	for (size_t i = 0; i < d_N; ++i)
+	{
+		for (size_t j = 0; j < d_N; ++j)
+			d_boundary_response[i][j] = 0.0;
+		for (size_t j = 0; j < d_number_surfaces; ++j)
+			d_leakage_response[i][j] = 0.0;
+		d_fission_response[i] = 0.0;
+		d_absorption_response[i] = 0.0;
+	}
+}
+
 } // end namespace erme_response
 
 #endif // erme_response_NODERESPONSE_I_HH_

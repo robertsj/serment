@@ -94,7 +94,7 @@ public:
    *  @brief Create communicators
    *  @param N  Number of local groups to create
    */
-  static void setup_communicators(const unsigned int N);
+  static void setup_communicators(const unsigned int N = 1);
 
   /// Set the communicator
   template<class C>

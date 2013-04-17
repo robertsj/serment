@@ -50,13 +50,7 @@ inline StateERME::size_t StateERME::global_size() const
 }
 
 //---------------------------------------------------------------------------//
-inline const StateERME::Vector& StateERME::moments() const
-{
-  return d_boundary_moments;
-}
-
-//---------------------------------------------------------------------------//
-inline StateERME::Vector& StateERME::moments()
+inline StateERME::SP_vector StateERME::moments()
 {
   return d_boundary_moments;
 }

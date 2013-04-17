@@ -10,6 +10,7 @@
 #ifndef erme_STATEERME_HH_
 #define erme_STATEERME_HH_
 
+#include "comm/Comm.hh"
 #include "linear_algebra/Vector.hh"
 
 namespace erme
@@ -22,6 +23,9 @@ namespace erme
  *  A solution for the eigenvalue response matrix equations consists
  *  of a global boundary vector, which contains moments for each surface
  *  of each cell, and the k-eigenvalue.
+ *
+ *  Note, the state vector (i.e. moments) lives on the global partition
+ *  only, since that's where the global balance equations are solved.
  *
  */
 /**
@@ -40,6 +44,7 @@ public:
 
   typedef detran_utilities::SP<StateERME>   SP_state;
   typedef linear_algebra::Vector            Vector;
+  typedef Vector::SP_vector 								SP_vector;
   typedef unsigned int                      size_t;
 
   //-------------------------------------------------------------------------//
@@ -53,7 +58,7 @@ public:
   StateERME(const size_t size);
 
   // SETTERS
-  void update(const Vector &v, const double k, const double l);
+  void update(SP_vector v, const double k, const double l);
   void set_k(const double k_val);
   void set_lambda(const double lambda_val);
 
@@ -63,17 +68,13 @@ public:
   size_t local_size() const;
   size_t global_size() const;
 
-  // MOMENT ACCESS (for now, just return the vector directly)
-
-  /// Const reference to moments vector
-  const Vector& moments() const;
-  /// Mutable reference to moments vector
-  Vector& moments();
+  /// Return the moments.  For non-global processes, this is NULL.
+  SP_vector moments();
 
 private:
 
   /// Boundary unknowns
-  Vector d_boundary_moments;
+  SP_vector d_boundary_moments;
   /// Local size of moments
   size_t d_local_size;
   /// Global size of moments

@@ -45,11 +45,7 @@
 
 #include "PostProcess.hh"
 #include "erme/StateERME.hh"
-#include "erme/ResponseMatrix.hh"
-#include "erme/Connect.hh"
-#include "erme/FissionOperator.hh"
-#include "erme/AbsorptionOperator.hh"
-#include "erme/LeakageOperator.hh"
+#include "erme/ResponseContainer.hh"
 #include "erme_geometry/NodeList.hh"
 #include "erme_geometry/NodePartitioner.hh"
 #include "erme_response/ResponseServer.hh"
@@ -61,7 +57,7 @@
 
 /**
  *  @brief Namespace for higher level routines for organizing response
- *         matrix problems and their solutions
+ *         matrix problems and their solutions.
  */
 namespace erme_utils
 {
@@ -79,21 +75,17 @@ public:
   // TYPEDEFS
   //-------------------------------------------------------------------------//
 
-  typedef detran_utilities::SP<ManagerERME>           SP_manager;
-  typedef PostProcess::SP_postprocess                 SP_postprocess;
-  typedef detran_utilities::InputDB::SP_input         SP_db;
-  typedef erme::StateERME::SP_state                   SP_state;
-  typedef erme::ResponseMatrix::SP_responsematrix     SP_R;
-  typedef erme::Connect::SP_connect                   SP_M;
-  typedef erme::FissionOperator::SP_fission           SP_F;
-  typedef erme::AbsorptionOperator::SP_absorption     SP_A;
-  typedef erme::LeakageOperator::SP_leakage           SP_L;
-  typedef erme_geometry::NodeList::SP_nodelist        SP_nodelist;
-  typedef erme_geometry::NodePartitioner              Partitioner;
-  typedef erme_response::ResponseServer::SP_server    SP_server;
-  typedef erme_response::ResponseIndexer::SP_indexer  SP_indexer;
-  typedef erme_solver::GlobalSolverBase::SP_solver    SP_solver;
-  typedef detran_utilities::vec_dbl                   vec_dbl;
+  typedef detran_utilities::SP<ManagerERME>           	SP_manager;
+  typedef PostProcess::SP_postprocess                 	SP_postprocess;
+  typedef detran_utilities::InputDB::SP_input         	SP_db;
+  typedef erme::StateERME::SP_state                   	SP_state;
+  typedef erme::ResponseContainer::SP_responsecontainer SP_responsecontainer;
+  typedef erme_geometry::NodeList::SP_nodelist        	SP_nodelist;
+  typedef erme_geometry::NodePartitioner              	Partitioner;
+  typedef erme_response::ResponseServer::SP_server    	SP_server;
+  typedef erme_response::ResponseIndexer::SP_indexer  	SP_indexer;
+  typedef erme_solver::GlobalSolverBase::SP_solver    	SP_solver;
+  typedef detran_utilities::vec_dbl                   	vec_dbl;
 
   //-------------------------------------------------------------------------//
   // CONSTRUCTOR & DESTRUCTOR
@@ -153,16 +145,8 @@ private:
   SP_server d_server;
   /// State vector
   SP_state d_state;
-  /// Response matrix
-  SP_R d_R;
-  /// Connectivity matrix
-  SP_M d_M;
-  /// Fission operator
-  SP_F d_F;
-  /// Absorption operator
-  SP_A d_A;
-  /// Leakage operator
-  SP_L d_L;
+  /// Response container
+  SP_responsecontainer d_responses;
   /// Global solver
   SP_solver d_solver;
   /// Is it built?

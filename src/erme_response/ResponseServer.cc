@@ -79,7 +79,10 @@ void ResponseServer::update(const double keff)
 
   // Update sources
   for (int i = 0; i < d_sources.size(); i++)
+  {
     d_sources[i]->update(k);
+    d_responses[i]->clear();
+  }
 
   // Use the simple updater.
   update_explicit_work_share();
@@ -109,6 +112,11 @@ void ResponseServer::update_explicit_work_share()
   using std::endl;
 
   typedef serment_comm::Comm Comm;
+
+  // Clear the responses.  This is needed since we use reduction to collect.
+  // Ultimately, more sophisticated approached will be assessed.
+  for (int i = 0; i < d_responses.size(); ++i)
+    d_responses[i]->clear();
 
   size_t number_responses = 0;
   std::vector<size_t> number_per_process(Comm::size(), 0);
