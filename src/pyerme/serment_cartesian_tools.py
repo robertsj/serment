@@ -202,6 +202,10 @@ def index(i, j, k, nx, ny) :
 
 def plot_slice(nodes, dims=[1.0, 1.0, 1.0], n=100) :
   """ Plot a 2-D slice of a geometry.
+  
+  Currently, this is limited to 2-D problems.  An extension
+  to 3-D should be straightforward, especially if limited 
+  to x, y, and z planes.
   """ 
 
   assert(nodes.is_finalized())

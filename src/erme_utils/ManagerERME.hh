@@ -91,8 +91,12 @@ public:
   // CONSTRUCTOR & DESTRUCTOR
   //-------------------------------------------------------------------------//
 
-  /// Constructor
+  /// Constructor that builds in full comm setup
   ManagerERME(int argc, char *argv[], SP_db db);
+
+  /// Constructor that only initializes comm
+  ManagerERME(int argc, char *argv[]);
+
 
   /// SP constructor
   static SP_manager Create(int argc, char *argv[], SP_db db);
@@ -100,6 +104,12 @@ public:
   //-------------------------------------------------------------------------//
   // PUBLIC FUNCTIONS
   //-------------------------------------------------------------------------//
+
+  /**
+   *  @brief Construct the communicators
+   *  @param db   User parameter db
+   */
+  void build_comm(SP_db db);
 
   /**
    *  @brief Construct the problem
@@ -135,6 +145,10 @@ private:
   // DATA
   //-------------------------------------------------------------------------//
 
+  /// Number of command line arguments
+  int d_argc;
+  /// Command line arguments
+  char** d_argv;
   /// Parameter database
   SP_db d_db;
   /// Node list

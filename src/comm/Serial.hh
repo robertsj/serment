@@ -94,6 +94,13 @@ int Comm::broadcast(T  *buffer,
   return COMM_SUCCESS;
 }
 
+template<class T>
+int Comm::broadcast(detran_utilities::SP<T> &buffer,
+                    int                      root)
+{
+  return COMM_SUCCESS;
+}
+
 //---------------------------------------------------------------------------//
 // REDUCTIONS
 //---------------------------------------------------------------------------//

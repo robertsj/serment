@@ -1,11 +1,11 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /**
  *  @file   ManagerERME.cc
  *  @brief  ManagerERME member definitions
  *  @author Jeremy Roberts
  *  @date   Oct 4, 2012
  */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #include "ManagerERME.hh"
 #include "comm/Comm.hh"
@@ -15,21 +15,52 @@
 namespace erme_utils
 {
 
-//---------------------------------------------------------------------------//
-ManagerERME::ManagerERME(int argc, char *argv[], SP_db db)
-  : d_db(db)
+//----------------------------------------------------------------------------//
+ManagerERME::ManagerERME(int argc, char *argv[])
+  : d_argc(argc)
+  , d_argv(argv)
   , d_is_built(false)
 {
-  // Preconditions
-  Require(db);
+  serment_comm::Comm::initialize(argc, argv);
+}
+
+//----------------------------------------------------------------------------//
+ManagerERME::ManagerERME(int argc, char *argv[], SP_db db)
+  : d_argc(argc)
+  , d_argv(argv)
+  , d_db(db)
+  , d_is_built(false)
+{
+  serment_comm::Comm::initialize(d_argc, d_argv);
+  build_comm(db);
+}
+
+//----------------------------------------------------------------------------//
+ManagerERME::SP_manager ManagerERME::Create(int argc, char *argv[], SP_db db)
+{
+  SP_manager p(new ManagerERME(argc, argv, db));
+  return p;
+}
+
+//----------------------------------------------------------------------------//
+void ManagerERME::build_comm(SP_db db)
+{
+  // Note, the db is not guaranteed to be defined on all processes, as
+  // only rank 0 reads from archives.
+
   using serment_comm::Comm;
   using std::cout;
   using std::endl;
 
-  // Initialize comm
-  Comm::initialize(argc, argv);
+  if (Comm::rank() == 0)
+  {
+    Insist(db, "Parameter database is NULL");
+  }
+  d_db = db;
+  Comm::broadcast(d_db, 0);
+  Assert(d_db);
 
-  if (Comm::world_rank() == 0) cout << "Constructing ManagerERME" << endl;
+  if (Comm::rank() == 0) cout << "BUILDING MANAGER" << endl;
 
   // Check the desired local group structure
   int local = 1;
@@ -47,38 +78,41 @@ ManagerERME::ManagerERME(int argc, char *argv[], SP_db db)
   Comm::setup_communicators(local);
 
   // Initialize linear algebra system
-  linear_algebra::initialize(argc, argv);
+  linear_algebra::initialize(d_argc, d_argv);
 }
-
-//---------------------------------------------------------------------------//
-ManagerERME::SP_manager ManagerERME::Create(int argc, char *argv[], SP_db db)
-{
-  SP_manager p(new ManagerERME(argc, argv, db));
-  return p;
-}
-
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 void ManagerERME::build_erme(SP_nodelist nodes)
 {
-  // Preconditions
-  Require(nodes);
-  d_nodes = nodes;
+  // Note, the db is not guaranteed to be defined on all processes, as
+  // only rank 0 reads from archives.
+
   using std::cout;
   using std::endl;
   using serment_comm::Comm;
+
+  if (Comm::rank() == 0)
+  {
+    Insist(Comm::is_comm_built(),
+           "Communicators must be built before problem construction.")
+    Insist(nodes, "Node list is NULL");
+  }
+  d_nodes = nodes;
 
   if (Comm::rank() == 0) cout << "*** BUILDING ERME " << endl;
 
   // Check if this is a database problem
   std::string dbname = "";
-  size_t dborder = 1;
-  if (d_db->check("response_db_name"))
+  size_t dborder     = 1;
+  if (Comm::rank() == 0)
   {
-    dbname = d_db->get<std::string>("response_db_name");
-  }
-  if (d_db->check("response_db_order"))
-  {
-    dborder = d_db->get<int>("response_db_order");
+    if (d_db->check("response_db_name"))
+    {
+      dbname = d_db->get<std::string>("response_db_name");
+    }
+    if (d_db->check("response_db_order"))
+    {
+      dborder = d_db->get<int>("response_db_order");
+    }
   }
 
   // Create partitioner and partition
@@ -106,12 +140,9 @@ void ManagerERME::build_erme(SP_nodelist nodes)
   	d_responses = new erme::ResponseContainer(d_nodes, d_indexer, d_server);
   d_is_built = true;
 
-  // Postprocessor
-//  d_postprocess = new PostProcess(d_db, d_nodes, d_indexer, d_server, d_state,
-//                                  d_R, d_M, d_F, d_A, d_L);
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 void ManagerERME::solve()
 {
   // Preconditions
@@ -125,7 +156,7 @@ void ManagerERME::solve()
   d_solver->solve();
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 void ManagerERME::finalize()
 {
   /* ... */
@@ -133,6 +164,6 @@ void ManagerERME::finalize()
 
 } // end namespace erme_utils
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 //              end of file ManagerERME.cc
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

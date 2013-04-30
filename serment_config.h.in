@@ -1,14 +1,15 @@
 /*-----------------------------------*-C-*-----------------------------------//
-/*!
- * \file   serment_config.h.in
- * \author Jeremy Roberts 
- * \date   Sep 15, 2011
- * \brief  Definitions for SERMENT packages.
+/*
+ *  @file  serment_config.h.in
+ *  @brief Definitions for SERMENT packages.
+ *  @note  Copyright (C) 2013 Jeremy Roberts
  */
 //---------------------------------------------------------------------------//
 
 #ifndef SERMENT_CONFIG_H_
 #define SERMENT_CONFIG_H_
+
+#include "detran_config.hh"
 
 // design by contract level 
 #cmakedefine SERMENT_ENABLE_DBC
@@ -33,8 +34,13 @@
 #cmakedefine SERMENT_ENABLE_XML
 #cmakedefine SERMENT_ENABLE_BOOST
 
-// compiled on date
-#cmakedefine SERMENT_COMPILED_DATE
+// date of compilation
+#cmakedefine SERMENT_COMPILED_M ${SERMENT_COMPILED_M}
+#cmakedefine SERMENT_COMPILED_D ${SERMENT_COMPILED_D}
+#cmakedefine SERMENT_COMPILED_Y ${SERMENT_COMPILED_Y}
+
+// git revision
+#define SERMENT_GIT_SHA1 "${SERMENT_WC_REVISION_HASH}"
 
 #endif // SERMENT_CONFIG_H_ 
 

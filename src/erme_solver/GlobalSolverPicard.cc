@@ -101,9 +101,9 @@ void GlobalSolverPicard::solve()
 
   if (Comm::is_global())
   {
-		d_R->display(d_R->MATLAB, "R_i.out");
-		d_M->display(d_R->MATLAB, "M.out");
-		d_L->display(d_L->MATLAB, "L_i.out");
+//		d_R->display(d_R->MATLAB, "R_i.out");
+//		d_M->display(d_R->MATLAB, "M.out");
+//		d_L->display(d_L->MATLAB, "L_i.out");
 //		d_F->display();
 //		d_A->display();
   }

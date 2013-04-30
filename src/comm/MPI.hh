@@ -12,6 +12,11 @@
 
 #include "MPI_Traits.hh"
 #include "utilities/DBC.hh"
+#include <boost/iostreams/stream.hpp>
+#include <boost/iostreams/device/back_inserter.hpp>
+#include <boost/iostreams/device/array.hpp>
+#include <boost/archive/binary_iarchive.hpp>
+#include <boost/archive/binary_oarchive.hpp>
 #include <mpi.h>
 #include <vector>
 #include <iostream>
@@ -115,6 +120,50 @@ inline int Comm::broadcast(T  *buffer,
   int r = MPI_Bcast(buffer, size, MPI_Traits<T>::element_type(),
                     root, communicator);
   return r;
+}
+
+template<class T>
+int Comm::broadcast(detran_utilities::SP<T> &object,
+                    int                      root)
+{
+  std::string buffer = "";
+  int buffer_size = 0;
+
+  if (rank() == root)
+  {
+    // Setup buffer and archive
+    typedef boost::iostreams::back_insert_device<std::string> insert_t;
+    insert_t inserter(buffer);
+    boost::iostreams::stream<insert_t> s(inserter);
+    boost::archive::binary_oarchive output_archive(s);
+
+    // Archive the object and flush
+    output_archive << object;
+    s.flush();
+
+    // Send the archive
+    buffer_size = buffer.size();
+    broadcast(&buffer_size, 1, root);
+    broadcast((char*)buffer.data(), buffer_size, 0);
+  }
+  else
+  {
+    // Receive the archive
+    broadcast(&buffer_size, 1, root);
+    buffer.reserve(buffer_size);
+    broadcast((char*)buffer.data(), buffer_size, root);
+
+    // Setup buffer and archive
+    typedef boost::iostreams::basic_array_source<char> source_t;
+    source_t device(buffer.data(), buffer_size);
+    boost::iostreams::stream<source_t> s(device);
+    boost::archive::binary_iarchive input_archive(s);
+
+    // Fill the object
+    input_archive >> object;
+  }
+
+  return 0;
 }
 
 //---------------------------------------------------------------------------//

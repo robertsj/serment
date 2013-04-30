@@ -97,10 +97,10 @@ cartesian_node_dummy_list_1d()
 
   // Create neighbor lists.
   NodeList::vec2_neighbor neighbors(4);
-  NodeList::vec_neighbor neigh0(4, NeighborSurface(Node::VACUUM, 0));
-  NodeList::vec_neighbor neigh1(4, NeighborSurface(Node::VACUUM, 0));
-  NodeList::vec_neighbor neigh2(4, NeighborSurface(Node::VACUUM, 0));
-  NodeList::vec_neighbor neigh3(4, NeighborSurface(Node::VACUUM, 0));
+  NodeList::vec_neighbor neigh0(2, NeighborSurface(Node::VACUUM, 0));
+  NodeList::vec_neighbor neigh1(2, NeighborSurface(Node::VACUUM, 0));
+  NodeList::vec_neighbor neigh2(2, NeighborSurface(Node::VACUUM, 0));
+  NodeList::vec_neighbor neigh3(2, NeighborSurface(Node::VACUUM, 0));
   //  --- --- --- ---
   // | 0 | 1 | 2 | 3 | with vacuum on all global surfaces
   //  --- --- --- ---

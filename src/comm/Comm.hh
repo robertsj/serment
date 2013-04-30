@@ -10,11 +10,9 @@
 #ifndef serment_comm_COMM_HH_
 #define serment_comm_COMM_HH_
 
-// Configuration
 #include "serment_config.h"
-
-// Serment Comm
 #include "Comm_Traits.hh"
+#include "utilities/SP.hh"
 
 namespace serment_comm
 {
@@ -184,6 +182,16 @@ public:
    */
   template<class T>
   static int broadcast(T *buffer, int size, int root = 0);
+
+  /**
+   *  @brief Do a root-to-all broadcast of a smart pointer.
+   *  @param object   Object to broadcast
+   *  @param root     Root process for broadcast
+   *
+   *  Note, this *assumes* that T can be serialized.
+   */
+  template<class T>
+  static int broadcast(detran_utilities::SP<T> &object, int root = 0);
 
   //---------------------------------------------------------------------------//
   // REDUCTIONS

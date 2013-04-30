@@ -11,6 +11,7 @@ SET(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 SET(SRC
     ManagerERME.cc
     PostProcess.cc
+    Archive.cc
 )
 
 #-------------------------------------#
@@ -32,8 +33,8 @@ INSTALL_TARGETS(/lib erme_utils)
 # TESTING
 #-------------------------------------#
 
-#if( SERMENT_ENABLE_TEST )
-#    include_directories(${SRC_DIR}/test)
-#    add_subdirectory(${SRC_DIR}/test)
-#endif()
+if( SERMENT_ENABLE_TEST )
+  include_directories(${SRC_DIR}/test)
+  add_subdirectory(${SRC_DIR}/test)
+endif()
 

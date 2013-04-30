@@ -10,6 +10,9 @@ project(Serment)
 cmake_minimum_required( VERSION 2.6 FATAL_ERROR )
 set(SERMENT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
+set (CMAKE_CXX_COMPILER tau_cxx.sh)
+set (CMAKE_C_COMPILER tau_cc.sh)
+
 #------------------------------------------------------------------------------#
 # VERSION
 #------------------------------------------------------------------------------#
@@ -31,38 +34,16 @@ list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/tools/CMake")
 # USER OPTIONS
 #------------------------------------------------------------------------------#
 
-## Pedantic
-#set(CMAKE_CXX_FLAGS_DEBUG "-g -O0 -Wextra -Wall -ansi -pedantic" CACHE STRING 
-#    "Flags used by the CXX compiler during normal builds." FORCE)
-
-## Verbose build
-#set(CMAKE_VERBOSE_MAKEFILE ON)
-
 # Set the default build type (debug)
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Debug CACHE STRING
         "Choose the type of build, options are: Debug Release." FORCE)
 endif()
 
-# Other build options.
-set(SERMENT_ENABLE_TEST    NO CACHE BOOL  
-    "Enable testing.")
-# Options for using external libraries.
-set(SERMENT_ENABLE_HDF5    NO CACHE BOOL
-    "Enable HDF5.")
-set(SERMENT_ENABLE_MPI     NO CACHE BOOL  
-    "Enable MPI.")
-set(SERMENT_ENABLE_PYTHON  NO CACHE BOOL
-    "Enable Python bindings via SWIG."
-)
-
-# PETSc is essential for most things...
-if(NOT SERMENT_ENABLE_PETSC)
-  if(SERMENT_BUILD_ERME OR SERMENT_BUILD_DIFF2D)
-    message( FATAL_ERROR "You must enable PETSc for ERME and DIFF2D." )
-  endif()
-endif()
-
+set(SERMENT_ENABLE_TEST    NO CACHE BOOL "Enable testing.")
+set(SERMENT_ENABLE_HDF5    NO CACHE BOOL "Enable HDF5.")
+set(SERMENT_ENABLE_MPI     NO CACHE BOOL "Enable MPI.")
+set(SERMENT_ENABLE_PYTHON  NO CACHE BOOL "Enable Python bindings via SWIG.")
 
 #------------------------------------------------------------------------------#
 # EXTERNAL LIBRARIES
@@ -71,7 +52,7 @@ endif()
 # Detran (required)
 find_package(Detran REQUIRED)
 include_directories(${Detran_INCLUDE_DIR})
-message("Detran library = ${Detran_LIBRARIES}")
+list(APPEND CMAKE_MODULE_PATH "${Detran_INCLUDE_DIR}/../tools/CMake")
 
 # PETSc (required)
 find_package(PETSc REQUIRED)
@@ -132,19 +113,28 @@ if(SERMENT_ENABLE_PYTHON)
   set(CMAKE_SWIG_FLAGS "-v")
 endif()
 
-set(GPERFTOOLS_LIBRARIES "/home/robertsj/opt/gperftools/lib/libprofiler.so")
-set(GPERFTOOLS_INCLUDE   "/home/robertsj/opt/gperftools/include")
-include_directories(${GPERFTOOLS_INCLUDE})
+#set(GPERFTOOLS_LIBRARIES "/home/robertsj/opt/gperftools/lib/libprofiler.so")
+#set(GPERFTOOLS_INCLUDE   "/home/robertsj/opt/gperftools/include")
+#include_directories(${GPERFTOOLS_INCLUDE})
 
 #------------------------------------------------------------------------------#
 # CONFIGURATION
 #------------------------------------------------------------------------------#
 
+include(GetTheDate)
+get_the_date(SERMENT_COMPILED_D SERMENT_COMPILED_M SERMENT_COMPILED_Y)
+
+set(SERMENT_WC_REVISION_HASH "unknown")
+find_package(Git)
+if(GIT_FOUND)
+  GIT_WC_INFO(${CMAKE_CURRENT_SOURCE_DIR} "SERMENT")
+endif()
+
 # Write config file, install it, and include that directory for all source
-set( SERMENT_CONFIG_IN  "${CMAKE_CURRENT_SOURCE_DIR}/serment_config.h.in" )
-set( SERMENT_CONFIG_OUT "${PROJECT_BINARY_DIR}/config/serment_config.h" )
-configure_file( ${SERMENT_CONFIG_IN} ${SERMENT_CONFIG_OUT} )
-include_directories( "${PROJECT_BINARY_DIR}/config" )
+set(SERMENT_CONFIG_IN  "${CMAKE_CURRENT_SOURCE_DIR}/serment_config.h.in")
+set(SERMENT_CONFIG_OUT "${PROJECT_BINARY_DIR}/config/serment_config.h")
+configure_file(${SERMENT_CONFIG_IN} ${SERMENT_CONFIG_OUT})
+include_directories("${PROJECT_BINARY_DIR}/config")
 
 
 #------------------------------------------------------------------------------#
@@ -153,40 +143,6 @@ include_directories( "${PROJECT_BINARY_DIR}/config" )
 
 option( USE_TESTING "Build testing" OFF )
 if ( SERMENT_ENABLE_TEST )
-#    SET ( CTEST_INITIAL_CACHE "
-#      COVERAGE_COMMAND:FILEPATH=/usr/bin/gcov
-#    " )
-#    # need for coverage -- probably a cleaner way to set this up.
-#    set( CMAKE_CXX_FLAGS_DEBUG        
-#         "-g -O0  -fprofile-arcs -ftest-coverage" CACHE STRING 
-#         "Choose"
-#         FORCE
-#    )
-#    set( CMAKE_CXX_FLAGS        
-#         "-g -O0  -fprofile-arcs -ftest-coverage" CACHE STRING
-#         "Choose"
-#         FORCE
-#    )
-#    set( CMAKE_C_FLAGS_DEBUG          
-#         "-g -O0  -fprofile-arcs -ftest-coverage" CACHE STRING
-#         "Choose"
-#         FORCE
-#    )
-#    set( CMAKE_EXE_LINKER_FLAGS 
-#         "-g -O0  -fprofile-arcs -ftest-coverage" CACHE STRING
-#         "Choose"
-#         FORCE
-#    )
-#    set( CTEST_MEMORYCHECK_COMMAND 
-#       /home/robertsj/opt/valgrind/3.6.1/bin/valgrind CACHE STRING 
-#       "Set the memory checking command."
-#       FORCE
-#    )
-#    set( CTEST_MEMORYCHECK_COMMAND_OPTIONS 
-#       "--tool=memcheck --leak-check=full" CACHE STRING 
-#       "Set the memory checking command options."
-#       FORCE
-#    ) 
     enable_testing()
     include(CTest)
     include_directories(src/linear_algebra/test)
@@ -216,13 +172,12 @@ endif()
 message(" ")
 message("---------------------------------------------------------------")
 message("              SUMMARY OF CMAKE CONFIGURATION")
-
-
 message("---------------------------------------------------------------")
 message("++++ System:      ${CMAKE_SYSTEM} ${CMAKE_SYSTEM_PROCESSOR}")
 message("++++ CXX:         ${CMAKE_CXX_COMPILER}")
 message("++++ Build type:  ${CMAKE_BUILD_TYPE}")
 message("++++ Install:     ${CMAKE_INSTALL_PREFIX}")
+message("++++ Git SHA1:    ${SERMENT_WC_REVISION}")
 message(" ")
 message("---------------------------------------------------------------")
 message("                      BUILD OPTIONS")
