@@ -1,7 +1,7 @@
 //----------------------------------*-C++-*----------------------------------//
 /**
  *  @file   Comm.hh
- *  @brief  Comm
+ *  @brief  Comm class definition
  *  @author Jeremy Roberts
  *  @date   Aug 21, 2012
  */
@@ -131,6 +131,24 @@ public:
    * The number of processes is determined by the current communicator.
    */
   static int size();
+
+  /// Return the rank of the last process (i.e. size -  1).
+  static int last()
+  {
+    return size() - 1;
+  }
+
+  /// Is it the first process?
+  static bool is_first()
+  {
+    return (rank() == 0);
+  }
+
+  /// Is it the last process?
+  static bool is_last()
+  {
+    return (rank() == size() - 1);
+  }
 
   /// Return the rank of a process within the world communicator
   static int world_rank()
