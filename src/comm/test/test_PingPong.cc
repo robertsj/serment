@@ -1,11 +1,10 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /**
- *  @file   test_PingPong.cc
- *  @author Jeremy Roberts
- *  @date   Aug 19, 2012
- *  @brief  Latency test
+ *  @file  test_PingPong.cc
+ *  @brief Simple Latency test based on the ping-pong pattern
+ *  @note  Copyright (C) 2013 Jeremy Roberts
  */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 // LIST OF TEST FUNCTIONS
 #define TEST_LIST                       \
@@ -23,8 +22,6 @@
 #include <iostream>
 #include <vector>
 
-// Setup
-
 using namespace serment_comm;
 using namespace detran_test;
 using detran_utilities::soft_equiv;
@@ -36,9 +33,9 @@ int main(int argc, char *argv[])
   RUN(argc, argv);
 }
 
-//----------------------------------------------//
+//----------------------------------------------------------------------------//
 // TEST DEFINITIONS
-//----------------------------------------------//
+//----------------------------------------------------------------------------//
 
 // Test of send and receive
 int test_PingPong_sendreceive(int argc, char *argv[])
@@ -276,6 +273,7 @@ int test_PingPong_latency(int argc, char *argv[])
   return 0;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 //              end of test_PingPong.cc
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+

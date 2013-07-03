@@ -1,27 +1,25 @@
-//----------------------------------*-C++-*----------------------------------//
-/*!
- * \file   Comm_Traits.hh
- * \brief  Comm_Traits class definition.
- * \author Jeremy Roberts
- * \date   Aug 21, 2012
- * \note   Largely unchanged from Denovo source.
+//----------------------------------*-C++-*-----------------------------------//
+/**
+ *  @file  Comm_Traits.hh
+ *  @brief Comm_Traits class definition
+ *  @note  Largely unchanged from Denovo source
  */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
-#ifndef COMM_TRAITS_HH_
-#define COMM_TRAITS_HH_
+#ifndef serment_comm_COMM_TRAITS_HH_
+#define serment_comm_COMM_TRAITS_HH_
 
 namespace serment_comm
 {
 
 const int COMM_SUCCESS = 0;
 
-/*!
- * \struct Comm_Traits
+/**
+ *  @struct Comm_Traits
  *
- * This struct and its specializations are used to implement the type-safe
- * default message tags in Comm.  Any other type-determined property needed in
- * Comm would also go here.
+ *  This struct and its specializations are used to implement the type-safe
+ *  default message tags in Comm.  Any other type-determined property needed in
+ *  Comm would also go here.
  */
 
 template<class T>
@@ -30,9 +28,9 @@ struct Comm_Traits
   /* ... */
 };
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // SPECIALIZATION OF INTRINSIC ELEMENTAL TYPES
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 template<>
 struct Comm_Traits<char>
@@ -100,9 +98,9 @@ struct Comm_Traits<long double>
   static const int tag = 441;
 };
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // SPECIALIZATION OF INTRINSIC POINTER TYPES
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 template<>
 struct Comm_Traits<char *>
@@ -172,8 +170,8 @@ struct Comm_Traits<long double *>
 
 } // end namespace serment_comm
 
-#endif // COMM_TRAITS_HH_ 
+#endif // serment_comm_COMM_TRAITS_HH_
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 //              end of file Comm_Traits.hh
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

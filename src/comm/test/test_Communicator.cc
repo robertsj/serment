@@ -1,27 +1,21 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /**
- *  @file   test_Communicator.cc
- *  @author Jeremy Roberts
- *  @date   Aug 19, 2012
- *  @brief  Test of communicator creation and use.
+ *  @file  test_Communicator.cc
+ *  @brief Test of Comm class
+ *  @note  Copyright (C) 2013 Jeremy Roberts
  */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 // LIST OF TEST FUNCTIONS
 #define TEST_LIST                       \
         FUNC(test_Communicator)
 
-// Detran test
 #include "utilities/TestDriver.hh"
-
 #include "Comm.hh"
-
 #include <cstdio>
 #include <cmath>
 #include <iostream>
 #include <vector>
-
-// Setup
 
 using namespace serment_comm;
 using namespace detran_test;
@@ -33,9 +27,9 @@ int main(int argc, char *argv[])
   RUN(argc, argv);
 }
 
-//----------------------------------------------//
+//----------------------------------------------------------------------------//
 // TEST DEFINITIONS
-//----------------------------------------------//
+//----------------------------------------------------------------------------//
 
 // Test of send and receive
 int test_Communicator(int argc, char *argv[])
@@ -155,6 +149,6 @@ int test_Communicator(int argc, char *argv[])
   return 0;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 //              end of test_Communicator.cc
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
