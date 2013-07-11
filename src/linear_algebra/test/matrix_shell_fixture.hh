@@ -1,11 +1,10 @@
-//----------------------------------*-C++-*----------------------------------//
-/*!
- * \file   matrix_shell_fixture.hh
- * \brief  matrix_shell_fixture 
- * \author Jeremy Roberts
- * \date   Aug 21, 2012
+//----------------------------------*-C++-*-----------------------------------//
+/**
+ *  @file  matrix_shell_fixture.hh
+ *  @brief Shell matrix fixture
+ *  @note  Copyright (C) 2012 Jeremy Roberts
  */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #ifndef MATRIX_SHELL_FIXTURE_HH_
 #define MATRIX_SHELL_FIXTURE_HH_
@@ -23,8 +22,8 @@ class MyMatrixShell: public MatrixShell
 public:
 
   MyMatrixShell(const size_type m, const size_type n)
-  :  MatrixShell(m, n, this)
-  ,  d_B(m, n, vec_int(m, 3), vec_int(m, 1))
+    : MatrixShell(m, n, this)
+    , d_B(m, n, vec_int(m, 3), vec_int(m, 1))
   {
 
     for (int row = d_B.lower_bound(); row < d_B.upper_bound(); row++)
@@ -52,14 +51,14 @@ public:
 
   }
 
-  PetscErrorCode shell_multiply(Vec x, Vec y)
+  void multiply(Vector &v_in, Vector &v_out)
   {
-    return MatMult(d_B.A(), x, y);
+    d_B.multiply(v_in, v_out);
   }
 
-  PetscErrorCode shell_multiply_transpose(Vec x, Vec y)
+  void multiply_transpose(Vector &v_in, Vector &v_out)
   {
-    return MatMultTranspose(d_B.A(), x, y);
+    d_B.multiply_transpose(v_in, v_out);
   }
 
 private:
@@ -73,6 +72,6 @@ private:
 
 #endif // MATRIX_SHELL_FIXTURE_HH_ 
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 //              end of file matrix_shell_fixture.hh
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

@@ -1,28 +1,19 @@
-//----------------------------------*-C++-*----------------------------------//
-/*!
- * \file   LinearSolver.hh
- * \author robertsj
- * \date   Sep 5, 2012
- * \brief  LinearSolver class definition.
- * \note   Copyright (C) 2012 Jeremy Roberts. 
+//----------------------------------*-C++-*-----------------------------------//
+/**
+ *  @file   LinearSolver.hh
+ *  @brief  LinearSolver class definition.
+ *  @note   Copyright (C) 2013 Jeremy Roberts.
  */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
-#ifndef LINEARSOLVER_HH_
-#define LINEARSOLVER_HH_
+#ifndef linear_algebra_LINEARSOLVER_HH_
+#define linear_algebra_LINEARSOLVER_HH_
 
-// Linear Algebra
 #include "Vector.hh"
 #include "MatrixBase.hh"
-
-// Comm
 #include "comm/Comm.hh"
-
-// Detran Utilities
-#include "DBC.hh"
-#include "SP.hh"
-
-// System
+#include "utilities/DBC.hh"
+#include "utilities/SP.hh"
 #include "petsc.h"
 #include <vector>
 #include <string>
@@ -35,59 +26,53 @@ class LinearSolver
 
 public:
 
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
   // TYPEDEFS
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
 
-  typedef detran::SP<LinearSolver>    SP_solver;
-  typedef MatrixBase::SP_matrix       SP_matrix;
-  typedef Vector::SP_vector           SP_vector;
+  typedef detran_utilities::SP<LinearSolver>  SP_solver;
+  typedef MatrixBase::SP_matrix               SP_matrix;
+  typedef Vector::SP_vector                   SP_vector;
 
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
   // PUBLIC INTERFACE
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
 
-  /*!
-   *  \brief Constructor
-   *  \param A  Pointer to linear system matrix
-   *  \param P  Pointer to preconditioning matrix, possibly equal to A
+  /**
+   *  @brief Constructor
+   *  @param A  pointer to linear system matrix
+   *  @param P  pointer to preconditioning matrix, possibly equal to A
    */
   LinearSolver(SP_matrix A, SP_matrix P);
 
 
-  /*!
-   *  \brief Solve the linear system
-   *  \param b  right hand side
-   *  \param x  solution
+  /**
+   *  @brief Solve the linear system
+   *  @param b  right hand side
+   *  @param x  solution
    */
   void solve(SP_vector b, SP_vector x);
 
 private:
 
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
   // DATA
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
 
   /// PETSc linear solver
   KSP d_solver;
-
   /// Matrix of linear system
   SP_matrix d_A;
-
   /// Preconditioner
   SP_matrix d_P;
-
-  //-------------------------------------------------------------------------//
-  // IMPLEMENTATION
-  //-------------------------------------------------------------------------//
 
 
 };
 
 } // end namespace linear_algebra
 
-#endif /* LINEARSOLVER_HH_ */
+#endif /* linear_algebra_LINEARSOLVER_HH_ */
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 //              end of file LinearSolver.hh
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

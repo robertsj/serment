@@ -1,27 +1,22 @@
-//----------------------------------*-C++-*----------------------------------//
-/*!
- * \file   test_MatrixShell.cc
- * \author Jeremy Roberts
- * \date   Aug 19, 2012
- * \brief  Test of MatrixShell class.
- * \note   Copyright (C) 2012 Jeremy Roberts. 
+//----------------------------------*-C++-*-----------------------------------//
+/**
+ *  @file  test_MatrixShell.cc
+ *  @brief Test of MatrixShell class.
+ *  @note  Copyright (C) 2012 Jeremy Roberts.
  */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 // LIST OF TEST FUNCTIONS
 #define TEST_LIST         \
         FUNC(test_MatrixShell)
 
-// Detran test
 #include "utilities/TestDriver.hh"
-
-#include "MatrixShell.hh"
-
+#include "linear_algebra/MatrixShell.hh"
+#include "linear_algebra/LinearAlgebraSetup.hh"
 #include <iostream>
-
-// Setup
 #include "matrix_shell_fixture.hh"
 
+using namespace serment_comm;
 using namespace linear_algebra;
 using namespace detran_test;
 using std::cout;
@@ -29,37 +24,21 @@ using std::endl;
 
 int main(int argc, char *argv[])
 {
+  linear_algebra::initialize(argc, argv, true);
   RUN(argc, argv);
+  linear_algebra::finalize();
 }
 
-//----------------------------------------------//
+//----------------------------------------------------------------------------//
 // TEST DEFINITIONS
-//----------------------------------------------//
-
-int test_MatrixShell_actual();
+//----------------------------------------------------------------------------//
 
 // Test of basic public interface
 int test_MatrixShell(int argc, char *argv[])
 {
-  // Initialize PETSc
-  PetscInitialize(&argc, &argv, PETSC_NULL, PETSC_NULL);
-
-  // Call actual test.
-  int result = test_MatrixShell_actual();
-
-  // Finalize PETSc
-  PetscFinalize();
-
-  return result;
-}
-
-// Test of basic public interface
-int test_MatrixShell_actual()
-{
   // Get size and rank
-  int size, rank;
-  MPI_Comm_size(PETSC_COMM_WORLD, &size);
-  MPI_Comm_rank(PETSC_COMM_WORLD, &rank);
+  int size = Comm::size();
+  int rank = Comm::rank();
 
   // Create MatrixShell
   MatrixShell::size_type n = 5;
@@ -104,6 +83,6 @@ int test_MatrixShell_actual()
   return 0;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 //              end of test_MatrixShell.cc
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

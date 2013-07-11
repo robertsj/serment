@@ -14,6 +14,7 @@ SET(SRC
     MatrixShell.cc
     Vector.cc
     EigenSolver.cc
+    NonlinearSolver.cc
 )
 
 #-------------------------------------#

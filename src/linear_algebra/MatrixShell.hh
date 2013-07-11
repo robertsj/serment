@@ -1,14 +1,13 @@
-//----------------------------------*-C++-*----------------------------------//
-/*!
- * \file   MatrixShell.hh
- * \brief  MatrixShell class definition.
- * \author Jeremy Roberts
- * \date   Aug 20, 2012
+//----------------------------------*-C++-*-----------------------------------//
+/**
+ *  @file   MatrixShell.hh
+ *  @brief  MatrixShell class definition.
+ *  @note   Copyright (C) 2013 Jeremy Roberts
  */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
-#ifndef MATRIXSHELL_HH_
-#define MATRIXSHELL_HH_
+#ifndef linear_algebra_MATRIXSHELL_HH_
+#define linear_algebra_MATRIXSHELL_HH_
 
 #include "MatrixBase.hh"
 
@@ -18,9 +17,9 @@ namespace linear_algebra
 // Forward declare the wrapper
 PetscErrorCode multiply_wrapper(Mat A, Vec x, Vec y);
 
-/*!
- *  \class MatrixShell
- *  \brief Shell matrix class for user storage and operator scheme
+/**
+ *  @class MatrixShell
+ *  @brief Shell matrix class for user storage and operator scheme
  *
  *  To use this class, a user must inherit it and implement the
  *  relevant shell methods, e.g. shell_multiply.  Unfortunately,
@@ -32,90 +31,89 @@ class MatrixShell: public MatrixBase
 
 public:
 
+  /// Constructor with void pointer to the user context
   MatrixShell(const size_type m,
               const size_type n,
               void* context);
 
   // No inserting in a shell.
-  virtual void insert_values(const size_type number_rows,
-                             const int *rows,
-                             const size_type number_columns,
-                             const int *columns,
-                             const double *values)
+  void insert_values(const size_type  number_rows,
+                     const int       *rows,
+                     const size_type  number_columns,
+                     const int       *columns,
+                     const double    *values)
   {
     THROW("Can't insert into a shell matrix.");
   }
 
   /// Assemble the matrix.
-  virtual void assemble()
+  void assemble()
   {
-    THROW("Can't assemble a shell matrix.");
+    /* ... */
   }
 
-private:
+  //@{
+  ///  Matrix-vector multiplication and its transpose must be implemented
+  virtual void multiply(Vector &v_in, Vector &v_out) = 0;
+  virtual void multiply_transpose(Vector &v_in, Vector &v_out) = 0;
+  //@}
 
-  //---------------------------------------------------------------------------//
-  // SHELL MATRIX OPERATIONS
-  //---------------------------------------------------------------------------//
+  SP_matrix multiply(SP_matrix m_in)
+  {
+    THROW("NOT IMPLEMENTED");
+    return SP_matrix(NULL);
+  }
 
-  /*!
-   *  PETSc calls this function when applying the operator.  The function
-   *  then calls the shell multiply function, when must be implemented
-   *  by the derived class.
+  /**
+   *  @brief Display the matrix to screen (or to output)
+   *  @param  output    Flag indicating (stdout=0, ascii=1, binary=2)
+   *  @param  name      File name for ascii or binary file
    */
-  friend PetscErrorCode multiply_wrapper(Mat A, Vec x, Vec y);
-
-  /*!
-   *  \brief Matrix-vector multiplication
-   *  \param x  Input vector
-   *  \param y  Output vector
-   */
-  virtual PetscErrorCode shell_multiply(Vec x, Vec y) = 0;
-
-  /*!
-   *  \brief Matrix-vector multiplication using matrix transpose.
-   *  \param x  Input vector
-   *  \param y  Output vector
-   */
-  virtual PetscErrorCode shell_multiply_transpose(Vec x, Vec y) = 0;
-
-
-  /*!
-   *  This must be called during construction of the base class.  It
-   *  gives PETSc the wrapper functions.
-   */
-  PetscErrorCode set_operation();
+  virtual void display(const int          output = 0,
+                       const std::string &name   = "matrix.out") const;
 
 };
 
-//---------------------------------------------------------------------------//
-// EXTERNAL WRAPPER FUNCTION AND SETTER
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+// WRAPPERS FOR MULTIPLICATIONS
+//----------------------------------------------------------------------------//
 
-inline PetscErrorCode multiply_wrapper(Mat A, Vec x, Vec y)
+inline PetscErrorCode shell_multiply_wrapper(Mat A, Vec x, Vec y)
 {
-
-  // Get the context and cast as MatrixShell
+  // get the context and cast
   PetscErrorCode ierr;
   void *context;
   ierr = MatShellGetContext(A, &context);
   Assert(!ierr);
-
-  MatrixShell *foo = (MatrixShell*) context;
-  // Call the actual apply operator.
-  return foo->shell_multiply(x, y);
+  MatrixShell* foo = (MatrixShell*) context;
+  // wrap the petsc vectors
+  Vector X(x), Y(y);
+  // call the actual apply operator.
+  foo->multiply(X, Y);
+  return ierr;
 }
 
-inline PetscErrorCode MatrixShell::set_operation()
+inline PetscErrorCode shell_multiply_transpose_wrapper(Mat A, Vec x, Vec y)
 {
-  return MatShellSetOperation(d_A, MATOP_MULT,
-                              (void(*)(void)) multiply_wrapper);
+  // get the context and cast
+  PetscErrorCode ierr;
+  void *context;
+  ierr = MatShellGetContext(A, &context);
+  Assert(!ierr);
+  MatrixShell* foo = (MatrixShell*) context;
+  // wrap the petsc vectors
+  Vector X(x), Y(y);
+  // call the actual apply operator.
+  foo->multiply_transpose(X, Y);
+  return ierr;
 }
+
+
 
 } // end namespace linear_algebra
 
-#endif // MATRIXSHELL_HH_ 
+#endif // linear_algebra_MATRIXSHELL_HH_
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 //              end of file MatrixShell.hh
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

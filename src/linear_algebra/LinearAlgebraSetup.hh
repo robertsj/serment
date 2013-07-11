@@ -1,11 +1,10 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /**
- *  @file   LinearAlgebraSetup.hh
- *  @brief  Setup routines for linear algebra subsystems
- *  @author Jeremy Roberts
- *  @date   Sep 3, 2012
+ *  @file  LinearAlgebraSetup.hh
+ *  @brief Setup routines for linear algebra subsystems
+ *  @note  Copyright (C) 2013 Jeremy Roberts
  */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #ifndef linear_algebra_LINEARALGEBRASETUP_HH_
 #define linear_algebra_LINEARALGEBRASETUP_HH_
@@ -18,11 +17,19 @@ namespace linear_algebra
 {
 
 /// Initialize a parallel job.
-void initialize(int &argc, char **&argv)
+void initialize(int &argc, char **&argv, bool init_comm = false)
 {
-  // Require that comm is initialized
+  if (init_comm)
+  {
+    // Initialize the comm so that world = global, i.e. each process
+    // is a local group.  This makes the most sense for testing.
+    serment_comm::Comm::initialize(argc, argv);
+    int N = serment_comm::Comm::size();
+    serment_comm::Comm::setup_communicators(N);
+  }
+
   Insist(serment_comm::Comm::is_comm_built(),
-    "The local and global communicator must be built before linear algebra");
+         "Communicators must be built before linear algebra");
 
   // Set PETSc communicator to global if running in parallel
 #ifdef SERMENT_ENABLE_MPI
@@ -52,11 +59,10 @@ void finalize()
   }
 }
 
-
 } // end namespace linear_algebra
 
 #endif // linear_algebra_LINEARALGEBRASETUP_HH_
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 //              end of file LinearAlgebraSetup.hh
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

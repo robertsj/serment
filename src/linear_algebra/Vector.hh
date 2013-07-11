@@ -1,14 +1,13 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /**
- *  @file   Vector.hh
- *  @brief  Vector
- *  @author Jeremy Roberts
- *  @date   Aug 19, 2012
+ *  @file  Vector.hh
+ *  @brief Vector class definition
+ *  @note  Copyright (C) 2013 Jeremy Roberts
  */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
-#ifndef VECTOR_HH_
-#define VECTOR_HH_
+#ifndef linear_algebra_VECTOR_HH_
+#define linear_algebra_VECTOR_HH_
 
 #include "utilities/DBC.hh"
 #include "utilities/SP.hh"
@@ -35,9 +34,9 @@ class Vector
 
 public:
 
-  //---------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
   // ENUMERATIONS
-  //---------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
 
   /**
    *  @brief various vector norms available
@@ -52,23 +51,30 @@ public:
     L1, L2, LINF, END_VECTOR_NORM_TYPES
   };
 
-  //---------------------------------------------------------------------------//
+
+  enum vector_display_types
+  {
+    STDOUT, ASCII, BINARY, END_VECTOR_DISPLAY_TYPES
+  };
+
+  //--------------------------------------------------------------------------//
   // TYPEDEFS
-  //---------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
 
   typedef detran_utilities::SP<Vector>      SP_vector;
-  typedef unsigned int                      size_type;
+  typedef detran_utilities::size_t          size_type;
+  typedef detran_utilities::vec_int         vec_int;
 
-  //---------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
   // CONSTRUCTOR & DESTRUCTOR
-  //---------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
 
   /**
    *  @brief Constructor
    *  @param m      Local number of rows
    *  @param val    Optional initial value
    */
-  Vector(const size_type m, const double val = 0.0);
+  Vector(const size_type m, const double val = 0.0, const bool seq = false);
 
   /**
    *  @brief Copy Constructor
@@ -76,12 +82,18 @@ public:
    */
   Vector(const Vector &V);
 
+  /// Temporarily wrap a vector with a smaller vector: does *NOT* free memory
+  Vector(Vector &V, const int m);
+
+  /// Temporary construction via PETSc vector: does *NOT* free memory
+  Vector(Vec pv);
+
   /// Destructor
   ~Vector();
 
-  //---------------------------------------------------------------------------//
-  // SETTERS
-  //---------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
+  // PUBLIC FUNCTIONS
+  //--------------------------------------------------------------------------//
 
   /**
    *  @brief Insert values
@@ -97,11 +109,8 @@ public:
   /// Assemble the vector.
   void assemble();
 
-  //---------------------------------------------------------------------------//
-  // VECTOR OPERATIONS
-  //---------------------------------------------------------------------------//
-
-  /// Compute my norm.
+  //@{
+  /// Vector operations
   double norm(const int type = L2);
   double norm_residual(const Vector& x, const int type = L2);
   double dot(Vector &x);
@@ -113,102 +122,84 @@ public:
   void divide(const Vector& x);
   void copy(const Vector& x);
   void add_a_times_x(const double a, const Vector& x);
+  //@}
 
-  //---------------------------------------------------------------------------//
-  // ACCESSORS
-  //---------------------------------------------------------------------------//
-
-  /**
-   *  @brief Const access to local array
-   *  @param i  Local index
-   */
+  ///@{
+  /// Access to element
   const double& operator[](const size_type i) const;
+  double& operator[](const size_type i);
+  ///@}
+
+  //@{
+  /// Getters
+  Vec V() const;
+  int global_size() const;
+  int local_size() const;
+  int lower_bound() const;
+  int upper_bound() const;
+  vec_int ranges() const;
+  bool is_assembled() const;
+  bool is_temporary() const;
+  bool is_sequential() const;
+  //@}
 
   /**
-   *  @brief Mutable access to local array
-   *  @param i  Local index
+   *  @brief Collect a multi-process vector on a single vector
+   *  @param    v     Parallel vector
+   *  @param    root  Process on which sequential vector is stored
+   *  @return         Sequential vector containing parallel vector contents
    */
-  double& operator[](const size_type i);
+  SP_vector collect_on_root(const size_type root = 0);
 
-  /// Return the PETSc vector
-  Vec V() const
-  {
-    return d_V;
-  }
 
-  //---------------------------------------------------------------------------//
-  // GETTERS
-  //---------------------------------------------------------------------------//
-
-  /// Return the global size.
-  int global_size() const
-  {
-    return d_global_size;
-  }
-
-  /// Return the local size.
-  int local_size() const
-  {
-    return d_local_size;
-  }
-
-  /// Return the lower bound.
-  int lower_bound() const
-  {
-    return d_lower_bound;
-  }
-
-  /// Return the upper bound.
-  int upper_bound() const
-  {
-    return d_upper_bound;
-  }
-
-  /// Return assembled flag.
-  bool is_assembled() const
-  {
-    return d_is_assembled;
-  }
-
-  /// View via standard output.
-  void display() const;
+  /// View to screen, to ascii file, or to binary file
+  void display(const size_type    display_type = STDOUT,
+               const std::string &filename = "V.out") const;
 
 private:
 
-  //---------------------------------------------------------------------------//
-  // PRIVATE DATA
-  //---------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
+  // DATA
+  //--------------------------------------------------------------------------//
 
   /// PETSc vector
   Vec d_V;
-
   /// Pointer to underlying local array.  Be *careful* when using.
   double* d_array;
-
   /// Global size
   size_type d_global_size;
-
   /// Local size
   size_type d_local_size;
-
   /// Local lower bound
   size_type d_lower_bound;
-
   /// Local upper bound
   size_type d_upper_bound;
-
   /// Am I assembled?
   bool d_is_assembled;
+  /// Am I temporary?
+  bool d_is_temporary;
+  /// Am I a sequential vector?
+  bool d_is_sequential;
+
+  //--------------------------------------------------------------------------//
+  // IMPLEMENTATION
+  //--------------------------------------------------------------------------//
+
+  /// Consolidation of common construction steps
+  PetscErrorCode setup();
 
 };
 
 } // end namespace linear_algebra
 
-// Inline members
+//----------------------------------------------------------------------------//
+// INLINE MEMBER DEFINITIONS
+//----------------------------------------------------------------------------//
+
 #include "Vector.i.hh"
 
-#endif // VECTOR_HH_ 
+#endif // linear_algebra_VECTOR_HH_
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 //              end of file Vector.hh
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

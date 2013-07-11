@@ -1,25 +1,22 @@
-//----------------------------------*-C++-*----------------------------------//
-/*!
- * \file   test_Matrix.cc
- * \author Jeremy Roberts
- * \date   Aug 19, 2012
- * \brief  Test of Matrix class.
- * \note   Copyright (C) 2012 Jeremy Roberts. 
+//----------------------------------*-C++-*-----------------------------------//
+/**
+ * @file  test_Matrix.cc
+ * @brief Test of Matrix class.
+ * @note  Copyright (C) 2012 Jeremy Roberts.
  */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 // LIST OF TEST FUNCTIONS
-#define TEST_LIST         \
-        FUNC(test_Matrix)
+#define TEST_LIST                   \
+        FUNC(test_Matrix)           \
+        FUNC(test_Matrix_matmatmult)
 
-// Detran test
 #include "utilities/TestDriver.hh"
 #include "linear_algebra/Matrix.hh"
-
+#include "linear_algebra/LinearAlgebraSetup.hh"
 #include <iostream>
 
-// Setup
-
+using namespace serment_comm;
 using namespace linear_algebra;
 using namespace detran_test;
 using std::cout;
@@ -27,37 +24,21 @@ using std::endl;
 
 int main(int argc, char *argv[])
 {
+  linear_algebra::initialize(argc, argv, true);
   RUN(argc, argv);
+  linear_algebra::finalize();
 }
 
-//----------------------------------------------//
+//----------------------------------------------------------------------------//
 // TEST DEFINITIONS
-//----------------------------------------------//
-
-int test_Matrix_actual();
+//----------------------------------------------------------------------------//
 
 // Test of basic public interface
 int test_Matrix(int argc, char *argv[])
 {
-  // Initialize PETSc
-  PetscInitialize(&argc, &argv, PETSC_NULL, PETSC_NULL);
-
-  // Call actual test.
-  int result = test_Matrix_actual();
-
-  // Finalize PETSc
-  PetscFinalize();
-
-  return result;
-}
-
-// Test of basic public interface
-int test_Matrix_actual()
-{
   // Get size and rank
-  int size, rank;
-  MPI_Comm_size(PETSC_COMM_WORLD, &size);
-  MPI_Comm_rank(PETSC_COMM_WORLD, &rank);
+  int size = Comm::size();
+  int rank = Comm::rank();
 
   // Create Matrix
   Matrix::size_type n = 5;
@@ -130,6 +111,55 @@ int test_Matrix_actual()
   return 0;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+int test_Matrix_matmatmult(int argc, char *argv[])
+{
+  int m_A = 5 * Comm::size();
+  int n_A = 5 * Comm::size();
+  int m_B = m_A;
+  int n_B = n_A ;
+  Matrix::vec_int nnz_d_A(m_A, 3);
+  Matrix::vec_int nnz_o_A(m_A, 0);
+  Matrix::vec_int nnz_d_B(m_B, 3);
+  Matrix::vec_int nnz_o_B(m_B, 0);
+  Matrix::SP_matrix A(new Matrix(m_A, n_A, nnz_d_A, nnz_o_A));
+  Matrix::SP_matrix B(new Matrix(m_B, n_B, nnz_d_B, nnz_o_B));
+
+  for (int i = A->lower_bound(); i < A->upper_bound(); ++i)
+  {
+    if (i == 0)
+    {
+      double v[] = {2.0, -1.0};
+      int r[] = {0};
+      int c[] = {0, 1};
+      A->insert_values(1, r, 2, c, v);
+      B->insert_values(2, c, 1, r, v);
+    }
+    else if (i == m_A - 1)
+    {
+      double v[] = {-1.0, 2.0};
+      int r[] = {i};
+      int c[] = {i - 1, i};
+      A->insert_values(1, r, 2, c, v);
+      B->insert_values(2, c, 1, r, v);
+    }
+    else
+    {
+      double v[] = {-1.0, 2.0, -1.0};
+      int r[] = {i};
+      int c[] = {i - 1, i, i + 1};
+      A->insert_values(1, r, 3, c, v);
+      B->insert_values(3, c, 1, r, v);
+    }
+  }
+  A->assemble();
+  A->display();
+  B->assemble();
+  B->display();
+
+  Matrix::SP_matrix C = B->multiply(A);
+  return 0;
+}
+//----------------------------------------------------------------------------//
 //              end of test_Matrix.cc
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
