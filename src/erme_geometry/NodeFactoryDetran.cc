@@ -1,11 +1,10 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /**
- *  @file   NodeFactoryDetran.cc
- *  @brief  NodeFactoryDetran
- *  @author Jeremy Roberts
- *  @date   Aug 23, 2012
+ *  @file  NodeFactoryDetran.cc
+ *  @brief NodeFactoryDetran member definitions
+ *  @note  Copyright (C) 2013 Jeremy Roberts
  */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #include "NodeFactoryDetran.hh"
 #include "CartesianNodeDetran.hh"
@@ -72,11 +71,10 @@ Node::SP_node NodeFactoryDetran::create_node(SP_db db,
                                   db, material, mesh));
   Ensure(node);
   return node;
-
 }
 
 } // end namespace erme_geometry
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 //              end of file NodeFactoryDetran.cc
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

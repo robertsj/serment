@@ -1,11 +1,10 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /**
- *  @file   ResponseServer.i.hh
- *  @author robertsj
- *  @date   Aug 31, 2012
- *  @brief  ResponseServer inline member definitions
+ *  @file  ResponseServer.i.hh
+ *  @brief ResponseServer inline member definitions
+ *  @note  Copyright (C) 2013 Jeremy Roberts
  */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #ifndef erme_response_RESPONSESERVER_I_HH_
 #define erme_response_RESPONSESERVER_I_HH_
@@ -15,7 +14,7 @@
 namespace erme_response
 {
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 inline ResponseServer::SP_response ResponseServer::response(size_t node_l)
 {
   // Preconditions
@@ -38,3 +37,7 @@ inline ResponseServer::SP_response ResponseServer::response(size_t node_l)
 } // end namespace erme_response
 
 #endif /* erme_response_RESPONSESERVER_I_HH_ */
+
+//----------------------------------------------------------------------------//
+//              end of file ResponseServer.i.hh
+//----------------------------------------------------------------------------//

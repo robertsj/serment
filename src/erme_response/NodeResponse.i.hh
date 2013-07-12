@@ -1,11 +1,10 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /**
- *  @file   NodeResponse.i.hh
- *  @brief  NodeResponse inline member definitions
- *  @author Jeremy Roberts
- *  @date   Aug 28, 2012
+ *  @file  NodeResponse.i.hh
+ *  @brief NodeResponse inline member definitions
+ *  @note  Copyright (C) 2013 Jeremy Roberts
  */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #ifndef erme_response_NODERESPONSE_I_HH_
 #define erme_response_NODERESPONSE_I_HH_
@@ -15,7 +14,7 @@
 namespace erme_response
 {
 
-//-------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 inline const double&
 NodeResponse::boundary_response(const size_t out,
                                 const size_t in) const
@@ -24,7 +23,7 @@ NodeResponse::boundary_response(const size_t out,
   Require(out < d_N);
   return d_boundary_response[in][out];
 }
-//-------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 inline double&
 NodeResponse::boundary_response(const size_t out,
                                 const size_t in)
@@ -35,14 +34,14 @@ NodeResponse::boundary_response(const size_t out,
   );
 }
 
-//-------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 inline const double&
 NodeResponse::fission_response(const size_t in) const
 {
   Require(in < d_N);
   return d_fission_response[in];
 }
-//-------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 inline double&
 NodeResponse::fission_response(const size_t in)
 {
@@ -52,14 +51,14 @@ NodeResponse::fission_response(const size_t in)
   );
 }
 
-//-------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 inline const double&
 NodeResponse::absorption_response(const size_t in) const
 {
   Require(in < d_N);
   return d_absorption_response[in];
 }
-//-------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 inline double&
 NodeResponse::absorption_response(const size_t in)
 {
@@ -69,7 +68,7 @@ NodeResponse::absorption_response(const size_t in)
   );
 }
 
-//-------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 inline const double&
 NodeResponse::leakage_response(const size_t surface,
                                const size_t in) const
@@ -78,7 +77,7 @@ NodeResponse::leakage_response(const size_t surface,
   Require(in < d_N);
   return d_leakage_response[in][surface];
 }
-//-------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 inline double&
 NodeResponse::leakage_response(const size_t surface,
                                const size_t in)
@@ -89,7 +88,7 @@ NodeResponse::leakage_response(const size_t surface,
   );
 }
 
-//-------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 inline void NodeResponse::clear()
 {
 	for (size_t i = 0; i < d_N; ++i)
@@ -107,6 +106,6 @@ inline void NodeResponse::clear()
 
 #endif // erme_response_NODERESPONSE_I_HH_
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 //              end of file NodeResponse.i.hh
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

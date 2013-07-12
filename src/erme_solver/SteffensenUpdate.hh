@@ -1,11 +1,10 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /**
- *  @file   SteffensenUpdate.hh
- *  @brief  SteffensenUpdate
- *  @author Jeremy Roberts
- *  @date   Oct 4, 2012
+ *  @file  SteffensenUpdate.hh
+ *  @brief SteffensenUpdate class definition
+ *  @note  Copyright (C) 2013 Jeremy Roberts
  */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #ifndef erme_solver_STEFFENSENUPDATE_HH_
 #define erme_solver_STEFFENSENUPDATE_HH_
@@ -15,20 +14,38 @@
 namespace erme_solver
 {
 
+/**
+ *  @class SteffensenUpdate
+ *  @brief Uses Steffensen's method to accelerate Picard
+ *
+ *  For a sequence @f$ x_0, \, x_1, \, x_2 @f$, Aitken's method provides an
+ *  improved estimate
+ *  @f[
+ *    \tilde{x}_2 = x_0 - (x_0-x_1)^2 / (x_2 - 2x_1 - x_0)
+ *  @f]
+ *  via a second order interpolation.  If the sequence is the result of a
+ *  fixed point iteration, substituting the updated estimate into the
+ *  fixed point yields Steffensen's method, which is a second order
+ *  method.
+ *
+ *  In practice, Steffensen's method can be difficult to apply if the
+ *  sequence does not contain adequately-converged elements (when elements
+ *  are the result of an approximate or iterative method).
+ */
 class SteffensenUpdate: public EigenvalueUpdate
 {
 
 public:
 
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
   // TYPEDEFS
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
 
   typedef detran_utilities::vec_dbl  vec_dbl;
 
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
   // CONSTRUCTOR & DESTRUCTOR
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
 
   /// Constructor
   SteffensenUpdate()
@@ -38,9 +55,9 @@ public:
   /// Virtual destructor
   virtual ~SteffensenUpdate(){}
 
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
   // PUBLIC FUNCTIONS
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
 
   /**
    *  @brief Computes and updated keff, possibly based on previous history
@@ -63,9 +80,9 @@ public:
 
 private:
 
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
   // DATA
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
 
   /// Values of keff for each iteration
   vec_dbl d_keffs;
@@ -78,6 +95,6 @@ private:
 
 #endif // erme_solver_STEFFENSENUPDATE_HH_
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 //              end of file SteffensenUpdate.hh
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

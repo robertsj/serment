@@ -1,11 +1,10 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /**
- *  @file   NodeResponse.hh
- *  @brief  NodeResponse class definition.
- *  @author Jeremy Roberts
- *  @date   Aug 28, 2012
+ *  @file  NodeResponse.hh
+ *  @brief NodeResponse class definition
+ *  @note  Copyright (C) 2013 Jeremy Roberts
  */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #ifndef erme_response_NODERESPONSE_HH_
 #define erme_response_NODERESPONSE_HH_
@@ -60,9 +59,9 @@ class NodeResponse
 
 public:
 
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
   // TYPEDEFS
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
 
   typedef detran_utilities::SP<NodeResponse>    SP_response;
   typedef unsigned int                          size_t;
@@ -70,9 +69,9 @@ public:
   typedef std::vector<double>                   vec_dbl;
   typedef std::vector<vec_dbl>                  vec2_dbl;
 
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
   // PUBLIC INTERFACE
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
 
   /**
    *  @brief Constructor
@@ -80,17 +79,15 @@ public:
    */
   NodeResponse(const size_t N, const size_t number_surfaces);
 
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
   // ACCESS
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
 
   /// Const access to boundary response
-  const double& boundary_response(const size_t out,
-                                  const size_t in) const;
+  const double& boundary_response(const size_t out, const size_t in) const;
 
   /// Mutable access to boundary response
-  double& boundary_response(const size_t out,
-                            const size_t in);
+  double& boundary_response(const size_t out, const size_t in);
 
   /// Const access to fission response
   const double& fission_response(const size_t in) const;
@@ -105,12 +102,10 @@ public:
   double& absorption_response(const size_t in);
 
   /// Const access to leakage response
-  const double& leakage_response(const size_t surface,
-                                 const size_t in) const;
+  const double& leakage_response(const size_t surface, const size_t in) const;
 
   /// Mutable access to leakage response
-  double& leakage_response(const size_t surface,
-                           const size_t in);
+  double& leakage_response(const size_t surface, const size_t in);
 
   /// Clear all the responses
   void clear();
@@ -132,33 +127,22 @@ public:
 
 private:
 
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
   // DATA
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
 
   /// Moment size
   const size_t d_N;
-
   /// Number of surfaces
   const size_t d_number_surfaces;
-
-  /**
-   *  @brief Boundary function moments [N][N]
-   *
-   *  Stored [incoming][outgoing] so that for an incident condition,
-   *  all outgoing values are contiguous in memory.
-   */
+  /// Boundary function moments [N][N]; outgoing is stored contiguously
   vec2_dbl d_boundary_response;
-
   /// Fission response [N]
   vec_dbl d_fission_response;
-
   /// Absorption response [N]
   vec_dbl d_absorption_response;
-
   /// Leakage response [nsurface][N]
   vec2_dbl d_leakage_response;
-
   /// Pin fission responses [Npins][N]
   vec2_dbl d_pin_response;
 
@@ -166,14 +150,14 @@ private:
 
 } // end namespace erme_response
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // INLINE MEMBER DEFINITIONS
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #include "NodeResponse.i.hh"
 
 #endif // erme_response_NODERESPONSE_HH_
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 //              end of file NodeResponse.hh
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

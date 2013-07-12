@@ -59,6 +59,9 @@ public:
    */
   double leakage(linear_algebra::Vector &x);
 
+  /// Compute vector that when dotted with the current gives the net leakage
+  const linear_algebra::Vector& leakage_vector();
+
   /// Display the global leakage vector
   void display_leakage();
 
@@ -70,9 +73,10 @@ private:
 
   /// Dotted with L*J, this gives the net leakage at global boundaries
   linear_algebra::Vector d_global_leakage;
-
   /// Vector for storing L*J
   linear_algebra::Vector d_L_times_moments;
+  /// Vector that when dotted with J gives net current
+  linear_algebra::Vector d_leakage_vector;
 
   //-------------------------------------------------------------------------//
   // IMPLEMENTATION

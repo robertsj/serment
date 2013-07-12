@@ -12,11 +12,8 @@
         FUNC(test_PingPong_bandwidth)   \
         FUNC(test_PingPong_latency)
 
-// Detran test
 #include "utilities/TestDriver.hh"
-
 #include "Comm.hh"
-
 #include <cstdio>
 #include <cmath>
 #include <iostream>
@@ -276,4 +273,3 @@ int test_PingPong_latency(int argc, char *argv[])
 //----------------------------------------------------------------------------//
 //              end of test_PingPong.cc
 //----------------------------------------------------------------------------//
-

@@ -36,9 +36,8 @@ inline double Vector::norm(const int type)
     ierr = VecNorm(d_V, NORM_INFINITY, &val);
   else
     THROW("Unsupported vector norm type");
-
   Ensure(!ierr);
-  Ensure(val >= 0.0);
+  Ensurev(val >= 0.0, "Invalid norm: " + AsString(val));
   return val;
 }
 

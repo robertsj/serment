@@ -1,17 +1,17 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /**
- *  @file   GlobalSolverNewton.hh
- *  @brief  GlobalSolverNewton
- *  @author Jeremy Roberts
- *  @date   Nov 29, 2012
+ *  @file  GlobalSolverNewton.hh
+ *  @brief GlobalSolverNewton class definition
+ *  @note  Copyright (C) 2013 Jeremy Roberts
  */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #ifndef erme_solver_GLOBALSOLVERNEWTON_HH_
 #define erme_solver_GLOBALSOLVERNEWTON_HH_
 
 #include "GlobalSolverBase.hh"
-#include "OperatorMR.hh"
+#include "Jacobian.hh"
+#include "linear_algebra/NonlinearSolver.hh"
 
 namespace erme_solver
 {
@@ -19,38 +19,38 @@ namespace erme_solver
 /**
  *  @class GlobalSolverNewton
  *  @brief Solves the problem using Picard (fixed point) iteration
- *
  */
 class GlobalSolverNewton: public GlobalSolverBase
 {
 
 public:
 
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
   // TYPEDEFS
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
 
   typedef detran_utilities::SP<GlobalSolverNewton>    SP_solver;
-  typedef GlobalSolverBase                            Base;
-  typedef erme
+  typedef erme_solver::GlobalSolverBase               Base;
+  typedef Jacobian::SP_jacobian                       SP_jacobian;
+  typedef linear_algebra::NonlinearSolver::SP_solver  SP_nonlinear_solver;
 
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
   // PUBLIC INTERFACE
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
 
   /**
    *  @brief Constructor
-   *  @param server Pointer to response server
-   *  @param state  Pointer to state vector
-   *  @param R      Pointer to response matrix
-   *  @param M      Pointer to connectivity matrix
-   *  @param F      Pointer to fission operator
-   *  @param A      Pointer to absorption operator
-   *  @param L      Pointer to leakage operator
+   *  @param db         Pointer to parameter database
+   *  @param indexer    Pointer to response indexer
+   *  @param server     Pointer to response server
+   *  @param state      Pointer to state vector
+   *  @param responses  Container of the responses
    */
-  GlobalSolverNewton(SP_db db, SP_indexer indexer, SP_server server,
-                     SP_state state,
-                     SP_R R, SP_M M, SP_F F, SP_A A, SP_L L);
+  GlobalSolverNewton(SP_db                db,
+                     SP_indexer           indexer,
+                     SP_server            server,
+                     SP_state             state,
+                     SP_responsecontainer responses);
 
   /// Virtual destructor
   virtual ~GlobalSolverNewton(){}
@@ -60,17 +60,17 @@ public:
 
 private:
 
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
   // DATA
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
 
   /// Jacobian
-  SP_Jacobian d_jacobian;
-  /// MR operator
-  SP_MR d_MR;
-  /// Temporary working vectors
-  SP_vector d_J0;
-  SP_vector d_J1;
+  SP_jacobian d_jacobian;
+  /// Jacobian preconditioner
+  SP_jacobian d_preconditioner;
+  /// Nonlinear solver
+  SP_nonlinear_solver d_solver;
+
 
 };
 
@@ -79,6 +79,6 @@ private:
 
 #endif // erme_solver_GLOBALSOLVERNEWTON_HH_
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 //              end of file GlobalSolverNewton.hh
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

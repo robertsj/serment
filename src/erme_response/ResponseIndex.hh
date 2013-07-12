@@ -1,11 +1,10 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /**
- *  @file   ResponseIndex.hh
- *  @brief  ResponseIndex class definition
- *  @author Jeremy Roberts
- *  @date   Aug 24, 2012
+ *  @file  ResponseIndex.hh
+ *  @brief ResponseIndex class definition
+ *  @note  Copyright (C) 2013 Jeremy Roberts
  */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #ifndef erme_response_RESPONSEINDEX_HH_
 #define erme_response_RESPONSEINDEX_HH_
@@ -60,7 +59,7 @@ struct ResponseIndex
 
 } // end namespace erme_response
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 inline std::ostream& operator<< (std::ostream &out,
                                  const erme_response::ResponseIndex &r)
 {
@@ -79,6 +78,6 @@ inline std::ostream& operator<< (std::ostream &out,
 
 #endif // erme_response_RESPONSEINDEX_HH_
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 //              end of file ResponseIndex.hh
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

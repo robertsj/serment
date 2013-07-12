@@ -1,9 +1,8 @@
 //----------------------------------*-C++-*-----------------------------------//
 /**
- *  @file   ManagerERME.cc
- *  @brief  ManagerERME member definitions
- *  @author Jeremy Roberts
- *  @date   Oct 4, 2012
+ *  @file  ManagerERME.cc
+ *  @brief ManagerERME member definitions
+ *  @note  Copyright (C) 2013 Jeremy Roberts
  */
 //----------------------------------------------------------------------------//
 
@@ -12,7 +11,7 @@
 #include "erme_solver/GlobalSolverPicard.hh"
 #include "linear_algebra/LinearAlgebraSetup.hh"
 
-namespace erme_utils
+namespace erme_solver
 {
 
 //----------------------------------------------------------------------------//
@@ -25,20 +24,9 @@ ManagerERME::ManagerERME(int argc, char *argv[])
 }
 
 //----------------------------------------------------------------------------//
-ManagerERME::ManagerERME(int argc, char *argv[], SP_db db)
-  : d_argc(argc)
-  , d_argv(argv)
-  , d_db(db)
-  , d_is_built(false)
+ManagerERME::SP_manager ManagerERME::Create(int argc, char *argv[])
 {
-  serment_comm::Comm::initialize(d_argc, d_argv);
-  build_comm(db);
-}
-
-//----------------------------------------------------------------------------//
-ManagerERME::SP_manager ManagerERME::Create(int argc, char *argv[], SP_db db)
-{
-  SP_manager p(new ManagerERME(argc, argv, db));
+  SP_manager p(new ManagerERME(argc, argv));
   return p;
 }
 
@@ -145,14 +133,11 @@ void ManagerERME::build_erme(SP_nodelist nodes)
 //----------------------------------------------------------------------------//
 void ManagerERME::solve()
 {
-  // Preconditions
   Insist(d_is_built, "Must build the manager before using.");
 
-  // Create solver
   d_solver = new erme_solver::GlobalSolverPicard(
     d_db, d_indexer, d_server, d_state, d_responses);
 
-  // Solve
   d_solver->solve();
 }
 
@@ -162,7 +147,7 @@ void ManagerERME::finalize()
   /* ... */
 }
 
-} // end namespace erme_utils
+} // end namespace erme_solver
 
 //----------------------------------------------------------------------------//
 //              end of file ManagerERME.cc

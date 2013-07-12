@@ -1,13 +1,13 @@
-//----------------------------------*-C++-*-----------------------------------//
+//----------------------------------*-C++-*----------------------------------//
 /**
- *  @file  Jacobian.hh
- *  @brief Jacobian class definition
+ *  @file  FullJacobian.hh
+ *  @brief FullJacobian class definition
  *  @note  Copyright (C) 2013 Jeremy Roberts
  */
-//----------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
-#ifndef erme_solver_JACOBIAN_HH_
-#define erme_solver_JACOBIAN_HH_
+#ifndef erme_solver_FULLJACOBIAN_HH_
+#define erme_solver_FULLJACOBIAN_HH_
 
 #include "OperatorMR.hh"
 #include "linear_algebra/JacobianBase.hh"
@@ -30,43 +30,17 @@ namespace erme_solver
 
 //----------------------------------------------------------------------------//
 /**
- *  @class Jacobian
- *  @brief This provides the action of the Jacobian
- *         (\f$ \mathbf{f}' \f$ )on a vector \f$ \mathbf{f} \f$
+ *  @class FullJacobian
+ *  @brief This constructs a full, possibly approximate Jacobian
  *
- *  The resulting vector is \f$ \mathbf{f}'\mathbf{f} \f$, or "fpf" where "p"
- *  denotes the prime.
+ *  This class should primarily be used to provide an accurate preconditioner
+ *  for use with the shell Jacobian.  The finite difference component is
+ *  optional left out to avoid extra response evaluations
  *
- *  Note, the vector \f$ \vec{f} \f$  does not necessarily begin as the
- *  residual but rather as a scaled residual. The PETSc manual does not seem
- *  to state this explicitly, but a little trial and error confirmed this---so
- *  don't fret when debugging!
- *
- *  The Jacobian is defined as
- *  \f[
- *      \mathbf{f'(x)} =
- *        \left [\begin{array}{ccc}
- *          (\mathbf{M}\mathbf{R}-\lambda \mathbf{I})              &
- *              \mathbf{M}\mathbf{R_k}\mathbf{J_-}                     &
- *                  \mathbf{J_-}                                           \\
- *          (\mathbf{F}-k\mathbf{L})                               &
- *              (\mathbf{F_k}-k\mathbf{L_k}-\mathbf{L}) \mathbf{J_-}   &
- *                  0                                                      \\
- *          \mathbf{J^T_-}                                         &
- *              0                                                      &
- *                 0
- *        \end{array} \right ]  \, .
- *      \label{eq:jacobian}
- *  \f]
- *  For \f$ \mathbf{R}(k) \f$ of size \f$ m\times m \f$, the Jacobian is
- *  of size \f$ (m+2)\times(m+2) \f$.
- *
- *  Most of the Jacobian is known <EM> a priori</EM>, and so most of the
- *  action can be computed directly.  Only the first \f$ m-1 \f$ rows of the
- *  \f$ (m-1) \f$th column require approximations via finite differences.
- *
+ *  For a more detailed description of the Jacobian operator, see
+ *  @ref Jacobian
  */
-class Jacobian: public linear_algebra::JacobianBase
+class FullJacobian: public linear_algebra::JacobianBase
 {
 
 public:
@@ -82,7 +56,6 @@ public:
   typedef erme::FissionOperator::SP_fission               SP_F;
   typedef erme::AbsorptionOperator::SP_absorption         SP_A;
   typedef erme::LeakageOperator::SP_leakage               SP_L;
-  typedef OperatorMR::SP_MR                               SP_MR;
   typedef linear_algebra::Vector                          Vector;
   typedef Vector::SP_vector                               SP_vector;
   typedef detran_utilities::vec_dbl                       vec_dbl;
@@ -93,16 +66,13 @@ public:
   // CONSTRUCTOR & DESTRUCTOR
   //--------------------------------------------------------------------------//
 
-  Jacobian(SP_server              server,
-           SP_responsecontainer   responses,
-           const double           eps = 1.0e-8);
+  FullJacobian(SP_server              server,
+               SP_responsecontainer   responses,
+               const double           eps = 1.0e-8);
 
   //--------------------------------------------------------------------------//
   // PUBLIC FUNCTIONS
   //--------------------------------------------------------------------------//
-
-  void multiply(Vector &v_in, Vector &v_out);
-  void multiply_transpose(Vector &v_in, Vector &v_out);
 
   /// Update the Jacobian
   void update(SP_vector x);
@@ -122,7 +92,6 @@ private:
   SP_F d_F;
   SP_A d_A;
   SP_L d_L;
-  SP_MR d_MR;
   //@}
   /// Finite difference epsilon
   double d_eps;
@@ -139,34 +108,15 @@ private:
   size_t d_m_full;
   size_t d_m;
 
-  /// Shell matrix for Jacobian action
-  class Shell: public linear_algebra::MatrixShell
-  {
-  public:
-    Shell(const size_type m, Jacobian &J)
-      : linear_algebra::MatrixShell(m, m, this)
-      , d_J(J)
-    {
-      /* ... */
-    }
-    void multiply(Vector &v_in, Vector &v_out)
-    {
-      d_J.multiply(v_in, v_out);
-    }
-    void multiply_transpose(Vector &v_in, Vector &v_out)
-    {
-      d_J.multiply_transpose(v_in, v_out);
-    }
-  private:
-    Jacobian& d_J;
-  };
-
 };
 
 } // end namespace detran
 
-#endif // erme_solver_JACOBIAN_HH_
+//----------------------------------------------------------------------------//
+//              end of file FullJacobian.hh
+//----------------------------------------------------------------------------//
 
-//----------------------------------------------------------------------------//
-//              end of file Jacobian.hh
-//----------------------------------------------------------------------------//
+
+
+
+#endif /* FULLJACOBIAN_HH_ */

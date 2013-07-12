@@ -1,21 +1,21 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /**
- *  @file   CartesianNodeDetran.cc
- *  @brief  CartesianNodeDetran member definitions
- *  @author Jeremy Roberts
- *  @date   Aug 22, 2012
+ *  @file  CartesianNodeDetran.cc
+ *  @brief CartesianNodeDetran member definitions
+ *  @note  Copyright (C) 2013 Jeremy Roberts
  */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #include "CartesianNodeDetran.hh"
 #include "NodeSerialization.hh"
+#include "geometry/Point.hh"
 
 #include "utilities/detran_utilities.hh"
 
 namespace erme_geometry
 {
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 CartesianNodeDetran::CartesianNodeDetran(const size_t  dim,
                                          std::string   nodename,
                                          vec2_size_t   so,
@@ -40,8 +40,8 @@ CartesianNodeDetran::CartesianNodeDetran(const size_t  dim,
   Require(detran_utilities::soft_equiv(d_mesh->total_width_z(), width(2)));
 }
 
-//---------------------------------------------------------------------------//
-double CartesianNodeDetran::color(Point point, std::string key)
+//----------------------------------------------------------------------------//
+double CartesianNodeDetran::color(const Point &point, std::string key)
 {
   Insist(d_mesh->mesh_map_exists(key),
          "Key used for CartesianNodeDetran coloring does not exist!");
@@ -62,6 +62,6 @@ double CartesianNodeDetran::color(Point point, std::string key)
 
 BOOST_CLASS_EXPORT_IMPLEMENT(erme_geometry::CartesianNodeDetran)
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 //              end of file CartesianNodeDetran.cc
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

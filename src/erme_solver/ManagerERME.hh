@@ -1,16 +1,15 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /**
- *  @file   ManagerERME.hh
- *  @brief  ManagerERME class definition
- *  @author Jeremy Roberts
- *  @date   Sep 1, 2012
+ *  @file  ManagerERME.hh
+ *  @brief ManagerERME class definition
+ *  @note  Copyright (C) 2013 Jeremy Roberts
  */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #ifndef erme_utils_MANAGERERME_HH_
 #define erme_utils_MANAGERERME_HH_
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /** @mainpage Serment: An Eigenvalue Response Matrix Code
  *
  *  @section sec_introduction Introduction
@@ -41,7 +40,7 @@
  *
  * etc...
  */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #include "PostProcess.hh"
 #include "erme/StateERME.hh"
@@ -59,7 +58,7 @@
  *  @brief Namespace for higher level routines for organizing response
  *         matrix problems and their solutions.
  */
-namespace erme_utils
+namespace erme_solver
 {
 
 /**
@@ -71,12 +70,11 @@ class ManagerERME
 
 public:
 
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
   // TYPEDEFS
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
 
   typedef detran_utilities::SP<ManagerERME>           	SP_manager;
-  typedef PostProcess::SP_postprocess                 	SP_postprocess;
   typedef detran_utilities::InputDB::SP_input         	SP_db;
   typedef erme::StateERME::SP_state                   	SP_state;
   typedef erme::ResponseContainer::SP_responsecontainer SP_responsecontainer;
@@ -87,23 +85,20 @@ public:
   typedef erme_solver::GlobalSolverBase::SP_solver    	SP_solver;
   typedef detran_utilities::vec_dbl                   	vec_dbl;
 
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
   // CONSTRUCTOR & DESTRUCTOR
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
 
-  /// Constructor that builds in full comm setup
-  ManagerERME(int argc, char *argv[], SP_db db);
-
-  /// Constructor that only initializes comm
+  /// Constructor
   ManagerERME(int argc, char *argv[]);
 
 
   /// SP constructor
-  static SP_manager Create(int argc, char *argv[], SP_db db);
+  static SP_manager Create(int argc, char *argv[]);
 
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
   // PUBLIC FUNCTIONS
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
 
   /**
    *  @brief Construct the communicators
@@ -126,24 +121,24 @@ public:
    */
   void solve();
 
-  /// Return the indexer
+  /// Getters
+  //@{
   SP_indexer indexer() const { return d_indexer; }
-
-  /// Return the postprocessor
-  SP_postprocess postprocess() const { return d_postprocess; }
-
   double get_keff() const { return d_state->k(); }
   double get_lambda() const { return d_state->lambda(); }
   vec_dbl get_residual_norms() const { return d_solver->residual_norms(); }
+  SP_responsecontainer get_responses() const { return d_responses; }
+  SP_server get_server() const { return d_server; }
+  //@}
 
   /// Close libraries, etc.
   void finalize();
 
 private:
 
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
   // DATA
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
 
   /// Number of command line arguments
   int d_argc;
@@ -165,14 +160,13 @@ private:
   SP_solver d_solver;
   /// Is it built?
   bool d_is_built;
-  ///
-  SP_postprocess d_postprocess;
+
 };
 
-} // end namespace erme_utils
+} // end namespace erme_solver
 
 #endif // erme_utils_MANAGERERME_HH_
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 //              end of file ManagerERME.hh
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

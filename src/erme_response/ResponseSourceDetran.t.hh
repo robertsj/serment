@@ -1,11 +1,10 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /**
- *  @file   ResponseSourceDetran.t.hh
- *  @brief  ResponseSourceDetran
- *  @author Jeremy Roberts
- *  @date   Jan 9, 2013
+ *  @file  ResponseSourceDetran.t.hh
+ *  @brief ResponseSourceDetran
+ *  @note  Copyright (C) 2013 Jeremy Roberts
  */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #ifndef erme_response_RESPONSESOURCEDETRAN_T_HH_
 #define erme_response_RESPONSESOURCEDETRAN_T_HH_
@@ -16,18 +15,20 @@
 #include "boundary/BoundaryTraits.hh"
 #include "boundary/FixedBoundary.hh"
 
+#define DBOUT(c) std::cout << c << std::endl;
+
 namespace erme_response
 {
 
 // \todo Need to consolidate code where possible
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 template <class B>
 void ResponseSourceDetran<B>::set_boundary(const ResponseIndex &index)
 {
   THROW("NOT IMPLEMENTED");
 }
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 template <class B>
 void ResponseSourceDetran<B>::expand_boundary(SP_response          response,
                                               const ResponseIndex &index_i)
@@ -35,11 +36,11 @@ void ResponseSourceDetran<B>::expand_boundary(SP_response          response,
   THROW("NOT IMPLEMENTED");
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // SN SPECIALIZATIONS
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // fixed boundary
 template <>
 void ResponseSourceDetran<detran::BoundarySN<detran::_1D> >::
@@ -83,7 +84,7 @@ set_boundary(const ResponseIndex &index_i)
 //  }
 //  //B.display(true);
 //}
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 template <>
 void ResponseSourceDetran<detran::BoundarySN<detran::_1D> >::
 expand_boundary(SP_response          response,
@@ -94,9 +95,9 @@ expand_boundary(SP_response          response,
   for (size_t surface = 0; surface < 2; ++surface)
   {
 
-    //-----------------------------------------------------------------------//
+    //------------------------------------------------------------------------//
     // BOUNDARY RESPONSE
-    //-----------------------------------------------------------------------//
+    //------------------------------------------------------------------------//
 
     size_t o_p = d_basis_p[surface]->order();
     size_t o_e = d_basis_e[surface]->order();
@@ -138,9 +139,9 @@ expand_boundary(SP_response          response,
         R[index_o.polar][index_o.energy];
     }
 
-    //-----------------------------------------------------------------------//
+    //------------------------------------------------------------------------//
     // LEAKAGE
-    //-----------------------------------------------------------------------//
+    //------------------------------------------------------------------------//
 
     response->leakage_response(surface, index_i.nodal) = 0.0;
     for (size_t g = 0; g < d_material->number_groups(); ++g)
@@ -158,7 +159,7 @@ expand_boundary(SP_response          response,
 //  THROW("lala");
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 template <>
 void ResponseSourceDetran<detran::BoundarySN<detran::_2D> >::
 set_boundary(const ResponseIndex &index_i)
@@ -197,24 +198,24 @@ set_boundary(const ResponseIndex &index_i)
    */
   for (size_t g = 0; g < d_material->number_groups(); ++g)
   {
-    //std::cout << " g = " << g << std::endl;
+    //DBOUT(" g = " << g)
     double P_e = (*d_basis_e[index_i.surface])(index_i.energy, g);
     size_t a = 0;
     for (size_t oo = 0; oo < 2; ++oo)
     {
       size_t o = q->incident_octant(index_i.surface)[oo];
-      //std::cout << "   o = " << o << std::endl;
+      //DBOUT("   o = " << o)
       int a0 = az[index_i.surface][oo][1];
       for (size_t aa = 0; aa < q->number_azimuths_octant(); ++aa, ++a)
       {
         size_t aaa = aa;
         if (a0 == -1) aaa = q->number_azimuths_octant() - aa - 1;
+        //DBOUT("     aaa = " << aaa << " " << q->number_azimuths_octant() << " " << a0)
 
-        //std::cout << "     aaa = " << aaa << " " << q->number_azimuths_octant() << " " << a0 << std::endl;
         double P_a = (*d_basis_a[index_i.surface])(index_i.azimuth, a);
         for (size_t p = 0; p < q->number_polar_octant(); ++p)
         {
-          //std::cout << "       p = " << p << std::endl;
+          //DBOUT("       p = " << p)
           double P_p = (*d_basis_p[index_i.surface])(index_i.polar, p);
           size_t angle = q->angle(aaa, p);
           BoundaryTraits_T::value_type &b = BC(oo, angle, g);
@@ -301,7 +302,7 @@ set_boundary(const ResponseIndex &index_i)
 //  }
 //}
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 template <>
 void ResponseSourceDetran<detran::BoundarySN<detran::_2D> >::
 expand_boundary(SP_response          response,
@@ -330,9 +331,9 @@ expand_boundary(SP_response          response,
       sign = -1;
     }
 
-    //-----------------------------------------------------------------------//
+    //------------------------------------------------------------------------//
     // BOUNDARY RESPONSE
-    //-----------------------------------------------------------------------//
+    //------------------------------------------------------------------------//
 
     size_t o_e = d_basis_e[surface]->order();
     size_t o_a = d_basis_a[surface]->order();
@@ -438,9 +439,9 @@ expand_boundary(SP_response          response,
         coef * R[index_o.space0][index_o.polar][index_o.azimuth][index_o.energy];
     }
 
-    //-----------------------------------------------------------------------//
+    //------------------------------------------------------------------------//
     // LEAKAGE
-    //-----------------------------------------------------------------------//
+    //------------------------------------------------------------------------//
 
     response->leakage_response(surface, index_i.nodal) = 0.0;
     for (size_t g = 0; g < d_material->number_groups(); ++g)
@@ -468,7 +469,7 @@ expand_boundary(SP_response          response,
 }
 
 
-////---------------------------------------------------------------------------//
+////----------------------------------------------------------------------------//
 //template <>
 //template <>
 //void ResponseSourceDetran<detran::_3D>::
@@ -478,7 +479,7 @@ expand_boundary(SP_response          response,
 //
 //}
 //
-////---------------------------------------------------------------------------//
+////----------------------------------------------------------------------------//
 //template <>
 //template <>
 //void ResponseSourceDetran<detran::_3D>::
@@ -489,11 +490,11 @@ expand_boundary(SP_response          response,
 //
 //}
 //
-////---------------------------------------------------------------------------//
+////----------------------------------------------------------------------------//
 //// MOC SPECIALIZATIONS
-////---------------------------------------------------------------------------//
+////----------------------------------------------------------------------------//
 //
-////---------------------------------------------------------------------------//
+////----------------------------------------------------------------------------//
 //template <>
 //template <>
 //void ResponseSourceDetran<detran::_2D>::
@@ -510,6 +511,6 @@ expand_boundary(SP_response          response,
 
 #endif // erme_response_RESPONSESOURCEDETRAN_T_HH_
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 //              end of file ResponseSourceDetran.t.hh
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

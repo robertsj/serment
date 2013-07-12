@@ -73,27 +73,25 @@ void MatrixBase::assemble(const int mode)
 }
 
 //----------------------------------------------------------------------------//
-void MatrixBase::multiply(Vector &x, Vector &y)
+void MatrixBase::multiply(Vector &v_in, Vector &v_out)
 {
   Require(d_is_assembled);
-  Require(d_number_global_columns = x.global_size());
-  Require(d_number_global_rows = y.global_size());
+  Require(d_number_global_columns = v_in.global_size());
+  Require(d_number_global_rows = v_out.global_size());
 
-  PetscErrorCode ierr;
-  ierr = MatMult(d_A, x.V(), y.V());
+  PetscErrorCode ierr = MatMult(d_A, v_in.V(), v_out.V());
 
   Ensure(!ierr);
 }
 
 //----------------------------------------------------------------------------//
-void MatrixBase::multiply_transpose(Vector &x, Vector &y)
+void MatrixBase::multiply_transpose(Vector &v_in, Vector &v_out)
 {
   Require(d_is_assembled);
-  Require(d_number_global_columns = y.global_size());
-  Require(d_number_global_rows = x.global_size());
+  Require(d_number_global_columns = v_out.global_size());
+  Require(d_number_global_rows = v_in.global_size());
 
-  PetscErrorCode ierr;
-  ierr = MatMultTranspose(d_A, x.V(), y.V());
+  PetscErrorCode ierr = MatMultTranspose(d_A, v_in.V(), v_out.V());
 
   Ensure(!ierr);
 }

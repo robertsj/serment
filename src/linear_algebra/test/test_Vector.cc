@@ -15,6 +15,7 @@
 #include "utilities/TestDriver.hh"
 #include "Vector.hh"
 #include "LinearAlgebraSetup.hh"
+#include <cmath>
 #include <iostream>
 
 using namespace serment_comm;
@@ -59,6 +60,14 @@ int test_Vector(int argc, char *argv[])
   Vector V(X);
   for (int i = 0; i < V.local_size(); i++)
     TEST(detran_utilities::soft_equiv(V[i], 2.0));
+
+  // Norms
+  double X_L2 = X.norm(X.L2);
+  TEST(detran_utilities::soft_equiv(X_L2, std::sqrt(4.0*X.global_size())));
+  double X_L1 = X.norm(X.L1);
+  TEST(detran_utilities::soft_equiv(X_L1, X.global_size()*2.0));
+  double X_LI = X.norm(X.LINF);
+  TEST(detran_utilities::soft_equiv(X_LI, 2.0));
 
   return 0;
 }

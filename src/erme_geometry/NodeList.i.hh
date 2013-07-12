@@ -1,11 +1,10 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /**
- *  @file   NodeList.i.hh
- *  @brief  NodeList inline member definitions
- *  @author Jeremy Roberts
- *  @date   Aug 27, 2012
+ *  @file  NodeList.i.hh
+ *  @brief NodeList inline member definitions
+ *  @note  Copyright (C) 2013 Jeremy Roberts
  */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #ifndef erme_geometry_NODELIST_I_HH_
 #define erme_geometry_NODELIST_I_HH_
@@ -13,7 +12,7 @@
 namespace erme_geometry
 {
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 inline NodeList::SP_node NodeList::node(const int node_g) const
 {
   Require(is_finalized());
@@ -22,7 +21,7 @@ inline NodeList::SP_node NodeList::node(const int node_g) const
   return d_nodes[d_node_map[node_g]];
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 inline NodeList::SP_node NodeList::unique_node(const int node_ug) const
 {
   Require(is_finalized());
@@ -31,39 +30,39 @@ inline NodeList::SP_node NodeList::unique_node(const int node_ug) const
   return d_nodes[node_ug];
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 inline NodeList::size_t NodeList::lower_bound() const
 {
   return d_lower_bound;
 }
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 inline NodeList::size_t NodeList::upper_bound() const
 {
   return d_upper_bound;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 inline NodeList::size_t NodeList::number_global_nodes() const
 {
   return d_node_map.size();
 }
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 inline NodeList::size_t NodeList::number_unique_global_nodes() const
 {
   return d_nodes.size();
 }
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 inline NodeList::size_t NodeList::number_local_nodes() const
 {
   return d_upper_bound - d_lower_bound;
 }
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 inline NodeList::size_t NodeList::number_unique_local_nodes() const
 {
   return d_unique_nodes.size();
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 inline NodeList::size_t NodeList::number_global_surfaces() const
 {
   size_t ns = 0;
@@ -71,7 +70,7 @@ inline NodeList::size_t NodeList::number_global_surfaces() const
     ns += node(n)->number_surfaces();
   return ns;
 }
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 inline NodeList::size_t NodeList::number_local_surfaces() const
 {
   size_t ns = 0;
@@ -80,7 +79,7 @@ inline NodeList::size_t NodeList::number_local_surfaces() const
   return ns;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 inline const NeighborSurface&
 NodeList::neighbor(const size_t node_g, const size_t s) const
 {
@@ -90,7 +89,7 @@ NodeList::neighbor(const size_t node_g, const size_t s) const
   return d_neighbors[node_g][s];
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // L-to-G
 inline NodeList::size_t
 NodeList::global_index_from_local(const size_t node_l) const
@@ -103,7 +102,7 @@ NodeList::global_index_from_local(const size_t node_l) const
   return node_g;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // G-to-L
 inline int NodeList::local_index_from_global(const size_t node_g) const
 {
@@ -116,7 +115,7 @@ inline int NodeList::local_index_from_global(const size_t node_g) const
     return -1;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // G-to-GU
 inline NodeList::size_t
 NodeList::unique_global_index_from_global(const size_t node_g) const
@@ -129,7 +128,7 @@ NodeList::unique_global_index_from_global(const size_t node_g) const
   return node_ug;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // GU-to-LU
 inline int
 NodeList::unique_local_index_from_unique_global(const size_t node_ug) const
@@ -145,7 +144,7 @@ NodeList::unique_local_index_from_unique_global(const size_t node_ug) const
   return node_lg;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 inline NodeList::size_t
 NodeList::unique_global_index_from_unique_local(const size_t node_ul) const
 {
@@ -161,6 +160,6 @@ NodeList::unique_global_index_from_unique_local(const size_t node_ul) const
 
 #endif // erme_geometry_NODELIST_I_HH_
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 //              end of file NodeList.i.hh
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

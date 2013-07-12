@@ -11,6 +11,10 @@ SET(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 SET(SRC
     GlobalSolverBase.cc
     GlobalSolverPicard.cc
+    GlobalSolverNewton.cc
+    Jacobian.cc
+    FullJacobian.cc
+    ManagerERME.cc    
 )
 
 #-------------------------------------#

@@ -1,11 +1,10 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /**
- *  @file   ResponseIndexer.i.hh
- *  @brief  ResponseIndexer inline member definitions
- *  @author Jeremy Roberts
- *  @date   Aug 24, 2012
+ *  @file  ResponseIndexer.i.hh
+ *  @brief ResponseIndexer inline member definitions
+ *  @note  Copyright (C) 2013 Jeremy Roberts
  */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #ifndef erme_response_RESPONSEINDEXER_I_HH_
 #define erme_response_RESPONSEINDEXER_I_HH_
@@ -13,14 +12,14 @@
 namespace erme_response
 {
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 inline ResponseIndexer::size_t
 ResponseIndexer::number_nodes() const
 {
   return d_nodes->number_global_nodes();
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 inline ResponseIndexer::size_t
 ResponseIndexer::number_surface_moments(const size_t node_ug,
                                         const size_t surface) const
@@ -30,7 +29,7 @@ ResponseIndexer::number_surface_moments(const size_t node_ug,
   return d_indices[node_ug][surface].size();
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 inline ResponseIndexer::size_t
 ResponseIndexer::number_node_moments(const size_t node_ug) const
 {
@@ -40,26 +39,26 @@ ResponseIndexer::number_node_moments(const size_t node_ug) const
   return d_sizes[node_ug];
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 inline ResponseIndexer::size_t
 ResponseIndexer::number_unique_moments() const
 {
   return d_unique_size;
 }
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 inline ResponseIndexer::size_t
 ResponseIndexer::number_local_moments() const
 {
   return d_local_size;
 }
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 inline ResponseIndexer::size_t
 ResponseIndexer::number_global_moments() const
 {
   return d_global_size;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 inline ResponseIndex
 ResponseIndexer::response_index(const size_t node_ug,
                                 const size_t surface,
@@ -71,7 +70,7 @@ ResponseIndexer::response_index(const size_t node_ug,
   return d_indices[node_ug][surface][index_s];
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 inline ResponseIndex
 ResponseIndexer::response_index_from_unique_local(const size_t index_ul) const
 {
@@ -87,7 +86,7 @@ ResponseIndexer::response_index_from_unique_local(const size_t index_ul) const
   return d_indices[node_ug][surface][nindex];
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 inline ResponseIndex
 ResponseIndexer::response_index_from_local(const size_t index_l) const
 {
@@ -99,7 +98,7 @@ ResponseIndexer::response_index_from_local(const size_t index_l) const
   return response_index_from_unique_local(index_ul);
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 inline ResponseIndexer::size_t ResponseIndexer::
 nodal_index_to_local(const size_t node_g, const size_t index_n) const
 {
@@ -107,7 +106,7 @@ nodal_index_to_local(const size_t node_g, const size_t index_n) const
   return index_n + d_offsets[d_nodes->local_index_from_global(node_g)];
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 inline int ResponseIndexer::
 global_index_to_local(const size_t index_g) const
 {
@@ -122,7 +121,7 @@ global_index_to_local(const size_t index_g) const
   return index_l;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 inline ResponseIndexer::size_t ResponseIndexer::
 nodal_index_to_global(const size_t node_g, const size_t index_n) const
 {
@@ -137,7 +136,7 @@ nodal_index_to_global(const size_t node_g, const size_t index_n) const
   return index_g;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 inline ResponseIndexer::size_t ResponseIndexer::
 local_index_to_global(const size_t index_l) const
 {
@@ -149,7 +148,7 @@ local_index_to_global(const size_t index_l) const
   return index_g;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 inline ResponseIndexer::size_t ResponseIndexer::
 local_index_to_unique(const size_t index_l) const
 {
@@ -165,6 +164,6 @@ local_index_to_unique(const size_t index_l) const
 
 #endif // erme_responseRESPONSEINDEXER_I_HH_
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 //              end of file ResponseIndexer.i.hh
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

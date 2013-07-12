@@ -1,11 +1,10 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /**
- *  @file   ResponseDatabase.i.hh
- *  @author robertsj
- *  @date   Oct 1, 2012
- *  @brief  ResponseDatabase inline member definitions
+ *  @file  ResponseDatabase.i.hh
+ *  @brief ResponseDatabase inline member definitions
+ *  @note  Copyright (C) 2013 Jeremy Roberts
  */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #ifndef erme_response_RESPONSEDATABASE_I_HH_
 #define erme_response_RESPONSEDATABASE_I_HH_
@@ -15,7 +14,7 @@
 namespace erme_response
 {
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // \todo need to consider other interpolation and pin responses
 inline void ResponseDatabase::get(std::string     nodename,
                                   SP_response     response,
@@ -109,7 +108,7 @@ inline void ResponseDatabase::get(std::string     nodename,
 
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 template <class T>
 inline bool ResponseDatabase::read_scalar_attribute
 (hid_t group, const char* name, T &value)
@@ -124,3 +123,7 @@ inline bool ResponseDatabase::read_scalar_attribute
 } // end namespace erme_response
 
 #endif /* erme_response_RESPONSEDATABASE_I_HH_ */
+
+//----------------------------------------------------------------------------//
+//              end of file ResponseDatabase.i.hh
+//----------------------------------------------------------------------------//

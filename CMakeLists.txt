@@ -10,8 +10,8 @@ project(Serment)
 cmake_minimum_required( VERSION 2.6 FATAL_ERROR )
 set(SERMENT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
-set (CMAKE_CXX_COMPILER tau_cxx.sh)
-set (CMAKE_C_COMPILER tau_cc.sh)
+#set (CMAKE_CXX_COMPILER tau_cxx.sh)
+#set (CMAKE_C_COMPILER tau_cc.sh)
 
 #------------------------------------------------------------------------------#
 # VERSION

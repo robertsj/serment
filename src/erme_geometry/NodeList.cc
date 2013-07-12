@@ -1,11 +1,10 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /**
- *  @file   NodeList.cc
- *  @brief  NodeList member definitions
- *  @author Jeremy Roberts
- *  @date   Aug 27, 2012
+ *  @file  NodeList.cc
+ *  @brief NodeList member definitions
+ *  @note  Copyright (C) 2013 Jeremy Roberts
  */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #include "NodeList.hh"
 #include "NodeSerialization.hh"
@@ -14,7 +13,7 @@
 namespace erme_geometry
 {
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 NodeList::NodeList()
   : d_lower_bound(0),
     d_upper_bound(0),
@@ -25,17 +24,16 @@ NodeList::NodeList()
   /* ... */
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 NodeList::SP_nodelist NodeList::Create()
 {
   SP_nodelist p(new NodeList());
   return p;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 void NodeList::set_bounds(const size_t lb, const size_t ub)
 {
-  // Preconditions
   Require(ub >= lb); // Can have more processes than nodes
 
   d_lower_bound = lb;
@@ -58,22 +56,20 @@ void NodeList::set_bounds(const size_t lb, const size_t ub)
   // d_unique_nodes now has global indices of nodes this process needs.
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 void NodeList::add_node(SP_node node)
 {
-  // Preconditions
   Insist(!is_finalized(), "Cannot be finalized when adding a node.")
   Insist(node, "Invalid node.");
 
   d_nodes.push_back(node);
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 void NodeList::set_nodal_map(const vec_int          &node_map,
                              const vec2_neighbor    &neighbors,
                              const vec_point        &origins)
 {
-  // Preconditions
   Insist(node_map.size() == neighbors.size(),
          "Node map size is inconsistent with size of neighbors.");
   for (int i = 0; i < node_map.size(); ++i)
@@ -92,14 +88,14 @@ void NodeList::set_nodal_map(const vec_int          &node_map,
   d_origins = origins;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 const NodeList::Point& NodeList::origin(const size_t node_g) const
 {
   Require(node_g < number_global_nodes());
   return d_origins[node_g];
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 void NodeList::display() const
 {
   if (serment_comm::Comm::rank() == 0)
@@ -116,6 +112,6 @@ void NodeList::display() const
 
 } // end namespace erme_geometry
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 //              end of file NodeList.cc
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

@@ -1,34 +1,35 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /**
- *  @file   NonlinearResidual.hh
- *  @brief  NonlinearResidual
- *  @author Jeremy Roberts
- *  @date   Oct 1, 2012
+ *  @file  NonlinearResidual.hh
+ *  @brief NonlinearResidual
+ *  @note  Copyright (C) 2013 Jeremy Roberts
  */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #ifndef erme_solver_NONLINEARRESIDUAL_HH_
 #define erme_solver_NONLINEARRESIDUAL_HH_
 
+#include "OperatorMR.hh"
 #include "erme/ResponseMatrix.hh"
 #include "erme/Connect.hh"
 #include "erme/FissionOperator.hh"
 #include "erme/AbsorptionOperator.hh"
 #include "erme/LeakageOperator.hh"
 #include "linear_algebra/Vector.hh"
+#include "linear_algebra/NonlinearResidualBase.hh"
 #include "utilities/SP.hh"
 
 namespace erme_solver
 {
 
-class NonlinearResidual
+class NonlinearResidual: public linear_algebra::NonlinearResidualBase
 {
 
 public:
 
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
   // TYPEDEFS
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
 
   typedef detran_utilities::SP<NonlinearResidual>     SP_residual;
   typedef erme::ResponseMatrix::SP_responsematrix     SP_R;
@@ -38,10 +39,11 @@ public:
   typedef erme::LeakageOperator::SP_leakage           SP_L;
   typedef linear_algebra::Vector                      Vector;
   typedef linear_algebra::Vector::SP_vector           SP_vector;
+  typedef OperatorMR::SP_matrix                       SP_matrix;
 
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
   // CONSTRUCTOR & DESTRUCTOR
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
 
   /**
    *  @brief Constructor
@@ -53,11 +55,13 @@ public:
    */
   NonlinearResidual(SP_R R, SP_M M, SP_F F, SP_A A, SP_L L)
     : d_R(R), d_M(M), d_F(F), d_A(A), d_L(L)
-  {/* ... */}
+  {
+    d_MR = new OperatorMR(d_R, d_M);
+  }
 
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
   // PUBLIC FUNCTIONS
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
 
   /**
    *  @brief Computes the \f$ L_2 \f$ norm of the nonlinear residual.
@@ -87,17 +91,22 @@ public:
    */
   double compute_norm(Vector &x, const double k, const double l);
 
+  /// Evaluate the residual vector
+  void evaluate(Vector &x, Vector &f);
+
 private:
 
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
   // DATA
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
 
   SP_R d_R;
   SP_M d_M;
   SP_F d_F;
   SP_A d_A;
   SP_L d_L;
+  SP_matrix d_MR;
+
 
 };
 
@@ -107,6 +116,6 @@ private:
 
 #endif // erme_solver_NONLINEARRESIDUAL_HH_
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 //              end of file NonlinearResidual.hh
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

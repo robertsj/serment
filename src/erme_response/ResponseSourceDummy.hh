@@ -1,11 +1,10 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /**
- *  @file   ResponseSourceDummy.hh
- *  @author robertsj
- *  @date   Aug 31, 2012
- *  @brief  ResponseSourceDummy class definition.
+ *  @file  ResponseSourceDummy.hh
+ *  @brief ResponseSourceDummy class definition
+ *  @note  Copyright (C) 2013 Jeremy Roberts
  */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #ifndef erme_response_RESPONSESOURCEDUMMY_HH_
 #define erme_response_RESPONSESOURCEDUMMY_HH_
@@ -26,19 +25,18 @@ class ResponseSourceDummy: public ResponseSource
 
 public:
 
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
   // PUBLIC INTERFACE
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
 
   ResponseSourceDummy(SP_node node, SP_indexer indexer);
 
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
   // ABSTRACT INTERFACE -- ALL RESPONSE SOURCES MUST IMPLEMENT
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
 
   void compute(SP_response response, const ResponseIndex &index)
   {
-    // Preconditions
     Require(response);
 
     // Easy value to recreate.
@@ -68,3 +66,7 @@ public:
 } // end namespace erme_response
 
 #endif /* erme_response_RESPONSESOURCEDUMMY_HH_ */
+
+//----------------------------------------------------------------------------//
+//              end of file ResponseSourceDummy.hh
+//----------------------------------------------------------------------------//

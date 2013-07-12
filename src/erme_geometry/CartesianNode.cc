@@ -1,20 +1,20 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /**
- *  @file   CartesianNode.cc
- *  @brief  CartesianNode
- *  @author Jeremy Roberts
- *  @date   Aug 22, 2012
+ *  @file  CartesianNode.cc
+ *  @brief CartesianNode member definitions
+ *  @note  Copyright (C) 2013 Jeremy Roberts
  */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #include "CartesianNode.hh"
 #include "NodeSerialization.hh"
+#include "geometry/Point.hh"
 #include <cmath>
 
 namespace erme_geometry
 {
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 CartesianNode::CartesianNode(const size_t  dim,
                              std::string   nodename,
                              vec2_size_t   so,
@@ -33,7 +33,7 @@ CartesianNode::CartesianNode(const size_t  dim,
   if (dimension() < 2) d_width[1] = 1.0;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 CartesianNode::SP_node
 CartesianNode::Create(const size_t  dimension,
                       std::string   nodename,
@@ -48,7 +48,7 @@ CartesianNode::Create(const size_t  dimension,
   return p;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 double CartesianNode::area(const size_t surface) const
 {
   Require(surface < number_surfaces());
@@ -59,14 +59,14 @@ double CartesianNode::area(const size_t surface) const
   return d_width[0] * d_width[1];
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 double CartesianNode::volume() const
 {
   return d_width[0] * d_width[1] * d_width[2];
 }
 
-//---------------------------------------------------------------------------//
-double CartesianNode::color(Point point, std::string)
+//----------------------------------------------------------------------------//
+double CartesianNode::color(const Point &point, std::string)
 {
   Point point_local = point;
   if ( (point_local.x() < 0.0) or
@@ -81,7 +81,7 @@ double CartesianNode::color(Point point, std::string)
   return (double) 1.0;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 double CartesianNode::width(const size_t dim) const
 {
   Require(dim < 3);
@@ -92,6 +92,6 @@ double CartesianNode::width(const size_t dim) const
 
 BOOST_CLASS_EXPORT_IMPLEMENT(erme_geometry::CartesianNode)
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 //              end of file CartesianNode.cc
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

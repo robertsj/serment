@@ -1,11 +1,10 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /**
- *  @file   ResponseDatabase.cc
- *  @author robertsj
- *  @date   Oct 1, 2012
- *  @brief  ResponseDatabase member definitions
+ *  @file  ResponseDatabase.cc
+ *  @brief ResponseDatabase member definitions
+ *  @note  Copyright (C) 2013 Jeremy Roberts
  */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #include "ResponseDatabase.hh"
 
@@ -16,7 +15,7 @@ namespace erme_response
 ResponseDatabase::SP_rfdb
 ResponseDatabase::d_instance = ResponseDatabase::SP_rfdb(NULL);
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 ResponseDatabase::ResponseDatabase(std::string filename, size_t order)
   : d_filename(filename)
   , d_open(false)
@@ -31,9 +30,9 @@ ResponseDatabase::ResponseDatabase(std::string filename, size_t order)
   Insist(d_file_id >= 0, "Error opening HDF5 file " + d_filename);
   d_open = true;
 
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
   // LOAD DATABASE
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
 
   // Get the number of nodes.  Each node is a group in the root group "/"
   herr_t ierr;
@@ -247,7 +246,7 @@ ResponseDatabase::ResponseDatabase(std::string filename, size_t order)
 
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 ResponseDatabase::~ResponseDatabase()
 {
   // Close the HDF5 file \todo why does this yield an error? h5py related?
@@ -256,7 +255,7 @@ ResponseDatabase::~ResponseDatabase()
   d_open = false;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 ResponseDatabase::SP_rfdb
 ResponseDatabase::Create(std::string filename, size_t order)
 {
@@ -271,7 +270,7 @@ ResponseDatabase::Create(std::string filename, size_t order)
   return d_instance;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 ResponseDatabase::SP_rfdb ResponseDatabase::Instance()
 {
   Insist(d_instance, "Cannot use the database without it being created.")
@@ -280,4 +279,7 @@ ResponseDatabase::SP_rfdb ResponseDatabase::Instance()
 
 } // end namespace erme_response
 
+//----------------------------------------------------------------------------//
+//              end of file ResponseDatabase.cc
+//----------------------------------------------------------------------------//
 

@@ -1,11 +1,10 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /**
- *  @file   NodeSerialization.hh
- *  @brief  Convenience header for holding Boost serialization macros
- *  @author Jeremy Roberts
- *  @date   Oct 4, 2012
+ *  @file  NodeSerialization.hh
+ *  @brief Convenience header for holding Boost serialization macros
+ *  @note  Copyright (C) 2013 Jeremy Roberts
  */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #ifndef erme_geometry_NODESERIALIZATION_HH_
 #define erme_geometry_NODESERIALIZATION_HH_
@@ -32,6 +31,6 @@ BOOST_CLASS_EXPORT_KEY(erme_geometry::CartesianNodeDummy)
 
 #endif // erme_geometry_NODESERIALIZATION_HH_
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 //              end of file NodeSerialization.hh
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

@@ -1,11 +1,10 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /**
- *  @file   GlobalSolverPicard.cc
- *  @brief  GlobalSolverPicard
- *  @author Jeremy Roberts
- *  @date   Oct 1, 2012
+ *  @file  GlobalSolverPicard.cc
+ *  @brief GlobalSolverPicard
+ *  @note  Copyright (C) 2013 Jeremy Roberts
  */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #include "GlobalSolverPicard.hh"
 #include "SteffensenUpdate.hh"
@@ -14,7 +13,7 @@
 namespace erme_solver
 {
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 GlobalSolverPicard::GlobalSolverPicard(SP_db      					db,
                                        SP_indexer 					indexer,
                                        SP_server  					server,
@@ -27,28 +26,19 @@ GlobalSolverPicard::GlobalSolverPicard(SP_db      					db,
 	{
 		using namespace linear_algebra;
 
-	  d_J0 = new Vector(d_state->local_size(), 0.0);
-	  d_J1 = new Vector(d_state->local_size(), 0.0);
-
 		// Create MR operator
 		d_MR = new OperatorMR(d_R, d_M);
 
-		// Inner eigensolver iterations
+		// Picard-specific DB options
+    //
 		int inner_max_iters = 1e5;
 		if (d_db->check("erme_inner_max_iters"))
 			inner_max_iters = d_db->get<int>("erme_inner_max_iters");
-
-		// Inner eigensolver tolderance
+    //
 		double inner_tolerance = 1e-10;
 		if (d_db->check("erme_inner_tolerance"))
 			inner_tolerance = d_db->get<double>("erme_inner_tolerance");
-
-		d_innersolver = new EigenSolver(d_MR,
-				                            Matrix::SP_matrix(0),
-				                            inner_max_iters,
-				                            inner_tolerance);
-
-		// Check if we are using a non-default keff update
+    //
 		std::string updater = "default";
 		if (d_db->check("picard_update"))
 			updater = d_db->get<std::string>("picard_update");
@@ -58,13 +48,19 @@ GlobalSolverPicard::GlobalSolverPicard(SP_db      					db,
 			d_update = new SteffensenUpdate();
 		else
 			THROW("Unknown Picard eigenvalue updater: " + updater);
+
+    d_innersolver = new EigenSolver(d_MR,
+                                    Matrix::SP_matrix(0),
+                                    inner_max_iters,
+                                    inner_tolerance);
+
 		if (serment_comm::Comm::world_rank() == 0)
 		  std::cout << "Using eigenvalue updater: " << updater << std::endl;
 	}
 
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 void GlobalSolverPicard::solve()
 {
 	using serment_comm::Comm;
@@ -75,37 +71,32 @@ void GlobalSolverPicard::solve()
 
   if (Comm::world_rank() == 0) cout << " Picard: solving... " << endl;
 
-  // Get initial keff guess
+  // Set the initial guess for unknowns
+  Vector x(d_local_size, 1.0);
+  setup_initial_current(x);
   double keff = 1.0;
   if (d_db->check("erme_initial_keff"))
     keff = d_db->get<double>("erme_initial_keff");
-
-  // Start lambda at unity
   double lambda = 1.0;
-
-  if (Comm::is_global())
+  if (Comm::is_last())
   {
-		// Set space-angle zeroth order moments to uniform guess.  Not
-  	// used by SLEPc but will in a hand-coded power iteration.
-		for (int i = 0; i < d_indexer->number_local_moments(); ++i)
-		{
-			erme_response::ResponseIndex ri = d_indexer->response_index_from_local(i);
-			if (ri.azimuth + ri.polar + ri.space0 + ri.space1 == 0) (*d_J0)[i] = 1.0;
-		}
-		// Ensure a normalized initial guess and initialize the responses
-		d_J0->scale(1.0/d_J0->norm(d_J0->L2));
+    x[d_local_size - 2] = keff;
+    x[d_local_size - 1] = lambda;
   }
+
+  // Wrap current in R-sized vector
+  Vector::SP_vector J(new Vector(x, d_R->number_local_rows()));
 
   // Compute initial responses
   update_response(keff);
 
   if (Comm::is_global())
   {
-//		d_R->display(d_R->MATLAB, "R_i.out");
-//		d_M->display(d_R->MATLAB, "M.out");
-//		d_L->display(d_L->MATLAB, "L_i.out");
-//		d_F->display();
-//		d_A->display();
+		d_R->display(d_R->BINARY, "R_i.out");
+		d_M->display(d_R->BINARY, "M.out");
+		d_L->display(d_L->BINARY, "L_i.out");
+		d_F->display();
+		d_A->display();
   }
 
   // Initialize balance parameters
@@ -119,14 +110,15 @@ void GlobalSolverPicard::solve()
 
   // Compute the initial residual norm
   double norm = 1.0;
+
   if (Comm::is_global())
-  	norm = d_residual->compute_norm(*d_J0, keff, lambda);
+    norm = d_residual->compute_norm(x);
   Comm::broadcast(&norm, 1, 0);
   d_residual_norms.push_back(norm);
 
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
   // OUTER ITERATIONS
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
 
   int it = 1; // count outer iteration
   for (; it <= d_maximum_iterations; it++)
@@ -135,43 +127,40 @@ void GlobalSolverPicard::solve()
   	if (Comm::is_global())
   	{
 
-			//---------------------------------------------------------------------//
+			//----------------------------------------------------------------------//
 			// INNER ITERATIONS -- solves M*R*X = lambda*X
-			//---------------------------------------------------------------------//
+			//----------------------------------------------------------------------//
 
-			lambda = d_innersolver->solve(d_J0);
+			lambda = d_innersolver->solve(J);
 
-			//---------------------------------------------------------------------//
+			//----------------------------------------------------------------------//
 			// EIGENVALUE UPDATE -- k = fission / (absorption + leakage)
-			//---------------------------------------------------------------------//
+			//----------------------------------------------------------------------//
 
 			// Compute gains and losses.
-			gain        = d_F->dot(*d_J0);
-			absorption  = d_A->dot(*d_J0);
-			leakage     = d_L->leakage(*d_J0);
+			gain        = d_F->dot(*J);
+			absorption  = d_A->dot(*J);
+			leakage     = d_L->leakage(*J);
 			loss        = absorption + leakage;
 
-
-		  if (Comm::is_global())
-		  {
-				d_R->display(d_R->MATLAB, "R.out");
-				d_L->display(d_L->MATLAB, "L.out");
-		//		d_F->display();
-		//		d_A->display();
-		  }
-//			if (serment_comm::Comm::world_rank() == 0)
-//			{
-//				std::cout << " GAIN = "     << gain << std::endl;
-//				std::cout << " ABS = "      << absorption << std::endl;
-//				std::cout << " leakage = "  << leakage << std::endl;
-//			}
+			if (serment_comm::Comm::world_rank() == 0)
+			{
+				std::cout << " GAIN = "     << gain << std::endl;
+				std::cout << " ABS = "      << absorption << std::endl;
+				std::cout << " LEAK = "     << leakage << std::endl;
+			}
 
 			// Initial update of keff
 			keff = gain / loss;
 
 			// Improved the update, if applicable
-			keff = d_update->compute(keff, d_J0);
+			keff = d_update->compute(keff, J);
 
+			if (Comm::is_last)
+			{
+		    x[d_local_size - 2] = keff;
+		    x[d_local_size - 1] = lambda;
+			}
   	} // global
   	Comm::broadcast(&keff, 1, 0);
 
@@ -180,7 +169,7 @@ void GlobalSolverPicard::solve()
 
     // Compute the norm of the nonlinear residual.
     if (Comm::is_global())
-    	norm = d_residual->compute_norm(*d_J0, keff, lambda);
+    	norm = d_residual->compute_norm(*J);
     Comm::broadcast(&norm, 1, 0);
     d_residual_norms.push_back(norm);
 
@@ -205,13 +194,13 @@ void GlobalSolverPicard::solve()
   }
 
   // Update the state
-  d_state->update(d_J0, keff, lambda);
+  d_state->update(J, keff, lambda);
 
   return;
 }
 
 } // end namespace erme_solver
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 //              end of file GlobalSolverPicard.cc
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

@@ -1,18 +1,17 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /**
- *  @file   GlobalSolverBase.cc
- *  @brief  GlobalSolverBase
- *  @author Jeremy Roberts
- *  @date   Oct 1, 2012
+ *  @file  GlobalSolverBase.cc
+ *  @brief GlobalSolverBase
+ *  @note  Copyright (C) 2013 Jeremy Roberts
  */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #include "GlobalSolverBase.hh"
 
 namespace erme_solver
 {
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 GlobalSolverBase::
 GlobalSolverBase(SP_db 									db,
                  SP_indexer 						indexer,
@@ -28,7 +27,6 @@ GlobalSolverBase(SP_db 									db,
 {
 	using serment_comm::Comm;
 
-  // Preconditions
   Require(d_db);
   Require(d_indexer);
   Require(d_server);
@@ -63,22 +61,64 @@ GlobalSolverBase(SP_db 									db,
     Assert(d_tolerance >= 0.0);
   }
 
-  // Postconditions
+  d_local_size = d_R->number_local_rows();
+  if (serment_comm::Comm::is_last()) d_local_size += 2;
+
   Ensure(d_residual);
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 GlobalSolverBase::~GlobalSolverBase()
-{ /* ... */ }
+{
+  /* ... */
+}
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 GlobalSolverBase::vec_dbl GlobalSolverBase::residual_norms() const
 {
   return d_residual_norms;
 }
 
+//----------------------------------------------------------------------------//
+void GlobalSolverBase::update_response(const double keff)
+{
+  /// Give the server the new keff
+  d_server->update(keff);
+
+  /// Fill the operators with updated values
+  if (serment_comm::Comm::is_global())
+  {
+    d_R->update();
+    d_F->update();
+    d_A->update();
+    d_L->update();
+  }
+}
+
+//----------------------------------------------------------------------------//
+void GlobalSolverBase::setup_initial_current(Vector &x)
+{
+  Require(x.local_size() >= d_R->number_local_rows());
+  using serment_comm::Comm;
+  if (Comm::is_global())
+  {
+    // Set zeroth order space/angle moments to unity, with others to zero. If
+    // different energy bases are used, better starting guesses may be used.
+    x.set(0.0);
+    for (int i = 0; i < d_indexer->number_local_moments(); ++i)
+    {
+      erme_response::ResponseIndex ri = d_indexer->response_index_from_local(i);
+      std::cout << ri << std::endl;
+      if (ri.azimuth + ri.polar + ri.space0 + ri.space1 == 0)
+        x[i] = 1.0;
+    }
+    x.assemble();
+    x.scale(1.0/x.norm(x.L2));
+  }
+}
+
 } // end namespace erme_solver
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 //              end of file GlobalSolverBase.cc
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

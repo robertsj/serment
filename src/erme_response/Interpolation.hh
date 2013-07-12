@@ -1,11 +1,10 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /**
- *  @file   Interpolation.hh
- *  @brief  Interpolation utilities
- *  @author Jeremy Roberts
- *  @date   Oct 9, 2012
+ *  @file  Interpolation.hh
+ *  @brief Interpolation utilities
+ *  @note  Copyright (C) 2013 Jeremy Roberts
  */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #ifndef erme_response_INTERPOLATION_HH_
 #define erme_response_INTERPOLATION_HH_
@@ -272,7 +271,6 @@ interpolate(double xi,
             detran_utilities::vec_dbl &x,
             detran_utilities::vec_dbl &r)
 {
-  // Preconditions
   Require(x.size() == r.size());
   Require(x.size() > 0);
   Require(x.size() < 5);
@@ -300,6 +298,6 @@ interpolate(double xi,
 
 #endif // erme_response_INTERPOLATION_HH_
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 //              end of file Interpolation.hh
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

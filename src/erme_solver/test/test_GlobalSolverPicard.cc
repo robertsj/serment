@@ -1,27 +1,23 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /**
- *  @file   test_GlobalSolverPicard.cc
- *  @brief  test_GlobalSolverPicard
- *  @author Jeremy Roberts
- *  @date   Oct 6, 2012
+ *  @file  test_GlobalSolverPicard.cc
+ *  @brief Test of GlobalSolverPicard class
+ *  @note  Copyright (C) 2013 Jeremy Roberts
  */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 // LIST OF TEST FUNCTIONS
 #define TEST_LIST                     \
         FUNC(test_GlobalSolverPicard)
 
-#include "erme_solver/GlobalSolverPicard.hh"
 #include "utilities/TestDriver.hh"
-#include "erme_response/ResponseIndexer.hh"
-#include "erme_response/ResponseServer.hh"
-#include "erme_geometry/NodePartitioner.hh"
-#include "linear_algebra/LinearAlgebraSetup.hh"
+#include "erme_solver/ManagerERME.hh"
+#include "erme_geometry/test/nodelist_fixture.hh"
 #include <iostream>
 
-// Setup
-#include "erme_geometry/test/nodelist_fixture.hh"
-using namespace erme_response;
+using namespace serment_comm;
+using namespace erme_solver;
+using namespace erme_geometry;
 using namespace detran_test;
 using detran_utilities::soft_equiv;
 using std::cout;
@@ -32,98 +28,35 @@ int main(int argc, char *argv[])
   RUN(argc, argv);
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // TEST DEFINITIONS
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 int test_GlobalSolverPicard(int argc, char *argv[])
 {
+  // Parameter database
+  ManagerERME::SP_db db = detran_utilities::InputDB::Create();
 
-  typedef erme_solver::GlobalSolverPicard Solver;
+  // Setup the manager and comm
+  ManagerERME manager(argc, argv);
+  int ng = Comm::size() == 1 ? 1 : 2;
+  db->put<std::string>("erme_solver_type", "picard");
+  db->put<int>("comm_local_groups", 1);
+  db->put<int>("dimension", 1);
+  db->put<int>("erme_maximum_iterations", 10);
+  db->put("basis_p_type", "jacobi");
+  manager.build_comm(db);
 
-  //-------------------------------------------------------------------------//
-  // SETUP COMM
-  //-------------------------------------------------------------------------//
+  // Get nodes, build problem, and solve
+  NodeList::SP_nodelist nodes = cartesian_node_detran_list_1d(0);//, 0, 0);
+  manager.build_erme(nodes);
+//  nodes->display();
+  manager.solve();
 
-  typedef serment_comm::Comm Comm;
-
-  Comm::initialize(argc, argv);
-  // Setup local and global communicators.
-  int number_local_comm = 1;
-  if (Comm::size() > 2) number_local_comm = 2;
-  Comm::setup_communicators(number_local_comm);
-
-  //-------------------------------------------------------------------------//
-  // SETUP LINEAR ALGEBRA
-  //-------------------------------------------------------------------------//
-
-  // This sets the PETSc communicator to global
-  linear_algebra::initialize(argc, argv);
-
-  // New scope so PETSc doesn't puke
-  {
-
-  //-------------------------------------------------------------------------//
-  // SETUP NODES AND PARTITION
-  //-------------------------------------------------------------------------//
-
-  // Get the node list
-  erme_geometry::NodeList::SP_nodelist nodes;
-  if (Comm::rank() == 0)
-    nodes = erme_geometry::cartesian_node_dummy_list_2d(1, 0, 0);
-
-  // Partition the nodes
-  erme_geometry::NodePartitioner partitioner;
-  partitioner.partition(nodes);
-
-  //-------------------------------------------------------------------------//
-  // SETUP INDEXER AND SERVER
-  //-------------------------------------------------------------------------//
-
-  // Create parameter database
-  erme_response::ResponseIndexer::SP_db db(new detran_utilities::InputDB());
-  db->put<int>("dimension", 							2);
-  db->put<int>("erme_order_reduction", 		3);
-  db->put<int>("erme_maximum_iterations", 5);
-
-  // Create indexer
-  erme_response::ResponseIndexer::SP_indexer
-    indexer(new erme_response::ResponseIndexer(db, nodes));
-
-  // Create server
-  erme_response::ResponseServer::SP_server
-    server(new erme_response::ResponseServer(nodes, indexer));
-  server->update(1.0);
-
-  //-------------------------------------------------------------------------//
-  // SETUP STATE AND OPERATORS AND SOLVER
-  //-------------------------------------------------------------------------//
-
-  // Create state
-  Solver::SP_state state(new erme::StateERME(indexer->number_local_moments()));
-  std::cout << "local size = " << state->local_size() << std::endl;
-
-  // Create response operators
-  Solver::SP_responsecontainer
-    responses(new erme::ResponseContainer(nodes, indexer, server));
-
-  // Solver
-  Solver::SP_solver solver(new Solver(db, indexer, server, state, responses));
-
-  solver->solve();
-
-  } // end extra scope for petsc
-
-  //-------------------------------------------------------------------------//
-  // WRAP UP
-  //-------------------------------------------------------------------------//
-
-  linear_algebra::finalize();
-  Comm::finalize();
+  serment_comm::Comm::global_barrier();
   return 0;
-
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 //              end of file test_GlobalSolverPicard.cc
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

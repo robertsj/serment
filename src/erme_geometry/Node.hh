@@ -1,20 +1,19 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /**
- *  @file   Node.hh
- *  @brief  Node class definition
- *  @author Jeremy Roberts
- *  @date   Aug 22, 2012
+ *  @file  Node.hh
+ *  @brief Node class definition
+ *  @note  Copyright (C) 2013 Jeremy Roberts
  */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #ifndef erme_geometry_NODE_HH_
 #define erme_geometry_NODE_HH_
 
 #include "serment_config.h"
 #include "comm/Comm.hh"
+#include "geometry/Point.hh"
 #include "utilities/Definitions.hh"
 #include "utilities/DBC.hh"
-#include "utilities/Point.hh"
 #include "utilities/SP.hh"
 #include <vector>
 #include <string>
@@ -24,6 +23,12 @@
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/export.hpp>
+
+// Forward declarations
+namespace detran_geometry
+{
+class Point;
+}
 
 /**
  *  @namespace erme_geometry
@@ -73,9 +78,9 @@ class Node
 
 public:
 
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
   // ENUMERATIONS
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
 
   /// Boundary condition identifiers.  Note, periodic is not listed, since
   /// nodes can be explicitly linked in a periodic fashion.
@@ -84,9 +89,9 @@ public:
     REFLECT = -1, VACUUM = -2
   };
 
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
   // TYPEDEFS
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
 
   typedef detran_utilities::SP<Node>        SP_node;
   typedef detran_utilities::size_t          size_t;
@@ -94,11 +99,11 @@ public:
   typedef detran_utilities::vec_dbl         vec_dbl;
   typedef detran_utilities::vec_size_t      vec_size_t;
   typedef detran_utilities::vec2_size_t     vec2_size_t;
-  typedef detran_utilities::Point           Point;
+  typedef detran_geometry::Point            Point;
 
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
   // CONSTRUCTOR & DESTRUCTOR
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
 
   /**
    *  @brief Constructor
@@ -121,9 +126,9 @@ public:
   /// Pure virtual destructor
   virtual ~Node() = 0;
 
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
   // ABSTRACT INTERFACE -- ALL NODES MUST IMPLEMENT THESE
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
 
   /**
    *  @brief Return the area of a node surface
@@ -135,11 +140,11 @@ public:
   virtual double volume() const = 0;
 
   /// Return a color
-  virtual double color(detran_utilities::Point point, std::string key = "MATERIAL") = 0;
+  virtual double color(const Point &point, std::string key = "MATERIAL") = 0;
 
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
   // PUBLIC INTERFACE
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
 
   /// Node dimension
   size_t dimension() const;
@@ -160,9 +165,9 @@ public:
 
 private:
 
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
   // DATA
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
 
   /// Problem dimension
   size_t d_dimension;
@@ -179,9 +184,9 @@ private:
   /// Energy order per surface
   vec_size_t d_energy_order;
 
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
   // IMPLEMENTATION
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
 
 protected:
 
@@ -216,6 +221,6 @@ private:
 
 #endif // erme_geometry_NODE_HH_
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 //              end of file Node.hh
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

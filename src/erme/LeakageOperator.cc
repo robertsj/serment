@@ -21,6 +21,7 @@ LeakageOperator::LeakageOperator(SP_nodelist nodes,
            indexer->number_local_moments())
   , d_global_leakage(nodes->number_local_surfaces(), 0.0)
   , d_L_times_moments(nodes->number_local_surfaces(), 0.0)
+  , d_leakage_vector(indexer->number_local_moments(), 0.0)
 {
   vec_int nnz_on_diag(d_nodes->number_local_surfaces(),  0);
   vec_int nnz_off_diag(d_nodes->number_local_surfaces(), 0);
@@ -137,11 +138,19 @@ double LeakageOperator::leakage(linear_algebra::Vector &x)
   // Compute L * x
   multiply(x, d_L_times_moments);
 
-  // Compute net global leakage
+  // Compute net global leakage  gL'*(L*x) = [1xs][s*n]*[n*s]
+  // L'*gl = [n*s][s*1]
   double val = d_L_times_moments.dot(d_global_leakage);
 
   // \todo Could put warning for negative leakage
   return val;
+}
+
+//---------------------------------------------------------------------------//
+const linear_algebra::Vector& LeakageOperator::leakage_vector()
+{
+  multiply_transpose(d_global_leakage, d_leakage_vector);
+  return d_leakage_vector;
 }
 
 //---------------------------------------------------------------------------//

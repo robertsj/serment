@@ -11,6 +11,7 @@
 #define linear_algebra_NONLINEARRESIDUALBASE_HH_
 
 #include "Vector.hh"
+#include "utilities/Definitions.hh"
 #include "utilities/SP.hh"
 
 namespace linear_algebra
@@ -27,6 +28,7 @@ public :
   //--------------------------------------------------------------------------//
 
   typedef detran_utilities::SP<NonlinearResidualBase>    SP_residual;
+  typedef detran_utilities::size_t                       size_t;
 
   //--------------------------------------------------------------------------//
   // PUBLIC FUNCTIONS

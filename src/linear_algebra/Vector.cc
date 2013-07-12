@@ -132,7 +132,7 @@ Vector::~Vector()
 void Vector::assemble()
 {
   PetscErrorCode ierr = 0;
-  if (!d_is_assembled)
+  if (1)//!d_is_assembled)
   {
     ierr = VecAssemblyBegin(d_V);
     ierr = VecAssemblyEnd(d_V);

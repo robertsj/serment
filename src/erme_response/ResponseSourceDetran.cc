@@ -1,11 +1,10 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /**
- *  @file   ResponseSourceDetran.cc
- *  @brief  ResponseSourceDetran
- *  @author Jeremy Roberts
- *  @date   Jan 9, 2013
+ *  @file  ResponseSourceDetran.cc
+ *  @brief ResponseSourceDetran
+ *  @note  Copyright (C) 2013 Jeremy Roberts
  */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #include "ResponseSourceDetran.hh"
 #include "ResponseSourceDetranDiffusion.t.hh"
@@ -15,7 +14,7 @@
 namespace erme_response
 {
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 template <class B>
 ResponseSourceDetran<B>::ResponseSourceDetran(SP_node node,
                                               SP_indexer indexer)
@@ -31,7 +30,8 @@ ResponseSourceDetran<B>::ResponseSourceDetran(SP_node node,
   Require(node->material());
   Require(node->mesh());
 
-  //std::cout << "********* BUILDING DETRAN<" << D::dimension << "> SOURCE FOR NODE " << d_node->name() << std::endl;
+  std::cout << "********* BUILDING DETRAN<" << D::dimension
+            << "> SOURCE FOR NODE " << d_node->name() << std::endl;
 
   d_db = node->db();
   d_material = node->material();
@@ -75,7 +75,7 @@ ResponseSourceDetran<B>::ResponseSourceDetran(SP_node node,
   construct_basis();
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 template <class B>
 void ResponseSourceDetran<B>::
 compute(SP_response response, const ResponseIndex &index)
@@ -84,27 +84,28 @@ compute(SP_response response, const ResponseIndex &index)
   d_solver->boundary()->clear();
   d_solver->boundary()->clear_bc();
   set_boundary(index);
+  std::cout << "idx =" << index << std::endl;
 
-  //THROW("lala");
-//  std::cout << "********* OUTGOING BOUNDARY *********** " << std::endl;
-//  d_B->display(false);
-//  std::cout << "********* INCIDENT BOUNDARY *********** " << std::endl;
-//  d_B->display(true);
+  std::cout << "********* OUTGOING BOUNDARY *********** " << std::endl;
+  d_B->display(false);
+  std::cout << "********* INCIDENT BOUNDARY *********** " << std::endl;
+  d_B->display(true);
+
   d_solver->solve(d_keff);
-
-//  d_solver->state()->display();
-//  std::cout << "********* OUTGOING BOUNDARY *********** " << std::endl;
-//  d_B->display(false);
-//  std::cout << "********* INCIDENT BOUNDARY *********** " << std::endl;
-//  d_B->display(true);
+ // THROW("lala");
+  d_solver->state()->display();
+  std::cout << "********* OUTGOING BOUNDARY *********** " << std::endl;
+  d_B->display(false);
+  std::cout << "********* INCIDENT BOUNDARY *********** " << std::endl;
+  d_B->display(true);
 
   expand(response, index);
 
-//  response->display();
-//  THROW("lala");
+    response->display();
+// THROW("lala");
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 template <class B>
 void ResponseSourceDetran<B>::construct_basis()
 {
@@ -112,9 +113,9 @@ void ResponseSourceDetran<B>::construct_basis()
 
   using std::string;
 
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
   // ENERGY
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
 
   string basis_e_type = "ddf";
   if (d_db->check("basis_e_type"))
@@ -123,9 +124,9 @@ void ResponseSourceDetran<B>::construct_basis()
   for (size_t s = 0; s < d_node->number_surfaces(); ++s)
     d_basis_e[s] = new detran_orthog::DDF(d_node->energy_order(s), ng);
 
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
   // SPACE
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
 
   string basis_s_type = "dlp";
   if (d_db->check("basis_s_type"))
@@ -150,9 +151,9 @@ void ResponseSourceDetran<B>::construct_basis()
   // Skip angular stuff if diffusion.
   if (d_solver->discretization() == d_solver->DIFF) return;
 
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
   // ANGLE
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
 
   /*
    * Here, we need to do a bit more logic. If we do the DLP approach, then
@@ -331,7 +332,7 @@ void ResponseSourceDetran<B>::construct_basis()
 
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 template <class B>
 void ResponseSourceDetran<B>::expand(SP_response response,
                                      const ResponseIndex &index_i)
@@ -354,9 +355,9 @@ void ResponseSourceDetran<B>::expand(SP_response response,
   expand_boundary(response, index_i);
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // EXPLICIT INSTANTIATIONS
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 template class ResponseSourceDetran<detran::BoundaryDiffusion<detran::_1D> >;
 template class ResponseSourceDetran<detran::BoundaryDiffusion<detran::_2D> >;
@@ -368,6 +369,6 @@ template class ResponseSourceDetran<detran::BoundarySN<detran::_2D> >;
 
 } // end namespace erme_response
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 //              end of file ResponseSourceDetran.cc
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

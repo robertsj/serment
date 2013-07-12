@@ -1,11 +1,10 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /**
- *  @file   GlobalSolverBase.hh
- *  @brief  GlobalSolverBase class definition
- *  @author Jeremy Roberts
- *  @date   Sep 4, 2012
+ *  @file  GlobalSolverBase.hh
+ *  @brief GlobalSolverBase class definition
+ *  @note  Copyright (C) 2013 Jeremy Roberts
  */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #ifndef erme_solver_GLOBALSOLVERBASE_HH_
 #define erme_solver_GLOBALSOLVERBASE_HH_
@@ -36,9 +35,9 @@ class GlobalSolverBase
 
 public:
 
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
   // TYPEDEFS
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
 
   typedef detran_utilities::SP<GlobalSolverBase>      		SP_solver;
   typedef detran_utilities::InputDB::SP_input         		SP_db;
@@ -53,13 +52,15 @@ public:
   typedef erme::LeakageOperator::SP_leakage           		SP_L;
   typedef OperatorMR::SP_MR                           		SP_MR;
   typedef NonlinearResidual::SP_residual              		SP_residual;
-  typedef linear_algebra::Vector::SP_vector           		SP_vector;
+  typedef linear_algebra::Vector                          Vector;
+  typedef Vector::SP_vector           		                SP_vector;
   typedef detran_utilities::vec_dbl                   		vec_dbl;
   typedef detran_utilities::vec_int                   		vec_int;
+  typedef detran_utilities::size_t                        size_t;
 
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
   // PUBLIC INTERFACE
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
 
   /**
    *  @brief Constructor
@@ -86,9 +87,9 @@ public:
 
 protected:
 
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
   // DATA
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
 
   /// Parameter database
   SP_db d_db;
@@ -118,29 +119,21 @@ protected:
   vec_dbl d_residual_norms;
   /// Number of inners for each (outer) iteration
   vec_int d_inner_iterations;
+  /// Local size of unknown vector
+  size_t d_local_size;
 
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
   // IMPLEMENTATION
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
 
   /// Update the response operators given a new eigenvalue
-  void update_response(const double keff)
-  {
-    /// Give the server the new keff
-    d_server->update(keff);
-
-    /// Fill the operators with updated values
-    if (serment_comm::Comm::is_global())
-    {
-			d_R->update();
-			d_F->update();
-			d_A->update();
-			d_L->update();
-    }
-  }
+  void update_response(const double keff);
 
   /// Monitor the convergence
-  void monitor();
+  //void monitor();
+
+  /// Set initial guess to be unity in zeroth order moments
+  void setup_initial_current(Vector &x);
 
 };
 
@@ -148,6 +141,6 @@ protected:
 
 #endif // erme_solver_GLOBALSOLVERBASE_HH_
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 //              end of file GlobalSolverBase.hh
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

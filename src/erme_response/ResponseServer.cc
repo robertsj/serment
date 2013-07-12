@@ -1,11 +1,10 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /**
- *  @file   ResponseServer.cc
- *  @author robertsj
- *  @date   Aug 31, 2012
- *  @brief  ResponseServer class definition.
+ *  @file  ResponseServer.cc
+ *  @brief ResponseServer class definition
+ *  @note  Copyright (C) 2013 Jeremy Roberts
  */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #include "ResponseServer.hh"
 #include "ResponseSourceFactory.hh"
@@ -16,7 +15,7 @@
 namespace erme_response
 {
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 ResponseServer::ResponseServer(SP_nodelist  nodes,
                                SP_indexer   indexer,
                                std::string  dbname,
@@ -58,7 +57,7 @@ ResponseServer::ResponseServer(SP_nodelist  nodes,
 
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 void ResponseServer::update(const double keff)
 {
   // Preconditions
@@ -93,11 +92,11 @@ void ResponseServer::update(const double keff)
 
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // IMPLEMENTATION
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 /*
  *  Simplest case of having each process do a predefined amount of
  *  work.  This first implementation assumes all responses are created
@@ -203,3 +202,6 @@ void ResponseServer::update_explicit_work_share()
 
 } // end namespace erme_response
 
+//----------------------------------------------------------------------------//
+//              end of file ResponseServer.cc
+//----------------------------------------------------------------------------//

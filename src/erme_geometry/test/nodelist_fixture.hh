@@ -26,26 +26,69 @@ namespace erme_geometry
 // DETRAN NODE LISTS
 //---------------------------------------------------------------------------//
 
+//---------------------------------------------------------------------------//
+NodeList::SP_nodelist
+cartesian_node_detran_list_1d(int po = 0)
+{
+  //  | 0 | 1 | 1 | 0 |
+
+  // Create node list
+  NodeList::SP_nodelist nodes(new NodeList());
+
+  // Get two, one-dimensional Cartesian test nodes
+  NodeList::SP_node node0 = cartesian_node_detran(1, 0, 0, po);
+  NodeList::SP_node node1 = cartesian_node_detran(1, 0, 0, po);
+
+  // Create neighbor lists.
+  NodeList::vec2_neighbor neighbors(4);
+  NodeList::vec_neighbor neigh0(2, NeighborSurface(Node::VACUUM, 0));
+  NodeList::vec_neighbor neigh1(2, NeighborSurface(Node::VACUUM, 0));
+  NodeList::vec_neighbor neigh2(2, NeighborSurface(Node::VACUUM, 0));
+  NodeList::vec_neighbor neigh3(2, NeighborSurface(Node::VACUUM, 0));
+  neigh0[CartesianNode::EAST]   = NeighborSurface(1, CartesianNode::WEST);
+  neigh1[CartesianNode::WEST]   = NeighborSurface(0, CartesianNode::EAST);
+  neigh2[CartesianNode::EAST]   = NeighborSurface(3, CartesianNode::WEST);
+  neigh3[CartesianNode::WEST]   = NeighborSurface(2, CartesianNode::EAST);
+
+  // Add nodes
+  nodes->add_node(node0);
+  nodes->add_node(node1);
+
+  // Node map and neighbors
+  NodeList::vec_int node_map(4, 0);
+  node_map[0]  = 0;
+  node_map[1]  = 1;
+  node_map[2]  = 1;
+  node_map[3]  = 0;
+  neighbors[0] = neigh0;
+  neighbors[1] = neigh1;
+  neighbors[2] = neigh2;
+  neighbors[3] = neigh3;
+  nodes->set_nodal_map(node_map, neighbors);
+
+  return nodes;
+}
+
 // Get a list of Detran nodes
 NodeList::SP_nodelist
-cartesian_node_detran_list_2d()
+cartesian_node_detran_list_2d(int so = 4, int ao = 2, int po = 2)
 {
 
   // Create node list
   NodeList::SP_nodelist nodes(new NodeList());
 
   // Get four, two-dimensional Cartesian test nodes
-  NodeList::SP_node node0 = cartesian_node_detran(2);
-  NodeList::SP_node node1 = cartesian_node_detran(2);
-  NodeList::SP_node node2 = cartesian_node_detran(2);
-  NodeList::SP_node node3 = cartesian_node_detran(2);
+  NodeList::SP_node node0 = cartesian_node_detran(2, so, ao, po);
+  NodeList::SP_node node1 = cartesian_node_detran(2, so, ao, po);
+  NodeList::SP_node node2 = cartesian_node_detran(2, so, ao, po);
+  NodeList::SP_node node3 = cartesian_node_detran(2, so, ao, po);
 
   // Create neighbor lists.
   NodeList::vec2_neighbor neighbors(4);
-  NodeList::vec_neighbor neigh0(4, NeighborSurface(Node::VACUUM, 0));
-  NodeList::vec_neighbor neigh1(4, NeighborSurface(Node::VACUUM, 0));
-  NodeList::vec_neighbor neigh2(4, NeighborSurface(Node::VACUUM, 0));
-  NodeList::vec_neighbor neigh3(4, NeighborSurface(Node::VACUUM, 0));
+  NodeList::vec_neighbor neigh0(4, NeighborSurface(Node::REFLECT, 0));
+  NodeList::vec_neighbor neigh1(4, NeighborSurface(Node::REFLECT, 0));
+  NodeList::vec_neighbor neigh2(4, NeighborSurface(Node::REFLECT, 0));
+  NodeList::vec_neighbor neigh3(4, NeighborSurface(Node::REFLECT, 0));
   //  --- ---
   // | 2 | 3 |
   //  --- ---

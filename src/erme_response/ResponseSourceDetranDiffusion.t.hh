@@ -1,11 +1,10 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /**
- *  @file   ResponseSourceDetranDiffusion.t.hh
- *  @author robertsj
- *  @date   Jan 22, 2013
- *  @brief  ResponseSourceDetran diffusion specializations
+ *  @file  ResponseSourceDetranDiffusion.t.hh
+ *  @brief ResponseSourceDetran diffusion specializations
+ *  @note  Copyright (C) 2013 Jeremy Roberts
  */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #ifndef erme_response_RESPONSESOURCEDETRANDIFFUSION_T_HH_
 #define erme_response_RESPONSESOURCEDETRANDIFFUSION_T_HH_
@@ -16,11 +15,11 @@
 namespace erme_response
 {
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 // DIFFUSION SPECIALIZATIONS
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 template <>
 void ResponseSourceDetran<detran::BoundaryDiffusion<detran::_1D> >::
 set_boundary(const ResponseIndex &index)
@@ -33,7 +32,7 @@ set_boundary(const ResponseIndex &index)
   }
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 template <>
 void ResponseSourceDetran<detran::BoundaryDiffusion<detran::_2D> >::
 set_boundary(const ResponseIndex &index)
@@ -60,7 +59,7 @@ set_boundary(const ResponseIndex &index)
   }
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 template <>
 void ResponseSourceDetran<detran::BoundaryDiffusion<detran::_3D> >::
 set_boundary(const ResponseIndex &index)
@@ -93,7 +92,7 @@ set_boundary(const ResponseIndex &index)
   }
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 template <>
 void ResponseSourceDetran<detran::BoundaryDiffusion<detran::_1D> >::
 expand_boundary(SP_response          response,
@@ -106,9 +105,9 @@ expand_boundary(SP_response          response,
 
   for (size_t surface = 0; surface < 2; ++surface)
   {
-    //-------------------------------------------------------------------------//
+    //--------------------------------------------------------------------------//
     // CURRENT RESPONSE
-    //-------------------------------------------------------------------------//
+    //--------------------------------------------------------------------------//
 
     vec_dbl b_e(d_material->number_groups(), 0.0);
     for (size_t g = 0; g < d_material->number_groups(); ++g)
@@ -124,9 +123,9 @@ expand_boundary(SP_response          response,
       response->boundary_response(index_o.nodal, index_i.nodal) = b_e[index_o.energy];
     }
 
-    //-----------------------------------------------------------------------//
+    //------------------------------------------------------------------------//
     // LEAKAGE RESPONSE
-    //-----------------------------------------------------------------------//
+    //------------------------------------------------------------------------//
 
     response->leakage_response(surface, index_i.nodal) = 0.0;
     for (size_t g = 0; g < d_material->number_groups(); ++g)
@@ -140,7 +139,7 @@ expand_boundary(SP_response          response,
 
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 template <>
 void ResponseSourceDetran<detran::BoundaryDiffusion<detran::_2D> >::
 expand_boundary(SP_response          response,
@@ -154,9 +153,9 @@ expand_boundary(SP_response          response,
   for (size_t surface = 0; surface < 4; ++surface)
   {
 
-    //-----------------------------------------------------------------------//
+    //------------------------------------------------------------------------//
     // CURRENT RESPONSE
-    //-----------------------------------------------------------------------//
+    //------------------------------------------------------------------------//
 
     size_t o_s = d_basis_s[surface][0]->order();
     size_t o_e = d_basis_e[surface]->order();
@@ -201,9 +200,9 @@ expand_boundary(SP_response          response,
         poo * R[index_o.space0][index_o.energy];
     }
 
-    //-----------------------------------------------------------------------//
+    //------------------------------------------------------------------------//
     // LEAKAGE RESPONSE
-    //-----------------------------------------------------------------------//
+    //------------------------------------------------------------------------//
 
     size_t dim  = surface / 2;
     size_t dim0 = d_spatial_dim[dim][0];
@@ -224,7 +223,7 @@ expand_boundary(SP_response          response,
 
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 template <>
 void ResponseSourceDetran<detran::BoundaryDiffusion<detran::_3D> >::
 expand_boundary(SP_response          response,
@@ -235,9 +234,9 @@ expand_boundary(SP_response          response,
   typedef BoundaryTraits<_3D> B_T;
   typedef BoundaryValue<_3D> B_V;
 
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
   // CURRENT RESPONSE
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
 
   for (size_t surface = 0; surface < 6; ++surface)
   {
@@ -304,9 +303,9 @@ expand_boundary(SP_response          response,
     }
   }
 
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
   // LEAKAGE RESPONSE
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
 
   for (size_t surface = 0; surface < 6; ++surface)
   {
@@ -338,3 +337,7 @@ expand_boundary(SP_response          response,
 } // end namespace erme_response
 
 #endif /* erme_response_RESPONSESOURCEDETRANDIFFUSION_T_HH_ */
+
+//----------------------------------------------------------------------------//
+//              end of file ResponseSourceDetranDiffusion.t.hh
+//----------------------------------------------------------------------------//

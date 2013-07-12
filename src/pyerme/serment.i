@@ -27,7 +27,7 @@
 // Linear algebra
 #include "linear_algebra/LinearAlgebraSetup.hh"
 // Manager
-#include "erme_utils/ManagerERME.hh"
+#include "erme_solver/ManagerERME.hh"
 #include "erme_utils/PostProcess.hh"
 #include "erme_utils/Archive.hh"
 %} // end module pyserment
@@ -87,9 +87,10 @@ as_cartesian_node(detran_utilities::SP<erme_geometry::Node> *n)
 // PETSc/SLEPc initialization
 %include "linear_algebra/LinearAlgebraSetup.hh"
 
+%include "erme_solver/ManagerERME.hh"
+%template(ManagerERMESP)          detran_utilities::SP<erme_solver::ManagerERME>;
+
 // ERME utilities
 %include "erme_utils/PostProcess.hh"
 %template(PostProcessSP)          detran_utilities::SP<erme_utils::PostProcess>;
-%include "erme_utils/ManagerERME.hh"
-%template(ManagerERMESP)          detran_utilities::SP<erme_utils::ManagerERME>;
 %include "erme_utils/Archive.hh"

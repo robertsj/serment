@@ -1,14 +1,13 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /**
- *  @file   NodeFactoryDetran.hh
- *  @brief  NodeFactoryDetran
- *  @author Jeremy Roberts
- *  @date   Aug 23, 2012
+ *  @file  NodeFactoryDetran.hh
+ *  @brief NodeFactoryDetran class definition
+ *  @note  Copyright (C) 2013 Jeremy Roberts
  */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
-#ifndef NODEFACTORYDETRAN_HH_
-#define NODEFACTORYDETRAN_HH_
+#ifndef erme_geometry_NODEFACTORYDETRAN_HH_
+#define erme_geometry_NODEFACTORYDETRAN_HH_
 
 #include "NodeFactory.hh"
 
@@ -31,12 +30,10 @@ public:
   virtual ~NodeFactoryDetran(){}
 
   /**
-   *  \brief Create a node
-   *  \param db   Parameter database.
+   *  @brief Create a node
+   *  @param db   Parameter database.
    */
-  SP_node create_node(SP_db db,
-                      SP_material material,
-                      SP_mesh mesh);
+  SP_node create_node(SP_db db, SP_material material, SP_mesh mesh);
 
 private:
 
@@ -44,8 +41,8 @@ private:
 
 } // end namespace erme_geometry
 
-#endif // NODEFACTORYDETRAN_HH_ 
+#endif // erme_geometry_NODEFACTORYDETRAN_HH_
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 //              end of file NodeFactoryDetran.hh
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

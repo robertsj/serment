@@ -1,11 +1,10 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /**
- *  @file   DummyNode.cc
- *  @brief  DummyNode member definitions
- *  @author Jeremy Roberts
- *  @date   Sep 1, 2012
+ *  @file  DummyNode.cc
+ *  @brief DummyNode member definitions
+ *  @note  Copyright (C) 2013 Jeremy Roberts
  */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #include "DummyNode.hh"
 #include "NodeSerialization.hh"
@@ -13,7 +12,7 @@
 namespace erme_geometry
 {
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 CartesianNodeDummy::CartesianNodeDummy(const size_t dim,
                                        const size_t so,
                                        const size_t po,
@@ -34,6 +33,6 @@ CartesianNodeDummy::CartesianNodeDummy(const size_t dim,
 
 BOOST_CLASS_EXPORT_IMPLEMENT(erme_geometry::CartesianNodeDummy)
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 //              end of file DummyNode.cc
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

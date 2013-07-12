@@ -1,11 +1,10 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /**
- *  @file   ResponseSourceFactoryDetran.hh
- *  @author robertsj
- *  @date   Aug 31, 2012
- *  @brief  ResponseSourceFactoryDetran build specialization
+ *  @file  ResponseSourceFactoryDetran.hh
+ *  @brief ResponseSourceFactoryDetran build specialization
+ *  @note  Copyright (C) 2013 Jeremy Roberts
  */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #ifndef erme_response_RESPONSESOURCEFACTORYDETRAN_HH_
 #define erme_response_RESPONSESOURCEFACTORYDETRAN_HH_
@@ -19,7 +18,7 @@
 namespace erme_response
 {
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 inline ResponseSourceFactory::SP_source
 ResponseSourceFactory::build_detran(SP_node node, SP_indexer indexer)
 {
@@ -86,3 +85,7 @@ ResponseSourceFactory::build_detran(SP_node node, SP_indexer indexer)
 } // end namespace erme_response
 
 #endif /* erme_response_RESPONSESOURCEFACTORYDETRAN_HH_ */
+
+//----------------------------------------------------------------------------//
+//              end of file ResponseSourceFactoryDetran.hh
+//----------------------------------------------------------------------------//

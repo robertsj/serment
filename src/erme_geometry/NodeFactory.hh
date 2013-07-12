@@ -1,14 +1,13 @@
-//----------------------------------*-C++-*----------------------------------//
-/*!
- * \file   NodeFactory.hh
- * \brief  NodeFactory class definition
- * \author Jeremy Roberts
- * \date   Aug 23, 2012
+//----------------------------------*-C++-*-----------------------------------//
+/**
+ *  @file  NodeFactory.hh
+ *  @brief NodeFactory class definition
+ *  @note  Copyright (C) 2013 Jeremy Roberts
  */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
-#ifndef NODEFACTORY_HH_
-#define NODEFACTORY_HH_
+#ifndef erme_geometry_NODEFACTORY_HH_
+#define erme_geometry_NODEFACTORY_HH_
 
 #include "Node.hh"
 #include "utilities/InputDB.hh"
@@ -18,9 +17,9 @@
 namespace erme_geometry
 {
 
-/*!
- *  \class NodeFactory
- *  \brief Base class for constructing various node types
+/**
+ *  @class NodeFactory
+ *  @brief Base class for constructing various node types
  */
 class NodeFactory
 {
@@ -39,18 +38,19 @@ public:
   /// Virtual destructor
   virtual ~NodeFactory(){}
 
-  /*!
-   *  \brief Create a node
+  /**
+   *  @brief Create a node
    *
    *  Everything needed to build the node must
    *  exist in the database.
    *
-   *  \param db   Parameter database.
-   *  \param db
+   *  @param db         parameter database.
+   *  @param material   cross section
+   *  @param mesh       geometry
    */
-  virtual SP_node create_node(SP_db db,
+  virtual SP_node create_node(SP_db       db,
                               SP_material material = SP_material(),
-                              SP_mesh mesh = SP_mesh()) = 0;
+                              SP_mesh     mesh = SP_mesh()) = 0;
 
 private:
 
@@ -58,8 +58,8 @@ private:
 
 } // end namespace erme_geometry
 
-#endif // NODEFACTORY_HH_ 
+#endif // erme_geometry_NODEFACTORY_HH_
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 //              end of file NodeFactory.hh
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

@@ -1,27 +1,27 @@
 //----------------------------------*-C++-*----------------------------------//
 /**
- *  @file   test_LeakageOperator.cc
- *  author Jeremy Roberts
- * \date   Aug 19, 2012
- * \brief  Test of LeakageOperator class.
- * \note   Copyright (C) 2012 Jeremy Roberts. 
+ *  @file   test_GlobalSolverPicard.cc
+ *  @brief  test_GlobalSolverPicard
+ *  @author Jeremy Roberts
+ *  @date   Oct 6, 2012
  */
 //---------------------------------------------------------------------------//
 
 // LIST OF TEST FUNCTIONS
-#define TEST_LIST           \
-        FUNC(test_LeakageOperator)
+#define TEST_LIST                     \
+        FUNC(test_GlobalSolverPicard)
 
+#include "erme_solver/GlobalSolverPicard.hh"
 #include "utilities/TestDriver.hh"
-#include "LeakageOperator.hh"
-#include "linear_algebra/LinearAlgebraSetup.hh"
+#include "erme_response/ResponseIndexer.hh"
+#include "erme_response/ResponseServer.hh"
 #include "erme_geometry/NodePartitioner.hh"
-#include "erme_geometry/test/nodelist_fixture.hh"
+#include "linear_algebra/LinearAlgebraSetup.hh"
 #include <iostream>
 
 // Setup
-
-using namespace erme;
+#include "erme_geometry/test/nodelist_fixture.hh"
+using namespace erme_response;
 using namespace detran_test;
 using detran_utilities::soft_equiv;
 using std::cout;
@@ -32,13 +32,14 @@ int main(int argc, char *argv[])
   RUN(argc, argv);
 }
 
-//----------------------------------------------//
+//---------------------------------------------------------------------------//
 // TEST DEFINITIONS
-//----------------------------------------------//
+//---------------------------------------------------------------------------//
 
-// Test of basic public interface
-int test_LeakageOperator(int argc, char *argv[])
+int test_GlobalSolverPicard(int argc, char *argv[])
 {
+
+  typedef erme_solver::GlobalSolverPicard Solver;
 
   //-------------------------------------------------------------------------//
   // SETUP COMM
@@ -59,6 +60,9 @@ int test_LeakageOperator(int argc, char *argv[])
   // This sets the PETSc communicator to global
   linear_algebra::initialize(argc, argv);
 
+  // New scope so PETSc doesn't puke
+  {
+
   //-------------------------------------------------------------------------//
   // SETUP NODES AND PARTITION
   //-------------------------------------------------------------------------//
@@ -66,7 +70,7 @@ int test_LeakageOperator(int argc, char *argv[])
   // Get the node list
   erme_geometry::NodeList::SP_nodelist nodes;
   if (Comm::rank() == 0)
-    nodes = erme_geometry::cartesian_node_dummy_list_2d(0, 0, 0);
+    nodes = erme_geometry::cartesian_node_dummy_list_2d(1, 0, 0);
 
   // Partition the nodes
   erme_geometry::NodePartitioner partitioner;
@@ -78,8 +82,9 @@ int test_LeakageOperator(int argc, char *argv[])
 
   // Create parameter database
   erme_response::ResponseIndexer::SP_db db(new detran_utilities::InputDB());
-  db->put<int>("dimension", 2);
-  db->put<int>("erme_order_reduction", 3);
+  db->put<int>("dimension", 							2);
+  db->put<int>("erme_order_reduction", 		3);
+  db->put<int>("erme_maximum_iterations", 5);
 
   // Create indexer
   erme_response::ResponseIndexer::SP_indexer
@@ -88,39 +93,26 @@ int test_LeakageOperator(int argc, char *argv[])
   // Create server
   erme_response::ResponseServer::SP_server
     server(new erme_response::ResponseServer(nodes, indexer));
-
-  /*
-   *  Update the server, which leads to the first local computations.  In
-   *  some cases, this might be the only true computation.  For instance,
-   *  if we define the responses as an expansion (R = R0 + R1/k + ...), then
-   *  this would compute the expansion coefficients once, store them
-   *  locally, and interpolate/expand on-the-fly.
-   */
   server->update(1.0);
 
-  // Create R only on the global communicator
-  if (Comm::is_global())
-  {
-    // LeakageOperator
-    LeakageOperator L(nodes, indexer, server);
+  //-------------------------------------------------------------------------//
+  // SETUP STATE AND OPERATORS AND SOLVER
+  //-------------------------------------------------------------------------//
 
-    // Update.  Since this uses the dummy data, this simply fills R.
-    L.update();
+  // Create state
+  Solver::SP_state state(new erme::StateERME(indexer->number_local_moments()));
+  std::cout << "local size = " << state->local_size() << std::endl;
 
-    // Moment vector
-    linear_algebra::Vector x(indexer->number_local_moments(), 1.0);
-    x.assemble();
+  // Create response operators
+  Solver::SP_responsecontainer
+    responses(new erme::ResponseContainer(nodes, indexer, server));
 
-    double leakage = L.leakage(x);
+  // Solver
+  Solver::SP_solver solver(new Solver(db, indexer, server, state, responses));
 
-    double ref = 0;
-    for (int n = 0; n < nodes->number_global_nodes(); n++)
-      ref += 2 * 4 * n * 1000000.0 + 2*(0 + 1 + 2 + 3) * 100000.0  +
-                   (0.4 + 0*0.01 + 0.4 + 2*0.01) + (0.4 + 2*0.01 + 0.4 + 1*0.01) +
-                   (0.4 + 0*0.01 + 0.4 + 3*0.01) + (0.4 + 3*0.01 + 0.4 + 1*0.01);
+  solver->solve();
 
-    TEST(soft_equiv(leakage, ref));
-  }
+  } // end extra scope for petsc
 
   //-------------------------------------------------------------------------//
   // WRAP UP
@@ -133,5 +125,5 @@ int test_LeakageOperator(int argc, char *argv[])
 }
 
 //---------------------------------------------------------------------------//
-//              end of test_StateERME.cc
+//              end of file test_GlobalSolverPicard.cc
 //---------------------------------------------------------------------------//
