@@ -89,15 +89,15 @@ void GlobalSolverPicard::solve()
 
   // Compute initial responses
   update_response(keff);
-
-  if (Comm::is_global())
-  {
-		d_R->display(d_R->BINARY, "R_i.out");
-		d_M->display(d_R->BINARY, "M.out");
-		d_L->display(d_L->BINARY, "L_i.out");
-		d_F->display();
-		d_A->display();
-  }
+//
+//  if (Comm::is_global())
+//  {
+//		d_R->display(d_R->BINARY, "R_i.out");
+//		d_M->display(d_R->BINARY, "M.out");
+//		d_L->display(d_L->BINARY, "L_i.out");
+//		d_F->display();
+//		d_A->display();
+//  }
 
   // Initialize balance parameters
   double loss       = 0;
@@ -145,9 +145,9 @@ void GlobalSolverPicard::solve()
 
 			if (serment_comm::Comm::world_rank() == 0)
 			{
-				std::cout << " GAIN = "     << gain << std::endl;
-				std::cout << " ABS = "      << absorption << std::endl;
-				std::cout << " LEAK = "     << leakage << std::endl;
+			  std::printf(" GAIN      = %20.16f \n", gain);
+        std::printf("  ABS      = %20.16f \n", absorption);
+        std::printf(" LEAK      = %20.16f \n", leakage);
 			}
 
 			// Initial update of keff
@@ -178,6 +178,18 @@ void GlobalSolverPicard::solve()
     	printf(" PICARD IT: %3i NORM: %8.6e LAMBDA: %12.9f KEFF: %12.9f INNERS %8i \n",
         it, norm, lambda, keff, innertot);
     }
+
+
+      if (Comm::is_global())
+      {
+        d_R->display(d_R->BINARY, "RR.out");
+        d_M->display(d_R->BINARY, "MM.out");
+        d_L->display(d_L->BINARY, "LL.out");
+        d_L->leakage_vector().display(d_L->BINARY, "LL_vec.out");
+        d_F->display(d_L->BINARY, "FF.out");
+        d_A->display(d_L->BINARY, "AA.out");
+        x.display(d_L->BINARY, "XX.out");
+      }
 
     // Check convergence
     if (norm < d_tolerance) break;

@@ -108,7 +108,6 @@ void GlobalSolverBase::setup_initial_current(Vector &x)
     for (int i = 0; i < d_indexer->number_local_moments(); ++i)
     {
       erme_response::ResponseIndex ri = d_indexer->response_index_from_local(i);
-      std::cout << ri << std::endl;
       if (ri.azimuth + ri.polar + ri.space0 + ri.space1 == 0)
         x[i] = 1.0;
     }
