@@ -67,7 +67,7 @@ public:
   typedef std::vector<vec_int>              vec2_int;
   typedef std::vector<NeighborSurface>      vec_neighbor;
   typedef std::vector<vec_neighbor>         vec2_neighbor;
-  typedef detran_geometry::Point            Point;
+  typedef detran_utilities::Point            Point;
   typedef std::vector<Point>                vec_point;
 
   //--------------------------------------------------------------------------//

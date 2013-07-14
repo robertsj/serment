@@ -84,24 +84,24 @@ compute(SP_response response, const ResponseIndex &index)
   d_solver->boundary()->clear();
   d_solver->boundary()->clear_bc();
   set_boundary(index);
-  std::cout << "idx =" << index << std::endl;
+  //std::cout << "idx =" << index << std::endl;
 
-  std::cout << "********* OUTGOING BOUNDARY *********** " << std::endl;
-  d_B->display(false);
-  std::cout << "********* INCIDENT BOUNDARY *********** " << std::endl;
-  d_B->display(true);
+//  std::cout << "********* OUTGOING BOUNDARY *********** " << std::endl;
+//  d_B->display(false);
+//  std::cout << "********* INCIDENT BOUNDARY *********** " << std::endl;
+//  d_B->display(true);
 
   d_solver->solve(d_keff);
  // THROW("lala");
-  d_solver->state()->display();
-  std::cout << "********* OUTGOING BOUNDARY *********** " << std::endl;
-  d_B->display(false);
-  std::cout << "********* INCIDENT BOUNDARY *********** " << std::endl;
-  d_B->display(true);
+ // d_solver->state()->display();
+//  std::cout << "********* OUTGOING BOUNDARY *********** " << std::endl;
+//  d_B->display(false);
+//  std::cout << "********* INCIDENT BOUNDARY *********** " << std::endl;
+//  d_B->display(true);
 
   expand(response, index);
 
-    response->display();
+  //response->display();
 // THROW("lala");
 }
 

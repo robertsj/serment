@@ -37,7 +37,7 @@ inline double Vector::norm(const int type)
   else
     THROW("Unsupported vector norm type");
   Ensure(!ierr);
-  Ensurev(val >= 0.0, "Invalid norm: " + AsString(val));
+  Ensure(val >= 0.0);//, "Invalid norm: " + AsString(val));
   return val;
 }
 
