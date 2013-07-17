@@ -1,6 +1,6 @@
 //----------------------------------*-C++-*-----------------------------------//
 /**
- *  @file  test_GlobalSolverPicard.cc
+ *  @file  test_GlobalSolverNewton.cc
  *  @brief Test of GlobalSolverPicard class
  *  @note  Copyright (C) 2013 Jeremy Roberts
  */
@@ -8,7 +8,7 @@
 
 // LIST OF TEST FUNCTIONS
 #define TEST_LIST                     \
-        FUNC(test_GlobalSolverPicard)
+        FUNC(test_GlobalSolverNewton)
 
 #include "utilities/TestDriver.hh"
 #include "erme_solver/ManagerERME.hh"
@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
 // TEST DEFINITIONS
 //----------------------------------------------------------------------------//
 
-int test_GlobalSolverPicard(int argc, char *argv[])
+int test_GlobalSolverNewton(int argc, char *argv[])
 {
   // Parameter database
   ManagerERME::SP_db db = detran_utilities::InputDB::Create();
@@ -42,11 +42,12 @@ int test_GlobalSolverPicard(int argc, char *argv[])
   // Setup the manager and comm
   ManagerERME manager(argc, argv);
   int ng = Comm::size() == 1 ? 1 : 2;
-  db->put<std::string>("erme_solver_type", "picard");
+  db->put<std::string>("erme_solver_type", "newton");
   db->put<int>("comm_local_groups", 1);
   db->put<int>("dimension", 1);
   db->put<int>("erme_maximum_iterations", 10);
   db->put<double>("erme_tolerance", 1.0e-12);
+  db->put("basis_p_type", "dlpsss");
   manager.build_comm(db);
 
   // Get nodes, build problem, and solve
@@ -59,5 +60,5 @@ int test_GlobalSolverPicard(int argc, char *argv[])
 }
 
 //----------------------------------------------------------------------------//
-//              end of file test_GlobalSolverPicard.cc
+//              end of file test_GlobalSolverNewton.cc
 //----------------------------------------------------------------------------//

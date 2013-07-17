@@ -1,9 +1,8 @@
 //----------------------------------*-C++-*-----------------------------------//
 /**
- *  @file   node_fixture.hh
- *  @brief  Fixtures for various node types.
- *  @author Jeremy Roberts
- *  @date   Aug 22, 2012
+ *  @file  node_fixture.hh
+ *  @brief Fixtures for various node types.
+ *  @note  Copyright (C) 2013 Jeremy Roberts
  *
  *  Ideally, fixtures for all available node types should be added to this
  *  file.  Doing so greatly facilitates testing of each node within the
@@ -40,16 +39,26 @@ Node::SP_node cartesian_node_detran(const int dim,
 
   // Parameter database
   Node_T::SP_db   db(new detran_utilities::InputDB());
-  db->put("number_groups",  1);
-  db->put("dimension",      dim);
-  db->put("equation",       "diffusion");
+  db->put<int>("number_groups",            1);
+  db->put<int>("dimension",                dim);
+  db->put<std::string>("equation",         "dd");
+  db->put<int>("outer_print_level",        0);
+  db->put<int>("inner_print_level",        0);
+  db->put<double>("inner_tolerance",       1.0e-9);
+  db->put<double>("outer_tolerance",       1.0e-9);
+
+  db->put<std::string>("quad_type",        "dpn");
+  db->put("quad_number_polar_octant",      2);
+  db->put<std::string>("basis_p_type",     "dlp");
 
   // Build the material
   Node_T::SP_material mat(new detran_material::Material(1, 1));
   mat->set_sigma_t(0, 0, 1.0);
   mat->set_sigma_s(0, 0, 0, 0.5);
   mat->set_sigma_f(0, 0, 0.5);
+  mat->set_chi(0, 0, 1.0);
   mat->set_sigma_a(0, 0, 0.5);
+  mat->set_diff_coef(0, 0, 1.0/3.0);
   mat->finalize();
 
   // Define discretization and material map

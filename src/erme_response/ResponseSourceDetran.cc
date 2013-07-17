@@ -36,7 +36,7 @@ ResponseSourceDetran<B>::ResponseSourceDetran(SP_node node,
   d_db = node->db();
   d_material = node->material();
   d_mesh = node->mesh();
-
+  d_db->display();
   // Ensure we compute boundary fluxes
   d_db->put<int>("compute_boundary_flux", 1);
 

@@ -9,6 +9,7 @@
 #include "ManagerERME.hh"
 #include "comm/Comm.hh"
 #include "erme_solver/GlobalSolverPicard.hh"
+#include "erme_solver/GlobalSolverNewton.hh"
 #include "linear_algebra/LinearAlgebraSetup.hh"
 
 namespace erme_solver
@@ -134,10 +135,28 @@ void ManagerERME::build_erme(SP_nodelist nodes)
 void ManagerERME::solve()
 {
   Insist(d_is_built, "Must build the manager before using.");
+  using namespace erme_solver;
 
-  d_solver = new erme_solver::GlobalSolverPicard(
-    d_db, d_indexer, d_server, d_state, d_responses);
+  std::string solver_type = "picard";
+  if (d_db->check("erme_solver_type"))
+  {
+    solver_type = d_db->get<std::string>("erme_solver_type");
+  }
 
+  if (solver_type == "picard")
+  {
+    d_solver =
+      new GlobalSolverPicard(d_db, d_indexer, d_server, d_state, d_responses);
+  }
+  else if (solver_type == "newton")
+  {
+    d_solver =
+      new GlobalSolverNewton(d_db, d_indexer, d_server, d_state, d_responses);
+  }
+  else
+  {
+    THROW("Unsupported solver type: " + solver_type);
+  }
   d_solver->solve();
 }
 

@@ -1,9 +1,8 @@
 //----------------------------------*-C++-*----------------------------------//
 /**
- *  @file   nodelist_fixture.hh
- *  @brief  nodelist_fixture
- *  @author Jeremy Roberts
- *  @date   Aug 26, 2012
+ *  @file  nodelist_fixture.hh
+ *  @brief nodelist_fixture
+ *  @note  Copyright (C) 2013 Jeremy Roberts
  *
  *  Just as each node type should have a prebuilt test fixture, a node
  *  list of such types (perhaps heterogeneous) shouls also be created.
@@ -39,16 +38,31 @@ cartesian_node_detran_list_1d(int po = 0)
   NodeList::SP_node node0 = cartesian_node_detran(1, 0, 0, po);
   NodeList::SP_node node1 = cartesian_node_detran(1, 0, 0, po);
 
-  // Create neighbor lists.
-  NodeList::vec2_neighbor neighbors(4);
-  NodeList::vec_neighbor neigh0(2, NeighborSurface(Node::VACUUM, 0));
-  NodeList::vec_neighbor neigh1(2, NeighborSurface(Node::VACUUM, 0));
-  NodeList::vec_neighbor neigh2(2, NeighborSurface(Node::VACUUM, 0));
-  NodeList::vec_neighbor neigh3(2, NeighborSurface(Node::VACUUM, 0));
-  neigh0[CartesianNode::EAST]   = NeighborSurface(1, CartesianNode::WEST);
-  neigh1[CartesianNode::WEST]   = NeighborSurface(0, CartesianNode::EAST);
-  neigh2[CartesianNode::EAST]   = NeighborSurface(3, CartesianNode::WEST);
-  neigh3[CartesianNode::WEST]   = NeighborSurface(2, CartesianNode::EAST);
+//  // Create neighbor lists.
+//  NodeList::vec2_neighbor neighbors(4);
+//  NodeList::vec_neighbor neigh0(2, NeighborSurface(Node::REFLECT, 0));
+//  NodeList::vec_neighbor neigh1(2, NeighborSurface(Node::REFLECT, 0));
+//  NodeList::vec_neighbor neigh2(2, NeighborSurface(Node::REFLECT, 0));
+//  NodeList::vec_neighbor neigh3(2, NeighborSurface(Node::REFLECT, 0));
+//  neigh0[CartesianNode::EAST]   = NeighborSurface(1, CartesianNode::WEST);
+//  neigh1[CartesianNode::WEST]   = NeighborSurface(0, CartesianNode::EAST);
+//  //
+//  neigh1[CartesianNode::EAST]   = NeighborSurface(2, CartesianNode::WEST);
+//  neigh2[CartesianNode::WEST]   = NeighborSurface(1, CartesianNode::EAST);
+//  //
+//  neigh2[CartesianNode::EAST]   = NeighborSurface(3, CartesianNode::WEST);
+//  neigh3[CartesianNode::WEST]   = NeighborSurface(2, CartesianNode::EAST);
+//
+  NodeList::vec2_neighbor
+    neighbors(4, NodeList::vec_neighbor(2, NeighborSurface(Node::VACUUM, 0)));
+  neighbors[0][CartesianNode::EAST] = NeighborSurface(1, CartesianNode::WEST);
+  neighbors[1][CartesianNode::WEST] = NeighborSurface(0, CartesianNode::EAST);
+  neighbors[1][CartesianNode::EAST] = NeighborSurface(2, CartesianNode::WEST);
+  neighbors[2][CartesianNode::WEST] = NeighborSurface(1, CartesianNode::EAST);
+  neighbors[2][CartesianNode::EAST] = NeighborSurface(3, CartesianNode::WEST);
+  neighbors[3][CartesianNode::WEST] = NeighborSurface(2, CartesianNode::EAST);
+
+  // |0|1|2|3|
 
   // Add nodes
   nodes->add_node(node0);
@@ -60,10 +74,10 @@ cartesian_node_detran_list_1d(int po = 0)
   node_map[1]  = 1;
   node_map[2]  = 1;
   node_map[3]  = 0;
-  neighbors[0] = neigh0;
-  neighbors[1] = neigh1;
-  neighbors[2] = neigh2;
-  neighbors[3] = neigh3;
+//  neighbors[0] = neigh0;
+//  neighbors[1] = neigh1;
+//  neighbors[2] = neigh2;
+//  neighbors[3] = neigh3;
   nodes->set_nodal_map(node_map, neighbors);
 
   return nodes;

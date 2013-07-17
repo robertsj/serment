@@ -169,7 +169,7 @@ void GlobalSolverPicard::solve()
 
     // Compute the norm of the nonlinear residual.
     if (Comm::is_global())
-    	norm = d_residual->compute_norm(*J);
+    	norm = d_residual->compute_norm(x);
     Comm::broadcast(&norm, 1, 0);
     d_residual_norms.push_back(norm);
 
@@ -179,17 +179,14 @@ void GlobalSolverPicard::solve()
         it, norm, lambda, keff, innertot);
     }
 
-
-      if (Comm::is_global())
-      {
-        d_R->display(d_R->BINARY, "RR.out");
-        d_M->display(d_R->BINARY, "MM.out");
-        d_L->display(d_L->BINARY, "LL.out");
-        d_L->leakage_vector().display(d_L->BINARY, "LL_vec.out");
-        d_F->display(d_L->BINARY, "FF.out");
-        d_A->display(d_L->BINARY, "AA.out");
-        x.display(d_L->BINARY, "XX.out");
-      }
+    if (Comm::is_global())
+    {
+      d_R->display(d_R->BINARY, "R.out");
+      d_M->display(d_R->BINARY, "M.out");
+      d_L->display(d_L->BINARY, "L.out");
+      d_F->display(d_L->BINARY, "F.out");
+      d_A->display(d_L->BINARY, "A.out");
+    }
 
     // Check convergence
     if (norm < d_tolerance) break;
@@ -207,8 +204,6 @@ void GlobalSolverPicard::solve()
 
   // Update the state
   d_state->update(J, keff, lambda);
-
-  return;
 }
 
 } // end namespace erme_solver

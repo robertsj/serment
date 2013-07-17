@@ -8,7 +8,7 @@
 
 #include "CartesianNodeDetran.hh"
 #include "NodeSerialization.hh"
-#include "geometry/Point.hh"
+#include "utilities/Point.hh"
 
 #include "utilities/detran_utilities.hh"
 

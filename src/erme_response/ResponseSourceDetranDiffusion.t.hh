@@ -30,6 +30,7 @@ set_boundary(const ResponseIndex &index)
     Assert(d_basis_e[index.surface]);
     B(index.surface, g, B.IN) = (*d_basis_e[index.surface])(index.energy, g);
   }
+  B.display(B.IN);
 }
 
 //----------------------------------------------------------------------------//

@@ -56,8 +56,7 @@ evaluate(Vector &x, Vector &f)
 inline double NonlinearResidual::
 compute_norm(Vector &x)
 {
-  //x.display();
-  Vector f(x);
+  Vector f(x.local_size(), 0.0);
   evaluate(x, f);
   return f.norm(f.L2);
 }
