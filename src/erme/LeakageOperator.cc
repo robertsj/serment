@@ -1,18 +1,17 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /**
- *  @file   LeakageOperator.cc
- *  @brief  LeakageOperator
- *  @author Jeremy Roberts
- *  @date   Sep 4, 2012
+ *  @file  LeakageOperator.cc
+ *  @brief LeakageOperator member definitions
+ *  @note  Copyright (C) 2013 Jeremy Roberts
  */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #include "LeakageOperator.hh"
 
 namespace erme
 {
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 LeakageOperator::LeakageOperator(SP_nodelist nodes,
                                  SP_indexer  indexer,
                                  SP_server   server)
@@ -82,7 +81,7 @@ LeakageOperator::LeakageOperator(SP_nodelist nodes,
   assemble();
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 void LeakageOperator::update()
 {
   using std::cout;
@@ -130,7 +129,7 @@ void LeakageOperator::update()
   d_global_leakage.assemble();
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 double LeakageOperator::leakage(linear_algebra::Vector &x)
 {
   Require(x.local_size() == number_local_columns());
@@ -146,14 +145,14 @@ double LeakageOperator::leakage(linear_algebra::Vector &x)
   return val;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 const linear_algebra::Vector& LeakageOperator::leakage_vector()
 {
   multiply_transpose(d_global_leakage, d_leakage_vector);
   return d_leakage_vector;
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 void LeakageOperator::display_leakage()
 {
   std::cout << " GLOBAL LEAKAGE: " << std::endl;
@@ -162,6 +161,6 @@ void LeakageOperator::display_leakage()
 
 } // end namespace erme
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 //              end of file LeakageOperator.cc
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//

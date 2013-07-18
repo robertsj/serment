@@ -1,9 +1,10 @@
-/*
- * ResponseContainer.hh
- *
- *  Created on: Apr 16, 2013
- *      Author: robertsj
+//----------------------------------*-C++-*-----------------------------------//
+/**
+ *  @file  ResponseContainer.hh
+ *  @brief ResponseContainer class definition
+ *  @note  Copyright (C) 2013 Jeremy Roberts
  */
+//----------------------------------------------------------------------------//
 
 #ifndef erme_RESPONSECONTAINER_HH_
 #define erme_RESPONSECONTAINER_HH_
@@ -27,9 +28,9 @@ namespace erme
 struct ResponseContainer
 {
 
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
   // TYPEDEFS
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
 
 	typedef detran_utilities::SP<ResponseContainer>     SP_responsecontainer;
   typedef erme_geometry::NodeList::SP_nodelist        SP_nodelist;
@@ -41,9 +42,9 @@ struct ResponseContainer
   typedef AbsorptionOperator::SP_absorption     			SP_A;
   typedef LeakageOperator::SP_leakage           			SP_L;
 
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
   // CONSTRUCTOR & DESTRUCTOR
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
 
 	ResponseContainer(SP_nodelist nodes, SP_indexer indexer, SP_server server)
   {
@@ -62,9 +63,9 @@ struct ResponseContainer
 		}
   }
 
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
   // TYPEDEFS
-  //-------------------------------------------------------------------------//
+  //--------------------------------------------------------------------------//
 
   /// Response matrix
   SP_R R;

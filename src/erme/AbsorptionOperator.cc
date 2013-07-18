@@ -1,18 +1,17 @@
-//----------------------------------*-C++-*----------------------------------//
+//----------------------------------*-C++-*-----------------------------------//
 /**
- *  @file   AbsorptionOperator.cc
- *  @author robertsj
- *  @date   Sep 4, 2012
- *  @brief  AbsorptionOperator class definition.
+ *  @file  AbsorptionOperator.cc
+ *  @brief AbsorptionOperator member definitions
+ *  @note  Copyright (C) 2013 Jeremy Roberts
  */
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 #include "AbsorptionOperator.hh"
 
 namespace erme
 {
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 AbsorptionOperator::AbsorptionOperator(SP_nodelist nodes,
                                        SP_indexer indexer,
                                        SP_server server)
@@ -22,7 +21,7 @@ AbsorptionOperator::AbsorptionOperator(SP_nodelist nodes,
   /* ... */
 }
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 void AbsorptionOperator::update()
 {
   // Offset for a block.  Starts at this vector's lower bound.
@@ -49,9 +48,9 @@ void AbsorptionOperator::update()
 
 } // end namespace erme
 
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 //              end of file AbsorptionOperator.cc
-//---------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
 
 
 
