@@ -36,6 +36,15 @@ class GlobalSolverBase
 public:
 
   //--------------------------------------------------------------------------//
+  // ENUMERATIONS
+  //--------------------------------------------------------------------------//
+
+  enum SOLVER_STATUS
+  {
+    CONTINUE, COMPLETED, END_SOLVER_STATUS
+  };
+
+  //--------------------------------------------------------------------------//
   // TYPEDEFS
   //--------------------------------------------------------------------------//
 
@@ -99,6 +108,8 @@ protected:
   SP_server d_server;
   /// State vector
   SP_state d_state;
+  /// Container of all responses
+  SP_responsecontainer d_responses;
   /// Response matrix
   SP_R d_R;
   /// Connectivity matrix
@@ -134,6 +145,9 @@ protected:
 
   /// Set initial guess to be unity in zeroth order moments
   void setup_initial_current(Vector &x);
+
+  /// Display responses
+  void display_response(std::string s);
 
 };
 

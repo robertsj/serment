@@ -47,10 +47,12 @@ public:
   // CONSTRUCTOR & DESTRUCTOR
   //--------------------------------------------------------------------------//
 
-  /// Constructor
-  SteffensenUpdate()
-    : d_minimum(4)
-  { /* ... */ }
+  /// Constructor with the number of k evaluations before using extrapolation
+  SteffensenUpdate(const int minimum = 3)
+    : d_minimum(minimum)
+  {
+    if (d_minimum < 2) d_minimum = 2;
+  }
 
   /// Virtual destructor
   virtual ~SteffensenUpdate(){}
@@ -59,22 +61,19 @@ public:
   // PUBLIC FUNCTIONS
   //--------------------------------------------------------------------------//
 
-  /**
-   *  @brief Computes and updated keff, possibly based on previous history
-   *  @param keff   latest eigenvalue estimate
-   *  @param J      latest boundary unknowns
-   */
-  double compute(const double keff, SP_vector J)
+  /// Computes an updated keff, possibly based on previous history
+  double compute(const double keff, const double lambda, SP_vector J)
   {
     // Save the latest keff
     d_keffs.push_back(keff);
-    // Check size
+    // Check size.  We need the minimum already saved to extrapolate.
     int n = d_keffs.size();
-    if (d_keffs.size() < d_minimum) return keff;
+    if (d_keffs.size() <= d_minimum) return keff;
     // If sequence is long enough, extrapolate
     double k0 = d_keffs[n-3];
     double k1 = d_keffs[n-2];
     double k2 = d_keffs[n-1];
+   // std::printf(" %20.16f %20.16f %20.16f \n", k0, k1, k2);
     return k0 - (k1 - k0)*(k1 - k0) / (k2 - 2.0*k1 + k0);
   }
 

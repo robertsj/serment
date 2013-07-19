@@ -11,6 +11,8 @@
 namespace erme_solver
 {
 
+using serment_comm::Comm;
+
 //----------------------------------------------------------------------------//
 GlobalSolverBase::
 GlobalSolverBase(SP_db 									db,
@@ -22,16 +24,16 @@ GlobalSolverBase(SP_db 									db,
   , d_indexer(indexer)
   , d_server(server)
   , d_state(state)
+  , d_responses(responses)
   , d_maximum_iterations(100)
   , d_tolerance(1.0e-6)
+  , d_local_size(0)
 {
-	using serment_comm::Comm;
-
   Require(d_db);
   Require(d_indexer);
   Require(d_server);
   Require(d_state);
-  if (serment_comm::Comm::is_global())
+  if (Comm::is_global())
   {
   	Require(responses);
   	d_M = responses->M;
@@ -44,6 +46,9 @@ GlobalSolverBase(SP_db 									db,
   	Ensure(d_L);
   	Ensure(d_A);
   	Ensure(d_F);
+
+    d_local_size = d_R->number_local_rows();
+    if (Comm::is_last()) d_local_size += 2;
   }
 
   // Create residual
@@ -60,11 +65,6 @@ GlobalSolverBase(SP_db 									db,
     d_tolerance = d_db->get<double>("erme_tolerance");
     Assert(d_tolerance >= 0.0);
   }
-
-  d_local_size = d_R->number_local_rows();
-  if (serment_comm::Comm::is_last()) d_local_size += 2;
-
-  Ensure(d_residual);
 }
 
 //----------------------------------------------------------------------------//
@@ -99,7 +99,6 @@ void GlobalSolverBase::update_response(const double keff)
 void GlobalSolverBase::setup_initial_current(Vector &x)
 {
   Require(x.local_size() >= d_R->number_local_rows());
-  using serment_comm::Comm;
   if (Comm::is_global())
   {
     // Set zeroth order space/angle moments to unity, with others to zero. If
@@ -113,6 +112,19 @@ void GlobalSolverBase::setup_initial_current(Vector &x)
     }
     x.assemble();
     x.scale(1.0/x.norm(x.L2));
+  }
+}
+
+//----------------------------------------------------------------------------//
+void GlobalSolverBase::display_response(std::string s)
+{
+  if (Comm::is_global())
+  {
+    d_R->display(d_R->BINARY, "R" + s + ".out");
+    d_M->display(d_R->BINARY, "M" + s + ".out");
+    d_L->display(d_L->BINARY, "L" + s + ".out");
+    d_F->display(d_L->BINARY, "F" + s + ".out");
+    d_A->display(d_L->BINARY, "A" + s + ".out");
   }
 }
 

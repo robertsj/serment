@@ -45,14 +45,20 @@ int test_GlobalSolverPicard(int argc, char *argv[])
   db->put<std::string>("erme_solver_type", "picard");
   db->put<int>("comm_local_groups", 1);
   db->put<int>("dimension", 1);
-  db->put<int>("erme_maximum_iterations", 10);
+  db->put<int>("erme_maximum_iterations", 20);
+  db->put<double>("erme_inner_tolerance", 1.0e-14);
   db->put<double>("erme_tolerance", 1.0e-12);
+  db->put<std::string>("erme_picard_update", "anghel");
+  db->put<int>("erme_anghel_scheme", 0);
+
   manager.build_comm(db);
 
   // Get nodes, build problem, and solve
   NodeList::SP_nodelist nodes = cartesian_node_detran_list_1d(1);
   manager.build_erme(nodes);
   manager.solve();
+
+  TEST(soft_equiv(manager.get_keff(), 0.996181414, 1.0e-8));
 
   serment_comm::Comm::global_barrier();
   return 0;

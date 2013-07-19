@@ -75,6 +75,9 @@ public:
   /// Solve
   void solve();
 
+  /// Perform a single Picard iteration
+  double iterate(SP_vector x, double &keff, double &lambda);
+
 private:
 
   //--------------------------------------------------------------------------//
@@ -92,6 +95,15 @@ private:
 //  SP_vector d_J0;
 //  SP_vector d_J1;
   //@}
+
+  //--------------------------------------------------------------------------//
+  // IMPLEMENTATION
+  //--------------------------------------------------------------------------//
+
+  void display(const size_t it,
+               const double norm,
+               const double keff,
+               const double lambda);
 
 };
 

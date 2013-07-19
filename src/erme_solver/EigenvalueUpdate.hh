@@ -52,11 +52,11 @@ public:
   //--------------------------------------------------------------------------//
 
   /**
-   *  @brief Computes and updated keff, possibly based on previous history
+   *  @brief Computes an updated keff, possibly based on previous history
    *  @param keff   latest eigenvalue estimate
    *  @param J      latest boundary unknowns
    */
-  virtual double compute(const double keff, SP_vector J)
+  virtual double compute(const double keff, const double lambda, SP_vector J)
   {
     /// Default does nothing
     return keff;
