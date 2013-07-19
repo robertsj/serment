@@ -1,7 +1,7 @@
 //----------------------------------*-C++-*-----------------------------------//
 /**
  *  @file  NonlinearSolver.cc
- *  @brief NonlinearSolver
+ *  @brief NonlinearSolver member definitions
  *  @note  Copyright (C) 2013 Jeremy Roberts
  */
 //----------------------------------------------------------------------------//
@@ -39,7 +39,7 @@ void NonlinearSolver::setup(SP_db       db,
   SNESSetFunction(d_solver, d_r->V(), residual_wrap, this);
 
   // newton type
-  int newton_type = NEWTON;
+  int newton_type = JFNK;
   if (db->check("newton_type"))
     newton_type = db->get<int>("newton_type");
   Assert(newton_type < END_NEWTON_TYPES);
@@ -78,6 +78,7 @@ void NonlinearSolver::solve(SP_vector x)
 {
   Require(x);
   PetscErrorCode ierr = 0;
+  SNESSetTolerances(d_solver, 1e-12, 1e-12, 1e-12, 20, 1000);
   ierr = SNESSolve(d_solver, PETSC_NULL, x->V());
   ierr = SNESGetIterationNumber(d_solver, &d_number_iterations);
   ierr = SNESGetLinearSolveIterations(d_solver, &d_number_linear_iterations);

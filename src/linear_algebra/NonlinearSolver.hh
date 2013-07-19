@@ -32,7 +32,7 @@ namespace linear_algebra
  *       0 : Standard Newton method based on a Jacobian matrix given
  *           by the user.  This can include Jacobian shell matrices in which
  *           only the action is given.
- *       1 : Jacobian-Free Newton-Krylov via finite0differencing the
+ *       1 : Jacobian-Free Newton-Krylov via finite-differencing the
  *           residual function.
  *       2 : Newton via a full Jacobian constructed from finite-differencing
  *           the residual.  Useful primarily for testing.
@@ -123,6 +123,8 @@ protected:
 inline PetscErrorCode
 residual_wrap(SNES snes, Vec x, Vec f, void *context)
 {
+  std::cout << " residual_wrap WRAP" << std::endl;
+
   PetscErrorCode ierr = 0;
   NonlinearSolver* foo = (NonlinearSolver*) context;
   Vector X(x), F(f);
@@ -137,6 +139,8 @@ residual_wrap(SNES snes, Vec x, Vec f, void *context)
 inline PetscErrorCode
 jacobian_wrap(SNES snes, Vec x, Mat *J, Mat *P, MatStructure *flag, void *ctx)
 {
+  std::cout << " jacobian_wrap WRAP" << std::endl;
+
   PetscErrorCode ierr = 0;
   NonlinearSolver* foo = (NonlinearSolver*) ctx;
   Vector::SP_vector X(new Vector(x));
@@ -159,7 +163,7 @@ inline PetscErrorCode
 jfnk_wrap(SNES snes, Vec x, Mat *J, Mat *P, MatStructure *flag, void *ctx)
 {
   PetscErrorCode ierr = 0;
-
+  std::cout << " JFNK WRAP" << std::endl;
   // Assemble the Jacobian matrix (this is all MatMFFDComputeJacobian does)
   ierr = MatAssemblyBegin(*J, MAT_FINAL_ASSEMBLY);
   ierr = MatAssemblyEnd(*J, MAT_FINAL_ASSEMBLY);

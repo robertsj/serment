@@ -18,7 +18,11 @@ namespace erme_solver
 
 /**
  *  @class GlobalSolverNewton
- *  @brief Solves the problem using Picard (fixed point) iteration
+ *  @brief Solves the problem using Newton's method
+ *
+ *  Nonlinear problems are discussed briefly in @ref NonlinearSolver.  See
+ *  @ref NonlinearResidual and @ref Jacobian for specifics on solving
+ *  the eigenvalue response matrix equations via Newton's method.
  */
 class GlobalSolverNewton: public GlobalSolverBase
 {
@@ -31,6 +35,7 @@ public:
 
   typedef detran_utilities::SP<GlobalSolverNewton>    SP_solver;
   typedef erme_solver::GlobalSolverBase               Base;
+  typedef Base::SP_solver                             SP_base;
   typedef Jacobian::SP_jacobian                       SP_jacobian;
   typedef linear_algebra::NonlinearSolver::SP_solver  SP_nonlinear_solver;
 
@@ -70,7 +75,8 @@ private:
   SP_jacobian d_preconditioner;
   /// Nonlinear solver
   SP_nonlinear_solver d_solver;
-
+  /// Solver for initial guess
+  SP_base d_initial;
 
 };
 

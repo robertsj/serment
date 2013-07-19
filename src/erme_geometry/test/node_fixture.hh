@@ -44,12 +44,13 @@ Node::SP_node cartesian_node_detran(const int dim,
   db->put<std::string>("equation",         "dd");
   db->put<int>("outer_print_level",        0);
   db->put<int>("inner_print_level",        0);
-  db->put<double>("inner_tolerance",       1.0e-9);
-  db->put<double>("outer_tolerance",       1.0e-9);
-
+  db->put<double>("inner_tolerance",       1.0e-16);
+  db->put<int>("inner_max_iters",          1e6);
+  db->put<double>("outer_tolerance",       1.0e-16);
+  db->put<int>("outer_max_iters",          1e6);
   db->put<std::string>("quad_type",        "dpn");
-  db->put("quad_number_polar_octant",      2);
-  db->put<std::string>("basis_p_type",     "dlp");
+  db->put("quad_number_polar_octant",      4);
+  db->put<std::string>("basis_p_type",     "jacobi");
 
   // Build the material
   Node_T::SP_material mat(new detran_material::Material(1, 1));

@@ -227,7 +227,7 @@ void Newton::solve()
 
   integer its, itslin;
   scalar tol = 1e-8;
-  SNESSetTolerances(snes, tol, tol, tol, 2, 1000);
+  SNESSetTolerances(snes, tol, tol, tol, 20, 1000);
   SNESSetFromOptions(snes);
   SNESLineSearchSet(snes, SNESLineSearchNo, PETSC_NULL);
   SNESSolve(snes, PETSC_NULL, x->V);

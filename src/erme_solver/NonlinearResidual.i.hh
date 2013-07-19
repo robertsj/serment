@@ -19,6 +19,8 @@ namespace erme_solver
 inline void NonlinearResidual::
 evaluate(Vector &x, Vector &f)
 {
+  using serment_comm::Comm;
+
   // Create temporary of smaller size with f's memory.
   Vector x_J(x, d_MR->number_local_rows());
   Vector f_J(f, d_MR->number_local_rows());
@@ -27,13 +29,21 @@ evaluate(Vector &x, Vector &f)
   double k = 0.0;
   double l = 0.0;
   int    m = x.local_size();
-  if (serment_comm::Comm::rank() == serment_comm::Comm::size() - 1)
+  if (Comm::is_last())
   {
     k = x[m-2];
     l = x[m-1];
   }
-  serment_comm::Comm::broadcast(&k, 1, serment_comm::Comm::size() - 1);
-  serment_comm::Comm::broadcast(&l, 1, serment_comm::Comm::size() - 1);
+  Comm::broadcast(&k, 1, Comm::last());
+  Comm::broadcast(&l, 1, Comm::last());
+
+//  {
+//    d_MR->display(d_MR->BINARY, "MR.out");
+//    d_L->leakage_vector().display(d_MR->BINARY, "L.out");
+//    d_F->display(d_MR->BINARY, "F.out");
+//    d_A->display(d_MR->BINARY, "A.out");
+//    x.display(d_MR->BINARY, "X.out");
+//  }
 
   // Compute MR*J - l*J
   d_MR->multiply(x_J, f_J);

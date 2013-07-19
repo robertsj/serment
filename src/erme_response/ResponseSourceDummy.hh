@@ -38,7 +38,7 @@ public:
   void compute(SP_response response, const ResponseIndex &index)
   {
     Require(response);
-
+    Require(d_keff > 0.0);
     // Easy value to recreate.
     double value = 1000000.0 * index.node +
                     100000.0 * index.surface +
@@ -51,9 +51,9 @@ public:
     size_t in = index.nodal;
     for (int out = 0; out < response->size(); out++)
     {
-      response->boundary_response(out, in) = value + 0.1;
+      response->boundary_response(out, in) = value + 0.1 / d_keff;
     }
-    response->fission_response(in) = value + 0.2;
+    response->fission_response(in) = value + 0.2 / d_keff;
     response->absorption_response(in) = value + 0.3;
     for (int s = 0; s < response->number_surfaces(); s++)
     {

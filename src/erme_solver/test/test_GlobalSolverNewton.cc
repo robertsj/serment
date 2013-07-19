@@ -1,7 +1,7 @@
 //----------------------------------*-C++-*-----------------------------------//
 /**
  *  @file  test_GlobalSolverNewton.cc
- *  @brief Test of GlobalSolverPicard class
+ *  @brief Test of GlobalSolverNewton class
  *  @note  Copyright (C) 2013 Jeremy Roberts
  */
 //----------------------------------------------------------------------------//
@@ -47,13 +47,14 @@ int test_GlobalSolverNewton(int argc, char *argv[])
   db->put<int>("dimension", 1);
   db->put<int>("erme_maximum_iterations", 10);
   db->put<double>("erme_tolerance", 1.0e-12);
-  db->put("basis_p_type", "dlpsss");
   manager.build_comm(db);
 
   // Get nodes, build problem, and solve
   NodeList::SP_nodelist nodes = cartesian_node_detran_list_1d(1);
   manager.build_erme(nodes);
   manager.solve();
+
+  TEST(soft_equiv(manager.get_keff(), 0.996181414, 1.0e-8));
 
   serment_comm::Comm::global_barrier();
   return 0;

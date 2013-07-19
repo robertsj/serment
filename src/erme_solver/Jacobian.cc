@@ -7,6 +7,7 @@
 //----------------------------------------------------------------------------//
 
 #include "Jacobian.hh"
+#include "GlobalSolverBase.hh"
 
 namespace erme_solver
 {
@@ -22,6 +23,8 @@ Jacobian::Jacobian(SP_server            server,
   , d_fd_FAL(0.0)
 {
   Require(d_server);
+  Require(d_eps > 0.0);
+
   if (serment_comm::Comm::is_global())
   {
     Require(responses);
@@ -31,26 +34,24 @@ Jacobian::Jacobian(SP_server            server,
     d_A = responses->A; Ensure(d_A);
     d_F = responses->F; Ensure(d_F);
     d_MR = new OperatorMR(d_R, d_M);
+
+    d_m = d_R->number_global_rows();
+    d_m_full = d_m;
+    if (serment_comm::Comm::is_last())
+      d_m_full += 2;
+
+    d_matrix = new Shell(d_m_full, *this);
+    d_fd_MR = new Vector(d_m, 0.0);
   }
-  Require(d_eps > 0.0);
-
-  d_m = d_R->number_global_rows();
-  d_m_full = d_m;
-  if (serment_comm::Comm::is_last()) d_m_full += 2;
-
-  // allocate etc.
-  d_matrix = new Shell(d_m_full, *this);
-
-  // working vector
-  d_fd_MR = new Vector(d_m, 0.0);
 }
 
 //----------------------------------------------------------------------------//
 void Jacobian::multiply(Vector &f, Vector &fp_times_f)
 {
+  using serment_comm::Comm;
+
   Assert(f.global_size() == d_MR->number_global_rows() + 2);
 
-  using serment_comm::Comm;
 
   // The Jacobian has the form
   //   | (M*R-lambda*I)   M*R_k*J              -J |
@@ -80,8 +81,8 @@ void Jacobian::multiply(Vector &f, Vector &fp_times_f)
   // last process is assigned the extra unknowns, so broadcast to others
   if (Comm::is_last())
   {
-    f_k      = f[d_m_full - 1];
-    f_lambda = f[d_m_full - 2];
+    f_k      = f[d_m_full - 2];
+    f_lambda = f[d_m_full - 1];
   }
   Comm::broadcast(&f_k,       Comm::last());
   Comm::broadcast(&f_lambda,  Comm::last());
@@ -101,8 +102,8 @@ void Jacobian::multiply(Vector &f, Vector &fp_times_f)
 
   if (Comm::is_last())
   {
-    fp_times_f[d_m_full-2] = fp_times_f_k;
-    fp_times_f[d_m_full-1] = fp_times_f_lambda;
+    fp_times_f[d_m_full - 2] = fp_times_f_k;
+    fp_times_f[d_m_full - 1] = fp_times_f_lambda;
   }
 
   return;
@@ -118,39 +119,75 @@ void Jacobian::multiply_transpose(Vector &v_in, Vector &v_out)
 void Jacobian::update(SP_vector x)
 {
   using serment_comm::Comm;
+
   d_x = x;
   if (Comm::is_last())
   {
-    d_k      = (*d_x)[d_m_full - 1];
-    d_lambda = (*d_x)[d_m_full - 2];
+    d_k      = (*d_x)[d_m_full - 2];
+    d_lambda = (*d_x)[d_m_full - 1];
   }
   Comm::broadcast(&d_k, Comm::last());
   Comm::broadcast(&d_lambda, Comm::last());
 
-  // Insert unknown in current-sized vector
+  if (Comm::rank() == 0)
+  {
+    std::printf("-------------> %12.9f \n", d_k);
+  }
+
+  // insert unknown in current-sized vector
   Vector x_J(*d_x, d_m);
 
-  // Compute the finite differenced components
+  // compute the finite differenced components
   Vector fd_MR_tmp(d_m, 0.0);
-
-  // for initial keff
+  //   for initial keff
   d_server->update(d_k);
   d_MR->multiply(x_J, fd_MR_tmp);
   double gain_1 = d_F->dot(x_J);
   double loss_1 = d_A->dot(x_J) + d_L->leakage(x_J);
-
-  // for perturbed keff
-  d_server->update(d_k + d_eps);
+  //   for perturbed keff
+  update_response(d_k + d_eps);
   d_MR->multiply(x_J, *d_fd_MR);
-  d_fd_MR->add_a_times_x(-1.0, fd_MR_tmp);
-  d_fd_MR->scale(1.0/d_eps);
-
   double gain_2 = d_F->dot(x_J);
   double loss_2 = d_A->dot(x_J) + d_L->leakage(x_J);
-  // (d/dk)[ gain(k) - k*loss(k) ] ~ (g2-g1)/eps - k*(l2-l1/eps - l1
+  //   result
+  d_fd_MR->add_a_times_x(-1.0, fd_MR_tmp);
+  d_fd_MR->scale(1.0/d_eps);
   d_fd_FAL = (gain_2-gain_1)/d_eps - d_k*(loss_2-loss_1)/d_eps - loss_1;
 
+  // return original responses
+  update_response(d_k);
+}
+
+//----------------------------------------------------------------------------//
+void Jacobian::update_response(const double keff)
+{
+  using serment_comm::Comm;
+  Require(serment_comm::communicator == serment_comm::world);
+  Require(d_server);
+  if (Comm::is_global())
+  {
+    Require(d_R);
+    Require(d_F);
+    Require(d_A);
+    Require(d_L);
+  }
+  // alert the workers to update
+  int msg = GlobalSolverBase::CONTINUE;
+  serment_comm::Comm::broadcast(&msg, 1, 0);
+  // update the server and responses
+  d_server->update(keff);
+  if (Comm::is_global())
+  {
+    d_R->update();
+    d_F->update();
+    d_A->update();
+    d_L->update();
+  }
 }
 
 } // end namespace erme_solver
+
+//----------------------------------------------------------------------------//
+//              end of file Jacobian.cc
+//----------------------------------------------------------------------------//
 

@@ -161,6 +161,13 @@ private:
     Jacobian& d_J;
   };
 
+  //--------------------------------------------------------------------------//
+  // IMPLEMENTATION
+  //--------------------------------------------------------------------------//
+
+  /// Update the response operators given a new eigenvalue
+  void update_response(const double keff);
+
 };
 
 } // end namespace detran
