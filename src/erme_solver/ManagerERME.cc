@@ -10,6 +10,7 @@
 #include "comm/Comm.hh"
 #include "erme_solver/GlobalSolverPicard.hh"
 #include "erme_solver/GlobalSolverNewton.hh"
+#include "erme_solver/GlobalSolverSteffensen.hh"
 #include "linear_algebra/LinearAlgebraSetup.hh"
 
 namespace erme_solver
@@ -145,13 +146,18 @@ void ManagerERME::solve()
 
   if (solver_type == "picard")
   {
-    d_solver =
-      new GlobalSolverPicard(d_db, d_indexer, d_server, d_state, d_responses);
+    d_solver = new GlobalSolverPicard(
+      d_db, d_indexer, d_server, d_state, d_responses);
   }
   else if (solver_type == "newton")
   {
-    d_solver =
-      new GlobalSolverNewton(d_db, d_indexer, d_server, d_state, d_responses);
+    d_solver = new GlobalSolverNewton(
+      d_db, d_indexer, d_server, d_state, d_responses);
+  }
+  else if (solver_type == "steffensen")
+  {
+    d_solver = new GlobalSolverSteffensen(
+      d_db, d_indexer, d_server, d_state, d_responses);
   }
   else
   {

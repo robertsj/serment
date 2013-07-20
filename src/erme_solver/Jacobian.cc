@@ -12,6 +12,8 @@
 namespace erme_solver
 {
 
+using serment_comm::Comm;
+
 //----------------------------------------------------------------------------//
 Jacobian::Jacobian(SP_server            server,
                    SP_responsecontainer responses,
@@ -25,7 +27,7 @@ Jacobian::Jacobian(SP_server            server,
   Require(d_server);
   Require(d_eps > 0.0);
 
-  if (serment_comm::Comm::is_global())
+  if (Comm::is_global())
   {
     Require(responses);
     d_M = responses->M; Ensure(d_M);
@@ -37,7 +39,7 @@ Jacobian::Jacobian(SP_server            server,
 
     d_m = d_R->number_global_rows();
     d_m_full = d_m;
-    if (serment_comm::Comm::is_last())
+    if (Comm::is_last())
       d_m_full += 2;
 
     d_matrix = new Shell(d_m_full, *this);
@@ -48,22 +50,9 @@ Jacobian::Jacobian(SP_server            server,
 //----------------------------------------------------------------------------//
 void Jacobian::multiply(Vector &f, Vector &fp_times_f)
 {
-  using serment_comm::Comm;
+  Require(f.global_size() == d_MR->number_global_rows() + 2);
 
-  Assert(f.global_size() == d_MR->number_global_rows() + 2);
-
-
-  // The Jacobian has the form
-  //   | (M*R-lambda*I)   M*R_k*J              -J |
-  //   | (F - k*L)        (F_k-k*L_k-L)*J       0 |
-  //   | -J'              0                     0 |
-  // which is computed in pieces. We approximate M*R_k*J as
-  //     d/dk(M*R(k)*J) ~ M*(R(k+eps)-R(k))/eps * J
-  // which is computed and stored upon updating the Jacobian. Similarly,
-  //     d/dk((F - k*L)*f_J) = [F(k+eps)-F(k) - k*(L(k+eps)+L(k))]/eps * f_J
-  //                         - L(k)*f_J
-  // Note that "L" as written here the Jacobian refers to  a total "loss"
-  // operator including absorption and global leakage.
+  Comm::set(serment_comm::global);
 
   // The current moment vector
   Vector x_J(*d_x, d_m);
@@ -106,6 +95,8 @@ void Jacobian::multiply(Vector &f, Vector &fp_times_f)
     fp_times_f[d_m_full - 1] = fp_times_f_lambda;
   }
 
+  Comm::set(serment_comm::world);
+
   return;
 }
 
@@ -118,7 +109,9 @@ void Jacobian::multiply_transpose(Vector &v_in, Vector &v_out)
 //----------------------------------------------------------------------------//
 void Jacobian::update(SP_vector x)
 {
-  using serment_comm::Comm;
+  Require(serment_comm::communicator == serment_comm::world);
+
+  Comm::set(serment_comm::global);
 
   d_x = x;
   if (Comm::is_last())
@@ -129,23 +122,22 @@ void Jacobian::update(SP_vector x)
   Comm::broadcast(&d_k, Comm::last());
   Comm::broadcast(&d_lambda, Comm::last());
 
-  if (Comm::rank() == 0)
-  {
-    std::printf("-------------> %12.9f \n", d_k);
-  }
-
   // insert unknown in current-sized vector
   Vector x_J(*d_x, d_m);
 
   // compute the finite differenced components
   Vector fd_MR_tmp(d_m, 0.0);
   //   for initial keff
+  Comm::set(serment_comm::world);
   d_server->update(d_k);
+  Comm::set(serment_comm::global);
   d_MR->multiply(x_J, fd_MR_tmp);
   double gain_1 = d_F->dot(x_J);
   double loss_1 = d_A->dot(x_J) + d_L->leakage(x_J);
   //   for perturbed keff
+  Comm::set(serment_comm::world);
   update_response(d_k + d_eps);
+  Comm::set(serment_comm::global);
   d_MR->multiply(x_J, *d_fd_MR);
   double gain_2 = d_F->dot(x_J);
   double loss_2 = d_A->dot(x_J) + d_L->leakage(x_J);
@@ -155,22 +147,14 @@ void Jacobian::update(SP_vector x)
   d_fd_FAL = (gain_2-gain_1)/d_eps - d_k*(loss_2-loss_1)/d_eps - loss_1;
 
   // return original responses
+  Comm::set(serment_comm::world);
   update_response(d_k);
 }
 
 //----------------------------------------------------------------------------//
 void Jacobian::update_response(const double keff)
 {
-  using serment_comm::Comm;
   Require(serment_comm::communicator == serment_comm::world);
-  Require(d_server);
-  if (Comm::is_global())
-  {
-    Require(d_R);
-    Require(d_F);
-    Require(d_A);
-    Require(d_L);
-  }
   // alert the workers to update
   int msg = GlobalSolverBase::CONTINUE;
   serment_comm::Comm::broadcast(&msg, 1, 0);

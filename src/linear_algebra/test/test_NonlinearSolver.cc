@@ -95,16 +95,16 @@ public:
   {
     d_m = d_A->number_local_rows();
   }
-  void evaluate(Vector &x, Vector &f)
+  void evaluate(Vector *x, Vector *f)
   {
-    Vector X(x, d_m), F(f, d_m);
+    Vector X(*x, d_m), F(*f, d_m);
     d_A->multiply(X, F);
     double L   = 0.0;
     double f_L = 0.5 - 0.5*pow(X.norm(X.L2), 2);
     if (Comm::is_last())
     {
-      f[d_m] = f_L;
-      L      = x[d_m];
+      (*f)[d_m] = f_L;
+      L         = (*x)[d_m];
     }
     //COUT("L="<<L);
     Comm::broadcast(&L, 1, Comm::last());

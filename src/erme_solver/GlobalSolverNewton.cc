@@ -20,7 +20,7 @@ GlobalSolverNewton::GlobalSolverNewton(SP_db                db,
                                        SP_responsecontainer responses)
   : Base(db, indexer, server, state, responses)
 {
-  d_residual = new NonlinearResidual(d_R, d_M, d_F, d_A, d_L);
+  d_residual = new NonlinearResidual(server, responses);
   d_jacobian = new Jacobian(d_server, responses, 1.0e-8);
   if (serment_comm::Comm::is_global())
   {
@@ -54,8 +54,9 @@ void GlobalSolverNewton::solve()
   std::cout << "...iterate " << std::endl;
   update_response(keff);
   norm = initial.iterate(x, keff, lambda);
-  update_response(keff);
   norm = initial.iterate(x, keff, lambda);
+  display_response("jac");
+  x->display(x->BINARY, "X.out");
 //  update_response(keff);
 //  norm = initial.iterate(x, keff, lambda);
 //  update_response(keff);
@@ -86,6 +87,7 @@ void GlobalSolverNewton::solve()
       update_response(0.0);
     }
   }
+  x->display(x->BINARY, "Xfinal.out");
 
   Comm::broadcast(&keff,   1, Comm::last());
   Comm::broadcast(&lambda, 1, Comm::last());

@@ -131,7 +131,7 @@ residual_wrap(SNES snes, Vec x, Vec f, void *context)
   //std::cout << " X =" << std::endl;
   //X.display();
   //std::cout << " end X" << std::endl;
-  foo->residual()->evaluate(X, F);
+  foo->residual()->evaluate(&X, &F);
   return  ierr;
 };
 

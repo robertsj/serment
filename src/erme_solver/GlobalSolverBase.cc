@@ -14,12 +14,11 @@ namespace erme_solver
 using serment_comm::Comm;
 
 //----------------------------------------------------------------------------//
-GlobalSolverBase::
-GlobalSolverBase(SP_db 									db,
-                 SP_indexer 						indexer,
-                 SP_server 							server,
-                 SP_state 							state,
-                 SP_responsecontainer 	responses)
+GlobalSolverBase::GlobalSolverBase(SP_db 									db,
+                                   SP_indexer 						indexer,
+                                   SP_server 							server,
+                                   SP_state 							state,
+                                   SP_responsecontainer 	responses)
   : d_db(db)
   , d_indexer(indexer)
   , d_server(server)
@@ -35,24 +34,20 @@ GlobalSolverBase(SP_db 									db,
   Require(d_state);
   if (Comm::is_global())
   {
-  	Require(responses);
-  	d_M = responses->M;
-  	d_R = responses->R;
-  	d_L = responses->L;
-  	d_A = responses->A;
-  	d_F = responses->F;
-  	Ensure(d_M);
-  	Ensure(d_R);
-  	Ensure(d_L);
-  	Ensure(d_A);
-  	Ensure(d_F);
-
+    Comm::set(serment_comm::global);
+  	Require(d_responses);
+  	d_M = d_responses->M;
+  	d_R = d_responses->R;
+  	d_L = d_responses->L;
+  	d_A = d_responses->A;
+  	d_F = d_responses->F;
     d_local_size = d_R->number_local_rows();
     if (Comm::is_last()) d_local_size += 2;
+    Comm::set(serment_comm::world);
   }
 
   // Create residual
-  d_residual = new NonlinearResidual(d_R, d_M, d_F, d_A, d_L);
+  d_residual = new NonlinearResidual(d_server, d_responses);
 
   // Set convergence criteria
   if (d_db->check("erme_maximum_iterations"))
@@ -122,7 +117,7 @@ void GlobalSolverBase::display_response(std::string s)
   {
     d_R->display(d_R->BINARY, "R" + s + ".out");
     d_M->display(d_R->BINARY, "M" + s + ".out");
-    d_L->display(d_L->BINARY, "L" + s + ".out");
+    d_L->leakage_vector().display(d_L->BINARY, "L" + s + ".out");
     d_F->display(d_L->BINARY, "F" + s + ".out");
     d_A->display(d_L->BINARY, "A" + s + ".out");
   }

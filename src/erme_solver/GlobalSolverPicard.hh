@@ -46,7 +46,7 @@ public:
   //--------------------------------------------------------------------------//
 
   typedef detran_utilities::SP<GlobalSolverPicard>    SP_solver;
-  typedef erme_solver::GlobalSolverBase               Base;
+  typedef GlobalSolverBase                            Base;
   typedef OperatorMR::SP_MR                           SP_MR;
   typedef linear_algebra::EigenSolver::SP_solver      SP_innersolver;
   typedef EigenvalueUpdate::SP_update                 SP_update;

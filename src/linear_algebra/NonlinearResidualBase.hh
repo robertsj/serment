@@ -38,7 +38,7 @@ public :
   virtual ~NonlinearResidualBase(){}
 
   /// Evaluate the residual vector given an approximate solution x
-  virtual void evaluate(Vector &x, Vector &f) = 0;
+  virtual void evaluate(Vector *x, Vector *f) = 0;
 
 };
 

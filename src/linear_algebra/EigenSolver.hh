@@ -7,7 +7,7 @@
 //----------------------------------------------------------------------------//
 
 #ifndef linear_algebra_EIGENSOLVER_HH_
-#define linear_algebra_EIGENSOLVER_HH_EIGENSOLVER_HH_
+#define linear_algebra_EIGENSOLVER_HH_
 
 #include "Vector.hh"
 #include "MatrixBase.hh"
@@ -88,7 +88,7 @@ private:
 
 } // end namespace linear_algebra
 
-#endif /* linear_algebra_EIGENSOLVER_HH_EIGENSOLVER_HH_ */
+#endif /* linear_algebra_EIGENSOLVER_HH_ */
 
 //----------------------------------------------------------------------------//
 //              end of file EigenSolver.hh

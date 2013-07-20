@@ -93,6 +93,12 @@ public:
   // CONSTRUCTOR & DESTRUCTOR
   //--------------------------------------------------------------------------//
 
+  /**
+   *  @brief Constructor
+   *  @param    server      response server
+   *  @param    responses   container of response operators
+   *  @param    eps         delta-k for finite difference
+   */
   Jacobian(SP_server              server,
            SP_responsecontainer   responses,
            const double           eps = 1.0e-8);

@@ -87,6 +87,7 @@ void GlobalSolverPicard::solve()
   double    lambda = 1.0;
   if (Comm::is_global())
   {
+    Comm::set(serment_comm::global);
     x = new Vector(d_local_size, 1.0);
     setup_initial_current(*x);
     if (d_db->check("erme_initial_keff"))
@@ -97,16 +98,11 @@ void GlobalSolverPicard::solve()
       (*x)[d_local_size - 1] = lambda;
     }
     J = new Vector(*x, d_R->number_local_rows());
+    Comm::set(serment_comm::world);
   }
 
-  // Compute initial responses
-  update_response(keff);
-
   // Compute the initial residual norm
-  double norm = 1.0;
-  if (Comm::is_global())
-    norm = d_residual->compute_norm(*x);
-  Comm::broadcast(&norm, 1, 0);
+  double norm = d_residual->compute_norm(x.bp());
   d_residual_norms.push_back(norm);
 
   // Perform outer iterations
@@ -157,11 +153,10 @@ double GlobalSolverPicard::iterate(SP_vector x, double &keff, double &lambda)
   }
 
   // Update responses with new keff and return the new residual
-  Comm::broadcast(&keff, 1, 0);
+  Comm::broadcast(&keff,   1, 0);
+  Comm::broadcast(&lambda, 1, 0);
   update_response(keff);
-  double norm = 0.0;
-  if (Comm::is_global()) norm = d_residual->compute_norm(*x);
-  Comm::broadcast(&norm, 1, 0);
+  double norm = d_residual->compute_norm(x.bp());
   return norm;
 }
 

@@ -64,7 +64,23 @@ struct ResponseContainer
   }
 
   //--------------------------------------------------------------------------//
-  // TYPEDEFS
+  // PUBLIC FUNCTIONS
+  //--------------------------------------------------------------------------//
+
+	/// Update the response operators with the latest eigenvalue held by server
+	void update()
+	{
+    if (serment_comm::Comm::is_global())
+    {
+      R->update();
+      L->update();
+      F->update();
+      A->update();
+    }
+	}
+
+  //--------------------------------------------------------------------------//
+  // DATA
   //--------------------------------------------------------------------------//
 
   /// Response matrix

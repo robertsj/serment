@@ -24,6 +24,10 @@ ADD_EXECUTABLE(test_GlobalSolverNewton              test_GlobalSolverNewton.cc)
 TARGET_LINK_LIBRARIES(test_GlobalSolverNewton       erme_solver)
 ADD_TEST(test_GlobalSolverNewton                    test_GlobalSolverNewton 0)
 
+ADD_EXECUTABLE(test_GlobalSolverSteffensen          test_GlobalSolverSteffensen.cc)
+TARGET_LINK_LIBRARIES(test_GlobalSolverSteffensen   erme_solver)
+ADD_TEST(test_GlobalSolverSteffensen                test_GlobalSolverSteffensen 0)
+
 ADD_EXECUTABLE(test_EigenvalueUpdate                test_EigenvalueUpdate.cc)
 TARGET_LINK_LIBRARIES(test_EigenvalueUpdate         erme_solver)
 ADD_TEST(test_EigenvalueUpdate                      test_EigenvalueUpdate 0)

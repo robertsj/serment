@@ -12,9 +12,11 @@ SET(SRC
     GlobalSolverBase.cc
     GlobalSolverPicard.cc
     GlobalSolverNewton.cc
+    GlobalSolverSteffensen.cc
     Jacobian.cc
     FullJacobian.cc
     ManagerERME.cc    
+    NonlinearResidual.cc
 )
 
 #-------------------------------------#
