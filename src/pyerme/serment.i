@@ -63,7 +63,7 @@
 // Vector templates
 %template(vec_neighbor)  std::vector<erme_geometry::NeighborSurface>;
 %template(vec2_neighbor) std::vector<std::vector<erme_geometry::NeighborSurface> >;
-%template(vec_point)     std::vector<detran_utilities::Point>;
+%template(vec_point)     std::vector<detran_geometry::Point>;
 
 %inline
 {

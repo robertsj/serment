@@ -42,13 +42,15 @@ Node::SP_node cartesian_node_detran(const int dim,
   db->put<int>("number_groups",            1);
   db->put<int>("dimension",                dim);
   db->put<std::string>("equation",         "dd");
-  db->put<int>("outer_print_level",        0);
-  db->put<int>("inner_print_level",        0);
-  db->put<double>("inner_tolerance",       1.0e-16);
-  db->put<int>("inner_max_iters",          1e6);
-  db->put<double>("outer_tolerance",       1.0e-16);
-  db->put<int>("outer_max_iters",          1e6);
-  db->put<std::string>("quad_type",        "dpn");
+  db->put<std::string>("inner_solver",     "SI");
+  db->put<int>("inner_print_level",        1);
+  db->put<double>("inner_tolerance",       1.0e-12);
+  db->put<int>("inner_max_iters",          1e4);
+  db->put<std::string>("outer_solver",     "GS");
+  db->put<int>("outer_print_level",        1);
+  db->put<double>("outer_tolerance",       1.0e-12);
+  db->put<int>("outer_max_iters",          1e2);
+  db->put<std::string>("quad_type",        "dgl");
   db->put("quad_number_polar_octant",      4);
   db->put<std::string>("basis_p_type",     "jacobi");
 

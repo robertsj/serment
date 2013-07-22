@@ -17,6 +17,7 @@
 #include <iostream>
 
 using namespace serment_comm;
+using namespace linear_algebra;
 using namespace erme_solver;
 using namespace erme_geometry;
 using namespace detran_test;
@@ -51,6 +52,10 @@ int test_NonlinearResidual(int argc, char *argv[])
   manager.get_server()->update(1.0);
   ManagerERME::SP_responsecontainer r = manager.get_responses();
 
+  NonlinearResidual residual(manager.get_server(), r);
+
+  linear_algebra::Vector::SP_vector x, f;
+
   if (Comm::is_global())
   {
     serment_comm::Comm::set(global);
@@ -62,7 +67,6 @@ int test_NonlinearResidual(int argc, char *argv[])
     r->L->update();
 
     // Build the residual
-    NonlinearResidual residual(r->R, r->M, r->F, r->A, r->L);
     r->R->display(r->R->BINARY, "nlr_R.out");
     r->M->display(r->M->BINARY, "nlr_M.out");
     r->F->display(r->F->BINARY, "nlr_F.out");
@@ -83,26 +87,29 @@ int test_NonlinearResidual(int argc, char *argv[])
 
     int m = r->R->number_local_rows();
     if (Comm::is_last()) m += 2;
-    linear_algebra::Vector x(m, 0.2041241452319315);
+
+    x = new Vector(m, 0.2041241452319315);
+    f = new Vector(m, 0.0);
+
     if (Comm::is_last())
     {
-      x[m-2] = 1.0;
-      x[m-1] = 1.0;
+      (*x)[m-2] = 1.0;
+      (*x)[m-1] = 1.0;
     }
-    linear_algebra::Vector J(x, r->R->number_local_rows());
-    linear_algebra::Vector f(m, 0.0);
-    residual.evaluate(x, f);
-
-    double norm_f = residual.compute_norm(x);
-    TEST(soft_equiv(norm_f, norm_f_ref));
-    norm_f = residual.compute_norm(J, 1.0, 1.0);
-    TEST(soft_equiv(norm_f, norm_f_ref));
-    for (int i = 0; i < f.local_size(); ++i)
-    {
-      TEST(soft_equiv(f[i], f_ref[i+f.lower_bound()]));
-    }
+    Vector::SP_vector J(new Vector(*x, r->R->number_local_rows()));
 
     serment_comm::Comm::set(world);
+
+    residual.evaluate(x.bp(), f.bp());
+    double norm_f = residual.compute_norm(x.bp());
+    TEST(soft_equiv(norm_f, norm_f_ref));
+    norm_f = residual.compute_norm(J.bp(), 1.0, 1.0);
+    TEST(soft_equiv(norm_f, norm_f_ref));
+    for (int i = 0; i < f->local_size(); ++i)
+    {
+      TEST(soft_equiv((*f)[i], f_ref[i+f->lower_bound()]));
+    }
+
   }
 
   Comm::global_barrier();

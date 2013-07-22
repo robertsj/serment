@@ -54,7 +54,8 @@ ResponseSourceDetran<B>::ResponseSourceDetran(SP_node node,
   d_solver->set_solver();  // Constructs the actual mg solver
   d_B = d_solver->boundary();
   d_quadrature = d_solver->quadrature();
-
+//  d_quadrature->display();
+//  THROW("ppp");
   // Spatial dimensions in play.  For example, when expanding
   // on an x-directed surface, y and z are in play.
   if (D::dimension == 2)
