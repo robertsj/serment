@@ -9,10 +9,15 @@
 #include "ResponseSourceDetran.hh"
 #include "ResponseSourceDetranDiffusion.t.hh"
 #include "ResponseSourceDetran.t.hh"
-#include "orthog/detran_orthog.hh"
+#include "orthog/OrthogonalBasis.hh"
 
 namespace erme_response
 {
+
+#define COUT(c) std::cout << c << std::endl;
+
+using std::string;
+using detran_orthog::OrthogonalBasis;
 
 //----------------------------------------------------------------------------//
 template <class B>
@@ -30,7 +35,7 @@ ResponseSourceDetran<B>::ResponseSourceDetran(SP_node node,
   Require(node->material());
   Require(node->mesh());
 
-  std::cout << "********* BUILDING DETRAN<" << D::dimension
+  std::cout << "********* BUILDING DETRAN<" << (int)D::dimension
             << "> SOURCE FOR NODE " << d_node->name() << std::endl;
 
   d_db = node->db();
@@ -81,11 +86,11 @@ template <class B>
 void ResponseSourceDetran<B>::
 compute(SP_response response, const ResponseIndex &index)
 {
-  //std::cout << "COMPUTING RESPONSE FOR INDEX: " << index << std::endl;
+//  std::cout << "COMPUTING RESPONSE FOR INDEX: " << index << std::endl;
   d_solver->boundary()->clear();
   d_solver->boundary()->clear_bc();
   set_boundary(index);
-  //std::cout << "idx =" << index << std::endl;
+//  std::cout << "idx =" << index << std::endl;
 
 //  std::cout << "********* OUTGOING BOUNDARY *********** " << std::endl;
 //  d_B->display(false);
@@ -95,7 +100,7 @@ compute(SP_response response, const ResponseIndex &index)
   d_solver->solve(d_keff);
  // THROW("lala");
  // d_solver->state()->display();
-//  std::cout << "********* OUTGOING BOUNDARY *********** " << std::endl;
+//std::cout << "********* OUTGOING BOUNDARY *********** " << std::endl;
 //  d_B->display(false);
 //  std::cout << "********* INCIDENT BOUNDARY *********** " << std::endl;
 //  d_B->display(true);
@@ -110,20 +115,10 @@ compute(SP_response response, const ResponseIndex &index)
 template <class B>
 void ResponseSourceDetran<B>::construct_basis()
 {
-  // @todo MOC is not incorporated yet
-
+  using namespace detran_orthog;
   using std::string;
 
-  //--------------------------------------------------------------------------//
-  // ENERGY
-  //--------------------------------------------------------------------------//
-
-  string basis_e_type = "ddf";
-  if (d_db->check("basis_e_type"))
-    basis_e_type = d_db->get<string>("basis_e_type");
-  size_t ng = d_material->number_groups();
-  for (size_t s = 0; s < d_node->number_surfaces(); ++s)
-    d_basis_e[s] = new detran_orthog::DDF(d_node->energy_order(s), ng);
+  construct_energy_basis();
 
   //--------------------------------------------------------------------------//
   // SPACE
@@ -142,9 +137,11 @@ void ResponseSourceDetran<B>::construct_basis()
       for (size_t dim01 = 0; dim01 < D::dimension - 1; ++dim01) // FREE DIMENSIONS
       {
         size_t fd = d_spatial_dim[dim][dim01];
-        d_basis_s[s][dim01] = new detran_orthog::
-          DLP(d_node->spatial_order(s, dim01),
-              d_mesh->number_cells(fd), true);
+        OrthogonalBasis::Parameters basis_s_p;
+        basis_s_p.size  = d_mesh->number_cells(fd);
+        basis_s_p.order = d_node->spatial_order(s, dim01);
+        basis_s_p.orthonormal = true;
+        d_basis_s[s][dim01] = OrthogonalBasis::Create(basis_s_type, basis_s_p);
       }
     }
   }
@@ -156,180 +153,197 @@ void ResponseSourceDetran<B>::construct_basis()
   // ANGLE
   //--------------------------------------------------------------------------//
 
-  /*
-   * Here, we need to do a bit more logic. If we do the DLP approach, then
-   * a split of the polar and azimuth is useful.  In 1-D, it's only polar.
-   * In 2-D, the split is the same on all sides (we just need to iterate
-   * over the correct azimuths).  In 3-D, things change a bit.  On the
-   * vertical surfaces, we have a half-azimuthal range and a full
-   * polar range.  On the horizontal surfaces, it's a full azimuthal
-   * range and a half polar range.  Note, in this way, the "polar" vs
-   * "azimuthal" distinction is with respect to the *actual* geometry,
-   * not with respect to the incident surface coordinates.
-   *
-   * If we go the route of continuous polynomials, it seems much more
-   * straightforward to employ the local coordinate system.  Then, the
-   * polar angle is with respect to the incident normal.  Then in 1-D,
-   * it's just the Jacobi polynomial.  In 2-D/3-D, it's the Jacobi
-   * polynomial and Legendre in the azimuth.  As long as we use a
-   * quadrature that integrates these exactly, we should be fine.
-   * It might be necessary to define a product quad with Legendre
-   * in the azimuth, or we could just use level symmetric.  My guess is
-   * the accuracy to integrate the Jacobi/Legendre moments is similar
-   * to that needed for spherical harmonics.
-   *
-   */
-
   // Determine whether to expand angular flux or angular current
   if (d_db->check("erme_angular_expansion"))
     d_angular_flux = d_db->get<int>("erme_angular_expansion");
 
-  // Polar
-  string basis_p_type = "dlp";
-  if (d_db->check("basis_p_type"))
-    basis_p_type = d_db->get<string>("basis_p_type");
-  //std::cout << " POLAR TYPE = " << basis_p_type << std::endl;
-
   if (B::D_T::dimension == 1)
   {
-    size_t np = d_quadrature->number_angles_octant();
-    for (size_t s = 0; s < d_node->number_surfaces(); ++s)
-    {
-      if (basis_p_type == "dlp")
-      {
-        d_basis_p[s] = new detran_orthog::
-          DLP(d_node->polar_order(s), np, true);
-      }
-      else if (basis_p_type == "jacobi")
-      {
-        vec_dbl mu = d_quadrature->cosines(d_quadrature->MU);
-        vec_dbl wt = d_quadrature->weights();
-        d_basis_p[s] = new detran_orthog::
-          Jacobi01(d_node->polar_order(s), mu, wt, 0.0, 1.0);
-      }
-      else if (basis_p_type == "legendre")
-      {
-        vec_dbl mu = d_quadrature->cosines(d_quadrature->MU);
-        vec_dbl wt = d_quadrature->weights();
-        d_basis_p[s] = new detran_orthog::
-          CLP(d_node->polar_order(s), mu, wt, 0.0, 1.0);
-      }
-    }
+    construct_angular_basis_1D();
   }
   else if (B::D_T::dimension == 2)
   {
-    // Azimuth
-    string basis_a_type = "dlp";
-    if (d_db->check("basis_a_type"))
-      basis_a_type = d_db->get<string>("basis_a_type");
-
-    if (basis_p_type == "dlp")
-    {
-      // Use DLP for the *physical* polar and azimuth.
-      SP_productquadrature q = d_quadrature;
-      size_t np = q->number_polar_octant();
-      size_t na = 2 * q->number_azimuths_octant();
-      for (size_t s = 0; s < d_node->number_surfaces(); ++s)
-      {
-        d_basis_p[s] = new detran_orthog::DLP(d_node->polar_order(s),     np, true);
-        d_basis_a[s] = new detran_orthog::DLP(d_node->azimuthal_order(s), na, true);
-      }
-    }
-    else if (basis_p_type == "legendre")
-    {
-      // Use continuous Legendre for the polar and azimuth.
-      SP_productquadrature q = d_quadrature;
-      size_t np = q->number_polar_octant();
-      size_t na = 2 * q->number_azimuths_octant();
-      vec_dbl xi(np, 0);
-      vec_dbl w_p(np, 0);
-      for (size_t p = 0; p < np; ++p)
-      {
-        xi[p]  = q->cos_theta(p);
-        w_p[p] = q->polar_weight(p);
-      }
-      vec_dbl phi(na, 0);
-      vec_dbl w_a(na, 0);
-      for (size_t a = 0; a < na/2; ++a)
-      {
-        phi[a]      = q->phi(a);
-        phi[na-a-1] = detran_utilities::pi - q->phi(a);
-        w_a[a]      = q->azimuth_weight(a) * 2.0 /  1.570796326794897;;
-        w_a[na-a-1] = q->azimuth_weight(a) * 2.0 /  1.570796326794897;
-      }
-      for (size_t s = 0; s < d_node->number_surfaces(); ++s)
-      {
-        d_basis_p[s] = new detran_orthog::
-          CLP(d_node->polar_order(s), xi, w_p, 0.0, 1.0);
-        d_basis_a[s] = new detran_orthog::
-          CLP(d_node->azimuthal_order(s), phi, w_a, 0.0, detran_utilities::pi);
-      }
-    }
-    else if (basis_p_type == "cheby")
-    {
-      SP_productquadrature q = d_quadrature;
-      size_t np = q->number_polar_octant();
-      size_t na = 2 * q->number_azimuths_octant();
-      vec_dbl xi(np, 0);
-      vec_dbl w_p(np, 0);
-      for (size_t p = 0; p < np; ++p)
-      {
-        xi[p]  = q->cos_theta(p);
-        w_p[p] = q->polar_weight(p);
-        //std::cout << " p = " << p << " w = " << w_p[p] << std::endl;
-      }
-      vec_dbl cos_phi(na, 0);
-      vec_dbl sin_phi(na, 0);
-      vec_dbl w_a(na, 0);
-      for (size_t a = 0; a < na/2; ++a)
-      {
-        cos_phi[a]      = q->cos_phi(a);
-        cos_phi[na-a-1] = -q->cos_phi(a);
-        sin_phi[a]      = q->sin_phi(a);
-        sin_phi[na-a-1] = q->sin_phi(a);
-        //std::cout << " a = " << a << " cos_phi = " << q->cos_phi(a) << std::endl;
-        w_a[a]      = q->sin_phi(a) * q->azimuth_weight(a);// /  1.570796326794897;
-        w_a[na-a-1] = q->sin_phi(a) * q->azimuth_weight(a);// /  1.570796326794897;
-      }
-      for (size_t s = 0; s < d_node->number_surfaces(); ++s)
-      {
-        d_basis_p[s] = new detran_orthog::
-          ChebyshevU(d_node->polar_order(s), xi, w_p, -1.0, 1.0, true);
-        d_basis_a[s] = new detran_orthog::
-          CLP(d_node->azimuthal_order(s), cos_phi, w_a, -1.0, 1.0);
-      }
-//      d_basis_p[0]->weights()->display();
-//      d_basis_p[0]->basis()->display();
-//      d_basis_a[0]->weights()->display();
-//      d_basis_a[0]->basis()->display();
-
-    }
-    else if (basis_p_type == "jacobi")
-    {
-      // Use Jacobi for the polar w/r to the incident.
-      // Note, this one
-
-      size_t axis = s / 2;
-      vec_dbl mu = d_quadrature->cosines(axis);
-      vec_dbl wt = d_quadrature->weights();
-      d_basis_p[s] = new detran_orthog::
-        Jacobi01(d_node->polar_order(s), mu, wt, 0.0, 1.0);
-    }
-    else
-    {
-      THROW("INVALID BASIS");
-    }
-
+    construct_angular_basis_2D();
   }
   if (B::D_T::dimension == 3)
   {
-    // Azimuth
-    string basis_a_type = "dlp";
-    if (d_db->check("basis_a_type"))
-      basis_a_type = d_db->get<string>("basis_a_type");
-    for (size_t s = 0; s < d_node->number_surfaces(); ++s)
-      d_basis_a[s] = new detran_orthog::DLP(d_node->azimuthal_order(s), 0);
+    construct_angular_basis_3D();
   }
+}
+
+//----------------------------------------------------------------------------//
+template <class B>
+void ResponseSourceDetran<B>::construct_energy_basis()
+{
+  /*
+   *  The default basis in energy is the discrete Diract delta basis, which
+   *  is limited to full order expansions.  This is equivalent to a standard
+   *  multigroup treatment.
+   *
+   *  As an alternative, any discrete basis can be used.  This includes
+   *  the transformed DCT basis.
+   *
+   */
+  OrthogonalBasis::Factory_T::ShowRegistered();
+
+  // default is a dirac basis, equivalent to full multigroup
+  string basis_e_type = "ddf";
+  if (d_db->check("basis_e_type"))
+    basis_e_type = d_db->get<string>("basis_e_type");
+  size_t ng = d_material->number_groups();
+  size_t basis_e_order = ng - 1;
+  if (d_db->check("basis_e_order"))
+    basis_e_order = d_db->get<int>("basis_e_order");
+  Assert(basis_e_order < ng);
+  OrthogonalBasis::Parameters basis_e_p;
+  basis_e_p.order = basis_e_order;
+  basis_e_p.size  = ng;
+  for (size_t s = 0; s < d_node->number_surfaces(); ++s)
+    d_basis_e[s] = OrthogonalBasis::Create(basis_e_type, basis_e_p);
+
+}
+
+//----------------------------------------------------------------------------//
+template <class B>
+void ResponseSourceDetran<B>::construct_angular_basis_1D()
+{
+  string basis_p_type = "dlp";
+  if (d_db->check("basis_p_type"))
+    basis_p_type = d_db->get<string>("basis_p_type");
+  COUT("BASIS P TYPE = " << basis_p_type)
+  OrthogonalBasis::Parameters basis_p_p;
+  basis_p_p.size = d_quadrature->number_angles_octant();
+  basis_p_p.x    = d_quadrature->cosines(d_quadrature->MU);
+  basis_p_p.qw   = d_quadrature->weights();
+  basis_p_p.orthonormal = true;
+  basis_p_p.lower_bound = 0.0;
+  basis_p_p.upper_bound = 1.0;
+  for (size_t s = 0; s < d_node->number_surfaces(); ++s)
+  {
+    basis_p_p.order = d_node->polar_order(s);
+    d_basis_p[s] = OrthogonalBasis::Create(basis_p_type, basis_p_p);
+  }
+  COUT("lb=" << basis_p_p.lower_bound << " ub=" << basis_p_p.upper_bound);
+  d_basis_p[0]->basis()->print_matlab("BP.out");
+}
+
+//----------------------------------------------------------------------------//
+template <class B>
+void ResponseSourceDetran<B>::construct_angular_basis_2D()
+{
+  /*
+   *  Any possible combination of bases available in Detran is allowed.
+   *  Using cheby for polar and/or clp for azimuth gets special treatment, since
+   *  with proper transformation of variables, their combo yields aconservative
+   *  basis as first presented by Rahnema and his students and examined more
+   *  rigorously in my thesis.
+   */
+
+  SP_productquadrature q = d_quadrature;
+
+  string basis_p_type = "dlp";
+  if (d_db->check("basis_p_type"))
+    basis_p_type = d_db->get<string>("basis_p_type");
+  OrthogonalBasis::Parameters basis_p_p;
+  basis_p_p.size = q->number_polar_octant();
+  basis_p_p.orthonormal = true;
+  basis_p_p.x.resize(basis_p_p.size, 0.0);
+  basis_p_p.qw.resize(basis_p_p.size, 0.0);
+  basis_p_p.lower_bound = 0.0;
+  basis_p_p.upper_bound = 1.0;
+
+  if (basis_p_type == "cheby")
+  {
+    // if cheby is used, we use the full -1 to 1 but skip odd orders (rather
+    // define the basis from 0 to 1)
+    basis_p_p.even_only   = true;
+    basis_p_p.lower_bound = -1.0;
+    basis_p_p.upper_bound =  1.0;
+  }
+  for (size_t p = 0; p < basis_p_p.size; ++p)
+  {
+    basis_p_p.x[p]  = q->cos_theta(p);
+    basis_p_p.qw[p] = q->polar_weight(p);
+  }
+
+  string basis_a_type = "dlp";
+  if (d_db->check("basis_p_type"))
+    basis_a_type = d_db->get<string>("basis_a_type");
+  OrthogonalBasis::Parameters basis_a_p;
+  basis_a_p.size = 2 * q->number_azimuths_octant();
+  basis_a_p.orthonormal = true;
+  basis_a_p.x.resize(basis_a_p.size, 0.0);
+  basis_a_p.qw.resize(basis_a_p.size, 0.0);
+  if (basis_a_type == "clp")
+  {
+    // if clp is used for a, we transform via
+    //     omega = cos(phi)
+    // --> domega = -sin(phi) dphi
+    // that negative is folded into the points, while the sin is factored into
+    // the weights.
+    for (size_t a = 0; a < basis_a_p.size / 2; ++a)
+    {
+      size_t b = basis_a_p.size - a - 1;
+      basis_a_p.x[a]  = q->cos_phi(a);
+      basis_a_p.x[b]  = -basis_a_p.x[a];
+      basis_a_p.qw[a] = q->sin_phi(a) * q->azimuth_weight(a);
+      basis_a_p.qw[b] = basis_a_p.qw[a];
+    }
+    basis_a_p.lower_bound = -1.0;
+    basis_a_p.upper_bound =  1.0;
+  }
+  else
+  {
+    // otherwise, it's just a standard expansion over 0 to 2pi
+    const double four_over_pi = 4.0 / detran_utilities::pi;
+    for (size_t a = 0; a < basis_a_p.size / 2; ++a)
+    {
+      size_t b = basis_a_p.size - a - 1;
+      basis_a_p.x[a]  = q->phi(a);
+      basis_a_p.x[b]  = detran_utilities::pi - basis_a_p.x[a];
+      basis_a_p.qw[a] = q->azimuth_weight(a) * four_over_pi;
+      basis_a_p.qw[b] = basis_a_p.qw[a];
+    }
+    basis_a_p.lower_bound = 0.0;
+    basis_a_p.upper_bound = detran_utilities::pi;
+  }
+
+  for (size_t s = 0; s < d_node->number_surfaces(); ++s)
+  {
+    basis_p_p.order = d_node->polar_order(s);
+    basis_a_p.order = d_node->azimuthal_order(s);
+    d_basis_p[s] = OrthogonalBasis::Create(basis_p_type, basis_p_p);
+    d_basis_a[s] = OrthogonalBasis::Create(basis_a_type, basis_a_p);
+  }
+}
+
+//----------------------------------------------------------------------------//
+template <class B>
+void ResponseSourceDetran<B>::construct_angular_basis_3D()
+{
+  /*
+   *  For 3-D, we allow two options: DLP-DLP and a combination of
+   *  cheby-clp + jacobi-clp.
+   */
+
+  SP_productquadrature q = d_quadrature;
+
+  string basis_p_type = "dlp";
+  if (d_db->check("basis_p_type"))
+    basis_p_type = d_db->get<string>("basis_p_type");
+  string basis_a_type = "dlp";
+  if (d_db->check("basis_a_type"))
+    basis_a_type = d_db->get<string>("basis_a_type");
+
+
+
+  OrthogonalBasis::Parameters basis_p_p;
+  basis_p_p.size = q->number_polar_octant();
+  basis_p_p.orthonormal = true;
+  basis_p_p.x.resize(basis_p_p.size, 0.0);
+  basis_p_p.qw.resize(basis_p_p.size, 0.0);
+  basis_p_p.lower_bound = 0.0;
+  basis_p_p.upper_bound = 1.0;
 
 }
 

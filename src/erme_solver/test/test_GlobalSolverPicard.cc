@@ -54,7 +54,7 @@ int test_GlobalSolverPicard(int argc, char *argv[])
   manager.build_comm(db);
 
   // Get nodes, build problem, and solve
-  NodeList::SP_nodelist nodes = cartesian_node_detran_list_1d(0);
+  NodeList::SP_nodelist nodes = cartesian_node_detran_list_1d(1);
   manager.build_erme(nodes);
   manager.solve();
 
