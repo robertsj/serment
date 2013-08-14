@@ -45,7 +45,6 @@ void NonlinearSolver::setup(SP_db       db,
   Assert(newton_type < END_NEWTON_TYPES);
   if (newton_type == NEWTON)
   {
-
     SNESSetJacobian(d_solver,
                     d_J->matrix()->A(),
                     d_P->matrix()->A(),
@@ -79,7 +78,6 @@ void NonlinearSolver::solve(SP_vector x)
 {
   Require(x);
   PetscErrorCode ierr = 0;
-  d_J->matrix()->display(Matrix::BINARY, "JACOBIAN.OUT");
   SNESSetTolerances(d_solver, 1e-12, 1e-12, 1e-12, 20, 1000);
   ierr = SNESSolve(d_solver, PETSC_NULL, x->V());
   ierr = SNESGetIterationNumber(d_solver, &d_number_iterations);

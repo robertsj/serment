@@ -69,7 +69,8 @@ void Matrix::insert_values(SP_matrix M_in, const int mode)
   {
     MatGetRow(M.A(), i, &ncols, &cols, &vals);
     int rows[] = {i};
-    MatrixBase::insert_values(1, rows, ncols, cols, vals, mode);
+    insert_values(1, rows, ncols, cols, vals, mode);
+    MatRestoreRow(M.A(), i, &ncols, &cols, &vals);
   }
 }
 

@@ -123,7 +123,7 @@ protected:
 inline PetscErrorCode
 residual_wrap(SNES snes, Vec x, Vec f, void *context)
 {
-  std::cout << " residual_wrap WRAP" << std::endl;
+  //std::cout << " residual_wrap WRAP" << std::endl;
 
   PetscErrorCode ierr = 0;
   NonlinearSolver* foo = (NonlinearSolver*) context;
@@ -139,7 +139,7 @@ residual_wrap(SNES snes, Vec x, Vec f, void *context)
 inline PetscErrorCode
 jacobian_wrap(SNES snes, Vec x, Mat *J, Mat *P, MatStructure *flag, void *ctx)
 {
-  std::cout << " jacobian_wrap WRAP" << std::endl;
+  //std::cout << " jacobian_wrap WRAP" << std::endl;
 
   PetscErrorCode ierr = 0;
   NonlinearSolver* foo = (NonlinearSolver*) ctx;
@@ -163,7 +163,7 @@ inline PetscErrorCode
 jfnk_wrap(SNES snes, Vec x, Mat *J, Mat *P, MatStructure *flag, void *ctx)
 {
   PetscErrorCode ierr = 0;
-  std::cout << " JFNK WRAP" << std::endl;
+  //std::cout << " JFNK WRAP" << std::endl;
   // Assemble the Jacobian matrix (this is all MatMFFDComputeJacobian does)
   ierr = MatAssemblyBegin(*J, MAT_FINAL_ASSEMBLY);
   ierr = MatAssemblyEnd(*J, MAT_FINAL_ASSEMBLY);
@@ -180,7 +180,6 @@ jfnk_wrap(SNES snes, Vec x, Mat *J, Mat *P, MatStructure *flag, void *ctx)
 }
 
 } // end namespace linear_algebra
-
 
 #endif /* linear_algebra_NONLINEARSOLVER_HH_ */
 
