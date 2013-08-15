@@ -24,6 +24,8 @@ FissionOperator::FissionOperator(SP_nodelist nodes,
 //----------------------------------------------------------------------------//
 void FissionOperator::update()
 {
+  if (!d_server->is_updated()) return;
+
   // Offset for a block.  Starts at this vector's lower bound.
   int offset = lower_bound();
 

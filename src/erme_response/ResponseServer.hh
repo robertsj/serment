@@ -69,9 +69,9 @@ public:
    *  @param dborder  Interpolation order for database (optional)
    */
   ResponseServer(SP_nodelist nodes,
-                 SP_indexer indexer,
+                 SP_indexer  indexer,
                  std::string dbname = "",
-                 size_t dborder = 1);
+                 size_t      dborder = 1);
 
   /// Update the eigenvalue and compute the new responses
   void update(const double keff);
@@ -81,6 +81,9 @@ public:
    *  @param node   Local node index
    */
   SP_response response(size_t node);
+
+  /// Ask server if it has updated responses (before reconstructing operators)
+  bool is_updated() const;
 
 private:
 
@@ -96,8 +99,16 @@ private:
   vec_source d_sources;
   /// Node response functions [size = number of unique local nodes]
   vec_response d_responses;
+  /// Previously-computed response functions (if k is repeated)
+  vec_response d_responses_1;
   /// Response database
   SP_rfdb d_rfdb;
+  /// Current k-eigenvalue
+  double d_keff;
+  /// Last k-eigenvalue
+  double d_keff_1;
+  /// Flag indicating the server has new values
+  bool d_is_updated;
 
   //--------------------------------------------------------------------------//
   // IMPLEMENTATION

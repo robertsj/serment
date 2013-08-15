@@ -11,6 +11,9 @@
 namespace erme
 {
 
+using std::cout;
+using std::endl;
+
 //----------------------------------------------------------------------------//
 LeakageOperator::LeakageOperator(SP_nodelist nodes,
                                  SP_indexer  indexer,
@@ -84,8 +87,7 @@ LeakageOperator::LeakageOperator(SP_nodelist nodes,
 //----------------------------------------------------------------------------//
 void LeakageOperator::update()
 {
-  using std::cout;
-  using std::endl;
+  if (!d_server->is_updated()) return;
 
   // Offset for a block.  Starts at this matrix's lower bound.
   int offset = lower_bound();

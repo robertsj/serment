@@ -11,6 +11,9 @@
 namespace erme
 {
 
+using std::cout;
+using std::endl;
+
 //----------------------------------------------------------------------------//
 ResponseMatrix::ResponseMatrix(SP_nodelist nodes,
                                SP_indexer indexer,
@@ -52,8 +55,7 @@ ResponseMatrix::ResponseMatrix(SP_nodelist nodes,
 //----------------------------------------------------------------------------//
 void ResponseMatrix::update()
 {
-  using std::cout;
-  using std::endl;
+  if (!d_server->is_updated()) return;
 
   // Offset for a block.  Starts at this matrix's lower bound.
   int offset = lower_bound();

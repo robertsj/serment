@@ -24,6 +24,8 @@ AbsorptionOperator::AbsorptionOperator(SP_nodelist nodes,
 //----------------------------------------------------------------------------//
 void AbsorptionOperator::update()
 {
+  if (!d_server->is_updated()) return;
+
   // Offset for a block.  Starts at this vector's lower bound.
   int offset = lower_bound();
 

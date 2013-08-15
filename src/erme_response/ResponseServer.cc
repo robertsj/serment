@@ -10,10 +10,15 @@
 #include "ResponseSourceFactory.hh"
 #include "comm/Comm.hh"
 
+#include <algorithm>
 #include <iostream>
 
 namespace erme_response
 {
+
+using std::cout;
+using std::endl;
+using serment_comm::Comm;
 
 //----------------------------------------------------------------------------//
 ResponseServer::ResponseServer(SP_nodelist  nodes,
@@ -22,8 +27,10 @@ ResponseServer::ResponseServer(SP_nodelist  nodes,
                                size_t       dborder)
   : d_nodes(nodes)
   , d_indexer(indexer)
+  , d_keff(-1.0)
+  , d_keff_1(-2.0)
+  , d_is_updated(false)
 {
-  // Preconditions
   Require(d_nodes);
   Require(d_indexer);
 
@@ -42,7 +49,7 @@ ResponseServer::ResponseServer(SP_nodelist  nodes,
    *  computed only once locally.
    */
   ResponseSourceFactory builder;
-  for (size_t node_ul = 0; node_ul < d_sources.size(); node_ul++)
+  for (size_t node_ul = 0; node_ul < d_sources.size(); ++node_ul)
   {
     // Build the sources
     size_t node_ug =  d_nodes->unique_global_index_from_unique_local(node_ul);
@@ -60,13 +67,7 @@ ResponseServer::ResponseServer(SP_nodelist  nodes,
 //----------------------------------------------------------------------------//
 void ResponseServer::update(const double keff)
 {
-  // Preconditions
   Require(serment_comm::communicator == serment_comm::world);
-
-  using std::cout;
-  using std::endl;
-
-  typedef serment_comm::Comm Comm;
 
   // Switch to local communicator.
   Comm::set(serment_comm::local);
@@ -76,20 +77,56 @@ void ResponseServer::update(const double keff)
   double k = keff;
   Comm::broadcast(&k, 1, 0);
 
-  // Update sources
-  for (int i = 0; i < d_sources.size(); i++)
+  d_is_updated = true;
+  if (k == d_keff)
   {
-    d_sources[i]->update(k);
-    d_responses[i]->clear();
+    // Do nothing, since these responses are already stored.
+    d_is_updated = false;
   }
+  else if (k == d_keff_1) // may want soft equiv
+  {
+    // Swap the stored eigenvalues
+    d_keff_1 = d_keff;
+    d_keff   = k;
 
-  // Use the simple updater.
-  update_explicit_work_share();
+    // Swap the stored responses, building a new vector if needed
+    if (d_responses_1.size() != d_responses.size())
+    {
+      d_responses_1.resize(d_responses.size());
+      for (size_t node_ul = 0; node_ul < d_sources.size(); ++node_ul)
+      {
+        // Build the nodal response containers
+        size_t node_ug =
+          d_nodes->unique_global_index_from_unique_local(node_ul);
+        d_responses[node_ul] =
+          new NodeResponse(d_indexer->number_node_moments(node_ug),
+                           d_nodes->unique_node(node_ug)->number_surfaces());
+      }
+    }
+    std::swap(d_responses, d_responses_1);
+  }
+  else
+  {
+    // Update sources for the new eigenvalue
+    for (int i = 0; i < d_sources.size(); i++)
+    {
+      d_sources[i]->update(k);
+      d_responses[i]->clear();
+    }
+
+    // Use the simple updater.
+    update_explicit_work_share();
+  }
 
   // Must go back to world, for which the global
   // roots now have the updated response.
   Comm::set(serment_comm::world);
+}
 
+//----------------------------------------------------------------------------//
+bool ResponseServer::is_updated() const
+{
+  return d_is_updated;
 }
 
 //----------------------------------------------------------------------------//
@@ -107,11 +144,6 @@ void ResponseServer::update(const double keff)
  */
 void ResponseServer::update_explicit_work_share()
 {
-  using std::cout;
-  using std::endl;
-
-  typedef serment_comm::Comm Comm;
-
   // Clear the responses.  This is needed since we use reduction to collect.
   // Ultimately, more sophisticated approached will be assessed.
   for (int i = 0; i < d_responses.size(); ++i)
