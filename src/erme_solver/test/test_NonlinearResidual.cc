@@ -51,6 +51,7 @@ int test_NonlinearResidual(int argc, char *argv[])
   manager.build_erme(nodes);
   manager.get_server()->update(1.0);
   ManagerERME::SP_responsecontainer r = manager.get_responses();
+
   NonlinearResidual residual(manager.get_server(), r);
 
   double f_ref[] =
@@ -66,6 +67,7 @@ int test_NonlinearResidual(int argc, char *argv[])
   double norm_f_ref = 3.446740773579676e+05;
 
   Vector::SP_vector x, f, J;
+
   if (Comm::is_global())
   {
     serment_comm::Comm::set(global);
@@ -87,15 +89,28 @@ int test_NonlinearResidual(int argc, char *argv[])
     int m = r->R->number_local_rows();
     if (Comm::is_last()) m += 2;
     x = new Vector(m, 0.2041241452319315);
+    f = new Vector(m, 0.0);
     if (Comm::is_last())
     {
       (*x)[m-2] = 1.0;
       (*x)[m-1] = 1.0;
     }
-    f = new Vector(m, 0.0);
     J = new Vector(*x, r->R->number_local_rows());
 
     serment_comm::Comm::set(world);
+
+    residual.evaluate(x.bp(), f.bp());
+    double norm_f = residual.compute_norm(x.bp());
+    TEST(soft_equiv(norm_f, norm_f_ref));
+    norm_f = residual.compute_norm(J.bp(), 1.0, 1.0);
+    TEST(soft_equiv(norm_f, norm_f_ref));
+    for (int i = 0; i < f->local_size(); ++i)
+    {
+      TEST(soft_equiv((*f)[i], f_ref[i+f->lower_bound()]));
+    }
+    f = new Vector(m, 0.0);
+    J = new Vector(*x, r->R->number_local_rows());
+
   }
 
   residual.evaluate(x.bp(), f.bp());

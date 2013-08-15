@@ -40,6 +40,8 @@ void ResponseSourceDetran<B>::expand_boundary(SP_response          response,
 // SN SPECIALIZATIONS
 //----------------------------------------------------------------------------//
 
+#define FUCK(c) std::cout << c << std::endl;
+
 //----------------------------------------------------------------------------//
 // fixed boundary
 template <>
@@ -52,13 +54,18 @@ set_boundary(const ResponseIndex &index_i)
   size_t octant = d_quadrature->incident_octant(index_i.surface)[0];
   for (size_t g = 0; g < d_material->number_groups(); ++g)
   {
-    double P_e = (*d_basis_e[index_i.surface])(index_i.energy, g);
+    double P_e = (*d_basis_e[index_i.surface])(g, index_i.energy);
     for (size_t p = 0; p < d_quadrature->number_angles_octant(); ++p)
     {
-      double P_p = (*d_basis_p[index_i.surface])(index_i.polar, p);
+
+
+      double P_p = (*d_basis_p[index_i.surface])(p, index_i.polar);
+
       double val = P_e * P_p;
+
       if (!d_angular_flux) val /= d_quadrature->mu(0, p);
       BC(0, p, g) =  val;
+
       //B(index_i.surface, octant, p, g) = val;
     }
   }

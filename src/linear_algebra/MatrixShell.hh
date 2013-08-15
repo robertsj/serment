@@ -31,6 +31,10 @@ class MatrixShell: public MatrixBase
 
 public:
 
+  //--------------------------------------------------------------------------//
+  // CONSTRUCTOR & DESTRUCTOR
+  //--------------------------------------------------------------------------//
+
   /// Constructor with void pointer to the user context
   MatrixShell(const size_type m,
               const size_type n,

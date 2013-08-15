@@ -168,7 +168,7 @@ void GlobalSolverPicard::display(const size_t it,
 {
   if (serment_comm::Comm::world_rank() == 0)
   {
-    printf(" %3i %12.8e %20.16f %20.16f \n", it, norm, lambda, keff);
+    printf("123 %3i %12.8e %20.16f %20.16f \n", it, norm, lambda, keff);
   }
 }
 

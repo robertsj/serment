@@ -11,7 +11,7 @@
 
 #include "serment_config.h"
 #include "comm/Comm.hh"
-#include "utilities/Point.hh"
+#include "geometry/Point.hh"
 #include "utilities/Definitions.hh"
 #include "utilities/DBC.hh"
 #include "utilities/SP.hh"
@@ -23,12 +23,6 @@
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/export.hpp>
-
-//// Forward declarations
-//namespace detran_geometry
-//{
-//class Point;
-//}
 
 /**
  *  @namespace erme_geometry
@@ -99,7 +93,7 @@ public:
   typedef detran_utilities::vec_dbl         vec_dbl;
   typedef detran_utilities::vec_size_t      vec_size_t;
   typedef detran_utilities::vec2_size_t     vec2_size_t;
-  typedef detran_utilities::Point            Point;
+  typedef detran_geometry::Point            Point;
 
   //--------------------------------------------------------------------------//
   // CONSTRUCTOR & DESTRUCTOR

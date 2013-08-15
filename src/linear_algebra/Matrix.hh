@@ -20,6 +20,10 @@ class Matrix: public MatrixBase
 
 public:
 
+  //--------------------------------------------------------------------------//
+  // CONSTRUCTOR & DESTRUCTOR
+  //--------------------------------------------------------------------------//
+
   /**
    *  @brief Constructor
    *  @param    m       local number of rows

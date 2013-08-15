@@ -48,7 +48,7 @@ int test_GlobalSolverPicard(int argc, char *argv[])
   db->put<int>("erme_maximum_iterations", 20);
   db->put<double>("erme_inner_tolerance", 1.0e-14);
   db->put<double>("erme_tolerance", 1.0e-12);
-  db->put<std::string>("erme_picard_update", "anghel");
+  db->put<std::string>("erme_picard_update", "default");
   db->put<int>("erme_anghel_scheme", 0);
 
   manager.build_comm(db);

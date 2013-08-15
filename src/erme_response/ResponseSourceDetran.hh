@@ -140,6 +140,15 @@ private:
   /// Construct the basis
   void construct_basis();
 
+  /// Specialized basis construction routines
+  //@{
+  void construct_energy_basis();
+  void construct_angular_basis_1D();
+  void construct_angular_basis_2D();
+  void construct_angular_basis_3D();
+  //@}
+
+
   /// Sign to avoid integrating space variables in reverse.
   int spatial_sign(const size_t surface)
   {
