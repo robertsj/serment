@@ -184,7 +184,6 @@ void MatrixBase::set_sizes_and_bounds()
   // Get ranges
   PetscErrorCode ierr;
   int lb, ub;
-  std::cout << " ierr = " << d_A << std::endl;
 
   ierr = MatGetOwnershipRange(d_A, &lb, &ub);
   Assert(lb >= 0 and ub > 0);

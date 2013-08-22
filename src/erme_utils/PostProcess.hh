@@ -10,6 +10,7 @@
 #ifndef erme_utils_POSTPROCESS_HH_
 #define erme_utils_POSTPROCESS_HH_
 
+#include "erme_solver/ManagerERME.hh"
 #include "erme_geometry/NodeList.hh"
 #include "erme_response/ResponseIndexer.hh"
 #include "erme_response/ResponseServer.hh"
@@ -51,22 +52,14 @@ public:
   typedef erme_response::ResponseIndexer::SP_indexer  SP_indexer;
   typedef erme_response::ResponseServer::SP_server    SP_server;
   typedef detran_utilities::vec_dbl                   vec_dbl;
+  typedef erme_solver::ManagerERME::SP_manager        SP_manager;
 
   //-------------------------------------------------------------------------//
   // CONSTRUCTOR & DESTRUCTOR
   //-------------------------------------------------------------------------//
 
   /// Constructor
-  PostProcess(SP_db db,
-              SP_nodelist nodes,
-              SP_indexer indexer,
-              SP_server server,
-              SP_state state,
-              SP_R R,
-              SP_M M,
-              SP_F F,
-              SP_A A,
-              SP_L L);
+  PostProcess(SP_manager manager);
 
   //-------------------------------------------------------------------------//
   // PUBLIC FUNCTIONS

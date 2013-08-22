@@ -22,6 +22,7 @@ ManagerERME::ManagerERME(int argc, char *argv[])
   , d_argv(argv)
   , d_is_built(false)
 {
+  std::cout << " INITIALIZING ERME MANAGER..." << std::endl;
   serment_comm::Comm::initialize(argc, argv);
 }
 

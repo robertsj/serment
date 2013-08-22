@@ -8,6 +8,7 @@
 
 #include "GlobalSolverNewton.hh"
 #include "GlobalSolverPicard.hh"
+#include <cstdio>
 
 namespace erme_solver
 {

@@ -13,28 +13,23 @@ namespace erme_utils
 {
 
 //---------------------------------------------------------------------------//
-PostProcess::PostProcess(SP_db db,
-                         SP_nodelist nodes,
-                         SP_indexer indexer,
-                         SP_server server,
-                         SP_state state,
-                         SP_R R,
-                         SP_M M,
-                         SP_F F,
-                         SP_A A,
-                         SP_L L)
-  : d_db(db)
-  , d_nodes(nodes)
-  , d_indexer(indexer)
-  , d_server(server)
-  , d_state(state)
-  , d_R(R)
-  , d_M(M)
-  , d_F(F)
-  , d_A(A)
-  , d_L(L)
+PostProcess::PostProcess(SP_manager manager)
 {
-
+  Require(manager);
+//  : d_db(db)
+//  , d_nodes(nodes)
+//  , d_indexer(indexer)
+//  , d_server(server)
+//  , d_state(state)
+//  , d_R(R)
+//  , d_M(M)
+//  , d_F(F)
+//  , d_A(A)
+//  , d_L(L)
+  d_nodes = manager->get_nodes();
+  d_indexer = manager->get_indexer();
+  d_state = manager->get_state();
+  d_F = manager->get_responses()->F;
 }
 
 //---------------------------------------------------------------------------//

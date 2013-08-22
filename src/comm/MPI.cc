@@ -34,7 +34,10 @@ int    Comm::d_local_group = 0;
 
 void Comm::initialize(int &argc, char **&argv)
 {
+  std::cout << " mpi init.... " << std::endl;
+
   int result = MPI_Init(&argc, &argv);
+  std::cout << " result = " << result << std::endl;
   d_time = 0.0;
   d_world_rank = Comm::rank();
   Ensure(result == MPI_SUCCESS);

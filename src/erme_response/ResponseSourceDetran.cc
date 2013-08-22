@@ -41,7 +41,7 @@ ResponseSourceDetran<B>::ResponseSourceDetran(SP_node node,
   d_db = node->db();
   d_material = node->material();
   d_mesh = node->mesh();
-  d_db->display();
+  //d_db->display();
   // Ensure we compute boundary fluxes
   d_db->put<int>("compute_boundary_flux", 1);
 
@@ -184,7 +184,7 @@ void ResponseSourceDetran<B>::construct_energy_basis()
    *  the transformed DCT basis.
    *
    */
-  OrthogonalBasis::Factory_T::ShowRegistered();
+  //OrthogonalBasis::Factory_T::ShowRegistered();
 
   // default is a dirac basis, equivalent to full multigroup
   string basis_e_type = "ddf";
@@ -194,10 +194,27 @@ void ResponseSourceDetran<B>::construct_energy_basis()
   size_t basis_e_order = ng - 1;
   if (d_db->check("basis_e_order"))
     basis_e_order = d_db->get<int>("basis_e_order");
-  Assert(basis_e_order < ng);
+  Insist(basis_e_order < ng, "Energy order must be <= number groups");
   OrthogonalBasis::Parameters basis_e_p;
   basis_e_p.order = basis_e_order;
   basis_e_p.size  = ng;
+  basis_e_p.orthonormal = true;
+  // transformed basis parameters
+  if (basis_e_type == "trans")
+  {
+    Insist(d_db->check("basis_e_zeroth"),
+      "Transformed energy basis requires the zeroth order be given.");
+    basis_e_p.x = d_db->get<vec_dbl>("basis_e_zeroth");
+    Insist(basis_e_p.x.size() == basis_e_p.size,
+      "Inconsistent zeroth order size.");
+    basis_e_p.transformed_key = "dlp";
+    if (d_db->check("basis_e_transformed_option"))
+    {
+      basis_e_p.transformed_option =
+        d_db->get<int>("basis_e_transformed_option");
+    }
+  }
+
   for (size_t s = 0; s < d_node->number_surfaces(); ++s)
     d_basis_e[s] = OrthogonalBasis::Create(basis_e_type, basis_e_p);
 
