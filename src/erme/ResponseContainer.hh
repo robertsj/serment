@@ -55,11 +55,17 @@ struct ResponseContainer
 		Require(server);
 		if (serment_comm::Comm::is_global())
 		{
+		  std::cout << " building M ....";
 			M = new Connect(nodes, indexer);
+			std::cout << " done.  building R ....";
 			R = new ResponseMatrix(nodes, indexer, server);
+			std::cout << " done.  building L ....";
 			L = new LeakageOperator(nodes, indexer, server);
+			std::cout << " done.  building F ....";
 			F = new FissionOperator(nodes, indexer, server);
+			std::cout << " done.  building A ....";
 			A = new AbsorptionOperator(nodes, indexer, server);
+			std::cout << " done." << std::endl;
 		}
   }
 

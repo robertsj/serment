@@ -19,7 +19,6 @@ ResponseMatrix::ResponseMatrix(SP_nodelist nodes,
   , Matrix(indexer->number_local_moments(),
            indexer->number_local_moments())
 {
-
   /*
    *  Build number of nonzeros
    *

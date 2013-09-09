@@ -110,7 +110,7 @@ private:
   /// Polar basis [number surfaces]
   vec_basis d_basis_p;
   /// Flag for expanding in angular flux (or the current)
-  bool d_angular_flux;
+  bool d_expand_angular_flux;
   /// Spatial dimensions in play for given axis
   vec2_size_t d_spatial_dim;
 

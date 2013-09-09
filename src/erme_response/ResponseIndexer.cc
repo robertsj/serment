@@ -221,7 +221,8 @@ ResponseIndexer::build_3D(SP_node node, const size_t n)
     if (mso > mao) msao = mso;
 
     // Is this a south or north surface?
-    bool south_north = (node->number_surfaces() - s > 2) ? false : true;
+    bool south_north = false;
+    if (s > 3) south_north = true;
 
     vec_index moment_indices;
     for (size_t e = 0; e <= node->energy_order(s); e++)
@@ -249,7 +250,7 @@ ResponseIndexer::build_3D(SP_node node, const size_t n)
               // reflection is off a horizontal surface.  The other variables
               // always switch polarity.
               bool polarity =
-                south_north ? (a + s0 + s1) % 2 : (a + p + s0 + s1) % 2;
+                south_north ? (a + p + s0 + s1) % 2 : (a + s0 + s1) % 2;
 
               // Add the index
               moment_indices.push_back(

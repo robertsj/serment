@@ -28,7 +28,7 @@ set_boundary(const ResponseIndex &index)
   for (size_t g = 0; g < d_material->number_groups(); ++g)
   {
     Assert(d_basis_e[index.surface]);
-    B(index.surface, g, B.IN) = (*d_basis_e[index.surface])(index.energy, g);
+    B(index.surface, g, B.IN) = (*d_basis_e[index.surface])(g, index.energy);
   }
   B.display(B.IN);
 }
@@ -50,11 +50,11 @@ set_boundary(const ResponseIndex &index)
   size_t dim0 = d_spatial_dim[dim][0];
   for (size_t g = 0; g < d_material->number_groups(); ++g)
   {
-    double P_e = (*d_basis_e[index.surface])(index.energy, g);
+    double P_e = (*d_basis_e[index.surface])(g, index.energy);
     BoundaryTraits_T::value_type &b = B(index.surface, g, B.IN);
     for (size_t i = 0; i < d_mesh->number_cells(dim0); ++i)
     {
-      double P_s0 = (*d_basis_s[index.surface][0])(index.space0, i);
+      double P_s0 = (*d_basis_s[index.surface][0])(i, index.space0);
       BoundaryValue_T::value(b, i, 0) =  sign * P_e * P_s0;
     }
   }
@@ -74,19 +74,20 @@ set_boundary(const ResponseIndex &index)
   {
     sign = -1.0;
   }
+
   for (size_t g = 0; g < d_material->number_groups(); ++g)
   {
-    double P_e = (*d_basis_e[index.surface])(index.energy, g);
+    double P_e = (*d_basis_e[index.surface])(g, index.energy);
     size_t dim  = index.surface / 2;
     size_t dim0 = d_spatial_dim[dim][0];
     size_t dim1 = d_spatial_dim[dim][1];
     BoundaryTraits_T::value_type &b = B(index.surface, g, B.IN);
     for (size_t j = 0; j < d_mesh->number_cells(dim1); ++j)
     {
-      double P_s1 = (*d_basis_s[index.surface][1])(index.space1, j);
+      double P_s1 = (*d_basis_s[index.surface][1])(j, index.space1);
       for (size_t i = 0; i < d_mesh->number_cells(dim0); ++i)
       {
-        double P_s0 = (*d_basis_s[index.surface][0])(index.space0, i);
+        double P_s0 = (*d_basis_s[index.surface][0])(i, index.space0);
         BoundaryValue_T::value(b, i, j) = sign * P_e * P_s0 * P_s1;
       }
     }

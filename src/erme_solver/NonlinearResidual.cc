@@ -88,6 +88,8 @@ void NonlinearResidual::evaluate(Vector *x, Vector *f)
       (*f)[m-1] = f_l;
     }
 
+    f->display(f->BINARY, "residual.out");
+
     // Reset to world
     Comm::set(serment_comm::world);
   }

@@ -105,6 +105,11 @@ void GlobalSolverPicard::solve()
   double norm = d_residual->compute_norm(x.bp());
   d_residual_norms.push_back(norm);
 
+  d_R->display(d_R->BINARY, "R.out");
+  d_M->display(d_R->BINARY, "M.out");
+  d_L->display(d_L->BINARY, "L.out");
+  J->display(d_R->BINARY,   "J.out");
+
   // Perform outer iterations
   display(0, norm, lambda, keff);
   int it = 1;
@@ -115,6 +120,9 @@ void GlobalSolverPicard::solve()
     display(it, norm, lambda, keff);
     if (norm < d_tolerance) break;
   }
+//  d_R->display(d_R->BINARY, "R.out");
+//  d_M->display(d_R->BINARY, "M.out");
+//  J->display(d_R->BINARY,   "J.out");
 
   if (Comm::world_rank() == 0)
   {
