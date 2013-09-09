@@ -545,7 +545,10 @@ void ResponseSourceDetran<B>::construct_angular_basis_3D()
     std::cout << " --> " << blah_t[0] << std::endl;
 
   }
-  //THROW("lala");
+//  std::cout << " BASIS A " << std::endl;
+//  d_basis_a[4]->basis()->display(true);
+//  d_basis_a[5]->basis()->display(true);
+//  THROW("lala");
 }
 
 //----------------------------------------------------------------------------//

@@ -109,6 +109,7 @@ void GlobalSolverPicard::solve()
   d_M->display(d_R->BINARY, "M.out");
   d_L->display(d_L->BINARY, "L.out");
   J->display(d_R->BINARY,   "J.out");
+  d_L->leakage_vector().display(d_R->BINARY, "LL.out");
 
   // Perform outer iterations
   display(0, norm, lambda, keff);

@@ -408,19 +408,22 @@ set_boundary(const ResponseIndex &index_i)
   for (size_t g = 0; g < d_material->number_groups(); ++g)
   {
     double P_e = (*d_basis_e[index_i.surface])(g, index_i.energy);
-    for (size_t aa = 0; aa < q->number_azimuths(index_i.surface); ++aa)
+    for (size_t a = 0; a < q->number_azimuths(index_i.surface); ++a)
     {
-      size_t a = aa;
-      if (index_i.surface == 4)
-        a = q->number_azimuths(index_i.surface) - aa - 1;
-      double P_a = (*d_basis_a[index_i.surface])(a, index_i.azimuth);
+      size_t aa = a;
+      if (index_i.surface == 5)
+        aa = q->number_azimuths(index_i.surface) - a - 1;
+      double P_a = (*d_basis_a[index_i.surface])(aa, index_i.azimuth);
+
       for (size_t p = 0; p < q->number_polar(index_i.surface ); ++p)
       {
         double P_p = (*d_basis_p[index_i.surface])(p, index_i.polar);
         size_t angle  = q->incident_index(index_i.surface, a, p).angle;
         // get the cardinal octant along the surface, *not* the actual octant
         size_t octant = q->incident_index(index_i.surface, a, p).io_octant;
-
+        size_t oct = q->incident_index(index_i.surface, a, p).octant;
+//        if (index_i.surface > 3)
+//          printf(" %4i %4i %4i \n", index_i.surface, oct, angle);
 //        if (index_i.surface > 3)
 //        {
 //          double muu = q->cosines(dim)[angle];
@@ -440,7 +443,8 @@ set_boundary(const ResponseIndex &index_i)
           {
             double P_s0 = (*d_basis_s[index_i.surface][0])(i, index_i.space0);
             double val = sign * P_s0 * P_s1 * P_p * P_a * P_e;
-           // printf(" %4i %12.8f  %12.8f  %12.8f  %12.8f \n", index_i.surface, P_s0, P_s1, P_p, P_a);
+//            if (index_i.surface > 3)
+//              printf(" %4i %12.8f  %12.8f  %12.8f  %12.8f \n", index_i.surface, P_s0, P_s1, P_p, P_a);
             if (!d_expand_angular_flux) val /= q->cosines(dim)[angle];
             BoundaryValue_T::value(b, i, j) = val;
           } // s2
@@ -596,7 +600,12 @@ expand_boundary(SP_response          response,
       ResponseIndex io = d_indexer->response_index(index_i.node, surface, m);
       // azimuths are ordered in reverse order on horizontal surfaces
       double coef = std::pow(sign, io.space0 + io.space1);
-      if (io.surface == 5) coef *= std::pow(-1.0, io.azimuth);
+      // Surface 4 is oriented corrently for *incident* while surface 5 is
+      // not.  Hence, surface 5 gets an azimuthal index reverse above in the
+      // setting routine, while here, this is done by inverting odd moment
+      // signs.  Careful!  This assumes bases are strictly even or odd.
+      if (io.surface == 4)
+        coef *= std::pow(-1.0, io.azimuth);
       response->boundary_response(io.nodal, index_i.nodal) =
         coef * R[io.space0][io.space1][io.polar][io.azimuth][io.energy];
     }
