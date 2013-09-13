@@ -99,17 +99,20 @@ void GlobalSolverPicard::solve()
     }
     J = new Vector(*x, d_R->number_local_rows());
     Comm::set(serment_comm::world);
+    if (Comm::world_rank() == 0) std::cout << " xxx " << std::endl;
   }
 
   // Compute the initial residual norm
   double norm = d_residual->compute_norm(x.bp());
+  if (Comm::world_rank() == 0) std::cout << " yyy " << std::endl;
+
   d_residual_norms.push_back(norm);
 
-  d_R->display(d_R->BINARY, "R.out");
-  d_M->display(d_R->BINARY, "M.out");
-  d_L->display(d_L->BINARY, "L.out");
-  J->display(d_R->BINARY,   "J.out");
-  d_L->leakage_vector().display(d_R->BINARY, "LL.out");
+//  d_R->display(d_R->BINARY, "R.out");
+//  d_M->display(d_R->BINARY, "M.out");
+//  d_L->display(d_L->BINARY, "L.out");
+//  J->display(d_R->BINARY,   "J.out");
+//  d_L->leakage_vector().display(d_R->BINARY, "LL.out");
 
   // Perform outer iterations
   display(0, norm, lambda, keff);

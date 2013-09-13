@@ -113,7 +113,10 @@ private:
   bool d_expand_angular_flux;
   /// Spatial dimensions in play for given axis
   vec2_size_t d_spatial_dim;
-
+  /// Compute nodal power (different from fission rate in general)
+  bool d_compute_nodal_power;
+  /// Compute pin powers
+  bool d_compute_pin_power;
 
   //--------------------------------------------------------------------------//
   // IMPLEMENTATION

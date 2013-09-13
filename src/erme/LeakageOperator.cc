@@ -52,19 +52,18 @@ LeakageOperator::LeakageOperator(SP_nodelist nodes,
   for (int n = d_nodes->lower_bound(); n < d_nodes->upper_bound(); n++)
   {
     // Unique node
-    size_t un = nodes->unique_global_index_from_global(n);
+    size_t un = d_nodes->unique_global_index_from_global(n);
 
     // Total moments for this node
     int size = d_indexer->number_node_moments(un);
-    std::cout << " size = " << size << std::endl;
 
     // Loop over this nodes surfaces
     for (int s = 0; s < d_nodes->node(n)->number_surfaces(); ++s, ++index_s)
     {
 
       Assert(index_s < nnz_on_diag.size());
-      nnz_on_diag[index_s] = 1;
-      nnz_off_diag[index_s] = size - 1;// + 1;
+      nnz_on_diag[index_s] = size;
+      nnz_off_diag[index_s] = 0;//size - 1;// + 1;
 
       // Check for leakage
       if (d_nodes->neighbor(n, s).neighbor() == erme_geometry::Node::VACUUM)
@@ -79,7 +78,6 @@ LeakageOperator::LeakageOperator(SP_nodelist nodes,
 
   // Preallocate.  This also computes the bounds and such.
   preallocate(nnz_on_diag, nnz_off_diag);
-  assemble();
 }
 
 //----------------------------------------------------------------------------//

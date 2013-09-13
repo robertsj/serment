@@ -52,6 +52,7 @@ public:
   typedef erme_response::ResponseIndexer::SP_indexer  SP_indexer;
   typedef erme_response::ResponseServer::SP_server    SP_server;
   typedef detran_utilities::vec_dbl                   vec_dbl;
+  typedef detran_utilities::vec2_dbl                  vec2_dbl;
   typedef erme_solver::ManagerERME::SP_manager        SP_manager;
 
   //-------------------------------------------------------------------------//
@@ -66,6 +67,8 @@ public:
   //-------------------------------------------------------------------------//
 
   vec_dbl nodal_fission_density(const double norm = 1.0);
+  vec_dbl nodal_power(const double norm = 1.0);
+  vec2_dbl pin_power(const double norm = 1.0);
 
 private:
 

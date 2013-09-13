@@ -35,9 +35,9 @@ ResponseMatrix::ResponseMatrix(SP_nodelist nodes,
   vec_int nnz_off_diag(indexer->number_local_moments(), 0);
 
   int m = 0;
-  for (size_t n = nodes->lower_bound(); n < nodes->upper_bound(); n++)
+  for (size_t n = d_nodes->lower_bound(); n < d_nodes->upper_bound(); n++)
   {
-    size_t un = nodes->unique_global_index_from_global(n);
+    size_t un = d_nodes->unique_global_index_from_global(n);
     int size = indexer->number_node_moments(un);
     for (int i = 0; i < size; i++, m++)
       nnz_on_diag[m] = size;

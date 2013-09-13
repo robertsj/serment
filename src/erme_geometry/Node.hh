@@ -144,6 +144,8 @@ public:
   size_t dimension() const;
   /// Number nodal surfaces
   size_t number_surfaces() const;
+  /// Number nodal pins
+  size_t number_pins() const;
   /// Nodal name
   std::string name() const;
   /// Spatial order for a surface and possible dimension
@@ -178,11 +180,14 @@ private:
   /// Energy order per surface
   vec_size_t d_energy_order;
 
+protected:
+
+  /// Number of node pins
+  size_t d_number_pins;
+
   //--------------------------------------------------------------------------//
   // IMPLEMENTATION
   //--------------------------------------------------------------------------//
-
-protected:
 
   /// Default constructor is needed for serialization.
   Node()

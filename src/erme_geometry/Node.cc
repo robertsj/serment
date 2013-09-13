@@ -22,6 +22,7 @@ Node::Node(const size_t  dimension,
            vec_size_t    eo)
   : d_dimension(dimension)
   , d_number_surfaces(number_surfaces)
+  , d_number_pins(0)
   , d_name(name)
   , d_spatial_order(so)
   , d_polar_order(po)

@@ -29,7 +29,6 @@ Connect::Connect(SP_nodelist nodes, SP_indexer indexer)
                            vec_int(indexer->number_local_moments(), 1),
                            vec_int(indexer->number_local_moments(), 1))
 {
-  // Preconditions
   Require(nodes->number_global_nodes() == indexer->number_nodes());
 
   using std::cout;

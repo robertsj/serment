@@ -170,7 +170,8 @@ void ManagerERME::solve()
 //----------------------------------------------------------------------------//
 void ManagerERME::finalize()
 {
-  /* ... */
+  linear_algebra::finalize();
+  //serment_comm::Comm::finalize();
 }
 
 } // end namespace erme_solver

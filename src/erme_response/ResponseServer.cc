@@ -9,11 +9,14 @@
 #include "ResponseServer.hh"
 #include "ResponseSourceFactory.hh"
 #include "comm/Comm.hh"
-
 #include <iostream>
 
 namespace erme_response
 {
+
+using serment_comm::Comm;
+using std::cout;
+using std::endl;
 
 //----------------------------------------------------------------------------//
 ResponseServer::ResponseServer(SP_nodelist  nodes,
@@ -22,8 +25,8 @@ ResponseServer::ResponseServer(SP_nodelist  nodes,
                                size_t       dborder)
   : d_nodes(nodes)
   , d_indexer(indexer)
+  , d_response_time(0.0)
 {
-  // Preconditions
   Require(d_nodes);
   Require(d_indexer);
 
@@ -52,7 +55,8 @@ ResponseServer::ResponseServer(SP_nodelist  nodes,
     // Build the nodal response containers
     d_responses[node_ul] =
         new NodeResponse(d_indexer->number_node_moments(node_ug),
-                         d_nodes->unique_node(node_ug)->number_surfaces());
+                         d_nodes->unique_node(node_ug)->number_surfaces(),
+                         d_nodes->unique_node(node_ug)->number_pins());
   }
 
 }
@@ -60,13 +64,9 @@ ResponseServer::ResponseServer(SP_nodelist  nodes,
 //----------------------------------------------------------------------------//
 void ResponseServer::update(const double keff)
 {
-  // Preconditions
   Require(serment_comm::communicator == serment_comm::world);
 
-  using std::cout;
-  using std::endl;
-
-  typedef serment_comm::Comm Comm;
+  Comm::tic();
 
   // Switch to local communicator.
   Comm::set(serment_comm::local);
@@ -90,7 +90,14 @@ void ResponseServer::update(const double keff)
   // roots now have the updated response.
   Comm::set(serment_comm::world);
 
+  d_response_time += Comm::toc();
 }
+
+double ResponseServer::response_time() const
+{
+  return d_response_time;
+}
+
 
 //----------------------------------------------------------------------------//
 // IMPLEMENTATION
@@ -107,11 +114,6 @@ void ResponseServer::update(const double keff)
  */
 void ResponseServer::update_explicit_work_share()
 {
-  using std::cout;
-  using std::endl;
-
-  typedef serment_comm::Comm Comm;
-
   // Clear the responses.  This is needed since we use reduction to collect.
   // Ultimately, more sophisticated approached will be assessed.
   for (int i = 0; i < d_responses.size(); ++i)
@@ -151,10 +153,8 @@ void ResponseServer::update_explicit_work_share()
   }
 
   // Find my start and finish
-
   Comm::broadcast(&number_responses, 1, 0);
   Comm::broadcast(&number_per_process[0], number_per_process.size(), 0);
-
   size_t start = 0;
   for (int i = 0; i < Comm::rank(); i++)
     start += number_per_process[i];

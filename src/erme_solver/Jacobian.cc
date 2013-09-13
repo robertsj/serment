@@ -8,6 +8,7 @@
 
 #include "Jacobian.hh"
 #include "GlobalSolverBase.hh"
+#include <cstdio>
 
 namespace erme_solver
 {
@@ -16,15 +17,18 @@ using serment_comm::Comm;
 
 //----------------------------------------------------------------------------//
 Jacobian::Jacobian(SP_server            server,
+                   SP_indexer           indexer,
                    SP_responsecontainer responses,
 									 const double         eps)
   : d_server(server)
+  , d_indexer(indexer)
   , d_eps(eps)
   , d_k(0.0)
   , d_lambda(0.0)
   , d_fd_FAL(0.0)
 {
   Require(d_server);
+  Require(d_indexer);
   Require(d_eps > 0.0);
 
   if (Comm::is_global())
@@ -132,6 +136,7 @@ void Jacobian::update(SP_vector x)
   d_server->update(d_k);
   Comm::set(serment_comm::global);
   d_MR->multiply(x_J, fd_MR_tmp);
+
   double gain_1 = d_F->dot(x_J);
   double loss_1 = d_A->dot(x_J) + d_L->leakage(x_J);
   //   for perturbed keff
@@ -141,6 +146,7 @@ void Jacobian::update(SP_vector x)
   d_MR->multiply(x_J, *d_fd_MR);
   double gain_2 = d_F->dot(x_J);
   double loss_2 = d_A->dot(x_J) + d_L->leakage(x_J);
+
   //   result
   d_fd_MR->add_a_times_x(-1.0, fd_MR_tmp);
   d_fd_MR->scale(1.0/d_eps);

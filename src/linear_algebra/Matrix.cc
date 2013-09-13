@@ -96,9 +96,6 @@ void Matrix::preallocate(const vec_int &nnz,
   {
     // All nonzeros get lumped into one vector.
     vec_int total_nnz(nnz);
-    for (size_t i = 0; i < nnz.size(); ++i)
-      total_nnz[i] += nnz_od[i];
-
     ierr = MatSetType(d_A, MATSEQAIJ);
     ierr = MatSeqAIJSetPreallocation(d_A, PETSC_NULL, &total_nnz[0]);
   }

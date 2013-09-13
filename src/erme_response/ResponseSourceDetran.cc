@@ -10,6 +10,7 @@
 #include "ResponseSourceDetranDiffusion.t.hh"
 #include "ResponseSourceDetran.t.hh"
 #include "orthog/OrthogonalBasis.hh"
+#include "postprocess/ReactionRates.hh"
 
 namespace erme_response
 {
@@ -30,6 +31,8 @@ ResponseSourceDetran<B>::ResponseSourceDetran(SP_node node,
   , d_basis_p(node->number_surfaces())
   , d_expand_angular_flux(true)
   , d_spatial_dim(D::dimension, vec_size_t(D::dimension-1))
+  , d_compute_nodal_power(false)
+  , d_compute_pin_power(false)
 {
   Require(node->db());
   Require(node->material());
@@ -79,6 +82,7 @@ ResponseSourceDetran<B>::ResponseSourceDetran(SP_node node,
   }
 
   construct_basis();
+
 }
 
 //----------------------------------------------------------------------------//
@@ -108,8 +112,7 @@ compute(SP_response response, const ResponseIndex &index)
 //  d_B->display(true);
 
   expand(response, index);
-
-  //response->display();
+ // response->display();
 // THROW("lala");
 }
 
@@ -133,9 +136,13 @@ void ResponseSourceDetran<B>::construct_basis()
   string basis_s_type = "dlp";
   if (d_db->check("basis_s_type"))
     basis_s_type = d_db->get<string>("basis_s_type");
+  std::cout << " SPATIAL BASIS: " << basis_s_type << std::endl;
 
   // Loop over major dimension, direction (+/-), and secondary dimensions
   size_t s = 0;
+  double w[3] = {d_mesh->total_width_x(),
+                 d_mesh->total_width_y(),
+                 d_mesh->total_width_z()};
   for (size_t dim = 0; dim < D::dimension; ++dim) // INCIDENT DIMENSION
   {
     for (size_t dir = 0; dir < 2; ++dir, ++s)     // LEFT or RIGHT
@@ -147,6 +154,30 @@ void ResponseSourceDetran<B>::construct_basis()
         basis_s_p.size  = d_mesh->number_cells(fd);
         basis_s_p.order = d_node->spatial_order(s, dim01);
         basis_s_p.orthonormal = true;
+        basis_s_p.x.resize(basis_s_p.size);
+        basis_s_p.qw.resize(basis_s_p.size);
+        double x = 0.0;
+        double dx = 0.0;
+        if (basis_s_type == "trans")
+        {
+          basis_s_p.transformed_key    = "dlp";
+          basis_s_p.transformed_option = 1;
+          for (int i = 0; i < basis_s_p.size; ++i)
+          {
+            basis_s_p.x[i]  = d_mesh->width(dim, i) / w[dim];
+          }
+        }
+        else
+        {
+          for (int i = 0; i < basis_s_p.size; ++i)
+          {
+            basis_s_p.x[i]  = x + 0.5 * d_mesh->width(dim, i);
+            basis_s_p.qw[i] = 2.0 * d_mesh->width(dim, i) / w[dim];
+            x  += d_mesh->width(dim, i);
+          }
+        }
+        basis_s_p.lower_bound = 0.0;
+        basis_s_p.upper_bound = w[dim];
         d_basis_s[s][dim01] = OrthogonalBasis::Create(basis_s_type, basis_s_p);
       }
     }
@@ -557,6 +588,9 @@ void ResponseSourceDetran<B>::expand(SP_response          response,
                                      const ResponseIndex &index_i)
 {
   typename Solver_T::SP_state state = d_solver->state();
+
+
+  // Fission and absorption responses for the balance problem
   const vec_int &mat_map = d_mesh->mesh_map("MATERIAL");
   response->fission_response(index_i.nodal) = 0.0;
   response->absorption_response(index_i.nodal) = 0.0;
@@ -571,6 +605,23 @@ void ResponseSourceDetran<B>::expand(SP_response          response,
         phi_times_volume * d_material->sigma_a(mat_map[i], g);
     }
   }
+
+  // Other volume responses
+  detran_postprocess::ReactionRates
+    rates(d_material, d_mesh, d_solver->state());
+  vec_dbl tmp = rates.region_power("NODAL", -1.0);
+  Assert(tmp.size() == 1);
+  response->nodal_power(index_i.nodal) = tmp[0];
+ // std::cout << " index=" << index_i.nodal << " nodal power = " << tmp[0] << std::endl;
+  if (d_node->number_pins() > 0)
+  {
+    vec_dbl ppwr = rates.region_power("PINS", -1.0);
+    Assert(ppwr.size() == response->number_pins());
+    for (size_t p = 0; p < response->number_pins(); ++p)
+      response->pin_power(p, index_i.nodal) = ppwr[p];
+  }
+
+  // Surface responses
   expand_boundary(response, index_i);
 }
 

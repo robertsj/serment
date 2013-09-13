@@ -43,6 +43,7 @@ void NonlinearSolver::setup(SP_db       db,
   if (db->check("newton_type"))
     newton_type = db->get<int>("newton_type");
   Assert(newton_type < END_NEWTON_TYPES);
+
   if (newton_type == NEWTON)
   {
     SNESSetJacobian(d_solver,

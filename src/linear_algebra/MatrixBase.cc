@@ -176,6 +176,7 @@ void MatrixBase::set_A(Mat A)
 {
   d_A = A;
   set_sizes_and_bounds();
+  d_is_assembled = true;
 }
 
 //----------------------------------------------------------------------------//

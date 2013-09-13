@@ -25,6 +25,12 @@ inline Node::size_t Node::number_surfaces() const
 }
 
 //----------------------------------------------------------------------------//
+inline Node::size_t Node::number_pins() const
+{
+  return d_number_pins;
+}
+
+//----------------------------------------------------------------------------//
 inline std::string Node::name() const
 {
   return d_name;

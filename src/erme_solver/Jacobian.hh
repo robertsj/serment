@@ -76,6 +76,7 @@ public:
   //--------------------------------------------------------------------------//
 
   typedef erme_response::ResponseServer::SP_server        SP_server;
+  typedef erme_response::ResponseIndexer::SP_indexer      SP_indexer;
   typedef erme::ResponseContainer::SP_responsecontainer   SP_responsecontainer;
   typedef erme::ResponseMatrix::SP_responsematrix         SP_R;
   typedef erme::Connect::SP_connect                       SP_M;
@@ -96,10 +97,12 @@ public:
   /**
    *  @brief Constructor
    *  @param    server      response server
+   *  @param    indexer     response indexer
    *  @param    responses   container of response operators
    *  @param    eps         delta-k for finite difference
    */
   Jacobian(SP_server              server,
+           SP_indexer             indexer,
            SP_responsecontainer   responses,
            const double           eps = 1.0e-8);
 
@@ -121,6 +124,8 @@ private:
 
   /// Response server
   SP_server d_server;
+  /// Response indexer
+  SP_indexer d_indexer;
   //@{
   /// Operators
   SP_R d_R;

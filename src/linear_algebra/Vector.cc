@@ -43,6 +43,7 @@ Vector::Vector(const size_type m, const double val, const bool seq)
 
 //----------------------------------------------------------------------------//
 Vector::Vector(const Vector& V)
+  : d_is_temporary(false)
 {
   Require(V.is_assembled());
   Require(!V.is_temporary());

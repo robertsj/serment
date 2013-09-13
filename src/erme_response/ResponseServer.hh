@@ -69,9 +69,9 @@ public:
    *  @param dborder  Interpolation order for database (optional)
    */
   ResponseServer(SP_nodelist nodes,
-                 SP_indexer indexer,
+                 SP_indexer  indexer,
                  std::string dbname = "",
-                 size_t dborder = 1);
+                 size_t      dborder = 1);
 
   /// Update the eigenvalue and compute the new responses
   void update(const double keff);
@@ -81,6 +81,9 @@ public:
    *  @param node   Local node index
    */
   SP_response response(size_t node);
+
+  /// Return the total time elapsed generating responses
+  double response_time() const;
 
 private:
 
@@ -98,6 +101,8 @@ private:
   vec_response d_responses;
   /// Response database
   SP_rfdb d_rfdb;
+  /// Response generation time
+  double d_response_time;
 
   //--------------------------------------------------------------------------//
   // IMPLEMENTATION

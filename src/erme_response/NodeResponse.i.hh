@@ -89,6 +89,43 @@ NodeResponse::leakage_response(const size_t surface,
 }
 
 //----------------------------------------------------------------------------//
+inline const double&
+NodeResponse::nodal_power(const size_t in) const
+{
+  Require(in < d_N);
+  return d_nodal_power[in];
+}
+//----------------------------------------------------------------------------//
+inline double&
+NodeResponse::nodal_power(const size_t in)
+{
+  return const_cast<double&>
+  (
+    static_cast<const NodeResponse*>(this)->nodal_power(in)
+  );
+}
+
+//----------------------------------------------------------------------------//
+inline const double&
+NodeResponse::pin_power(const size_t p,
+                        const size_t in) const
+{
+  Require(p < d_number_pins);
+  Require(in < d_N);
+  return d_pin_power[in][p];
+}
+//----------------------------------------------------------------------------//
+inline double&
+NodeResponse::pin_power(const size_t p,
+                        const size_t in)
+{
+  return const_cast<double&>
+  (
+    static_cast<const NodeResponse*>(this)->pin_power(p, in)
+  );
+}
+
+//----------------------------------------------------------------------------//
 inline void NodeResponse::clear()
 {
 	for (size_t i = 0; i < d_N; ++i)

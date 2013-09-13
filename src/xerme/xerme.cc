@@ -35,6 +35,7 @@ int main(int argc, char **argv)
   M.build_erme(A.get_nodes());
   M.solve();
 
+  M.finalize();
   return 0;
 }
 

@@ -17,7 +17,6 @@ namespace erme_response
 //----------------------------------------------------------------------------//
 inline ResponseServer::SP_response ResponseServer::response(size_t node_l)
 {
-  // Preconditions
   Require(node_l < d_nodes->number_local_nodes());
 
   size_t node_g  = d_nodes->global_index_from_local(node_l);
@@ -29,7 +28,6 @@ inline ResponseServer::SP_response ResponseServer::response(size_t node_l)
 //            << " node_ug=" << node_ug
 //            << " node_ul=" << node_ul << std::endl;
 
-  // Postconditions
   Ensure(node_ul < d_responses.size());
   return d_responses[node_ul];
 }
