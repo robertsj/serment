@@ -77,7 +77,9 @@ public:
    *  @brief Constructor
    *  @param moments_size   Size of node moments vector for each surface
    */
-  NodeResponse(const size_t N, const size_t number_surfaces);
+  NodeResponse(const size_t N,
+               const size_t number_surfaces,
+               const size_t number_pins = 0);
 
   //--------------------------------------------------------------------------//
   // ACCESS
@@ -85,27 +87,33 @@ public:
 
   /// Const access to boundary response
   const double& boundary_response(const size_t out, const size_t in) const;
-
   /// Mutable access to boundary response
   double& boundary_response(const size_t out, const size_t in);
 
   /// Const access to fission response
   const double& fission_response(const size_t in) const;
-
   /// Mutable access to fission response
   double& fission_response(const size_t in);
 
   /// Const access to absorption response
   const double& absorption_response(const size_t in) const;
-
   /// Mutable access to absorption response
   double& absorption_response(const size_t in);
 
   /// Const access to leakage response
   const double& leakage_response(const size_t surface, const size_t in) const;
-
   /// Mutable access to leakage response
   double& leakage_response(const size_t surface, const size_t in);
+
+  /// Const access to leakage response
+  const double& nodal_power(const size_t in) const;
+  /// Mutable access to leakage response
+  double& nodal_power(const size_t in);
+
+  /// Const access to leakage response
+  const double& pin_power(const size_t p, const size_t in) const;
+  /// Mutable access to leakage response
+  double& pin_power(const size_t p, const size_t in);
 
   /// Clear all the responses
   void clear();
@@ -122,6 +130,12 @@ public:
     return d_number_surfaces;
   }
 
+  /// Return number of pins
+  size_t number_pins() const
+  {
+    return d_number_pins;
+  }
+
   /// Display the response data
   void display() const;
 
@@ -135,6 +149,8 @@ private:
   const size_t d_N;
   /// Number of surfaces
   const size_t d_number_surfaces;
+  /// Number of pins
+  const size_t d_number_pins;
   /// Boundary function moments [N][N]; outgoing is stored contiguously
   vec2_dbl d_boundary_response;
   /// Fission response [N]
@@ -143,8 +159,10 @@ private:
   vec_dbl d_absorption_response;
   /// Leakage response [nsurface][N]
   vec2_dbl d_leakage_response;
-  /// Pin fission responses [Npins][N]
-  vec2_dbl d_pin_response;
+  /// Nodal power responses [N]
+  vec_dbl d_nodal_power;
+  /// Pin power response [Npins][N]
+  vec2_dbl d_pin_power;
 
 };
 

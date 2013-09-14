@@ -83,7 +83,10 @@ public:
   void setup(SP_db db, SP_residual f, SP_jacobian J, SP_jacobian P);
 
   /// Solver the nonlinear system for an initial guess x
-  void solve(SP_vector x);
+  void solve(SP_vector    x,
+             const double atol = 1e-8,
+             const double rtol = 1e-8,
+             const int    maxit = 20);
 
   //@{
   ///  Getters

@@ -47,10 +47,13 @@ int test_GlobalSolverNewton(int argc, char *argv[])
   db->put<int>("dimension", 1);
   db->put<int>("erme_maximum_iterations", 10);
   db->put<double>("erme_tolerance", 1.0e-12);
+  db->put<std::string>("erme_newton_pc", "full");
+ // db->put<int>("erme_newton_full_jacobian", 1);
   manager.build_comm(db);
 
   // Get nodes, build problem, and solve
   NodeList::SP_nodelist nodes = cartesian_node_detran_list_1d(1);
+
   manager.build_erme(nodes);
   manager.solve();
 

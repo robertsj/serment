@@ -74,7 +74,7 @@ public:
                  size_t      dborder = 1);
 
   /// Update the eigenvalue and compute the new responses
-  void update(const double keff);
+  bool update(const double keff);
 
   /**
    *  @brief Return a nodal response
@@ -84,6 +84,9 @@ public:
 
   /// Ask server if it has updated responses (before reconstructing operators)
   bool is_updated() const;
+
+  /// Return the total time elapsed generating responses
+  double response_time() const;
 
 private:
 
@@ -109,6 +112,8 @@ private:
   double d_keff_1;
   /// Flag indicating the server has new values
   bool d_is_updated;
+  /// Response generation time
+  double d_response_time;
 
   //--------------------------------------------------------------------------//
   // IMPLEMENTATION

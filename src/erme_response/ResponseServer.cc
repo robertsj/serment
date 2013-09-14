@@ -9,16 +9,19 @@
 #include "ResponseServer.hh"
 #include "ResponseSourceFactory.hh"
 #include "comm/Comm.hh"
-
+#include "utilities/SoftEquivalence.hh"
 #include <algorithm>
 #include <iostream>
+#include <cstdio>
 
 namespace erme_response
 {
 
+using serment_comm::Comm;
+using detran_utilities::soft_equiv;
 using std::cout;
 using std::endl;
-using serment_comm::Comm;
+
 
 //----------------------------------------------------------------------------//
 ResponseServer::ResponseServer(SP_nodelist  nodes,
@@ -30,12 +33,14 @@ ResponseServer::ResponseServer(SP_nodelist  nodes,
   , d_keff(-1.0)
   , d_keff_1(-2.0)
   , d_is_updated(false)
+  , d_response_time(0.0)
 {
   Require(d_nodes);
   Require(d_indexer);
 
   d_sources.resize(d_nodes->number_unique_local_nodes());
   d_responses.resize(d_nodes->number_unique_local_nodes());
+  d_responses_1.resize(d_nodes->number_unique_local_nodes());
 
   // Build the response database if requested
   if (dbname != "")
@@ -59,15 +64,24 @@ ResponseServer::ResponseServer(SP_nodelist  nodes,
     // Build the nodal response containers
     d_responses[node_ul] =
         new NodeResponse(d_indexer->number_node_moments(node_ug),
-                         d_nodes->unique_node(node_ug)->number_surfaces());
+                         d_nodes->unique_node(node_ug)->number_surfaces(),
+                         d_nodes->unique_node(node_ug)->number_pins());
+    d_responses_1[node_ul] =
+        new NodeResponse(d_indexer->number_node_moments(node_ug),
+                         d_nodes->unique_node(node_ug)->number_surfaces(),
+                         d_nodes->unique_node(node_ug)->number_pins());
   }
 
 }
 
 //----------------------------------------------------------------------------//
-void ResponseServer::update(const double keff)
+bool ResponseServer::update(const double keff)
 {
   Require(serment_comm::communicator == serment_comm::world);
+
+  bool store_k = true;
+
+  Comm::tic();
 
   // Switch to local communicator.
   Comm::set(serment_comm::local);
@@ -77,36 +91,31 @@ void ResponseServer::update(const double keff)
   double k = keff;
   Comm::broadcast(&k, 1, 0);
 
+
   d_is_updated = true;
-  if (k == d_keff)
+  if (soft_equiv(k, d_keff) && store_k)
   {
     // Do nothing, since these responses are already stored.
     d_is_updated = false;
   }
-  else if (k == d_keff_1) // may want soft equiv
+  else if (soft_equiv(k, d_keff_1) && store_k) // may want soft equiv
   {
     // Swap the stored eigenvalues
     d_keff_1 = d_keff;
     d_keff   = k;
 
-    // Swap the stored responses, building a new vector if needed
-    if (d_responses_1.size() != d_responses.size())
-    {
-      d_responses_1.resize(d_responses.size());
-      for (size_t node_ul = 0; node_ul < d_sources.size(); ++node_ul)
-      {
-        // Build the nodal response containers
-        size_t node_ug =
-          d_nodes->unique_global_index_from_unique_local(node_ul);
-        d_responses[node_ul] =
-          new NodeResponse(d_indexer->number_node_moments(node_ug),
-                           d_nodes->unique_node(node_ug)->number_surfaces());
-      }
-    }
+    // Swap the responses
     std::swap(d_responses, d_responses_1);
   }
   else
   {
+    // Swap the stored eigenvalues
+    d_keff_1 = d_keff;
+    d_keff   = k;
+
+    // Swap if we're storing
+    if (store_k) std::swap(d_responses, d_responses_1);
+
     // Update sources for the new eigenvalue
     for (int i = 0; i < d_sources.size(); i++)
     {
@@ -121,12 +130,21 @@ void ResponseServer::update(const double keff)
   // Must go back to world, for which the global
   // roots now have the updated response.
   Comm::set(serment_comm::world);
+
+  d_response_time += Comm::toc();
+
+  return d_is_updated;
 }
 
 //----------------------------------------------------------------------------//
 bool ResponseServer::is_updated() const
 {
   return d_is_updated;
+}
+
+double ResponseServer::response_time() const
+{
+  return d_response_time;
 }
 
 //----------------------------------------------------------------------------//
@@ -183,10 +201,8 @@ void ResponseServer::update_explicit_work_share()
   }
 
   // Find my start and finish
-
   Comm::broadcast(&number_responses, 1, 0);
   Comm::broadcast(&number_per_process[0], number_per_process.size(), 0);
-
   size_t start = 0;
   for (int i = 0; i < Comm::rank(); i++)
     start += number_per_process[i];

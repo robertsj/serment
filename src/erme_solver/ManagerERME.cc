@@ -22,6 +22,7 @@ ManagerERME::ManagerERME(int argc, char *argv[])
   , d_argv(argv)
   , d_is_built(false)
 {
+  std::cout << " INITIALIZING ERME MANAGER..." << std::endl;
   serment_comm::Comm::initialize(argc, argv);
 }
 
@@ -169,7 +170,8 @@ void ManagerERME::solve()
 //----------------------------------------------------------------------------//
 void ManagerERME::finalize()
 {
-  /* ... */
+  linear_algebra::finalize();
+  //serment_comm::Comm::finalize();
 }
 
 } // end namespace erme_solver

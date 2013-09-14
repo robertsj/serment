@@ -116,17 +116,17 @@ def build_model(nodes, nodal_map, global_bc) :
           if k == 0 :
             tmp_neigh[CartesianNode.BOTTOM] = bc[CartesianNode.BOTTOM]
           else : # my bottom is their top
-            if indices[index(i, j, k+1, nx, ny)] < 0 :
+            if indices[index(i, j, k-1, nx, ny)] < 0 :
               tmp_neigh[CartesianNode.BOTTOM] = bc[CartesianNode.BOTTOM]
             else :
-              tmp_neigh[CartesianNode.BOTTOM] = NeighborSurface(int(indices[index(i, j, k+1, nx, ny)]), CartesianNode.TOP)
+              tmp_neigh[CartesianNode.BOTTOM] = NeighborSurface(int(indices[index(i, j, k-1, nx, ny)]), CartesianNode.TOP)
           if k == nz - 1:
             tmp_neigh[CartesianNode.TOP] = bc[CartesianNode.TOP]
           else : # my top is their bottom
-            if indices[index(i, j, k-1, nx, ny)] < 0 :
+            if indices[index(i, j, k+1, nx, ny)] < 0 :
               tmp_neigh[CartesianNode.TOP] = bc[CartesianNode.TOP]
             else :
-              tmp_neigh[CartesianNode.TOP] = NeighborSurface(int(indices[index(i, j, k-1, nx, ny)]), CartesianNode.BOTTOM)
+              tmp_neigh[CartesianNode.TOP] = NeighborSurface(int(indices[index(i, j, k+1, nx, ny)]), CartesianNode.BOTTOM)
 
         neighbors.push_back(tmp_neigh)
 

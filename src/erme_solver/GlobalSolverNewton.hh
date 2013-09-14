@@ -30,6 +30,20 @@ class GlobalSolverNewton: public GlobalSolverBase
 public:
 
   //--------------------------------------------------------------------------//
+  // ENUMERATIONS
+  //--------------------------------------------------------------------------//
+
+  /**
+   *  NONE  -- The shell Jacobian is passed as the preconditioner
+   *  FULL  -- An exact Jacobian is explicitly constructed for factorization
+   *  APPX  -- An inexact Jacobian is explicitly constructed
+   */
+  enum erme_newton_pc_options
+  {
+    NONE, FULL, APPX, END_ERME_NEWTON_PC_OPTIONS
+  };
+
+  //--------------------------------------------------------------------------//
   // TYPEDEFS
   //--------------------------------------------------------------------------//
 

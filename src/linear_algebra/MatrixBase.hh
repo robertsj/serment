@@ -97,13 +97,13 @@ public:
   }
 
   /// Copy in values from another matrix that must be no larger than this one
-  virtual void insert_values(SP_matrix m_in, const int mode = INSERT_VALUES)
+  virtual void insert_values(SP_matrix m_in, const int mode = INSERT)
   {
     THROW("NOT IMPLEMENTED");
   }
 
   /// Assemble the matrix.
-  virtual void assemble(const int mode = MAT_FINAL_ASSEMBLY);
+  virtual void assemble(const int mode = FINAL);
 
   //@{
   ///  Matrix-vector multiplication and its transpose
@@ -127,6 +127,8 @@ public:
 
   /// Set the PETSc matrix
   void set_A(Mat A);
+
+  void scale(const double a);
 
   /**
    *  @brief Display the matrix to screen (or to output)

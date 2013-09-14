@@ -44,7 +44,8 @@ void Matrix::insert_values(const size_type   number_rows,
   Require(number_rows > 0);
   Require(number_columns > 0);
 
-  InsertMode petsc_mode = mode == INSERT ? INSERT_VALUES : ADD_VALUES;
+  InsertMode petsc_mode = INSERT_VALUES;
+  if (mode == ADD) petsc_mode = ADD_VALUES;
   d_is_assembled = false; // changing values = no longer ready
   PetscErrorCode ierr;
   ierr = MatSetValues(d_A, number_rows, rows, number_columns, columns,
@@ -96,9 +97,6 @@ void Matrix::preallocate(const vec_int &nnz,
   {
     // All nonzeros get lumped into one vector.
     vec_int total_nnz(nnz);
-    for (size_t i = 0; i < nnz.size(); ++i)
-      total_nnz[i] += nnz_od[i];
-
     ierr = MatSetType(d_A, MATSEQAIJ);
     ierr = MatSeqAIJSetPreallocation(d_A, PETSC_NULL, &total_nnz[0]);
   }

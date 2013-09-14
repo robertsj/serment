@@ -53,23 +53,26 @@ MatrixBase::~MatrixBase()
   if (d_A != PETSC_NULL) MatDestroy(&d_A);
 }
 
+void MatrixBase::scale(const double a)
+{
+  MatScale(d_A, a);
+}
+
 //----------------------------------------------------------------------------//
 void MatrixBase::assemble(const int mode)
 {
-  if (!d_is_assembled)
+  Require(mode == FINAL || mode == FLUSH);
+  if (mode == FINAL)
   {
-    if (mode == FINAL)
-    {
-      MatAssemblyBegin(d_A, MAT_FINAL_ASSEMBLY);
-      MatAssemblyEnd(d_A, MAT_FINAL_ASSEMBLY);
-    }
-    else
-    {
-      MatAssemblyBegin(d_A, MAT_FLUSH_ASSEMBLY);
-      MatAssemblyEnd(d_A, MAT_FLUSH_ASSEMBLY);
-    }
-    d_is_assembled = true;
+    MatAssemblyBegin(d_A, MAT_FINAL_ASSEMBLY);
+    MatAssemblyEnd(d_A, MAT_FINAL_ASSEMBLY);
   }
+  else
+  {
+    MatAssemblyBegin(d_A, MAT_FLUSH_ASSEMBLY);
+    MatAssemblyEnd(d_A, MAT_FLUSH_ASSEMBLY);
+  }
+  d_is_assembled = true;
 }
 
 //----------------------------------------------------------------------------//
@@ -176,6 +179,7 @@ void MatrixBase::set_A(Mat A)
 {
   d_A = A;
   set_sizes_and_bounds();
+  d_is_assembled = true;
 }
 
 //----------------------------------------------------------------------------//
@@ -184,7 +188,6 @@ void MatrixBase::set_sizes_and_bounds()
   // Get ranges
   PetscErrorCode ierr;
   int lb, ub;
-  std::cout << " ierr = " << d_A << std::endl;
 
   ierr = MatGetOwnershipRange(d_A, &lb, &ub);
   Assert(lb >= 0 and ub > 0);

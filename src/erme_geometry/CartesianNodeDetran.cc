@@ -9,6 +9,7 @@
 #include "CartesianNodeDetran.hh"
 #include "NodeSerialization.hh"
 #include "geometry/Point.hh"
+#include "utilities/MathUtilities.hh"
 
 #include "utilities/detran_utilities.hh"
 
@@ -31,13 +32,25 @@ CartesianNodeDetran::CartesianNodeDetran(const size_t  dim,
   , d_material(nodematerial)
   , d_mesh(nodemesh)
 {
+  using namespace detran_utilities;
+
   Require(d_db);
   Require(d_material);
   Require(d_mesh);
   Require(d_mesh->dimension() == dimension());
-  Require(detran_utilities::soft_equiv(d_mesh->total_width_x(), width(0)));
-  Require(detran_utilities::soft_equiv(d_mesh->total_width_y(), width(1)));
-  Require(detran_utilities::soft_equiv(d_mesh->total_width_z(), width(2)));
+  Require(soft_equiv(d_mesh->total_width_x(), width(0)));
+  Require(soft_equiv(d_mesh->total_width_y(), width(1)));
+  Require(soft_equiv(d_mesh->total_width_z(), width(2)));
+
+  if (!d_mesh->mesh_map_exists("NODAL"))
+  {
+    vec_int tmp(d_mesh->number_cells(), 0);
+    d_mesh->add_mesh_map("NODAL", tmp);
+  }
+  if (d_mesh->mesh_map_exists("PINS"))
+  {
+    d_number_pins = vec_max(d_mesh->mesh_map("PINS")) + 1;
+  }
 }
 
 //----------------------------------------------------------------------------//

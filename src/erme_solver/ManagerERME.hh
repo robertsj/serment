@@ -42,7 +42,6 @@
  */
 //----------------------------------------------------------------------------//
 
-#include "PostProcess.hh"
 #include "erme/StateERME.hh"
 #include "erme/ResponseContainer.hh"
 #include "erme_geometry/NodeList.hh"
@@ -129,6 +128,9 @@ public:
   vec_dbl get_residual_norms() const { return d_solver->residual_norms(); }
   SP_responsecontainer get_responses() const { return d_responses; }
   SP_server get_server() const { return d_server; }
+  SP_state get_state() {return d_state;}
+  SP_nodelist get_nodes() {return d_nodes;}
+  SP_indexer get_indexer() {return d_indexer;}
   //@}
 
   /// Close libraries, etc.

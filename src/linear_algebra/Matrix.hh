@@ -53,7 +53,7 @@ public:
                      const int        mode = INSERT);
 
   /// Insert values by copying a possibly smaller matrix
-  void insert_values(SP_matrix m_in, const int mode = INSERT_VALUES);
+  void insert_values(SP_matrix m_in, const int mode = INSERT);
 
   /// Preallocate the matrix with the number of nonzeros
   void preallocate(const vec_int &nnz,

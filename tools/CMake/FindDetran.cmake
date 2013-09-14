@@ -19,16 +19,17 @@ find_path(Detran_INCLUDE_DIR
           PATHS ${Detran_DIR}/include 
                 ${Detran_INC}
 )
-find_library(Detran_utilities NAMES utilities PATHS ${Detran_DIR}/lib ${Detran_LIB})
-find_library(Detran_callow    NAMES callow    PATHS ${Detran_DIR}/lib ${Detran_LIB})
-find_library(Detran_angle     NAMES angle     PATHS ${Detran_DIR}/lib ${Detran_LIB})
-find_library(Detran_orthog    NAMES orthog    PATHS ${Detran_DIR}/lib ${Detran_LIB})
-find_library(Detran_geometry  NAMES geometry  PATHS ${Detran_DIR}/lib ${Detran_LIB})
-find_library(Detran_material  NAMES material  PATHS ${Detran_DIR}/lib ${Detran_LIB})
-find_library(Detran_boundary  NAMES boundary  PATHS ${Detran_DIR}/lib ${Detran_LIB})
-find_library(Detran_transport NAMES transport PATHS ${Detran_DIR}/lib ${Detran_LIB})
-find_library(Detran_solvers   NAMES solvers   PATHS ${Detran_DIR}/lib ${Detran_LIB})
-find_library(Detran_ioutils   NAMES ioutils   PATHS ${Detran_DIR}/lib ${Detran_LIB})
+find_library(Detran_utilities   NAMES utilities   PATHS ${Detran_DIR}/lib ${Detran_LIB})
+find_library(Detran_callow      NAMES callow      PATHS ${Detran_DIR}/lib ${Detran_LIB})
+find_library(Detran_angle       NAMES angle       PATHS ${Detran_DIR}/lib ${Detran_LIB})
+find_library(Detran_orthog      NAMES orthog      PATHS ${Detran_DIR}/lib ${Detran_LIB})
+find_library(Detran_geometry    NAMES geometry    PATHS ${Detran_DIR}/lib ${Detran_LIB})
+find_library(Detran_material    NAMES material    PATHS ${Detran_DIR}/lib ${Detran_LIB})
+find_library(Detran_boundary    NAMES boundary    PATHS ${Detran_DIR}/lib ${Detran_LIB})
+find_library(Detran_transport   NAMES transport   PATHS ${Detran_DIR}/lib ${Detran_LIB})
+find_library(Detran_solvers     NAMES solvers     PATHS ${Detran_DIR}/lib ${Detran_LIB})
+find_library(Detran_ioutils     NAMES ioutils     PATHS ${Detran_DIR}/lib ${Detran_LIB})
+find_library(Detran_postprocess NAMES postprocess PATHS ${Detran_DIR}/lib ${Detran_LIB})
 
 # handle the QUIETLY and REQUIRED arguments and set Detran_FOUND to TRUE if 
 # all listed variables are TRUE
@@ -46,6 +47,7 @@ FIND_PACKAGE_HANDLE_STANDARD_ARGS(Detran
   Detran_transport 
   Detran_solvers
   Detran_ioutils
+  Detran_postprocess
 )
 
 if(DETRAN_FOUND)
@@ -60,6 +62,7 @@ if(DETRAN_FOUND)
                        ${Detran_transport} 
                        ${Detran_solvers}
                        ${Detran_ioutils}
+                       ${Detran_postprocess}
   )
   message("Detran IS FOUND")
 else(DETRAN_FOUND)
