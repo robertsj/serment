@@ -50,7 +50,10 @@ MatrixBase::MatrixBase(const size_type m,
 //----------------------------------------------------------------------------//
 MatrixBase::~MatrixBase()
 {
-  if (d_A != PETSC_NULL) MatDestroy(&d_A);
+  if (d_A != PETSC_NULL)
+  {
+    MatDestroy(&d_A);
+  }
 }
 
 void MatrixBase::scale(const double a)
@@ -62,7 +65,8 @@ void MatrixBase::scale(const double a)
 void MatrixBase::assemble(const int mode)
 {
   Require(mode == FINAL || mode == FLUSH);
-  if (mode == FINAL)
+  //if (d_is_assembled) return;
+  if (mode == FINAL)// && !d_is_assembled)
   {
     MatAssemblyBegin(d_A, MAT_FINAL_ASSEMBLY);
     MatAssemblyEnd(d_A, MAT_FINAL_ASSEMBLY);
@@ -71,6 +75,7 @@ void MatrixBase::assemble(const int mode)
   {
     MatAssemblyBegin(d_A, MAT_FLUSH_ASSEMBLY);
     MatAssemblyEnd(d_A, MAT_FLUSH_ASSEMBLY);
+   // d_is_assembled = false;
   }
   d_is_assembled = true;
 }

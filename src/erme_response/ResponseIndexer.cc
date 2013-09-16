@@ -24,6 +24,7 @@ ResponseIndexer::ResponseIndexer(SP_db db, SP_nodelist nodes)
 {
   Require(db);
   Require(d_nodes);
+  db->display();
   Insist(db->check("dimension"),
          "Parameter database must specify dimension.");
   int dimension = db->get<int>("dimension");

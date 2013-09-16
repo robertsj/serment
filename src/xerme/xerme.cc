@@ -9,7 +9,9 @@
 #include "serment_config.h"
 #include "erme_solver/ManagerERME.hh"
 #include "erme_utils/Archive.hh"
+#include "linear_algebra/LinearAlgebraSetup.hh"
 #include "utilities/Timer.hh"
+#include "utilities/Profiler.hh"
 #include <iostream>
 #include <ctime>
 
@@ -20,22 +22,49 @@ int main(int argc, char **argv)
 {
   Insist(argc > 1, "Not enough command line arguments!");
 
-  // Setup the communicators
-  erme_solver::ManagerERME M(argc, argv);
+  START_PROFILER();
+
+  erme_solver::ManagerERME::initialize(argc, argv);
 
   print_welcome();
 
-  // Get input from archive.  This assumes the first argument is
-  // the archive file name.
-  erme_utils::Archive A;
-  A.unarchive(std::string(argv[1]));
+  serment_comm::Comm::tic();
 
-  // Setup and solve problem
-  M.build_comm(A.get_db());
-  M.build_erme(A.get_nodes());
-  M.solve();
+  try
+  {
+    // Get input from archive.  This assumes the first argument is
+    // the archive file name.
+    erme_utils::Archive A;
+    A.unarchive(std::string(argv[1]));
 
-  M.finalize();
+    // Setup and solve problem
+    erme_solver::ManagerERME M(argc, argv);
+    M.build_comm(A.get_db());
+    M.build_erme(A.get_nodes());
+    M.solve();
+  }
+  catch (detran_utilities::GenException &e)
+  {
+    std::cout << e.what() << std::endl;
+    return 0;
+  }
+  catch (std::exception &e)
+  {
+    std::cout << "Bad news from the system..." << std::endl;
+    std::cout << e.what() << std::endl;
+    return 0;
+  }
+  catch (...)
+  {
+    std::cout << "Unknown exception!" << std::endl;
+    return 0;
+  }
+
+  std::cout << "*** ELAPSED TIME = " << serment_comm::Comm::toc() << std::endl;
+
+  erme_solver::ManagerERME::finalize();
+  STOP_PROFILER();
+
   return 0;
 }
 

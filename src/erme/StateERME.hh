@@ -58,6 +58,7 @@ public:
 
   // SETTERS
   void update(SP_vector v, const double k, const double l);
+  void update(SP_vector v);
   void set_k(const double k_val);
   void set_lambda(const double lambda_val);
 

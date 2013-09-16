@@ -156,6 +156,8 @@ public:
   size_t azimuthal_order(const size_t s) const;
   /// Energy order for a surface
   size_t energy_order(const size_t s) const;
+  /// Set fuel flag
+  void set_fuel(bool flag);
   /// Pretty print of key characteristics
   void display() const;
 
@@ -179,6 +181,8 @@ private:
   vec_size_t d_azimuthal_order;
   /// Energy order per surface
   vec_size_t d_energy_order;
+  /// Flag indicated node is fueled or not (default: true)
+  bool d_is_fuel;
 
 protected:
 
@@ -193,6 +197,8 @@ protected:
   Node()
     : d_dimension(0),
       d_number_surfaces(0),
+      d_number_pins(0),
+      d_is_fuel(true),
       d_name("no_name_given")
   {/* ... */}
 
@@ -205,11 +211,13 @@ private:
   {
     ar & d_dimension;
     ar & d_number_surfaces;
+    ar & d_number_pins;
     ar & d_name;
     ar & d_spatial_order;
     ar & d_polar_order;
     ar & d_azimuthal_order;
     ar & d_energy_order;
+    ar & d_is_fuel;
   }
 
 };

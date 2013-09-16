@@ -38,9 +38,6 @@ ResponseSourceDetran<B>::ResponseSourceDetran(SP_node node,
   Require(node->material());
   Require(node->mesh());
 
-  std::cout << "********* BUILDING DETRAN<" << (int)D::dimension
-            << "> SOURCE FOR NODE " << d_node->name() << std::endl;
-
   d_db = node->db();
   d_material = node->material();
   d_mesh = node->mesh();
@@ -56,13 +53,23 @@ ResponseSourceDetran<B>::ResponseSourceDetran(SP_node node,
   d_db->put<std::string>("bc_bottom",   "fixed");
   d_db->put<std::string>("bc_top",      "fixed");
 
-
   // Create the solver and extract the boundary and quadrature
   d_solver = new Solver_T(d_db, d_material, d_mesh, true);
   d_solver->setup();       // Constructs quadrature, etc.
   d_solver->set_solver();  // Constructs the actual mg solver
   d_B = d_solver->boundary();
   d_quadrature = d_solver->quadrature();
+
+  std::string disc = "SN";
+  if (d_solver->discretization() == d_solver->DIFF)
+    disc = "DIFFUSION";
+  else if (d_solver->discretization() == d_solver->MOC)
+    disc = "MOC";
+
+  std::cout << "********* BUILDING DETRAN<" << (int)D::dimension
+            << "> SOURCE USING " << disc << " FOR NODE "
+            << d_node->name() << std::endl;
+
 
   // Spatial dimensions in play.  For example, when expanding
   // on an x-directed surface, y and z are in play.
@@ -136,7 +143,7 @@ void ResponseSourceDetran<B>::construct_basis()
   string basis_s_type = "dlp";
   if (d_db->check("basis_s_type"))
     basis_s_type = d_db->get<string>("basis_s_type");
-  std::cout << " SPATIAL BASIS: " << basis_s_type << std::endl;
+  //std::cout << " SPATIAL BASIS: " << basis_s_type << std::endl;
 
   // Loop over major dimension, direction (+/-), and secondary dimensions
   size_t s = 0;
@@ -186,7 +193,6 @@ void ResponseSourceDetran<B>::construct_basis()
   // Skip angular stuff if diffusion.
   if (d_solver->discretization() == d_solver->DIFF)
   {
-    DBOUT("USING DIFFUSION")
     return;
   }
 

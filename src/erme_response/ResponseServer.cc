@@ -33,6 +33,8 @@ ResponseServer::ResponseServer(SP_nodelist  nodes,
   , d_keff(-1.0)
   , d_keff_1(-2.0)
   , d_is_updated(false)
+  , d_number_unique_evaluations(0)
+  , d_number_swapped_evaluations(0)
   , d_response_time(0.0)
 {
   Require(d_nodes);
@@ -66,6 +68,7 @@ ResponseServer::ResponseServer(SP_nodelist  nodes,
         new NodeResponse(d_indexer->number_node_moments(node_ug),
                          d_nodes->unique_node(node_ug)->number_surfaces(),
                          d_nodes->unique_node(node_ug)->number_pins());
+
     d_responses_1[node_ul] =
         new NodeResponse(d_indexer->number_node_moments(node_ug),
                          d_nodes->unique_node(node_ug)->number_surfaces(),
@@ -106,6 +109,8 @@ bool ResponseServer::update(const double keff)
 
     // Swap the responses
     std::swap(d_responses, d_responses_1);
+
+    ++d_number_swapped_evaluations;
   }
   else
   {
@@ -125,6 +130,8 @@ bool ResponseServer::update(const double keff)
 
     // Use the simple updater.
     update_explicit_work_share();
+
+    ++d_number_unique_evaluations;
   }
 
   // Must go back to world, for which the global
@@ -142,9 +149,41 @@ bool ResponseServer::is_updated() const
   return d_is_updated;
 }
 
+//----------------------------------------------------------------------------//
+ResponseServer::size_t ResponseServer::number_unique_evaluations() const
+{
+  return d_number_unique_evaluations;
+}
+
+//----------------------------------------------------------------------------//
+ResponseServer::size_t ResponseServer::number_swapped_evaluations() const
+{
+  return d_number_swapped_evaluations;
+}
+
+//----------------------------------------------------------------------------//
 double ResponseServer::response_time() const
 {
   return d_response_time;
+}
+
+//----------------------------------------------------------------------------//
+double ResponseServer::last_keff(const double k) const
+{
+  double val = k;
+  if (soft_equiv(k, d_keff))
+  {
+    val = d_keff_1;
+  }
+  else if (soft_equiv(k, d_keff_1))
+  {
+    val = d_keff;
+  }
+  else
+  {
+    THROW("ERROR USING LAST KEFF.");
+  }
+  return val;
 }
 
 //----------------------------------------------------------------------------//

@@ -137,6 +137,8 @@ private:
   //@}
   /// Finite difference epsilon
   double d_eps;
+  /// Flag to use previous iterates of keff (not epsilon)
+  bool d_use_previous_keff;
   /// Unknown vector
   SP_vector d_x;
   /// Eigenvalues
@@ -149,6 +151,9 @@ private:
   /// Full and truncated local sizes
   size_t d_m_full;
   size_t d_m;
+  /// Time in Jacobian updates
+  double d_time;
+
 
   /// Shell matrix for Jacobian action
   class Shell: public linear_algebra::MatrixShell

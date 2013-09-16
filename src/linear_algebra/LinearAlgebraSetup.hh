@@ -37,6 +37,8 @@ void initialize(int &argc, char **&argv, bool init_comm = false)
     PETSC_COMM_WORLD = serment_comm::global;
   else
     PETSC_COMM_WORLD = PETSC_COMM_SELF;
+#else
+  //PETSC_COMM_WORLD = PETSC_COMM_SELF;
 #endif
 
   // Initialize PETSc on the *global* communicator
@@ -49,13 +51,18 @@ void initialize(int &argc, char **&argv, bool init_comm = false)
 }
 
 /// Finish a parallel job.
-void finalize()
+void finalize(bool final_comm = false)
 {
   // Finalize PETSc on the *global* communicator
   if (1)//(serment_comm::Comm::is_global())
   {
     SlepcFinalize();
     PetscFinalize();
+  }
+
+  if (final_comm)
+  {
+    serment_comm::Comm::finalize();
   }
 }
 

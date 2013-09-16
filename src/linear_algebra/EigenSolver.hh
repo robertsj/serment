@@ -33,6 +33,7 @@ public:
   typedef detran_utilities::SP<EigenSolver>     SP_solver;
   typedef MatrixBase::SP_matrix                 SP_matrix;
   typedef Vector::SP_vector                     SP_vector;
+  typedef detran_utilities::size_t              size_t;
 
   //--------------------------------------------------------------------------//
   // PUBLIC INTERFACE
@@ -46,7 +47,11 @@ public:
   EigenSolver(SP_matrix A,
               SP_matrix B = SP_matrix(0),
               int max_iters = 1e5,
-              double tolerance = 1e-10);
+              double tolerance = 1e-10,
+              const std::string type = "krylovschur");
+
+  /// Destructor
+  virtual ~EigenSolver();
 
   /**
    *  @brief Solve the eigenvalue problem
@@ -55,12 +60,17 @@ public:
    */
   double solve(SP_vector x);
 
+  /// Number of iterations
+  size_t number_iterations();
+
 private:
 
   //--------------------------------------------------------------------------//
   // DATA
   //--------------------------------------------------------------------------//
 
+  /// Eigensolver type
+  std::string d_type;
   /// SLEPc eigensolver
   EPS d_solver;
   /// Left side
@@ -83,6 +93,8 @@ private:
   //--------------------------------------------------------------------------//
   // IMPLEMENTATION
   //--------------------------------------------------------------------------//
+
+  void swap_vector(Vector* a, Vector* b);
 
 };
 

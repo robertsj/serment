@@ -85,7 +85,10 @@ void Matrix::preallocate(const vec_int &nnz,
   // Create appropriate matrix type.
   PetscErrorCode ierr;
   int size; // \todo Why is MPI called directly?
-  ierr = MPI_Comm_size(PETSC_COMM_WORLD, &size);
+  //ierr = MPI_Comm_size(PETSC_COMM_WORLD, &size);
+
+  size = serment_comm::Comm::size();
+
   if (size > 1)
   {
     ierr = MatSetType(d_A, MATMPIAIJ);
@@ -97,10 +100,16 @@ void Matrix::preallocate(const vec_int &nnz,
   {
     // All nonzeros get lumped into one vector.
     vec_int total_nnz(nnz);
+    for (int i = 0; i < nnz.size(); ++i)
+    {
+      total_nnz[i] += nnz_od[i];
+      //std::cout << " i ---> " << total_nnz[i] << std::endl;
+    }
     ierr = MatSetType(d_A, MATSEQAIJ);
     ierr = MatSeqAIJSetPreallocation(d_A, PETSC_NULL, &total_nnz[0]);
   }
-  ierr = MatSetOption(d_A, MAT_NEW_NONZERO_ALLOCATION_ERR, PETSC_FALSE);
+
+  ierr = MatSetOption(d_A, MAT_NEW_NONZERO_ALLOCATION_ERR, PETSC_TRUE);
 
   // Set the local/global size along with row bounds.
   set_sizes_and_bounds();

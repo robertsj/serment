@@ -60,8 +60,8 @@ public:
    *  @param nodes  Complete list of nodes, not necessarily partitioned
    *  @param name   Name of the archive file
    */
-  void archive(SP_db             db,
-               SP_nodelist       nodes,
+  void archive(SP_db             &db,
+               SP_nodelist       &nodes,
                const std::string filename = "serment.archive");
 
   /**
@@ -69,6 +69,8 @@ public:
    *  @param name   Name of the archive file
    */
   void unarchive(const std::string filename);
+
+  void unarchive(const std::string filename, SP_db &db, SP_nodelist &node);
 
 private:
 

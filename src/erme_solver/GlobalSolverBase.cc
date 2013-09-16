@@ -27,6 +27,8 @@ GlobalSolverBase::GlobalSolverBase(SP_db 									db,
   , d_maximum_iterations(100)
   , d_tolerance(1.0e-6)
   , d_local_size(0)
+  , d_number_outer_iterations(0)
+  , d_number_inner_iterations(0)
 {
   Require(d_db);
   Require(d_indexer);
@@ -69,9 +71,31 @@ GlobalSolverBase::~GlobalSolverBase()
 }
 
 //----------------------------------------------------------------------------//
-GlobalSolverBase::vec_dbl GlobalSolverBase::residual_norms() const
+GlobalSolverBase::vec_dbl
+GlobalSolverBase::residual_norms() const
 {
   return d_residual_norms;
+}
+
+//----------------------------------------------------------------------------//
+GlobalSolverBase::size_t
+GlobalSolverBase::number_outer_iterations() const
+{
+  return d_number_outer_iterations;
+}
+
+//----------------------------------------------------------------------------//
+GlobalSolverBase::size_t
+GlobalSolverBase::number_inner_iterations() const
+{
+  return d_number_inner_iterations;
+}
+
+//----------------------------------------------------------------------------//
+GlobalSolverBase::vec_size_t
+GlobalSolverBase::number_inner_iterations_per_outer() const
+{
+  return d_number_inner_iterations_per_outer;
 }
 
 //----------------------------------------------------------------------------//

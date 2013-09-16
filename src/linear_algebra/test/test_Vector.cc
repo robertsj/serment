@@ -28,9 +28,7 @@ using std::endl;
 
 int main(int argc, char *argv[])
 {
-  linear_algebra::initialize(argc, argv, true);
   RUN(argc, argv);
-  linear_algebra::finalize();
 }
 
 //----------------------------------------------------------------------------//
@@ -40,34 +38,40 @@ int main(int argc, char *argv[])
 // Test of basic public interface
 int test_Vector(int argc, char *argv[])
 {
-  // Create vector
-  Vector X(10);
-  TEST(X.local_size() == 10);
+  linear_algebra::initialize(argc, argv, true);
 
-  double value = 1.0;
-  int count = 1;
-  for (int i = X.lower_bound(); i < X.upper_bound(); i++)
-    X.insert_values(count, &i, &value);
-  X.assemble();
+  {
+    // Create vector
+    Vector X(10);
+    TEST(X.local_size() == 10);
 
-  value = X.dot(X);
-  TEST(detran_utilities::soft_equiv(value, 1.0*X.global_size()));
+    double value = 1.0;
+    int count = 1;
+    for (int i = X.lower_bound(); i < X.upper_bound(); i++)
+      X.insert_values(count, &i, &value);
+    X.assemble();
 
-  X.scale(2.0);
-  for (int i = 0; i < X.local_size(); i++)
-    TEST(detran_utilities::soft_equiv(X[i], 2.0));
+    value = X.dot(X);
+    TEST(detran_utilities::soft_equiv(value, 1.0*X.global_size()));
 
-  Vector V(X);
-  for (int i = 0; i < V.local_size(); i++)
-    TEST(detran_utilities::soft_equiv(V[i], 2.0));
+    X.scale(2.0);
+    for (int i = 0; i < X.local_size(); i++)
+      TEST(detran_utilities::soft_equiv(X[i], 2.0));
 
-  // Norms
-  double X_L2 = X.norm(X.L2);
-  TEST(detran_utilities::soft_equiv(X_L2, std::sqrt(4.0*X.global_size())));
-  double X_L1 = X.norm(X.L1);
-  TEST(detran_utilities::soft_equiv(X_L1, X.global_size()*2.0));
-  double X_LI = X.norm(X.LINF);
-  TEST(detran_utilities::soft_equiv(X_LI, 2.0));
+    Vector V(X);
+    for (int i = 0; i < V.local_size(); i++)
+      TEST(detran_utilities::soft_equiv(V[i], 2.0));
+
+    // Norms
+    double X_L2 = X.norm(X.L2);
+    TEST(detran_utilities::soft_equiv(X_L2, std::sqrt(4.0*X.global_size())));
+    double X_L1 = X.norm(X.L1);
+    TEST(detran_utilities::soft_equiv(X_L1, X.global_size()*2.0));
+    double X_LI = X.norm(X.LINF);
+    TEST(detran_utilities::soft_equiv(X_LI, 2.0));
+  }
+
+  linear_algebra::finalize(true);
 
   return 0;
 }
@@ -75,69 +79,84 @@ int test_Vector(int argc, char *argv[])
 // Test of temporary constructors
 int test_Vector_temporary(int argc, char *argv[])
 {
-  Vector X(5, 0.0);
-  for (int i = 0; i < X.local_size(); ++i)
-  {
-    X[i] = Comm::rank() * 5.0 + i;
-  }
-  double sum_ref = (X.global_size()-1) * X.global_size() /2;
-  double sum_X   = X.norm(X.L1);
-  TEST(soft_equiv(sum_X, sum_ref));
+  linear_algebra::initialize(argc, argv, true);
 
-  // test temporary from PETSc Vec
   {
-    Vector temp_from_Vec(X.V());
-    double sum_temp = temp_from_Vec.norm(X.L1);
-    TEST(soft_equiv(sum_temp, sum_ref));
+    Vector X(5, 0.0);
+    for (int i = 0; i < X.local_size(); ++i)
+    {
+      X[i] = Comm::rank() * 5.0 + i;
+    }
+    double sum_ref = (X.global_size()-1) * X.global_size() /2;
+    double sum_X   = X.norm(X.L1);
+    TEST(soft_equiv(sum_X, sum_ref));
+
+    // test temporary from PETSc Vec
+    {
+      Vector temp_from_Vec(X.V());
+      double sum_temp = temp_from_Vec.norm(X.L1);
+      TEST(soft_equiv(sum_temp, sum_ref));
+    }
+
+    // test temporary by inserting larger vec into smaller vec
+    {
+      int m = 5;
+      if (Comm::rank() == Comm::size() - 1) m = 3;
+      Vector small(X, m);
+      TEST(small.global_size() == X.global_size() - 2);
+      double sum_small = small.norm(X.L1);
+      sum_ref -= (2*X.global_size()-3);
+      TEST(soft_equiv(sum_small, sum_ref));
+    }
   }
 
-  // test temporary by inserting larger vec into smaller vec
-  {
-    int m = 5;
-    if (Comm::rank() == Comm::size() - 1) m = 3;
-    Vector small(X, m);
-    TEST(small.global_size() == X.global_size() - 2);
-    double sum_small = small.norm(X.L1);
-    sum_ref -= (2*X.global_size()-3);
-    TEST(soft_equiv(sum_small, sum_ref));
-  }
+  linear_algebra::finalize(true);
 
   return 0;
+
 }
 
 // Test of collect to a root
 int test_Vector_collect_to_root(int argc, char *argv[])
 {
-  using serment_comm::Comm;
-  Vector V(1, 0.0);
+  linear_algebra::initialize(argc, argv, true);
 
-  // test ranges
-  Vector::vec_int ranges = V.ranges();
-  for (int i = 0; i < ranges.size(); ++i)
   {
-    TEST(ranges[i] == i);
-  }
 
-  // fill with local values
-  for (int i = 0; i < V.local_size(); ++i)
-  {
-    V[i] = Comm::rank();
-  }
+    using serment_comm::Comm;
+    Vector V(1, 0.0);
 
-  // collect on last process
-  int root = Comm::last();
-  Vector::SP_vector V_seq = V.collect_on_root(root);
-  if (Comm::rank() == root)
-  {
-    TEST(V_seq->is_sequential());
-    TEST(V_seq->local_size() == V_seq->global_size());
-    for (int i = 0; i < V_seq->global_size(); ++i)
+    // test ranges
+    Vector::vec_int ranges = V.ranges();
+    for (int i = 0; i < ranges.size(); ++i)
     {
-      TEST(soft_equiv((*V_seq)[i], (double)i));
+      TEST(ranges[i] == i);
     }
+
+    // fill with local values
+    for (int i = 0; i < V.local_size(); ++i)
+    {
+      V[i] = Comm::rank();
+    }
+
+    // collect on last process
+    int root = Comm::last();
+    Vector::SP_vector V_seq = V.collect_on_root(root);
+    if (Comm::rank() == root)
+    {
+      TEST(V_seq->is_sequential());
+      TEST(V_seq->local_size() == V_seq->global_size());
+      for (int i = 0; i < V_seq->global_size(); ++i)
+      {
+        TEST(soft_equiv((*V_seq)[i], (double)i));
+      }
+    }
+
+    Comm::global_barrier();
+
   }
 
-  Comm::global_barrier();
+  linear_algebra::finalize(true);
   return 0;
 }
 

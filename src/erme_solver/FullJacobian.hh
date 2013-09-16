@@ -73,7 +73,8 @@ public:
                SP_responsecontainer   responses,
                const double           eps = 1.0e-8,
                bool                   fill_diag = false,
-               bool                   include_fd = true);
+               bool                   include_fd = true,
+               const double           zero_diagonal = 0.0001);
 
   //--------------------------------------------------------------------------//
   // PUBLIC FUNCTIONS
@@ -84,6 +85,11 @@ public:
 
   /// Update the Jacobian
   void update(SP_vector x);
+
+  void set_zero_diagonal(const double v)
+  {
+    d_zero_diagonal = v;
+  }
 
 private:
 
@@ -106,6 +112,8 @@ private:
   //@}
   /// Finite difference epsilon
   double d_eps;
+  /// Flag to use previous iterates of keff (not epsilon)
+  bool d_use_previous_keff;
   /// Include finite difference
   bool d_include_fd;
   /// Fill the last diagonal with a small number (when a preconditioner)
@@ -122,6 +130,10 @@ private:
   /// Full and truncated local sizes
   size_t d_m_full;
   size_t d_m;
+  double d_time;
+  /// Value to use in last element that would normally be zero
+  double d_zero_diagonal;
+
 
   //--------------------------------------------------------------------------//
   // IMPLEMENTATION

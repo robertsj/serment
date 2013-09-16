@@ -25,8 +25,9 @@ using std::endl;
 int main(int argc, char *argv[])
 {
   linear_algebra::initialize(argc, argv, true);
-  RUN(argc, argv);
-  linear_algebra::finalize();
+  int value = TestDriver::run(argc, argv);
+  linear_algebra::finalize(true);
+  return value;
 }
 
 //----------------------------------------------------------------------------//

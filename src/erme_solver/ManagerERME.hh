@@ -91,7 +91,6 @@ public:
   /// Constructor
   ManagerERME(int argc, char *argv[]);
 
-
   /// SP constructor
   static SP_manager Create(int argc, char *argv[]);
 
@@ -99,11 +98,17 @@ public:
   // PUBLIC FUNCTIONS
   //--------------------------------------------------------------------------//
 
+  /// Static start and finish functions
+  //@{
+  static void initialize(int argc, char *argv[]);
+  static void finalize();
+  //@}
+
   /**
    *  @brief Construct the communicators
    *  @param db   User parameter db
    */
-  void build_comm(SP_db db);
+  void build_comm(SP_db db, bool flag = true);
 
   /**
    *  @brief Construct the problem
@@ -126,15 +131,14 @@ public:
   double get_keff() const { return d_state->k(); }
   double get_lambda() const { return d_state->lambda(); }
   vec_dbl get_residual_norms() const { return d_solver->residual_norms(); }
+  size_t get_outer_iterations() const { return d_solver->number_outer_iterations(); }
+  size_t get_inner_iterations() const { return d_solver->number_inner_iterations(); }
   SP_responsecontainer get_responses() const { return d_responses; }
   SP_server get_server() const { return d_server; }
   SP_state get_state() {return d_state;}
   SP_nodelist get_nodes() {return d_nodes;}
   SP_indexer get_indexer() {return d_indexer;}
   //@}
-
-  /// Close libraries, etc.
-  void finalize();
 
 private:
 

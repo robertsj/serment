@@ -64,8 +64,9 @@ void GlobalSolverSteffensen::solve()
 
   // Perform iterations
   display(0, norm, lambda, keff);
-  int it = 1;
-  for (; it <= d_maximum_iterations; it++)
+  d_number_outer_iterations = 1;
+  for (; d_number_outer_iterations <= d_maximum_iterations;
+       ++d_number_outer_iterations)
   {
     double k0 = keff, k1, k2;
     picard.iterate(x, k1, lambda); ++count;
@@ -73,12 +74,14 @@ void GlobalSolverSteffensen::solve()
     keff = k0 - (k0 - k1) * (k0 - k1) / (k2 - 2.0 * k1 + k0);
     norm = d_residual->compute_norm(x.bp());
     d_residual_norms.push_back(norm);
-    display(it, norm, lambda, keff);
+    display(d_number_outer_iterations, norm, lambda, keff);
     if (norm < d_tolerance) break;
   }
   std::cout << " COUNT = " << count << std::endl;
   // Update the state
   d_state->update(J, keff, lambda);
+
+  d_number_inner_iterations = picard.number_inner_iterations();
 }
 
 //----------------------------------------------------------------------------//

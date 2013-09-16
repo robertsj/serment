@@ -61,11 +61,15 @@ GlobalSolverPicard::GlobalSolverPicard(SP_db                db,
       THROW("Unknown Picard eigenvalue updater: " + updater);
     }
 
+    std::string inner_type = "krylovschur";
+    if (d_db->check("erme_inner_solver"))
+      inner_type = d_db->get<std::string>("erme_inner_solver");
     d_innersolver =
       new linear_algebra::EigenSolver(d_MR,
                                       linear_algebra::Matrix::SP_matrix(0),
                                       inner_max_iters,
-                                      inner_tolerance);
+                                      inner_tolerance,
+                                      inner_type);
 
     if (serment_comm::Comm::world_rank() == 0)
       std::cout << "Using eigenvalue updater: " << updater << std::endl;
@@ -116,12 +120,13 @@ void GlobalSolverPicard::solve()
 
   // Perform outer iterations
   display(0, norm, lambda, keff);
-  int it = 1;
-  for (; it <= d_maximum_iterations; it++)
+  d_number_outer_iterations = 1;
+  for (; d_number_outer_iterations <= d_maximum_iterations;
+       ++d_number_outer_iterations)
   {
     norm = iterate(x, keff, lambda);
     d_residual_norms.push_back(norm);
-    display(it, norm, lambda, keff);
+    display(d_number_outer_iterations, norm, lambda, keff);
     if (norm < d_tolerance) break;
   }
 //  d_R->display(d_R->BINARY, "R.out");
@@ -133,7 +138,7 @@ void GlobalSolverPicard::solve()
     std::printf(" FINAL PICARD ITERATION EIGENVALUES: \n");
     std::printf(" **** FINAL KEFF        = %12.9f \n", keff);
     std::printf(" **** FINAL LAMBDA      = %12.9f \n", lambda);
-    std::printf(" **** OUTER ITERATIONS  = %8i \n", it);
+    std::printf(" **** OUTER ITERATIONS  = %8i \n", d_number_outer_iterations);
   }
 
   // Update the state
@@ -150,6 +155,8 @@ double GlobalSolverPicard::iterate(SP_vector x, double &keff, double &lambda)
 
     // Current balance (inner iterations)
     lambda = d_innersolver->solve(J);
+    d_number_inner_iterations += d_innersolver->number_iterations();
+    d_number_inner_iterations_per_outer.push_back(d_number_inner_iterations);
 
     // Initial update of keff via gains-to-losses
     keff =  d_F->dot(*J) / (d_A->dot(*J) + d_L->leakage(*J));

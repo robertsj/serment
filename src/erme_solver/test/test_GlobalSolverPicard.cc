@@ -27,6 +27,7 @@ using std::endl;
 
 int main(int argc, char *argv[])
 {
+  ManagerERME::initialize(argc, argv);
   RUN(argc, argv);
 }
 
@@ -36,31 +37,35 @@ int main(int argc, char *argv[])
 
 int test_GlobalSolverPicard(int argc, char *argv[])
 {
-  // Parameter database
-  ManagerERME::SP_db db = detran_utilities::InputDB::Create();
+  {
+    // Parameter database
+    ManagerERME::SP_db db = detran_utilities::InputDB::Create();
 
-  // Setup the manager and comm
-  ManagerERME manager(argc, argv);
-  int ng = Comm::size() == 1 ? 1 : 2;
-  db->put<std::string>("erme_solver_type", "picard");
-  db->put<int>("comm_local_groups", 1);
-  db->put<int>("dimension", 1);
-  db->put<int>("erme_maximum_iterations", 20);
-  db->put<double>("erme_inner_tolerance", 1.0e-14);
-  db->put<double>("erme_tolerance", 1.0e-12);
-  db->put<std::string>("erme_picard_update", "default");
-  db->put<int>("erme_anghel_scheme", 0);
+    // Setup the manager and comm
+    ManagerERME manager(argc, argv);
+    int ng = Comm::size() == 1 ? 1 : 2;
+    db->put<std::string>("erme_solver_type", "picard");
+    db->put<int>("comm_local_groups", 1);
+    db->put<int>("dimension", 1);
+    db->put<int>("erme_maximum_iterations", 20);
+    db->put<double>("erme_inner_tolerance", 1.0e-14);
+    db->put<double>("erme_tolerance", 1.0e-12);
+    db->put<std::string>("erme_picard_update", "default");
+    db->put<int>("erme_anghel_scheme", 0);
 
-  manager.build_comm(db);
+    manager.build_comm(db);
 
-  // Get nodes, build problem, and solve
-  NodeList::SP_nodelist nodes = cartesian_node_detran_list_1d(1);
-  manager.build_erme(nodes);
-  manager.solve();
+    // Get nodes, build problem, and solve
+    NodeList::SP_nodelist nodes = cartesian_node_detran_list_1d(1);
+    manager.build_erme(nodes);
+    manager.solve();
 
-  TEST(soft_equiv(manager.get_keff(), 0.996181414, 1.0e-8));
+    TEST(soft_equiv(manager.get_keff(), 0.996181414, 1.0e-8));
 
-  serment_comm::Comm::global_barrier();
+    serment_comm::Comm::global_barrier();
+  }
+
+  ManagerERME::finalize();
   return 0;
 }
 

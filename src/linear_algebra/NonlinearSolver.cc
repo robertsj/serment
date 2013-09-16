@@ -17,8 +17,15 @@ namespace linear_algebra
 NonlinearSolver::NonlinearSolver()
   : d_number_iterations(0)
   , d_number_linear_iterations(0)
+  , d_number_evaluations(0)
 {
   SNESCreate(PETSC_COMM_WORLD, &d_solver);
+}
+
+//----------------------------------------------------------------------------//
+NonlinearSolver::~NonlinearSolver()
+{
+  SNESDestroy(&d_solver);
 }
 
 //----------------------------------------------------------------------------//
@@ -71,7 +78,21 @@ void NonlinearSolver::setup(SP_db       db,
                     SNESDefaultComputeJacobian, NULL);
   }
 
+  // Set the monitor
+  SNESMonitorSet(d_solver, monitor_wrap, this, NULL);
   SNESSetFromOptions(d_solver);
+}
+
+void NonlinearSolver::setup_pc(int levels, int lag)
+{
+  KSP ksp;
+  PC pc;
+  SNESGetKSP(d_solver, &ksp);
+  KSPSetType(ksp, KSPGMRES);
+  KSPGetPC(ksp, &pc);
+  PCSetType(pc, PCILU);
+  PCFactorSetLevels(pc, levels);
+  SNESSetLagPreconditioner(d_solver, lag);
 }
 
 //----------------------------------------------------------------------------//
@@ -86,6 +107,7 @@ void NonlinearSolver::solve(SP_vector    x,
   ierr = SNESSolve(d_solver, PETSC_NULL, x->V());
   ierr = SNESGetIterationNumber(d_solver, &d_number_iterations);
   ierr = SNESGetLinearSolveIterations(d_solver, &d_number_linear_iterations);
+  ierr = SNESGetNumberFunctionEvals(d_solver, &d_number_evaluations);
   Ensure(!ierr);
 }
 
@@ -99,6 +121,12 @@ int NonlinearSolver::number_iterations() const
 int NonlinearSolver::number_linear_iterations() const
 {
   return d_number_linear_iterations;
+}
+
+//----------------------------------------------------------------------------//
+int NonlinearSolver::number_evaluations() const
+{
+  return d_number_evaluations;
 }
 
 //----------------------------------------------------------------------------//

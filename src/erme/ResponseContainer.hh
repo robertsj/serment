@@ -53,19 +53,28 @@ struct ResponseContainer
 		Require(nodes);
 		Require(indexer);
 		Require(server);
+
 		if (serment_comm::Comm::is_global())
 		{
-		  std::cout << " building M ....";
+		  std::cout << "********* BUILDING M ....";
 			M = new Connect(nodes, indexer);
-			std::cout << " done.  building R ....";
+			std::cout << " done. " << std::endl;
+
+			std::cout << "********* BUILDING R ....";
 			R = new ResponseMatrix(nodes, indexer, server);
-			std::cout << " done.  building L ....";
+			std::cout << " done. " << std::endl;
+
+			std::cout << "********* BUILDING L ....";
 			L = new LeakageOperator(nodes, indexer, server);
-			std::cout << " done.  building F ....";
+			std::cout << " done. " << std::endl;
+
+			std::cout << "********* BUILDING F ....";
 			F = new FissionOperator(nodes, indexer, server);
-			std::cout << " done.  building A ....";
+			std::cout << " done. " << std::endl;
+
+			std::cout << "********* BUILDING A ....";
 			A = new AbsorptionOperator(nodes, indexer, server);
-			std::cout << " done." << std::endl;
+			std::cout << " done. " << std::endl;
 		}
   }
 

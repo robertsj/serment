@@ -8,6 +8,7 @@
 
 #include "Jacobian.hh"
 #include "GlobalSolverBase.hh"
+#include "utilities/SoftEquivalence.hh"
 #include <cstdio>
 
 namespace erme_solver
@@ -23,13 +24,14 @@ Jacobian::Jacobian(SP_server            server,
   : d_server(server)
   , d_indexer(indexer)
   , d_eps(eps)
+  , d_use_previous_keff(eps <= 0.0)
   , d_k(0.0)
   , d_lambda(0.0)
   , d_fd_FAL(0.0)
+  , d_time(0.0)
 {
   Require(d_server);
   Require(d_indexer);
-  Require(d_eps > 0.0);
 
   if (Comm::is_global())
   {
@@ -55,6 +57,8 @@ Jacobian::Jacobian(SP_server            server,
 void Jacobian::multiply(Vector &f, Vector &fp_times_f)
 {
   Require(f.global_size() == d_MR->number_global_rows() + 2);
+
+  Comm::tic();
 
   Comm::set(serment_comm::global);
 
@@ -100,6 +104,7 @@ void Jacobian::multiply(Vector &f, Vector &fp_times_f)
   }
 
   Comm::set(serment_comm::world);
+  d_time += Comm::toc();
 
   return;
 }
@@ -115,6 +120,7 @@ void Jacobian::update(SP_vector x)
 {
   Require(serment_comm::communicator == serment_comm::world);
 
+  Comm::tic();
   Comm::set(serment_comm::global);
 
   d_x = x;
@@ -141,6 +147,11 @@ void Jacobian::update(SP_vector x)
   double loss_1 = d_A->dot(x_J) + d_L->leakage(x_J);
   //   for perturbed keff
   Comm::set(serment_comm::world);
+  if (d_use_previous_keff)
+  {
+    d_eps = d_server->last_keff(d_k) - d_k;
+    Assert(!detran_utilities::soft_equiv(d_eps, 0.0));
+  }
   update_response(d_k + d_eps);
   Comm::set(serment_comm::global);
   d_MR->multiply(x_J, *d_fd_MR);
@@ -155,6 +166,8 @@ void Jacobian::update(SP_vector x)
   // return original responses
   Comm::set(serment_comm::world);
   update_response(d_k);
+
+  d_time += Comm::toc();
 }
 
 //----------------------------------------------------------------------------//

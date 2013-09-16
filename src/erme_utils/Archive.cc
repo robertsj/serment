@@ -17,6 +17,7 @@ namespace erme_utils
 
 //----------------------------------------------------------------------------//
 Archive::Archive()
+  : d_db(NULL)
 {
   // TODO Auto-generated constructor stub
 }
@@ -44,7 +45,7 @@ Archive::SP_nodelist Archive::get_nodes()
 }
 
 //----------------------------------------------------------------------------//
-void Archive::archive(SP_db db, SP_nodelist nodes, const std::string filename)
+void Archive::archive(SP_db &db, SP_nodelist &nodes, const std::string filename)
 {
   if (serment_comm::Comm::world_rank() == 0)
   {
@@ -75,6 +76,23 @@ void Archive::unarchive(const std::string filename)
 
     Ensure(d_db);
     Ensure(d_nodes);
+  }
+}
+
+void Archive::unarchive(const std::string filename, SP_db &db, SP_nodelist &nodes)
+{
+  if (serment_comm::Comm::world_rank() == 0)
+  {
+    Insist(filename != "", "Filename is empty.");
+
+    std::ifstream instream(filename.c_str());
+    boost::archive::binary_iarchive inarchive(instream);
+    inarchive >> db;
+    inarchive >> nodes;
+    instream.close();
+
+    Ensure(db);
+    Ensure(nodes);
   }
 }
 

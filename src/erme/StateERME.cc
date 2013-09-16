@@ -40,6 +40,24 @@ void StateERME::update(SP_vector v, const double k, const double l)
   serment_comm::Comm::broadcast(&d_lambda, 1, 0);
 }
 
+//----------------------------------------------------------------------------//
+void StateERME::update(SP_vector v)
+{
+  if (serment_comm::Comm::is_global())
+  {
+    Require(v);
+    Vector j(*v, d_local_size);
+    d_boundary_moments->copy(j);
+    if (serment_comm::Comm::is_last())
+    {
+      d_k = (*v)[d_local_size];
+      d_lambda = (*v)[d_local_size+1];
+    }
+  }
+  serment_comm::Comm::broadcast(&d_k, 1, 0);
+  serment_comm::Comm::broadcast(&d_lambda, 1, 0);
+}
+
 } // end namespace erme
 
 //----------------------------------------------------------------------------//

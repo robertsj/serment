@@ -29,6 +29,7 @@ using std::endl;
 
 int main(int argc, char *argv[])
 {
+  ManagerERME::initialize(argc, argv);
   RUN(argc, argv);
 }
 
@@ -59,6 +60,8 @@ void update(ManagerERME &manager, double keff, std::string name)
 
 int test_Jacobian(int argc, char *argv[])
 {
+  {
+
   // Parameter database
   ManagerERME::SP_db db = detran_utilities::InputDB::Create();
 
@@ -126,11 +129,15 @@ int test_Jacobian(int argc, char *argv[])
     TEST(soft_equiv(jacobian_times_x[i], ref[i]));
   }
   Comm::global_barrier();
+
+  }
+  ManagerERME::finalize();
   return 0;
 }
 
 int test_FullJacobian(int argc, char *argv[])
 {
+  {
   // Parameter database
   ManagerERME::SP_db db = detran_utilities::InputDB::Create();
 
@@ -198,6 +205,8 @@ int test_FullJacobian(int argc, char *argv[])
   }
 
   Comm::global_barrier();
+  }
+  ManagerERME::finalize();
   return 0;
 }
 

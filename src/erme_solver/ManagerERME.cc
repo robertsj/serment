@@ -16,14 +16,17 @@
 namespace erme_solver
 {
 
+using serment_comm::Comm;
+using std::cout;
+using std::endl;
+
 //----------------------------------------------------------------------------//
 ManagerERME::ManagerERME(int argc, char *argv[])
   : d_argc(argc)
   , d_argv(argv)
   , d_is_built(false)
 {
-  std::cout << " INITIALIZING ERME MANAGER..." << std::endl;
-  serment_comm::Comm::initialize(argc, argv);
+  /* ... */
 }
 
 //----------------------------------------------------------------------------//
@@ -34,15 +37,10 @@ ManagerERME::SP_manager ManagerERME::Create(int argc, char *argv[])
 }
 
 //----------------------------------------------------------------------------//
-void ManagerERME::build_comm(SP_db db)
+void ManagerERME::build_comm(SP_db db, bool flag)
 {
   // Note, the db is not guaranteed to be defined on all processes, as
   // only rank 0 reads from archives.
-
-  using serment_comm::Comm;
-  using std::cout;
-  using std::endl;
-
   if (Comm::rank() == 0)
   {
     Insist(db, "Parameter database is NULL");
@@ -69,18 +67,14 @@ void ManagerERME::build_comm(SP_db db)
   Comm::setup_communicators(local);
 
   // Initialize linear algebra system
-  linear_algebra::initialize(d_argc, d_argv);
+  if (flag)
+    linear_algebra::initialize(d_argc, d_argv);
 }
 //----------------------------------------------------------------------------//
 void ManagerERME::build_erme(SP_nodelist nodes)
 {
   // Note, the db is not guaranteed to be defined on all processes, as
   // only rank 0 reads from archives.
-
-  using std::cout;
-  using std::endl;
-  using serment_comm::Comm;
-
   if (Comm::rank() == 0)
   {
     Insist(Comm::is_comm_built(),
@@ -125,12 +119,12 @@ void ManagerERME::build_erme(SP_nodelist nodes)
 
   // Create response operators
   if (Comm::rank() == 0) cout << "****** BUILDING OPERATORS" << endl;
-
-  // Operators and live on global communicator
   if (Comm::is_global())
   	d_responses = new erme::ResponseContainer(d_nodes, d_indexer, d_server);
+
   d_is_built = true;
 
+  cout << "*** ERME BUILT" << endl;
 }
 
 //----------------------------------------------------------------------------//
@@ -168,10 +162,16 @@ void ManagerERME::solve()
 }
 
 //----------------------------------------------------------------------------//
+void ManagerERME::initialize(int argc, char *argv[])
+{
+  serment_comm::Comm::initialize(argc, argv);
+}
+
+//----------------------------------------------------------------------------//
 void ManagerERME::finalize()
 {
   linear_algebra::finalize();
-  //serment_comm::Comm::finalize();
+  serment_comm::Comm::finalize();
 }
 
 } // end namespace erme_solver

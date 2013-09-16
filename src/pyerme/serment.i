@@ -24,6 +24,7 @@
 #include "erme_response/NodeResponse.hh"
 #include "erme_response/ResponseIndex.hh"
 #include "erme_response/ResponseIndexer.hh"
+#include "erme_response/ResponseServer.hh"
 // Linear algebra
 #include "linear_algebra/LinearAlgebraSetup.hh"
 // Manager
@@ -83,6 +84,8 @@ as_cartesian_node(detran_utilities::SP<erme_geometry::Node> *n)
 %template(ResponseIndexSP)  detran_utilities::SP<erme_response::ResponseIndex>;
 %include "ResponseIndexer.hh"
 %template(ResponseIndexerSP)  detran_utilities::SP<erme_response::ResponseIndexer>;
+%include "ResponseServer.hh"
+%template(ResponseServerSP)  detran_utilities::SP<erme_response::ResponseServer>;
 
 // PETSc/SLEPc initialization
 %include "linear_algebra/LinearAlgebraSetup.hh"

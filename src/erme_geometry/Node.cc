@@ -28,6 +28,7 @@ Node::Node(const size_t  dimension,
   , d_polar_order(po)
   , d_azimuthal_order(ao)
   , d_energy_order(eo)
+  , d_is_fuel(true)
 {
   Require(d_dimension > 0 and d_dimension <= 3);
   Require(d_number_surfaces > 0);
@@ -41,6 +42,12 @@ Node::Node(const size_t  dimension,
 Node::~Node()
 {
   /* ... */
+}
+
+//----------------------------------------------------------------------------//
+void Node::set_fuel(bool flag)
+{
+  d_is_fuel = flag;
 }
 
 //----------------------------------------------------------------------------//

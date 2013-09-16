@@ -65,6 +65,7 @@ public:
   typedef Vector::SP_vector           		                SP_vector;
   typedef detran_utilities::vec_dbl                   		vec_dbl;
   typedef detran_utilities::vec_int                   		vec_int;
+  typedef detran_utilities::vec_size_t                    vec_size_t;
   typedef detran_utilities::size_t                        size_t;
 
   //--------------------------------------------------------------------------//
@@ -93,6 +94,14 @@ public:
 
   /// Get the residuals
   vec_dbl residual_norms() const;
+
+
+  //@{
+  /// Get the number of inner or outer iterations
+  size_t number_outer_iterations() const;
+  size_t number_inner_iterations() const;
+  vec_size_t number_inner_iterations_per_outer() const;
+  //@}
 
 protected:
 
@@ -128,8 +137,12 @@ protected:
   double d_tolerance;
   /// Residual norm for each (outer) iteration
   vec_dbl d_residual_norms;
+  /// Number of outer iterations
+  size_t d_number_outer_iterations;
+  /// Number of inner iterations
+  size_t d_number_inner_iterations;
   /// Number of inners for each (outer) iteration
-  vec_int d_inner_iterations;
+  vec_size_t d_number_inner_iterations_per_outer;
   /// Local size of unknown vector
   size_t d_local_size;
 

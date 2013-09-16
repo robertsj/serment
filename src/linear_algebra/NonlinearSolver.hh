@@ -66,6 +66,7 @@ public:
   typedef Vector::SP_vector                           SP_vector;
   typedef NonlinearResidualBase::SP_residual          SP_residual;
   typedef detran_utilities::InputDB::SP_input         SP_db;
+  typedef detran_utilities::vec_dbl                   vec_dbl;
 
   //--------------------------------------------------------------------------//
   // PUBLIC INTERFACE
@@ -74,6 +75,9 @@ public:
   /// Constructor
   NonlinearSolver();
 
+  /// Destructor
+  virtual ~NonlinearSolver();
+
   /**
    *  @brief Setup the solver
    *  @param   db  parameter database
@@ -81,6 +85,8 @@ public:
    *  @param    P  preconditioner matrix (may be J)
    */
   void setup(SP_db db, SP_residual f, SP_jacobian J, SP_jacobian P);
+
+  void setup_pc(int levels, int lag = 1);
 
   /// Solver the nonlinear system for an initial guess x
   void solve(SP_vector    x,
@@ -92,9 +98,13 @@ public:
   ///  Getters
   int number_iterations() const;
   int number_linear_iterations() const;
+  int number_evaluations() const;
   SP_residual residual();
   SP_jacobian jacobian();
   SP_jacobian preconditioner();
+  SNES solver() {return d_solver;}
+  void add_residual(const double nr){d_residual_norm.push_back(nr);}
+  vec_dbl residual_norm() const {return d_residual_norm;}
   //@}
 
 protected:
@@ -117,6 +127,10 @@ protected:
   int d_number_iterations;
   /// Number of linear solver iterations
   int d_number_linear_iterations;
+  /// Number of function evaluations
+  int d_number_evaluations;
+  /// Residual norms
+  vec_dbl d_residual_norm;
   /// Temporary matrix for JFNK Jacobian
   SP_matrix d_jfnk_jacobian;
 
@@ -180,6 +194,19 @@ jfnk_wrap(SNES snes, Vec x, Mat *J, Mat *P, MatStructure *flag, void *ctx)
   }
 
   return ierr;
+}
+
+//----------------------------------------------------------------------------//
+/**
+ *  Additional function called during SNES monitoring so that the
+ *  residual norms can be kept
+ */
+inline PetscErrorCode
+monitor_wrap(SNES snes, int iteration, double nr, void *ctx)
+{
+  NonlinearSolver* foo = (NonlinearSolver*) ctx;
+  foo->add_residual(nr);
+  return 0;
 }
 
 } // end namespace linear_algebra

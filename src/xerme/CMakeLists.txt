@@ -20,7 +20,8 @@ add_executable(serment
                ${SRC} 
 )
 TARGET_LINK_LIBRARIES(serment 
-                      erme_utils                 
+                      erme_utils     
+                      ${GPERFTOOLS_LIBRARIES}
 )
 
 INSTALL_FILES(/include .hh)

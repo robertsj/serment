@@ -49,6 +49,13 @@ public:
    */
   LeakageOperator(SP_nodelist nodes, SP_indexer indexer, SP_server server);
 
+//  virtual ~LeakageOperator()
+//  {
+////    d_global_leakage.destroy();
+////    d_L_times_moments.destroy();
+////    d_leakage_vector.destroy();
+//  }
+
   /// Update the response matrix data
   void update();
 

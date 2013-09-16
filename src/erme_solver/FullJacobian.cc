@@ -25,19 +25,22 @@ FullJacobian::FullJacobian(SP_server            server,
                            SP_responsecontainer responses,
                            const double         eps,
                            bool                 fill_diag,
-                           bool                 include_fd)
+                           bool                 include_fd,
+                           const double         zero_diagonal)
   : d_server(server)
   , d_indexer(indexer)
   , d_eps(eps)
+  , d_use_previous_keff(eps <= 0.0)
   , d_fill_diag(fill_diag)
   , d_include_fd(include_fd)
   , d_k(0.0)
   , d_lambda(0.0)
   , d_fd_FAL(0.0)
+  , d_time(0.0)
+  , d_zero_diagonal(zero_diagonal)
 {
   Require(d_server);
   Require(d_indexer);
-  Require(d_eps > 0.0);
 
   if (serment_comm::Comm::is_global())
   {
@@ -91,14 +94,16 @@ FullJacobian::FullJacobian(SP_server            server,
   }
   if (serment_comm::Comm::is_last())
   {
-    nnz[i  ] = d_m_full - 1;
-    nnz[i+1] = d_m_full - 2;
-    nnz_od[i]   = d_R->number_global_rows() + 2 - d_m_full;
-    nnz_od[i+1] = d_R->number_global_rows() + 2 - d_m_full;
+    nnz[d_m_full-2] = d_m_full - 1;
+    nnz[d_m_full-1] = d_m_full - 1;
+    nnz_od[d_m_full-2] = d_R->number_global_rows()+2 - nnz[d_m_full-2];
+    nnz_od[d_m_full-1] = d_R->number_global_rows()+2 - nnz[d_m_full-1];
   }
 
   // allocate etc.
   M.preallocate(nnz, nnz_od);
+
+  //MatSetOption(M.A(), MAT_KEEP_NONZERO_PATTERN, PETSC_TRUE);
 
   // working vector
   d_fd_MR = new Vector(d_m, 0.0);
@@ -123,6 +128,7 @@ void FullJacobian::update(SP_vector x)
 {
   Require(serment_comm::communicator == serment_comm::world);
 
+  Comm::tic();
   Comm::set(serment_comm::global);
 
   // Set all values to zero if we've already set values.  For whatever
@@ -214,10 +220,16 @@ void FullJacobian::update(SP_vector x)
     double gain1 = d_F->dot(x_J);
     double loss1 = d_A->dot(x_J) + d_L->leakage(x_J);
 
-    //   perturbed keff
+    //   for perturbed keff
     Comm::set(serment_comm::world);
+    if (d_use_previous_keff)
+    {
+      d_eps = d_server->last_keff(d_k) - d_k;
+      Assert(!detran_utilities::soft_equiv(d_eps, 0.0));
+    }
     update_response(d_k + d_eps);
     Comm::set(serment_comm::global);
+
     d_MR->multiply(x_J, *d_fd_MR);
     double gain2 = d_F->dot(x_J);
     double loss2 = d_A->dot(x_J) + d_L->leakage(x_J);
@@ -240,8 +252,7 @@ void FullJacobian::update(SP_vector x)
     // Small value to avoid zero
     if (d_fill_diag)
     {
-      double diag_val = 1.0e-4;
-      d_matrix->insert_values(1, k_idx, 1, k_idx, &diag_val);
+      d_matrix->insert_values(1, k_idx, 1, k_idx, &d_zero_diagonal);
     }
   }
 
@@ -261,8 +272,7 @@ void FullJacobian::update(SP_vector x)
                             &((*lambda_row_seq)[0]));
     if (d_fill_diag)
     {
-      double diag_val = 1.0e4;
-      d_matrix->insert_values(1, lambda_idx, 1, lambda_idx, &diag_val);
+      d_matrix->insert_values(1, lambda_idx, 1, lambda_idx, &d_zero_diagonal);
     }
   }
   // reset the sign, since this is our active unknown
@@ -273,6 +283,8 @@ void FullJacobian::update(SP_vector x)
   // return original responses
   Comm::set(serment_comm::world);
   update_response(d_k);
+
+  d_time += Comm::toc();
 }
 
 //----------------------------------------------------------------------------//

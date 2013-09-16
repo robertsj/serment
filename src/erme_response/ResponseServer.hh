@@ -85,8 +85,13 @@ public:
   /// Ask server if it has updated responses (before reconstructing operators)
   bool is_updated() const;
 
+  size_t number_unique_evaluations() const;
+  size_t number_swapped_evaluations() const;
   /// Return the total time elapsed generating responses
   double response_time() const;
+
+  /// Get the last keff not equal to the argument
+  double last_keff(const double k) const;
 
 private:
 
@@ -112,6 +117,10 @@ private:
   double d_keff_1;
   /// Flag indicating the server has new values
   bool d_is_updated;
+  /// Number of unique evaluations (i.e. new keff values)
+  size_t d_number_unique_evaluations;
+  /// Number of evaluations that require updated operators but are in memory
+  size_t d_number_swapped_evaluations;
   /// Response generation time
   double d_response_time;
 

@@ -31,8 +31,9 @@ using detran_utilities::range;
 int main(int argc, char *argv[])
 {
   linear_algebra::initialize(argc, argv, true);
-  RUN(argc, argv);
-  linear_algebra::finalize();
+  int value = TestDriver::run(argc, argv);
+  linear_algebra::finalize(true);
+  return value;
 }
 
 //----------------------------------------------------------------------------//
@@ -134,7 +135,7 @@ public:
   {
     if (Comm::is_last())
       ++d_local_size;
-    std::vector<int> nnz(d_local_size, 3);
+    std::vector<int> nnz(d_local_size, 4); // tri from A + last col
     std::vector<int> nnz_od(d_local_size, 0);
     if (Comm::is_last())
     {
@@ -232,12 +233,12 @@ int test_NonlinearSolver(int argc, char *argv[])
   {
     (*x)[m] = L;
   }
-//  x->display(x->BINARY, "X.out");
-//  A->display(x->BINARY, "A.out");
-//  J->update(x);
+  x->display(x->BINARY, "X.out");
+  A->display(x->BINARY, "A.out");
+  J->update(x);
 //  A->display(x->BINARY, "A.out");
 //  J->matrix()->display(x->BINARY, "J.out");
-
+;
   NonlinearSolver solver;
   NonlinearSolver::SP_db db = detran_utilities::InputDB::Create();
   solver.setup(db, f, J, P);

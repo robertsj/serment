@@ -36,12 +36,13 @@ int test_Archive(int argc, char *argv[])
   int number_nodes = 0;
 
   // Write
-  {
+  if(0){
     Archive::SP_db db;
     Archive::SP_nodelist nodes;
     db = new detran_utilities::InputDB("testdb");
     db->put<int>("ip", 123);
     db->put<double>("dp", 0.456);
+    //std::cout << db << std::endl;
     nodes = cartesian_node_dummy_list_1d();
     number_nodes = nodes->number_global_nodes();
     Archive A;
@@ -49,7 +50,7 @@ int test_Archive(int argc, char *argv[])
   }
 
   // Read
-  {
+  if(1){
     Archive::SP_db db;
     Archive::SP_nodelist nodes;
     Archive A;

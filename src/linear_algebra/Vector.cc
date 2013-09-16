@@ -111,6 +111,7 @@ Vector::Vector(Vec pv)
   , d_is_temporary(true)
   , d_is_sequential(false)
 {
+
   d_V = pv;
   int gs = 0, ls = 0;
   PetscErrorCode ierr = 0;
@@ -126,7 +127,20 @@ Vector::Vector(Vec pv)
 //----------------------------------------------------------------------------//
 Vector::~Vector()
 {
-  if (!d_is_temporary) VecDestroy(&d_V);
+  if (!d_is_temporary)
+  {
+    VecDestroy(&d_V);
+  }
+}
+
+//----------------------------------------------------------------------------//
+void Vector::destroy()
+{
+  if (!d_is_temporary)
+  {
+    VecDestroy(&d_V);
+    d_is_temporary = true;
+  }
 }
 
 //----------------------------------------------------------------------------//
@@ -212,6 +226,13 @@ Vector::SP_vector Vector::collect_on_root(const size_type root)
 
   Ensure(!ierr);
   return V_seq;
+}
+
+//----------------------------------------------------------------------------//
+void Vector::swap(SP_vector V)
+{
+  Require(V->local_size() == local_size());
+  VecSwap(d_V, V->V());
 }
 
 //----------------------------------------------------------------------------//

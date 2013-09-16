@@ -91,6 +91,8 @@ public:
   /// Destructor
   ~Vector();
 
+  void destroy();
+
   //--------------------------------------------------------------------------//
   // PUBLIC FUNCTIONS
   //--------------------------------------------------------------------------//
@@ -151,6 +153,8 @@ public:
    */
   SP_vector collect_on_root(const size_type root = 0);
 
+  /// Swap this with another vector
+  void swap(SP_vector V);
 
   /// View to screen, to ascii file, or to binary file
   void display(const size_type    display_type = STDOUT,

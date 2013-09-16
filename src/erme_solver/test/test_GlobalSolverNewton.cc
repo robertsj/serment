@@ -7,8 +7,9 @@
 //----------------------------------------------------------------------------//
 
 // LIST OF TEST FUNCTIONS
-#define TEST_LIST                     \
-        FUNC(test_GlobalSolverNewton)
+#define TEST_LIST                                   \
+        FUNC(test_GlobalSolverNewton_shelljacobian) \
+        FUNC(test_GlobalSolverNewton_fulljacobian)
 
 #include "utilities/TestDriver.hh"
 #include "erme_solver/ManagerERME.hh"
@@ -27,6 +28,7 @@ using std::endl;
 
 int main(int argc, char *argv[])
 {
+  ManagerERME::initialize(argc, argv);
   RUN(argc, argv);
 }
 
@@ -34,32 +36,69 @@ int main(int argc, char *argv[])
 // TEST DEFINITIONS
 //----------------------------------------------------------------------------//
 
-int test_GlobalSolverNewton(int argc, char *argv[])
+int test_GlobalSolverNewton_shelljacobian(int argc, char *argv[])
 {
-  // Parameter database
-  ManagerERME::SP_db db = detran_utilities::InputDB::Create();
+  {
+    // Parameter database
+    ManagerERME::SP_db db = detran_utilities::InputDB::Create();
 
-  // Setup the manager and comm
-  ManagerERME manager(argc, argv);
-  int ng = Comm::size() == 1 ? 1 : 2;
-  db->put<std::string>("erme_solver_type", "newton");
-  db->put<int>("comm_local_groups", 1);
-  db->put<int>("dimension", 1);
-  db->put<int>("erme_maximum_iterations", 10);
-  db->put<double>("erme_tolerance", 1.0e-12);
-  db->put<std::string>("erme_newton_pc", "full");
- // db->put<int>("erme_newton_full_jacobian", 1);
-  manager.build_comm(db);
+    // Setup the manager and comm
+    ManagerERME manager(argc, argv);
+    int ng = Comm::size() == 1 ? 1 : 2;
+    db->put<std::string>("erme_solver_type", "newton");
+    db->put<int>("comm_local_groups", 1);
+    db->put<int>("dimension", 1);
+    db->put<int>("erme_maximum_iterations", 10);
+    db->put<double>("erme_tolerance", 1.0e-12);
+    db->put<std::string>("erme_newton_pc", "full");
+    //db->put<int>("erme_newton_full_jacobian", 1);
+    manager.build_comm(db);
 
-  // Get nodes, build problem, and solve
-  NodeList::SP_nodelist nodes = cartesian_node_detran_list_1d(1);
+    // Get nodes, build problem, and solve
+    NodeList::SP_nodelist nodes = cartesian_node_detran_list_1d(1);
 
-  manager.build_erme(nodes);
-  manager.solve();
+    manager.build_erme(nodes);
+    manager.solve();
 
-  TEST(soft_equiv(manager.get_keff(), 0.996181414, 1.0e-8));
+    TEST(soft_equiv(manager.get_keff(), 0.996181414, 1.0e-8));
 
-  serment_comm::Comm::global_barrier();
+    serment_comm::Comm::global_barrier();
+  }
+  ManagerERME::finalize();
+  return 0;
+}
+
+
+int test_GlobalSolverNewton_fulljacobian(int argc, char *argv[])
+{
+  {
+    // Parameter database
+    ManagerERME::SP_db db = detran_utilities::InputDB::Create();
+
+    // Setup the manager and comm
+    ManagerERME manager(argc, argv);
+    int ng = Comm::size() == 1 ? 1 : 2;
+    db->put<std::string>("erme_solver_type", "newton");
+    db->put<int>("comm_local_groups", 1);
+    db->put<int>("dimension", 1);
+    db->put<int>("erme_maximum_iterations", 10);
+    db->put<double>("erme_tolerance", 1.0e-12);
+    db->put<std::string>("erme_newton_pc", "full");
+    db->put<int>("erme_newton_full_jacobian", 1);
+    manager.build_comm(db);
+
+    // Get nodes, build problem, and solve
+    NodeList::SP_nodelist nodes = cartesian_node_detran_list_1d(1);
+
+    manager.build_erme(nodes);
+    manager.solve();
+
+    TEST(soft_equiv(manager.get_keff(), 0.996181414, 1.0e-8));
+
+    serment_comm::Comm::global_barrier();
+  }
+
+  ManagerERME::finalize();
   return 0;
 }
 
