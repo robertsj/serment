@@ -9,6 +9,7 @@
 #include "FullJacobian.hh"
 #include "GlobalSolverBase.hh"
 #include "utilities/MathUtilities.hh"
+#include "utilities/SoftEquivalence.hh"
 #include <cstdio>
 
 #define COUT(c) std::cout << c << std::endl;

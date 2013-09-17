@@ -117,6 +117,10 @@ private:
   bool d_compute_nodal_power;
   /// Compute pin powers
   bool d_compute_pin_power;
+  /// Time elapsed for this node
+  double d_time;
+  /// Number of responses generated so far
+  int d_number;
 
   //--------------------------------------------------------------------------//
   // IMPLEMENTATION

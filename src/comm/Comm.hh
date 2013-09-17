@@ -299,6 +299,9 @@ public:
   /// Return time elapsed after tic() call.
   static double toc();
 
+  /// Return the current wall time
+  static double wtime();
+
   //--------------------------------------------------------------------------//
   // UTILITY
   //--------------------------------------------------------------------------//

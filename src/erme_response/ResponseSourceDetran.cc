@@ -33,6 +33,8 @@ ResponseSourceDetran<B>::ResponseSourceDetran(SP_node node,
   , d_spatial_dim(D::dimension, vec_size_t(D::dimension-1))
   , d_compute_nodal_power(false)
   , d_compute_pin_power(false)
+  , d_time(0.0)
+  , d_number(0)
 {
   Require(node->db());
   Require(node->material());
@@ -97,30 +99,28 @@ template <class B>
 void ResponseSourceDetran<B>::
 compute(SP_response response, const ResponseIndex &index)
 {
-   //if (index.surface < 2) return;
 
-//  std::cout << "COMPUTING RESPONSE FOR INDEX: " << index << std::endl;
+  double wt = serment_comm::Comm::wtime();
+
   d_solver->boundary()->clear();
   d_solver->boundary()->clear_bc();
   set_boundary(index);
-//  std::cout << "idx =" << index << std::endl;
 
-//  std::cout << "********* OUTGOING BOUNDARY *********** " << std::endl;
-//  d_B->display(false);
-//  std::cout << "********* INCIDENT BOUNDARY *********** " << std::endl;
-//  d_B->display(true);
 
   d_solver->solve(d_keff);
- // THROW("lala");
- // d_solver->state()->display();
-//std::cout << "********* OUTGOING BOUNDARY *********** " << std::endl;
-//  d_B->display(false);
-//  std::cout << "********* INCIDENT BOUNDARY *********** " << std::endl;
-//  d_B->display(true);
+  double t_solve = serment_comm::Comm::wtime() - wt;
 
   expand(response, index);
- // response->display();
-// THROW("lala");
+  double t_expand = serment_comm::Comm::wtime() - wt - t_solve;
+
+  double t_tot = t_solve + t_expand;
+  d_time += t_tot;
+  ++d_number;
+  double t_avg = d_time / (double)d_number;
+  double t_done = (d_indexer->number_node_moments(index.node)-d_number) * t_avg;
+  printf(" %4i %4i %4i %4i %4i %4i %10.2e  (%10.2e  %10.2e) %10.2e %10.2e  <%10.2e>  \n ",
+         serment_comm::Comm::rank(), index.node, index.nodal, index.surface, d_number, d_indexer->number_node_moments(index.node),
+         d_time, t_solve, t_expand, t_tot, t_avg, t_done);
 }
 
 //----------------------------------------------------------------------------//
@@ -134,6 +134,7 @@ void ResponseSourceDetran<B>::construct_basis()
   // ENERGY
   //--------------------------------------------------------------------------//
 
+  std::cout << "************ BUILDING ENERGY BASIS " << std::endl;
   construct_energy_basis();
 
   //--------------------------------------------------------------------------//
@@ -143,7 +144,8 @@ void ResponseSourceDetran<B>::construct_basis()
   string basis_s_type = "dlp";
   if (d_db->check("basis_s_type"))
     basis_s_type = d_db->get<string>("basis_s_type");
-  //std::cout << " SPATIAL BASIS: " << basis_s_type << std::endl;
+  std::cout << "************ BUILDING SPATIAL BASIS: "
+            << basis_s_type << std::endl;
 
   // Loop over major dimension, direction (+/-), and secondary dimensions
   size_t s = 0;
@@ -206,6 +208,7 @@ void ResponseSourceDetran<B>::construct_basis()
     d_expand_angular_flux = (1 == d_db->get<int>("erme_expand_angular_flux"));
   }
 
+  std::cout << "************ BUILDING ANGULAR BASIS " << std::endl;
   if (B::D_T::dimension == 1)
   {
     construct_angular_basis_1D();
@@ -383,9 +386,6 @@ void ResponseSourceDetran<B>::construct_angular_basis_2D()
     d_basis_a[s] = OrthogonalBasis::Create(basis_a_type, basis_a_p);
   }
 
-  d_basis_p[0]->basis()->display(true);
-  d_basis_p[0]->coefficients()->display();
-  d_basis_p[0]->weights()->display();
 }
 
 //----------------------------------------------------------------------------//

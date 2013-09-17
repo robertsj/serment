@@ -84,6 +84,8 @@ bool ResponseServer::update(const double keff)
 
   bool store_k = true;
 
+  double et = Comm::wtime();
+
   Comm::tic();
 
   // Switch to local communicator.
@@ -138,7 +140,7 @@ bool ResponseServer::update(const double keff)
   // roots now have the updated response.
   Comm::set(serment_comm::world);
 
-  d_response_time += Comm::toc();
+  d_response_time += (Comm::wtime() - et);
 
   return d_is_updated;
 }

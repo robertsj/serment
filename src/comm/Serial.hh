@@ -227,6 +227,11 @@ inline double Comm::toc()
   return (double) std::clock() / (double)CLOCKS_PER_SEC - d_time;
 }
 
+inline double Comm::wtime()
+{
+  return (double) std::clock() / (double)CLOCKS_PER_SEC;
+}
+
 //----------------------------------------------------------------------------//
 // UTILITIES
 //----------------------------------------------------------------------------//

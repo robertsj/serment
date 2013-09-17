@@ -28,7 +28,7 @@ int main(int argc, char **argv)
 
   print_welcome();
 
-  serment_comm::Comm::tic();
+  double t = serment_comm::Comm::wtime();
 
   try
   {
@@ -42,6 +42,9 @@ int main(int argc, char **argv)
     M.build_comm(A.get_db());
     M.build_erme(A.get_nodes());
     M.solve();
+
+
+    std::cout << "*** RESPONSE TIME = " << M.get_server()->response_time() << std::endl;
   }
   catch (detran_utilities::GenException &e)
   {
@@ -60,7 +63,8 @@ int main(int argc, char **argv)
     return 0;
   }
 
-  std::cout << "*** ELAPSED TIME = " << serment_comm::Comm::toc() << std::endl;
+  t = serment_comm::Comm::wtime() - t;
+  std::cout << "*** ELAPSED TIME = " << t << std::endl;
 
   erme_solver::ManagerERME::finalize();
   STOP_PROFILER();
