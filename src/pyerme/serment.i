@@ -47,6 +47,27 @@
 %import "material/detran_material.i"
 %import "geometry/detran_geometry.i"
 
+// Basic comm interface
+namespace serment_comm
+{
+class Comm
+{
+public:
+  static void initialize(int &argc, char **&argv);
+  static void finalize();
+  static void setup_communicators(const unsigned int N = 1);
+  static bool is_global();
+  static bool is_comm_built();
+  static int rank();
+  static int size();
+  static int last();
+  static bool is_first();
+  static bool is_last();
+  static int world_rank();
+  static int local_group();
+};
+}
+
 // Geometry
 %include "erme_geometry/NeighborSurface.hh"
 %include "erme_geometry/Node.hh"

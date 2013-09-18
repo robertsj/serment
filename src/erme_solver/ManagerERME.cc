@@ -60,6 +60,7 @@ void ManagerERME::build_comm(SP_db db, bool flag)
       local = d_db->get<int>("comm_local_groups");
     }
     Assert(local > 0);
+    if (local > Comm::size()) local = Comm::size();
   }
 
   // Broadcast local group count and setup comm groups

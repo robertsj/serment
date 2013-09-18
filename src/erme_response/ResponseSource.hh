@@ -75,6 +75,12 @@ public:
     d_keff = keff;
   }
 
+  /// Return my node
+  SP_node node()
+  {
+    return d_node;
+  }
+
   //--------------------------------------------------------------------------//
   // ABSTRACT INTERFACE
   //--------------------------------------------------------------------------//
@@ -90,6 +96,7 @@ public:
    *  @param index      Response indices
    */
   virtual void compute(SP_response response, const ResponseIndex &index) = 0;
+
 
 protected:
 

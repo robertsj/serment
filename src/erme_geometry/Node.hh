@@ -158,6 +158,8 @@ public:
   size_t energy_order(const size_t s) const;
   /// Set fuel flag
   void set_fuel(bool flag);
+  /// Is is fuel?
+  bool is_fuel() const {return d_is_fuel;}
   /// Pretty print of key characteristics
   void display() const;
 
