@@ -556,7 +556,7 @@ void ResponseSourceDetran<B>::construct_angular_basis_3D()
 
     // Debug check on the quadratures to ensure they integrate the
     // partial current the way I expect.
-  if (1)
+  if (0)
   {
     using detran_utilities::soft_equiv;
     vec_dbl blah(basis_p[0].size, 1.0);

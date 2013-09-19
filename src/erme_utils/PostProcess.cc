@@ -71,7 +71,6 @@ PostProcess::vec_dbl PostProcess::nodal_power(const double norm)
 
   if (Comm::is_global())
   {
-    d_state->moments()->display(d_state->moments()->BINARY, "moments.out");
     int i = 0;
     for (int gn = d_nodes->lower_bound(); gn < d_nodes->upper_bound(); ++gn)
     {
@@ -80,8 +79,6 @@ PostProcess::vec_dbl PostProcess::nodal_power(const double norm)
       erme_response::ResponseServer::SP_response rf = d_server->response(ln);
       for (int m = 0; m < d_indexer->number_node_moments(ugn); ++m, ++i)
       {
-        std::printf(" %4i %4i %4i %4i %4i %20.12e %20.12e \n ",
-                    gn, ugn, ln, m, i, rf->nodal_power(m), (*d_state->moments())[i]);
         power[gn] += rf->nodal_power(m) * (*d_state->moments())[i];
       }
     }
@@ -116,7 +113,6 @@ PostProcess::vec2_dbl PostProcess::pin_power(const double norm)
 
   if (Comm::is_global())
   {
-    d_state->moments()->display(d_state->moments()->BINARY, "moments.out");
     int i = 0;
     for (int gn = d_nodes->lower_bound(); gn < d_nodes->upper_bound(); ++gn)
     {
@@ -133,12 +129,16 @@ PostProcess::vec2_dbl PostProcess::pin_power(const double norm)
       }
     }
   }
+
   for (int gn = 0; gn < d_nodes->number_global_nodes(); ++gn)
   {
-    Comm::global_sum(&power[gn][0], N);
+    int np = d_nodes->node(gn)->number_pins();
+    if (np > 0)
+    {
+      Comm::global_sum(&power[gn][0], np);
+    }
   }
   Comm::global_sum(power_sum);
-
   for (int gn = 0; gn < d_nodes->number_global_nodes(); ++gn)
     for (int p = 0; p < d_nodes->node(gn)->number_pins(); ++p)
       power[gn][p] *= norm / power_sum;
@@ -148,4 +148,6 @@ PostProcess::vec2_dbl PostProcess::pin_power(const double norm)
 
 } // end namespace erme_utils
 
-
+//----------------------------------------------------------------------------//
+//              end of file PostProcess.cc
+//----------------------------------------------------------------------------//

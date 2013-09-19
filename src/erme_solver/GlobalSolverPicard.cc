@@ -142,9 +142,6 @@ void GlobalSolverPicard::solve()
     std::printf(" **** FINAL KEFF        = %12.9f \n", keff);
     std::printf(" **** FINAL LAMBDA      = %12.9f \n", lambda);
     std::printf(" **** OUTER ITERATIONS  = %8i \n", d_number_outer_iterations);
-
-    J->display(J->BINARY, "J.out");
-
   }
 
   // Update the state
