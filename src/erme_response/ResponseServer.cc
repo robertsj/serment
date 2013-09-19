@@ -277,13 +277,17 @@ void ResponseServer::update_explicit_work_share()
     {
       int number_moments = d_responses[n]->size();
       int number_surfaces = d_responses[n]->number_surfaces();
+      int number_pins = d_responses[n]->number_pins();
       for (size_t in = 0; in < number_moments; in++)
       {
         Comm::sum(&d_responses[n]->boundary_response(0, in), number_moments, 0);
         Comm::sum(&d_responses[n]->leakage_response(0, in), number_surfaces, 0);
+        if (number_pins)
+          Comm::sum(&d_responses[n]->pin_power(0, in), number_pins, 0);
       }
       Comm::sum(&d_responses[n]->fission_response(0), number_moments, 0);
       Comm::sum(&d_responses[n]->absorption_response(0), number_moments, 0);
+      Comm::sum(&d_responses[n]->nodal_power(0), number_moments, 0);
     }
   }
 

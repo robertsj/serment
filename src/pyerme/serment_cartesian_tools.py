@@ -132,7 +132,7 @@ def build_model(nodes, nodal_map, global_bc) :
 
   assert(count == number_nodes)
   origins = compute_origins(nodes, nodal_map, nodal_map_vec)  
-  print origins.size()
+  #print origins.size()
   assert(origins.size() == number_nodes)
 
   node_list.set_nodal_map(nodal_map_vec, neighbors, origins)

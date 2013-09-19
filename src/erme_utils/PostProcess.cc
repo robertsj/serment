@@ -62,12 +62,16 @@ PostProcess::vec_dbl PostProcess::nodal_fission_density(const double norm)
 //---------------------------------------------------------------------------//
 PostProcess::vec_dbl PostProcess::nodal_power(const double norm)
 {
+  Insist(serment_comm::communicator == serment_comm::world,
+         "Post processing happens on the world communicator.")
+
   int N = d_nodes->number_global_nodes();
   vec_dbl power(N, 0.0);
   double power_sum = 0.0;
 
   if (Comm::is_global())
   {
+    d_state->moments()->display(d_state->moments()->BINARY, "moments.out");
     int i = 0;
     for (int gn = d_nodes->lower_bound(); gn < d_nodes->upper_bound(); ++gn)
     {
@@ -76,6 +80,8 @@ PostProcess::vec_dbl PostProcess::nodal_power(const double norm)
       erme_response::ResponseServer::SP_response rf = d_server->response(ln);
       for (int m = 0; m < d_indexer->number_node_moments(ugn); ++m, ++i)
       {
+        std::printf(" %4i %4i %4i %4i %4i %20.12e %20.12e \n ",
+                    gn, ugn, ln, m, i, rf->nodal_power(m), (*d_state->moments())[i]);
         power[gn] += rf->nodal_power(m) * (*d_state->moments())[i];
       }
     }
@@ -84,12 +90,8 @@ PostProcess::vec_dbl PostProcess::nodal_power(const double norm)
       power_sum += power[gn];
     }
   }
-  std::cout << "******" << std::endl;
   serment_comm::Comm::global_sum(power_sum);
-  std::cout << "******" << std::endl;
-
   serment_comm::Comm::global_sum(&power[0], N);
-  std::cout << "******" << std::endl;
 
   for (int n = 0; n < N; ++n)
     power[n] *= norm / power_sum;
@@ -99,6 +101,9 @@ PostProcess::vec_dbl PostProcess::nodal_power(const double norm)
 //---------------------------------------------------------------------------//
 PostProcess::vec2_dbl PostProcess::pin_power(const double norm)
 {
+  Insist(serment_comm::communicator == serment_comm::world,
+         "Post processing happens on the world communicator.")
+
   int N = d_nodes->number_global_nodes();
   vec2_dbl power(N);
   double power_sum = 0.0;
@@ -111,6 +116,7 @@ PostProcess::vec2_dbl PostProcess::pin_power(const double norm)
 
   if (Comm::is_global())
   {
+    d_state->moments()->display(d_state->moments()->BINARY, "moments.out");
     int i = 0;
     for (int gn = d_nodes->lower_bound(); gn < d_nodes->upper_bound(); ++gn)
     {

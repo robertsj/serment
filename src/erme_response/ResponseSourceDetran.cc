@@ -43,7 +43,7 @@ ResponseSourceDetran<B>::ResponseSourceDetran(SP_node node,
   d_db = node->db();
   d_material = node->material();
   d_mesh = node->mesh();
-  //d_db->display();
+
   // Ensure we compute boundary fluxes
   d_db->put<int>("compute_boundary_flux", 1);
 
@@ -68,9 +68,9 @@ ResponseSourceDetran<B>::ResponseSourceDetran(SP_node node,
   else if (d_solver->discretization() == d_solver->MOC)
     disc = "MOC";
 
-  std::cout << "********* BUILDING DETRAN<" << (int)D::dimension
-            << "> SOURCE USING " << disc << " FOR NODE "
-            << d_node->name() << std::endl;
+//  std::cout << "********* BUILDING DETRAN<" << (int)D::dimension
+//            << "> SOURCE USING " << disc << " FOR NODE "
+//            << d_node->name() << std::endl;
 
 
   // Spatial dimensions in play.  For example, when expanding
@@ -106,7 +106,7 @@ compute(SP_response response, const ResponseIndex &index)
   d_solver->boundary()->clear_bc();
   set_boundary(index);
 
-
+  d_solver->state()->clear();
   d_solver->solve(d_keff);
   double t_solve = serment_comm::Comm::wtime() - wt;
 
@@ -118,9 +118,9 @@ compute(SP_response response, const ResponseIndex &index)
   ++d_number;
   double t_avg = d_time / (double)d_number;
   double t_done = (d_indexer->number_node_moments(index.node)-d_number) * t_avg;
-  printf(" %4i %4i %4i %4i %4i %4i %10.2e  (%10.2e  %10.2e) %10.2e %10.2e  <%10.2e>  \n ",
-         serment_comm::Comm::rank(), index.node, index.nodal, index.surface, d_number, d_indexer->number_node_moments(index.node),
-         d_time, t_solve, t_expand, t_tot, t_avg, t_done);
+//  printf(" %4i %4i %4i %4i %4i %4i %10.2e  (%10.2e  %10.2e) %10.2e %10.2e  <%10.2e>  \n ",
+//         serment_comm::Comm::rank(), index.node, index.nodal, index.surface, d_number, d_indexer->number_node_moments(index.node),
+//         d_time, t_solve, t_expand, t_tot, t_avg, t_done);
 }
 
 //----------------------------------------------------------------------------//
@@ -134,7 +134,7 @@ void ResponseSourceDetran<B>::construct_basis()
   // ENERGY
   //--------------------------------------------------------------------------//
 
-  std::cout << "************ BUILDING ENERGY BASIS " << std::endl;
+  //std::cout << "************ BUILDING ENERGY BASIS " << std::endl;
   construct_energy_basis();
 
   //--------------------------------------------------------------------------//
@@ -144,8 +144,8 @@ void ResponseSourceDetran<B>::construct_basis()
   string basis_s_type = "dlp";
   if (d_db->check("basis_s_type"))
     basis_s_type = d_db->get<string>("basis_s_type");
-  std::cout << "************ BUILDING SPATIAL BASIS: "
-            << basis_s_type << std::endl;
+//  std::cout << "************ BUILDING SPATIAL BASIS: "
+//            << basis_s_type << std::endl;
 
   // Loop over major dimension, direction (+/-), and secondary dimensions
   size_t s = 0;
@@ -208,7 +208,7 @@ void ResponseSourceDetran<B>::construct_basis()
     d_expand_angular_flux = (1 == d_db->get<int>("erme_expand_angular_flux"));
   }
 
-  std::cout << "************ BUILDING ANGULAR BASIS " << std::endl;
+  //std::cout << "************ BUILDING ANGULAR BASIS " << std::endl;
   if (B::D_T::dimension == 1)
   {
     construct_angular_basis_1D();
@@ -279,7 +279,7 @@ void ResponseSourceDetran<B>::construct_angular_basis_1D()
   string basis_p_type = "dlp";
   if (d_db->check("basis_p_type"))
     basis_p_type = d_db->get<string>("basis_p_type");
-  COUT("BASIS P TYPE = " << basis_p_type)
+  //COUT("BASIS P TYPE = " << basis_p_type)
   OrthogonalBasis::Parameters basis_p_p;
   basis_p_p.size = d_quadrature->number_angles_octant();
   basis_p_p.x    = d_quadrature->cosines(d_quadrature->MU);

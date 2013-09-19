@@ -136,6 +136,9 @@ inline void NodeResponse::clear()
 			d_leakage_response[i][j] = 0.0;
 		d_fission_response[i] = 0.0;
 		d_absorption_response[i] = 0.0;
+		d_nodal_power[i] = 0.0;
+    for (size_t j = 0; j < d_number_pins; ++j)
+      d_pin_power[i][j] = 0.0;
 	}
 }
 

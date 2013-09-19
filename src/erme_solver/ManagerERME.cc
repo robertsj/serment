@@ -125,7 +125,7 @@ void ManagerERME::build_erme(SP_nodelist nodes)
 
   d_is_built = true;
 
-  cout << "*** ERME BUILT" << endl;
+  if (Comm::rank() == 0) cout << "*** ERME BUILT" << endl;
 }
 
 //----------------------------------------------------------------------------//
