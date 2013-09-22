@@ -76,8 +76,8 @@ void NonlinearSolver::setup(SP_db       db,
   else if (newton_type == FDJAC)
   {
     // this computes an explicit jacobian using finite differences
-    SNESSetJacobian(d_solver, d_J->matrix()->A(), d_P->matrix()->A(),
-                    SNESDefaultComputeJacobian, NULL);
+//    SNESSetJacobian(d_solver, d_J->matrix()->A(), d_P->matrix()->A(),
+//                    SNESDefaultComputeJacobian, NULL);
   }
 
   // Set the monitor

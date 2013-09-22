@@ -30,6 +30,9 @@ find_library(Detran_transport   NAMES transport   PATHS ${Detran_DIR}/lib ${Detr
 find_library(Detran_solvers     NAMES solvers     PATHS ${Detran_DIR}/lib ${Detran_LIB})
 find_library(Detran_ioutils     NAMES ioutils     PATHS ${Detran_DIR}/lib ${Detran_LIB})
 find_library(Detran_postprocess NAMES postprocess PATHS ${Detran_DIR}/lib ${Detran_LIB})
+find_library(Detran_kinetics    NAMES kinetics PATHS ${Detran_DIR}/lib ${Detran_LIB})
+find_library(Detran_external_source  NAMES external_source PATHS ${Detran_DIR}/lib ${Detran_LIB})
+
 
 # handle the QUIETLY and REQUIRED arguments and set Detran_FOUND to TRUE if 
 # all listed variables are TRUE
@@ -48,6 +51,8 @@ FIND_PACKAGE_HANDLE_STANDARD_ARGS(Detran
   Detran_solvers
   Detran_ioutils
   Detran_postprocess
+  Detran_kinetics
+  Detran_external_source
 )
 
 if(DETRAN_FOUND)
@@ -63,6 +68,8 @@ if(DETRAN_FOUND)
                        ${Detran_solvers}
                        ${Detran_ioutils}
                        ${Detran_postprocess}
+                       ${Detran_kinetics}
+                       ${Detran_external_source}
   )
   message("Detran IS FOUND")
 else(DETRAN_FOUND)
