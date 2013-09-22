@@ -11,6 +11,8 @@
 #include "utilities/SoftEquivalence.hh"
 #include <cstdio>
 
+#define COUT(c) std::cout << c << std::endl;
+
 namespace erme_solver
 {
 
@@ -36,6 +38,9 @@ Jacobian::Jacobian(SP_server            server,
   if (Comm::is_global())
   {
     Require(responses);
+
+    Comm::set(serment_comm::global);
+
     d_M = responses->M; Ensure(d_M);
     d_R = responses->R; Ensure(d_R);
     d_L = responses->L; Ensure(d_L);
@@ -50,6 +55,8 @@ Jacobian::Jacobian(SP_server            server,
 
     d_matrix = new Shell(d_m_full, *this);
     d_fd_MR = new Vector(d_m, 0.0);
+
+    Comm::set(serment_comm::world);
   }
 }
 
@@ -57,7 +64,7 @@ Jacobian::Jacobian(SP_server            server,
 void Jacobian::multiply(Vector &f, Vector &fp_times_f)
 {
   Require(f.global_size() == d_MR->number_global_rows() + 2);
-
+  //COUT(" JACOBIAN MULTIPLY....")
   Comm::tic();
 
   Comm::set(serment_comm::global);
@@ -105,7 +112,7 @@ void Jacobian::multiply(Vector &f, Vector &fp_times_f)
 
   Comm::set(serment_comm::world);
   d_time += Comm::toc();
-
+  //COUT(" JACOBIAN MULTIPLY....DONE")
   return;
 }
 
@@ -175,8 +182,11 @@ void Jacobian::update_response(const double keff)
 {
   Require(serment_comm::communicator == serment_comm::world);
   // alert the workers to update
-  int msg = GlobalSolverBase::CONTINUE;
-  serment_comm::Comm::broadcast(&msg, 1, 0);
+  int msg = 1234; //GlobalSolverBase::CONTINUE;
+
+  int ierr = serment_comm::Comm::broadcast(&msg, 1, 0);
+  Assert(!ierr);
+
   // update the server and responses
   if (d_server->update(keff))
   {

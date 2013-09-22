@@ -11,6 +11,8 @@
 #include "AnghelUpdate.hh"
 #include <cstdio>
 
+#define COUT(c) std::cout << c << std::endl;
+
 namespace erme_solver
 {
 
@@ -112,15 +114,6 @@ void GlobalSolverPicard::solve()
 
   d_residual_norms.push_back(norm);
 
-  if (Comm::is_global())
-  {
-    d_R->display(d_R->BINARY, "R.out");
-//  d_M->display(d_R->BINARY, "M.out");
-//  d_L->display(d_L->BINARY, "L.out");
-//  J->display(d_R->BINARY,   "J.out");
-//  d_L->leakage_vector().display(d_R->BINARY, "LL.out");
-  }
-
   // Perform outer iterations
   display(0, norm, lambda, keff);
   d_number_outer_iterations = 1;
@@ -132,9 +125,6 @@ void GlobalSolverPicard::solve()
     display(d_number_outer_iterations, norm, lambda, keff);
     if (norm < d_tolerance) break;
   }
-//  d_R->display(d_R->BINARY, "R.out");
-//  d_M->display(d_R->BINARY, "M.out");
-//  J->display(d_R->BINARY,   "J.out");
 
   if (Comm::world_rank() == 0)
   {
@@ -153,6 +143,8 @@ double GlobalSolverPicard::iterate(SP_vector x, double &keff, double &lambda)
 {
   if (Comm::is_global())
   {
+    Comm::set(serment_comm::global);
+
     // Wrap current in R-sized vector
     Vector::SP_vector J(new Vector(*x, d_R->number_local_rows()));
 
@@ -167,11 +159,13 @@ double GlobalSolverPicard::iterate(SP_vector x, double &keff, double &lambda)
     // Improved the update, if applicable
     keff = d_update->compute(keff, lambda, J);
 
-    if (Comm::is_last)
+    if (Comm::is_last())
     {
       (*x)[d_local_size - 2] = keff;
       (*x)[d_local_size - 1] = lambda;
     }
+
+    Comm::set(serment_comm::world);
   }
 
   // Update responses with new keff and return the new residual

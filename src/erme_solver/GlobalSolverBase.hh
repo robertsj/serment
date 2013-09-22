@@ -38,11 +38,14 @@ public:
   //--------------------------------------------------------------------------//
   // ENUMERATIONS
   //--------------------------------------------------------------------------//
+//
+//  enum SOLVER_STATUS
+//  {
+//    CONTINUE, COMPLETED, END_SOLVER_STATUS
+//  };
 
-  enum SOLVER_STATUS
-  {
-    CONTINUE, COMPLETED, END_SOLVER_STATUS
-  };
+  const static int CONTINUE = 1984;
+  const static int COMPLETED = 2013;
 
   //--------------------------------------------------------------------------//
   // TYPEDEFS

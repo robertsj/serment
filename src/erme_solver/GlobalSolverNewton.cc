@@ -11,6 +11,8 @@
 #include "FullJacobian.hh"
 #include <cstdio>
 
+#define COUT(c) std::cout << c << std::endl;
+
 namespace erme_solver
 {
 
@@ -105,7 +107,6 @@ void GlobalSolverNewton::solve()
   double norm = 0.0;
 
   // Initial guess via two picard iterations
-  std::cout << "...initial guess" << std::endl;
   GlobalSolverPicard initial(d_db, d_indexer, d_server, d_state, d_responses);
   if (Comm::is_global())
   {
@@ -122,7 +123,6 @@ void GlobalSolverNewton::solve()
     Comm::set(serment_comm::world);
   }
 
-  std::cout << "...iterate " << std::endl;
   update_response(keff);
   //norm = d_residual->compute_norm(x.bp());
   d_residual_norms.push_back(d_residual->compute_norm(x.bp()));
@@ -130,7 +130,6 @@ void GlobalSolverNewton::solve()
   d_number_outer_iterations += 1;
   d_number_inner_iterations += initial.number_inner_iterations();
 
-  std::cout << "...newton solve" << std::endl;
   if (Comm::is_global())
   {
     d_jacobian->update(x);
@@ -145,21 +144,25 @@ void GlobalSolverNewton::solve()
     {
       d_residual_norms.push_back(d_solver->residual_norm()[i]);
     }
+    Comm::set(serment_comm::global);
+    Comm::broadcast(&keff,   1, Comm::last());
+    Comm::broadcast(&lambda, 1, Comm::last());
+    Comm::set(serment_comm::world);
   }
   else
   {
     while (true)
     {
       Comm::broadcast(&msg, 1, 0);
-      Assert(msg == COMPLETED || msg == CONTINUE);
+      // Assert(msg == COMPLETED || msg == CONTINUE);
       if (msg == COMPLETED) break;
       // keff is broadcasted inside the call, so a dummy argument is fine
       update_response(0.0);
     }
   }
 
-  Comm::broadcast(&keff,   1, Comm::last());
-  Comm::broadcast(&lambda, 1, Comm::last());
+  Comm::broadcast(&keff,   1, 0);
+  Comm::broadcast(&lambda, 1, 0);
   if (Comm::world_rank() == 0)
   {
     std::printf(" FINAL NEWTON ITERATION EIGENVALUES: \n");

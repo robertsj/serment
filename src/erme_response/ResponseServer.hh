@@ -74,7 +74,7 @@ public:
                  size_t      dborder = 1);
 
   /// Update the eigenvalue and compute the new responses
-  bool update(const double keff);
+  bool update(const double keff, int msg = 0);
 
   /**
    *  @brief Return a nodal response

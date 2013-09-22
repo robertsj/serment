@@ -65,7 +65,9 @@ void NonlinearResidual::evaluate(Vector *x, Vector *f)
 
     // Update server on the world communicator
     Comm::set(serment_comm::world);
-    d_server->update(k);
+    int msg = 999;
+    int ierr = serment_comm::Comm::broadcast(&msg, 1, 0);
+    d_server->update(k, 999);
     Comm::set(serment_comm::global);
 
     // Update the responses with the new eigenvalue
@@ -88,15 +90,16 @@ void NonlinearResidual::evaluate(Vector *x, Vector *f)
       (*f)[m-1] = f_l;
     }
 
-    //f->display(f->BINARY, "residual.out");
-
     // Reset to world
     Comm::set(serment_comm::world);
   }
   else
   {
+    int msg;
+    int ierr = serment_comm::Comm::broadcast(&msg, 1, 0);
+    Require(msg == 999);
     // Update server.  Note that keff is broadcasted within, so dummy is fine.
-    d_server->update(0.0);
+    d_server->update(0.0, 999);
   }
 }
 

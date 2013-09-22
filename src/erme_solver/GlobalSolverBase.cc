@@ -102,10 +102,10 @@ GlobalSolverBase::number_inner_iterations_per_outer() const
 void GlobalSolverBase::update_response(const double keff)
 {
   /// Give the server the new keff
-  d_server->update(keff);
+  bool flag = d_server->update(keff);
 
   /// Fill the operators with updated values
-  if (serment_comm::Comm::is_global())
+  if (flag && serment_comm::Comm::is_global())
   {
     d_R->update();
     d_F->update();

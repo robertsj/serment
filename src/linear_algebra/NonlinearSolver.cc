@@ -10,6 +10,8 @@
 #include "Matrix.hh"
 #include "utilities/DBC.hh"
 
+#define COUT(c) std::cout << c << std::endl;
+
 namespace linear_algebra
 {
 

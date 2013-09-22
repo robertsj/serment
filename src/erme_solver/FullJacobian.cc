@@ -43,72 +43,68 @@ FullJacobian::FullJacobian(SP_server            server,
   Require(d_server);
   Require(d_indexer);
 
-  if (serment_comm::Comm::is_global())
+  if (Comm::is_global())
   {
     Require(responses);
+
+    Comm::set(serment_comm::global);
+
     d_M = responses->M; Ensure(d_M);
     d_R = responses->R; Ensure(d_R);
     d_L = responses->L; Ensure(d_L);
     d_A = responses->A; Ensure(d_A);
     d_F = responses->F; Ensure(d_F);
     d_MR = new OperatorMR(d_R, d_M);
-  }
 
-  d_m = d_R->number_global_rows();
-  d_m_full = d_m;
-  if (serment_comm::Comm::is_last())
-    d_m_full += 2;
+    d_m = d_R->number_global_rows();
+    d_m_full = d_m;
+    if (serment_comm::Comm::is_last())
+      d_m_full += 2;
 
-  if (serment_comm::Comm::is_last())
-  {
-    std::cout << " I AM LAST " << std::endl;
-  }
-  else
-  {
-    THROW("why am I not last?");
-  }
+    d_matrix = new linear_algebra::Matrix(d_m_full, d_m_full);
+    linear_algebra::Matrix &M =
+        *dynamic_cast<linear_algebra::Matrix*>(d_matrix.bp());
 
-  d_matrix = new linear_algebra::Matrix(d_m_full, d_m_full);
-  linear_algebra::Matrix &M =
-      *dynamic_cast<linear_algebra::Matrix*>(d_matrix.bp());
-  std::cout << " J size = " << d_matrix->number_global_columns()
-            << " R size = " << d_R->number_global_columns() << std::endl;
-  /*
-   *  Number of the nonzeros should be the number of moments of all local
-   *  nodes plus one for the k-column plus one for the lambda-column.  For
-   *  the last process, the k-row is full except the last element, and
-   *  the lambda-row is full except for the last two elements
-   *
-   */
-  vec_int nnz(d_m_full,    0);
-  vec_int nnz_od(d_m_full, 0);
-  size_t i = 0;
-  for (size_t gn = 0; gn < d_indexer->nodes()->number_local_nodes(); ++gn)
-  {
-    size_t ugn = d_indexer->nodes()->unique_global_index_from_global(gn);
-    for (size_t m = 0; m < d_indexer->number_node_moments(ugn); ++m, ++i)
+    std::cout << " J size = " << d_matrix->number_global_columns()
+              << " R size = " << d_R->number_global_columns() << std::endl;
+    /*
+     *  Number of the nonzeros should be the number of moments of all local
+     *  nodes plus one for the k-column plus one for the lambda-column.  For
+     *  the last process, the k-row is full except the last element, and
+     *  the lambda-row is full except for the last two elements
+     *
+     */
+    vec_int nnz(d_m_full,    0);
+    vec_int nnz_od(d_m_full, 0);
+    size_t i = 0;
+    for (size_t gn = 0; gn < d_indexer->nodes()->number_local_nodes(); ++gn)
     {
-      Assert(i < d_m_full);
-      nnz[i]    = d_indexer->number_node_moments(ugn);
-      nnz_od[i] = d_indexer->number_node_moments(ugn);
+      size_t ugn = d_indexer->nodes()->unique_global_index_from_global(gn);
+      for (size_t m = 0; m < d_indexer->number_node_moments(ugn); ++m, ++i)
+      {
+        Assert(i < d_m_full);
+        nnz[i]    = d_indexer->number_node_moments(ugn);
+        nnz_od[i] = d_indexer->number_node_moments(ugn);
+      }
     }
-  }
-  if (serment_comm::Comm::is_last())
-  {
-    nnz[d_m_full-2] = d_m_full - 1;
-    nnz[d_m_full-1] = d_m_full - 1;
-    nnz_od[d_m_full-2] = d_R->number_global_rows()+2 - nnz[d_m_full-2];
-    nnz_od[d_m_full-1] = d_R->number_global_rows()+2 - nnz[d_m_full-1];
-  }
+    if (serment_comm::Comm::is_last())
+    {
+      nnz[d_m_full-2] = d_m_full - 1;
+      nnz[d_m_full-1] = d_m_full - 1;
+      nnz_od[d_m_full-2] = d_R->number_global_rows()+2 - nnz[d_m_full-2];
+      nnz_od[d_m_full-1] = d_R->number_global_rows()+2 - nnz[d_m_full-1];
+    }
 
-  // allocate etc.
-  M.preallocate(nnz, nnz_od);
+    // allocate etc.
+    M.preallocate(nnz, nnz_od);
 
-  //MatSetOption(M.A(), MAT_KEEP_NONZERO_PATTERN, PETSC_TRUE);
+    //MatSetOption(M.A(), MAT_KEEP_NONZERO_PATTERN, PETSC_TRUE);
 
-  // working vector
-  d_fd_MR = new Vector(d_m, 0.0);
+    // working vector
+    d_fd_MR = new Vector(d_m, 0.0);
 
+    Comm::set(serment_comm::world);
+  } // end global
 }
 
 //----------------------------------------------------------------------------//

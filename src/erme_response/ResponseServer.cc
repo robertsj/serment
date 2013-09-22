@@ -78,7 +78,7 @@ ResponseServer::ResponseServer(SP_nodelist  nodes,
 }
 
 //----------------------------------------------------------------------------//
-bool ResponseServer::update(const double keff)
+bool ResponseServer::update(const double keff, int msg)
 {
   Require(serment_comm::communicator == serment_comm::world);
 
@@ -96,6 +96,8 @@ bool ResponseServer::update(const double keff)
   double k = keff;
   Comm::broadcast(&k, 1, 0);
 
+//  std::printf(" UPDATE ON RANK %4i   MSG %4i   KEFF %16.12f \n",
+//              Comm::rank(), msg, k);
 
   d_is_updated = true;
   if (soft_equiv(k, d_keff) && store_k)
