@@ -125,6 +125,9 @@ void FullJacobian::update(SP_vector x)
 {
   Require(serment_comm::communicator == serment_comm::world);
 
+  if (Comm::is_global())
+  {
+
   Comm::tic();
   Comm::set(serment_comm::global);
 
@@ -134,19 +137,6 @@ void FullJacobian::update(SP_vector x)
   {
     d_matrix->scale(0.0);
   }
-
-  // DEBUG ONLY
-//  if (d_fill_diag)
-//  {
-//    for (int i = 0; i < d_m_full; ++i)
-//    {
-//      double val = 1.0;
-//      d_matrix->insert_values(1, &i, 1, &i, &val, d_matrix->INSERT);
-//    }
-//    d_matrix->assemble(d_matrix->FINAL);
-//    Comm::set(serment_comm::world);
-//    return;
-//  }
 
   d_x = x;
   Vector x_J(*d_x, d_m);
@@ -282,6 +272,8 @@ void FullJacobian::update(SP_vector x)
   update_response(d_k);
 
   d_time += Comm::toc();
+
+  } // end global
 }
 
 //----------------------------------------------------------------------------//
