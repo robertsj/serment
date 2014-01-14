@@ -15,7 +15,7 @@ namespace erme_response
 {
 
 //----------------------------------------------------------------------------//
-inline const double&
+inline double
 NodeResponse::boundary_response(const size_t out,
                                 const size_t in) const
 {
@@ -28,14 +28,13 @@ inline double&
 NodeResponse::boundary_response(const size_t out,
                                 const size_t in)
 {
-  return const_cast<double&>
-  (
-    static_cast<const NodeResponse*>(this)->boundary_response(out, in)
-  );
+  Require(in  < d_N);
+  Require(out < d_N);
+  return d_boundary_response[in][out];
 }
 
 //----------------------------------------------------------------------------//
-inline const double&
+inline double
 NodeResponse::fission_response(const size_t in) const
 {
   Require(in < d_N);
@@ -45,14 +44,12 @@ NodeResponse::fission_response(const size_t in) const
 inline double&
 NodeResponse::fission_response(const size_t in)
 {
-  return const_cast<double&>
-  (
-    static_cast<const NodeResponse*>(this)->fission_response(in)
-  );
+  Require(in < d_N);
+  return d_fission_response[in];
 }
 
 //----------------------------------------------------------------------------//
-inline const double&
+inline double
 NodeResponse::absorption_response(const size_t in) const
 {
   Require(in < d_N);
@@ -62,14 +59,12 @@ NodeResponse::absorption_response(const size_t in) const
 inline double&
 NodeResponse::absorption_response(const size_t in)
 {
-  return const_cast<double&>
-  (
-    static_cast<const NodeResponse*>(this)->absorption_response(in)
-  );
+  Require(in < d_N);
+  return d_absorption_response[in];
 }
 
 //----------------------------------------------------------------------------//
-inline const double&
+inline double
 NodeResponse::leakage_response(const size_t surface,
                                const size_t in) const
 {
@@ -82,14 +77,13 @@ inline double&
 NodeResponse::leakage_response(const size_t surface,
                                const size_t in)
 {
-  return const_cast<double&>
-  (
-    static_cast<const NodeResponse*>(this)->leakage_response(surface, in)
-  );
+  Require(surface < d_number_surfaces);
+  Require(in < d_N);
+  return d_leakage_response[in][surface];
 }
 
 //----------------------------------------------------------------------------//
-inline const double&
+inline double
 NodeResponse::nodal_power(const size_t in) const
 {
   Require(in < d_N);
@@ -99,14 +93,12 @@ NodeResponse::nodal_power(const size_t in) const
 inline double&
 NodeResponse::nodal_power(const size_t in)
 {
-  return const_cast<double&>
-  (
-    static_cast<const NodeResponse*>(this)->nodal_power(in)
-  );
+  Require(in < d_N);
+  return d_nodal_power[in];
 }
 
 //----------------------------------------------------------------------------//
-inline const double&
+inline double
 NodeResponse::pin_power(const size_t p,
                         const size_t in) const
 {
@@ -119,10 +111,9 @@ inline double&
 NodeResponse::pin_power(const size_t p,
                         const size_t in)
 {
-  return const_cast<double&>
-  (
-    static_cast<const NodeResponse*>(this)->pin_power(p, in)
-  );
+  Require(p < d_number_pins);
+  Require(in < d_N);
+  return d_pin_power[in][p];
 }
 
 //----------------------------------------------------------------------------//

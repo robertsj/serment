@@ -86,32 +86,32 @@ public:
   //--------------------------------------------------------------------------//
 
   /// Const access to boundary response
-  const double& boundary_response(const size_t out, const size_t in) const;
+  double boundary_response(const size_t out, const size_t in) const;
   /// Mutable access to boundary response
   double& boundary_response(const size_t out, const size_t in);
 
   /// Const access to fission response
-  const double& fission_response(const size_t in) const;
+  double fission_response(const size_t in) const;
   /// Mutable access to fission response
   double& fission_response(const size_t in);
 
   /// Const access to absorption response
-  const double& absorption_response(const size_t in) const;
+  double absorption_response(const size_t in) const;
   /// Mutable access to absorption response
   double& absorption_response(const size_t in);
 
   /// Const access to leakage response
-  const double& leakage_response(const size_t surface, const size_t in) const;
+  double leakage_response(const size_t surface, const size_t in) const;
   /// Mutable access to leakage response
   double& leakage_response(const size_t surface, const size_t in);
 
   /// Const access to leakage response
-  const double& nodal_power(const size_t in) const;
+  double nodal_power(const size_t in) const;
   /// Mutable access to leakage response
   double& nodal_power(const size_t in);
 
   /// Const access to leakage response
-  const double& pin_power(const size_t p, const size_t in) const;
+  double pin_power(const size_t p, const size_t in) const;
   /// Mutable access to leakage response
   double& pin_power(const size_t p, const size_t in);
 
