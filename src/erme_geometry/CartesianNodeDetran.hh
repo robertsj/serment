@@ -37,7 +37,7 @@ public:
   //--------------------------------------------------------------------------//
 
   typedef CartesianNode                             Base;
-  typedef typename Base::SP_node                    SP_base;
+  typedef Base::SP_node                             SP_base;
   typedef detran_utilities::SP<CartesianNodeDetran> SP_node;
   typedef detran_utilities::InputDB::SP_input       SP_db;
   typedef detran_material::Material::SP_material    SP_material;

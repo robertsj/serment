@@ -1,7 +1,7 @@
 //----------------------------------*-C++-*-----------------------------------//
 /**
  *  @file  ResponseSourceDatabase.hh
- *  @brief ResponseSourceDatabase
+ *  @brief ResponseSourceDatabase class definition
  *  @note  Copyright (C) 2013 Jeremy Roberts
  */
 //----------------------------------------------------------------------------//

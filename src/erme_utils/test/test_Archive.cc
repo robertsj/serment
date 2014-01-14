@@ -36,7 +36,7 @@ int test_Archive(int argc, char *argv[])
   int number_nodes = 0;
 
   // Write
-  if(0){
+  {
     Archive::SP_db db;
     Archive::SP_nodelist nodes;
     db = new detran_utilities::InputDB("testdb");
@@ -50,7 +50,7 @@ int test_Archive(int argc, char *argv[])
   }
 
   // Read
-  if(1){
+  {
     Archive::SP_db db;
     Archive::SP_nodelist nodes;
     Archive A;

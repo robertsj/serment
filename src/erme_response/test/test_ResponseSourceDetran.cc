@@ -120,7 +120,7 @@ int test_ResponseSourceDetran_1D_DIFF(int argc, char *argv[])
   vec_size_t  po(2, 0);
   vec_size_t  eo(2, 1);
   vec_dbl     width(3, 1.0); width[0] = 10.0;
-  typename Source_T::SP_node node(new erme_geometry::
+  Source_T::SP_node node(new erme_geometry::
     CartesianNodeDetran(1, "lala", so, ao, po, eo, width, db, mat, mesh));
 
   //--------------------------------------------------------------------------//
@@ -164,7 +164,7 @@ int test_ResponseSourceDetran_1D_DIFF(int argc, char *argv[])
   Source_T source(node, indexer);
 
   // Solver
-  typename Source_T::SP_solver solver = source.solver();
+  Source_T::SP_solver solver = source.solver();
   Boundary_T::SP_boundary b = solver->boundary();
   Boundary_T &boundary = *b;
 
@@ -229,7 +229,7 @@ int test_ResponseSourceDetran_1D_DIFF_1G(int argc, char *argv[])
   vec_size_t  po(2, 0);
   vec_size_t  eo(2, 0);
   vec_dbl     width(3, 1.0); width[0] = 10.0;
-  typename Source_T::SP_node node(new erme_geometry::
+  Source_T::SP_node node(new erme_geometry::
     CartesianNodeDetran(1, "lala", so, ao, po, eo, width, db, mat, mesh));
 
   //--------------------------------------------------------------------------//
@@ -273,7 +273,7 @@ int test_ResponseSourceDetran_1D_DIFF_1G(int argc, char *argv[])
   Source_T source(node, indexer);
 
   // Solver
-  typename Source_T::SP_solver solver = source.solver();
+  Source_T::SP_solver solver = source.solver();
   Boundary_T::SP_boundary b = solver->boundary();
   Boundary_T &boundary = *b;
 
@@ -336,7 +336,7 @@ int test_ResponseSourceDetran_2D_DIFF(int argc, char *argv[])
   vec_size_t  po(4, 0);
   vec_size_t  eo(4, 1);
   vec_dbl     width(3, 10.0); width[2] = 1.0;
-  typename Source_T::SP_node node(new erme_geometry::
+  Source_T::SP_node node(new erme_geometry::
     CartesianNodeDetran(2, "lala", so, ao, po, eo, width, db, mat, mesh));
 
   //--------------------------------------------------------------------------//
@@ -380,7 +380,7 @@ int test_ResponseSourceDetran_2D_DIFF(int argc, char *argv[])
   Source_T source(node, indexer);
 
   // Solver
-  typename Source_T::SP_solver solver = source.solver();
+  Source_T::SP_solver solver = source.solver();
   Boundary_T::SP_boundary b = solver->boundary();
   Boundary_T &boundary = *b;
 
@@ -452,7 +452,7 @@ int test_ResponseSourceDetran_3D_DIFF(int argc, char *argv[])
   vec_size_t  po(6, 0);
   vec_size_t  eo(6, 1);
   vec_dbl     width(3, 10.0);
-  typename Source_T::SP_node node(new erme_geometry::
+  Source_T::SP_node node(new erme_geometry::
     CartesianNodeDetran(3, "lala", so, ao, po, eo, width, db, mat, mesh));
 
   //--------------------------------------------------------------------------//
@@ -505,7 +505,7 @@ int test_ResponseSourceDetran_3D_DIFF(int argc, char *argv[])
   Source_T source(node, indexer);
 
   // Solver
-  typename Source_T::SP_solver solver = source.solver();
+  Source_T::SP_solver solver = source.solver();
   Boundary_T::SP_boundary b = solver->boundary();
   Boundary_T &boundary = *b;
 
@@ -577,7 +577,7 @@ int test_ResponseSourceDetran_1D_SN(int argc, char *argv[])
   vec_size_t  po(2, 0);
   vec_size_t  eo(2, 1);
   vec_dbl     width(3, 1.0); width[0] = 10.0;
-  typename Source_T::SP_node node(new erme_geometry::
+  Source_T::SP_node node(new erme_geometry::
     CartesianNodeDetran(1, "lala", so, ao, po, eo, width, db, mat, mesh));
 
   //--------------------------------------------------------------------------//
@@ -621,7 +621,7 @@ int test_ResponseSourceDetran_1D_SN(int argc, char *argv[])
   Source_T source(node, indexer);
 
   // Solver
-  typename Source_T::SP_solver solver = source.solver();
+  Source_T::SP_solver solver = source.solver();
   BoundarySN<_1D>::SP_boundary b = solver->boundary();
   BoundarySN<_1D> &boundary = *b;
   nodes->display();

@@ -1,9 +1,8 @@
 //----------------------------------*-C++-*----------------------------------//
 /**
- *  @file   ResponseSourceDatabase.cc
- *  @author robertsj
- *  @date   Oct 1, 2012
- *  @brief  ResponseSourceDatabase class definition.
+ *  @file  ResponseSourceDatabase.cc
+ *  @brief ResponseSourceDatabase member definitions
+ *  @note  Copyright (C) 2013 Jeremy Roberts
  */
 //---------------------------------------------------------------------------//
 
@@ -35,3 +34,7 @@ compute(SP_response response, const ResponseIndex &index)
 }
 
 } // end namespace erme_response
+
+//----------------------------------------------------------------------------//
+//              end of file ResponseSourceDatabase.cc
+//----------------------------------------------------------------------------//
