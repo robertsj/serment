@@ -187,6 +187,13 @@ void ResponseSourceDetran<B>::construct_basis()
         }
         basis_s_p.lower_bound = 0.0;
         basis_s_p.upper_bound = w[dim];
+
+        if (basis_s_type == "UserBasis")
+        {
+      	 Insist(d_db->check("basis_s_db"),
+      	   "Must be set of basis functions in db");
+      	 basis_s_p.db = d_db->get<SP_db>("basis_s_db");
+        }
         d_basis_s[s][dim01] = OrthogonalBasis::Create(basis_s_type, basis_s_p);
       }
     }
@@ -267,6 +274,13 @@ void ResponseSourceDetran<B>::construct_energy_basis()
     }
   }
 
+  // User inputed basis set
+  if (basis_e_type == "UserBasis")
+  {
+	 Insist(d_db->check("basis_e_db"),
+	   "Must be set of basis functions in db");
+	 basis_e_p.db = d_db->get<SP_db>("basis_e_db");
+  }
   for (size_t s = 0; s < d_node->number_surfaces(); ++s)
     d_basis_e[s] = OrthogonalBasis::Create(basis_e_type, basis_e_p);
 
