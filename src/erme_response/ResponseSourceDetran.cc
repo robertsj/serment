@@ -190,7 +190,7 @@ void ResponseSourceDetran<B>::construct_basis()
 
         if (basis_s_type == "UserBasis")
         {
-      	 Insist(d_db->check("basis_e_db"),
+      	 Insist(d_db->check("basis_s_db"),
       	   "Must be set of basis functions in db");
       	 basis_s_p.db = d_db->get<SP_db>("basis_s_db");
         }
