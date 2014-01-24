@@ -144,8 +144,8 @@ void ResponseSourceDetran<B>::construct_basis()
   string basis_s_type = "dlp";
   if (d_db->check("basis_s_type"))
     basis_s_type = d_db->get<string>("basis_s_type");
-//  std::cout << "************ BUILDING SPATIAL BASIS: "
-//            << basis_s_type << std::endl;
+  //std::cout << "************ BUILDING SPATIAL BASIS: "
+  //          << basis_s_type << std::endl;
 
   // Loop over major dimension, direction (+/-), and secondary dimensions
   size_t s = 0;
@@ -176,6 +176,15 @@ void ResponseSourceDetran<B>::construct_basis()
             basis_s_p.x[i]  = d_mesh->width(dim, i) / w[dim];
           }
         }
+
+        else if (basis_s_type == "UserBasis")
+        {
+		 //COUT("Using User Defined Basis");
+      	 Insist(d_db->check("basis_s_db"),
+      	   "Must be set of basis functions in db");
+      	 basis_s_p.db = d_db->get<SP_db>("basis_s_db");
+        }
+
         else
         {
           for (int i = 0; i < basis_s_p.size; ++i)
@@ -188,12 +197,6 @@ void ResponseSourceDetran<B>::construct_basis()
         basis_s_p.lower_bound = 0.0;
         basis_s_p.upper_bound = w[dim];
 
-        if (basis_s_type == "UserBasis")
-        {
-      	 Insist(d_db->check("basis_s_db"),
-      	   "Must be set of basis functions in db");
-      	 basis_s_p.db = d_db->get<SP_db>("basis_s_db");
-        }
         d_basis_s[s][dim01] = OrthogonalBasis::Create(basis_s_type, basis_s_p);
       }
     }
