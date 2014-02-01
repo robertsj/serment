@@ -75,7 +75,12 @@ ResponseDatabase::ResponseDatabase(std::string filename, size_t order)
     read_scalar_attribute(group, "number_surfaces", number_surfaces);
     if (db) std::cout << "   number_surfaces " << number_surfaces << std::endl;
 
-    // Number of surfaces
+    // Number of pins
+    int number_pins = 0;
+    read_scalar_attribute(group, "number_pins", number_surfaces);
+    if (db) std::cout << "   number_pins " << number_pins << std::endl;
+
+    // Response expansion scheme
     int scheme = 0;
     read_scalar_attribute(group, "scheme", scheme);
     if (db) std::cout << "   scheme " << scheme << std::endl;
@@ -175,6 +180,40 @@ ResponseDatabase::ResponseDatabase(std::string filename, size_t order)
         H5Sclose(space);
       }
 
+      // Pin powers
+      if (number_pins > 0)
+      {
+        hid_t dset  = H5Dopen(group, "pin_power", H5P_DEFAULT);
+        hid_t space = H5Dget_space(dset);
+        hsize_t       dims_out[3];
+        int rank    = H5Sget_simple_extent_ndims(space);
+        int ndims   = H5Sget_simple_extent_dims(space, dims_out, NULL);
+        Assert(ndims > 0);
+
+        // Want hyperslab corresponding to this k, i.e. data[k,:,:]
+        hsize_t count[]  = {1, number_surfaces, response_size};
+        hsize_t offset[] = {k, 0, 0};
+        int status = H5Sselect_hyperslab(space, H5S_SELECT_SET, offset, NULL, count, NULL);
+        Assert(!status);
+
+        // Define memory dataspace
+        hsize_t dims[] = {number_surfaces, response_size};
+        double *buffer(new double[number_pins*response_size]);
+        hid_t memspace = H5Screate_simple (2, dims, NULL);
+
+        // Read the set and kill the buffer
+        status = H5Dread(dset, H5T_NATIVE_DOUBLE, memspace, space, H5P_DEFAULT, buffer);
+        Assert(!status);
+
+        for (int ii = 0; ii < number_surfaces; ++ii)
+          for (int jj = 0; jj < response_size; ++jj)
+            r->pin_power(ii, jj) = buffer[jj + ii * response_size];
+        delete [] buffer;
+
+        H5Dclose(dset);
+        H5Sclose(space);
+      }
+
       // Fission response
       {
         hid_t dset  = H5Dopen(group, "F", H5P_DEFAULT);
@@ -225,6 +264,34 @@ ResponseDatabase::ResponseDatabase(std::string filename, size_t order)
         // Read the set and kill the buffer
         status = H5Dread(dset, H5T_NATIVE_DOUBLE, memspace, space, H5P_DEFAULT,
                          &r->absorption_response(0));
+        Assert(!status);
+
+        H5Dclose(dset);
+        H5Sclose(space);
+      }
+
+      // Nodal power
+      {
+        hid_t dset  = H5Dopen(group, "nodal_power", H5P_DEFAULT);
+        hid_t space = H5Dget_space(dset);
+        hsize_t       dims_out[2];
+        int rank    = H5Sget_simple_extent_ndims(space);
+        int ndims   = H5Sget_simple_extent_dims(space, dims_out, NULL);
+        Assert(ndims > 0);
+
+        // Want hyperslab corresponding to this k, i.e. data[k,:]
+        hsize_t count[]  = {1, response_size};
+        hsize_t offset[] = {k, 0};
+        int status = H5Sselect_hyperslab(space, H5S_SELECT_SET, offset, NULL, count, NULL);
+        Assert(!status);
+
+        // Define memory dataspace
+        hsize_t dims[] = {response_size};
+        hid_t memspace = H5Screate_simple (1, dims, NULL);
+
+        // Read the set and kill the buffer
+        status = H5Dread(dset, H5T_NATIVE_DOUBLE, memspace, space, H5P_DEFAULT,
+                         &r->nodal_power(0));
         Assert(!status);
 
         H5Dclose(dset);
