@@ -60,29 +60,32 @@ ResponseDatabase::ResponseDatabase(std::string filename, size_t order)
     // Open group
     hid_t group = H5Gopen(d_file_id, nodename.c_str(), H5P_DEFAULT);
 
+    // Read attributes
+    bool flag = false;
+
     // Get the number of keff terms
     int number_keffs = 0;
-    read_scalar_attribute(group, "number_keffs", number_keffs);
+    flag = read_scalar_attribute(group, "number_keffs", number_keffs);
     if (db) std::cout << "   number_keffs " << number_keffs << std::endl;
 
     // Response size
     int response_size = 0;
-    read_scalar_attribute(group, "response_size", response_size);
+    flag = read_scalar_attribute(group, "response_size", response_size);
     if (db) std::cout << "   response_size " << response_size << std::endl;
 
     // Number of surfaces
     int number_surfaces = 0;
-    read_scalar_attribute(group, "number_surfaces", number_surfaces);
+    flag = read_scalar_attribute(group, "number_surfaces", number_surfaces);
     if (db) std::cout << "   number_surfaces " << number_surfaces << std::endl;
 
     // Number of pins
     int number_pins = 0;
-    read_scalar_attribute(group, "number_pins", number_surfaces);
+    flag = read_scalar_attribute(group, "number_pins", number_pins);
     if (db) std::cout << "   number_pins " << number_pins << std::endl;
 
     // Response expansion scheme
     int scheme = 0;
-    read_scalar_attribute(group, "scheme", scheme);
+    flag = read_scalar_attribute(group, "scheme", scheme);
     if (db) std::cout << "   scheme " << scheme << std::endl;
 
     // Instantiate this node.  This *assumes*  the db doesn't have repeats
@@ -109,7 +112,8 @@ ResponseDatabase::ResponseDatabase(std::string filename, size_t order)
     // Load the responses
     for (int k = 0; k < number_keffs; ++k)
     {
-      SP_response r(new NodeResponse(response_size, number_surfaces));
+      SP_response r(new NodeResponse(response_size, number_surfaces,
+                                     number_pins));
 
       // Boundary response
       {
@@ -191,13 +195,13 @@ ResponseDatabase::ResponseDatabase(std::string filename, size_t order)
         Assert(ndims > 0);
 
         // Want hyperslab corresponding to this k, i.e. data[k,:,:]
-        hsize_t count[]  = {1, number_surfaces, response_size};
+        hsize_t count[]  = {1, number_pins, response_size};
         hsize_t offset[] = {k, 0, 0};
         int status = H5Sselect_hyperslab(space, H5S_SELECT_SET, offset, NULL, count, NULL);
         Assert(!status);
 
         // Define memory dataspace
-        hsize_t dims[] = {number_surfaces, response_size};
+        hsize_t dims[] = {number_pins, response_size};
         double *buffer(new double[number_pins*response_size]);
         hid_t memspace = H5Screate_simple (2, dims, NULL);
 
@@ -205,7 +209,7 @@ ResponseDatabase::ResponseDatabase(std::string filename, size_t order)
         status = H5Dread(dset, H5T_NATIVE_DOUBLE, memspace, space, H5P_DEFAULT, buffer);
         Assert(!status);
 
-        for (int ii = 0; ii < number_surfaces; ++ii)
+        for (int ii = 0; ii < number_pins; ++ii)
           for (int jj = 0; jj < response_size; ++jj)
             r->pin_power(ii, jj) = buffer[jj + ii * response_size];
         delete [] buffer;
@@ -300,9 +304,6 @@ ResponseDatabase::ResponseDatabase(std::string filename, size_t order)
 
       // Add the temporary response to the vector
       d_responses[nodename].responses.push_back(r);
-
-//      r->display();
-//      THROW("");
 
     } // end keff loop
 

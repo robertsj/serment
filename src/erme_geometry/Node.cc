@@ -58,6 +58,7 @@ void Node::display() const
   std::cout << "----------------------------" << std::endl;
   std::cout << "  dimension = " << d_dimension << std::endl;
   std::cout << "   surfaces = " << d_number_surfaces << std::endl;
+  std::cout << "       pins = " << d_number_pins << std::endl;
   std::cout << "      name  = " << d_name << std::endl;
   std::cout << "----------------------------" << std::endl;
   for (size_t s = 0; s < d_number_surfaces; ++s)

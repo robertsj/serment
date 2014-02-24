@@ -114,9 +114,12 @@ inline bool ResponseDatabase::read_scalar_attribute
 (hid_t group, const char* name, T &value)
 {
   detran_ioutils::HDF5_MemoryType mem;
-  hid_t att     = H5Aopen_name(group, name);
+  if (H5Aexists(group, name) == 0) return false;
+  hid_t att = H5Aopen_name(group, name);
   herr_t status = H5Aread(att, mem.type<T>(), &value);
-  status        = H5Aclose(att);
+  Assert(!status);
+  status = H5Aclose(att);
+  Assert(!status);
   return true;
 }
 

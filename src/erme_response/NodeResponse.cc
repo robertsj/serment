@@ -26,8 +26,8 @@ NodeResponse::NodeResponse(const size_t N,
   , d_nodal_power(N, 0.0)
   , d_pin_power(N, vec_dbl(number_pins, 0.0))
 {
-  Require(d_N > 1); // At least 2 surfaces, each with at least 1 moment
-  Require(d_number_surfaces > 1);
+  Requirev(d_N > 1, "N = " + AsString(d_N));
+  Requirev(d_number_surfaces > 1, "number = " + AsString(d_number_surfaces));
 }
 
 //----------------------------------------------------------------------------//

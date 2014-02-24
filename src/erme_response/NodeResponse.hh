@@ -75,7 +75,9 @@ public:
 
   /**
    *  @brief Constructor
-   *  @param moments_size   Size of node moments vector for each surface
+   *  @param N                Total number of nodal surface moments
+   *  @param number_surfaces  Number of nodal surfaces
+   *  @param number_pins      Number of pins in the node
    */
   NodeResponse(const size_t N,
                const size_t number_surfaces,

@@ -102,8 +102,8 @@ inline double
 NodeResponse::pin_power(const size_t p,
                         const size_t in) const
 {
-  Require(p < d_number_pins);
-  Require(in < d_N);
+  Requirev(p < d_number_pins, "p = " + AsString(p));
+  Requirev(in < d_N, "in = " + AsString(in));
   return d_pin_power[in][p];
 }
 //----------------------------------------------------------------------------//
@@ -111,8 +111,8 @@ inline double&
 NodeResponse::pin_power(const size_t p,
                         const size_t in)
 {
-  Require(p < d_number_pins);
-  Require(in < d_N);
+  Requirev(p < d_number_pins, "p = " + AsString(p));
+  Requirev(in < d_N, "in = " + AsString(in));
   return d_pin_power[in][p];
 }
 
