@@ -83,7 +83,9 @@ inline void ResponseDatabase::get(std::string     nodename,
     // fill the responses
     for (int o = 0; o < response->size(); ++o)
     {
-      Assert(response->size() == rf.responses[kidx[0]]->size());
+      Assertv(response->size() == rf.responses[kidx[0]]->size(),
+              AsString(response->size()) + " vs " +
+              AsString(rf.responses[kidx[0]]->size()));
       for (int i = 0; i < nk; ++i)
         rval[i] = rf.responses[kidx[i]]->boundary_response(o, in);
       response->boundary_response(o, in) = interpolate(keff, kval, rval);

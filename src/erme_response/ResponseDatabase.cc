@@ -331,7 +331,7 @@ ResponseDatabase::Create(std::string filename, size_t order)
   Require(filename != "");
 
   // Create the instance if not done already
-  if (!d_instance) d_instance = new ResponseDatabase(filename, order);
+  d_instance = new ResponseDatabase(filename, order);
 
   // Postconditions
   Ensure(d_instance);
