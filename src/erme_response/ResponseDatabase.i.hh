@@ -96,12 +96,21 @@ inline void ResponseDatabase::get(std::string     nodename,
         rval[i] = rf.responses[kidx[i]]->leakage_response(o, in);
       response->leakage_response(o, in) = interpolate(keff, kval, rval);
     }
+    for (int o = 0; o < response->number_pins(); ++o)
+      {
+        for (int i = 0; i < nk; ++i)
+          rval[i] = rf.responses[kidx[i]]->pin_power(o, in);
+        response->pin_power(o, in) = interpolate(keff, kval, rval);
+      }
     for (int i = 0; i < nk; ++i)
       rval[i] = rf.responses[kidx[i]]->fission_response(in);
     response->fission_response(in) = interpolate(keff, kval, rval);
     for (int i = 0; i < nk; ++i)
       rval[i] = rf.responses[kidx[i]]->absorption_response(in);
     response->absorption_response(in) = interpolate(keff, kval, rval);
+    for (int i = 0; i < nk; ++i)
+	  rval[i] = rf.responses[kidx[i]]->nodal_power(in);
+	response->nodal_power(in) = interpolate(keff, kval, rval);
   }
   else
   {
