@@ -67,11 +67,13 @@ public:
    *  @param indexer  Pointer to indexer
    *  @param dbname   Filename of response database (optional)
    *  @param dborder  Interpolation order for database (optional)
+   *  @param dbtype   Interpolation type for database (optional)
    */
   ResponseServer(SP_nodelist nodes,
                  SP_indexer  indexer,
                  std::string dbname = "",
-                 size_t      dborder = 1);
+                 size_t      dborder = 1,
+                 std::string dbtype = "i");
 
   /// Update the eigenvalue and compute the new responses
   bool update(const double keff, int msg = 0);

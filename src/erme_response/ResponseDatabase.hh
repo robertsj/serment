@@ -86,7 +86,7 @@ public:
    *  @brief SP constructor
    *  @param filename  name of hdf5 file
    */
-  static SP_rfdb Create(std::string filename, size_t order = 1);
+  static SP_rfdb Create(std::string filename, size_t order = 1, std::string type = "i");
 
   /// SP Accessor
   static SP_rfdb Instance();
@@ -134,6 +134,8 @@ private:
   hsize_t d_number_nodes;
   /// Linear, quadratic, or cubic interpolation, when applicable
   size_t d_interpolation_order;
+  /// k, 1/k, k^2, ln(k) and combinations for interpolation
+  std::string d_interpolation_type;
 
   /**
    *  Response data
@@ -153,7 +155,7 @@ private:
    *  @brief Constructor
    *  @param filename   name of hdf5 file
    */
-  ResponseDatabase(std::string filename, size_t order = 1);
+  ResponseDatabase(std::string filename, size_t order = 1, std::string type = "i");
 
   /// Read a scalar (int or double) attribute
   template <class T>

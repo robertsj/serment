@@ -11,6 +11,7 @@
 
 #include "utilities/DBC.hh"
 #include "utilities/Definitions.hh"
+#include <math.h>
 
 namespace erme_response
 {
@@ -269,7 +270,8 @@ interpolate_cubic(double x,
 inline double
 interpolate(double xi,
             detran_utilities::vec_dbl &x,
-            detran_utilities::vec_dbl &r)
+            detran_utilities::vec_dbl &r,
+            std::string type)
 {
   Require(x.size() == r.size());
   Require(x.size() > 0);
@@ -283,11 +285,62 @@ interpolate(double xi,
   if (n == 1)
     ri = r[0];
   else if (n == 2)
-    ri = interpolate_linear(1.0/xi, 1.0/x[0], 1.0/x[1], r[0], r[1]);
+  {
+	if (type == "i")
+	  ri = interpolate_linear(1.0/xi, 1.0/x[0], 1.0/x[1], r[0], r[1]);
+	else if (type == "e")
+	  ri = interpolate_linear(log(xi), log(x[0]), log(x[1]), r[0], r[1]);
+	else if (type == "s")
+	  ri = interpolate_linear((xi*xi), (x[0]*x[0]), (x[1]*x[1]), r[0], r[1]);
+	else if (type == "ie" || type == "ei")
+	  ri = interpolate_linear(log(1.0/xi), log(1.0/x[0]), log(1.0/x[1]), r[0], r[1]);
+	else if (type == "is" || type == "si")
+	  ri = interpolate_linear(1.0/(xi*xi), 1.0/(x[0]*x[0]), 1.0/(x[1]*x[1]), r[0], r[1]);
+	else if (type == "es" || "se")
+	  ri = interpolate_linear(log(xi*xi), log(x[0]*x[0]), log(x[1]*x[1]), r[0], r[1]);
+	else if (type == "ies" || type == "ise" || type == "esi" || type == "eis" || type == "sie" || type == "sei")
+	  ri = interpolate_linear(log(1.0/(xi*xi)), log(1.0/(x[0]*x[0])), log(1.0/(x[1]*x[1])), r[0], r[1]);
+	else
+	  ri = interpolate_linear(xi, x[0], x[1], r[0], r[1]);
+  }
   else if (n == 3)
-    ri = interpolate_quadratic(1.0/xi, 1.0/x[0], 1.0/x[1], 1.0/x[2], r[0], r[1], r[2]);
+  {
+	if (type == "i")
+	  ri = interpolate_quadratic(1.0/xi, 1.0/x[0], 1.0/x[1], 1.0/x[2], r[0], r[1], r[2]);
+	else if (type == "e")
+	  ri = interpolate_quadratic(log(xi), log(x[0]), log(x[1]), log(x[2]), r[0], r[1], r[2]);
+	else if (type == "s")
+	  ri = interpolate_quadratic((xi*xi), (x[0]*x[0]), (x[1]*x[1]), (x[2]*x[2]), r[0], r[1], r[2]);
+	else if (type == "ie" || type == "ei")
+	  ri = interpolate_quadratic(log(1.0/xi), log(1.0/x[0]), log(1.0/x[1]), log(1.0/x[2]), r[0], r[1], r[2]);
+	else if (type == "is" || type == "si")
+	  ri = interpolate_quadratic(1.0/(xi*xi), 1.0/(x[0]*x[0]), 1.0/(x[1]*x[1]), 1.0/(x[2]*x[2]), r[0], r[1], r[2]);
+	else if (type == "es" || "se")
+	  ri = interpolate_quadratic(log(xi*xi), log(x[0]*x[0]), log(x[1]*x[1]), log(x[2]*x[2]), r[0], r[1], r[2]);
+	else if (type == "ies" || type == "ise" || type == "esi" || type == "eis" || type == "sie" || type == "sei")
+	  ri = interpolate_quadratic(log(1.0/(xi*xi)), log(1.0/(x[0]*x[0])), log(1.0/(x[1]*x[1])), log(1.0/(x[2]*x[2])), r[0], r[1], r[2]);
+	else
+	  ri = interpolate_quadratic(xi, x[0], x[1], x[2], r[0], r[1], r[2]);
+  }
   else if (n == 4)
-    ri = interpolate_cubic(1.0/xi, 1.0/x[0], 1.0/x[1], 1.0/x[2], 1.0/x[3], r[0], r[1], r[2], r[3]);
+  {
+	if (type == "i")
+	  ri = interpolate_cubic(1.0/xi, 1.0/x[0], 1.0/x[1], 1.0/x[2], 1.0/x[3], r[0], r[1], r[2], r[3]);
+	else if (type == "e")
+	  ri = interpolate_cubic(log(xi), log(x[0]), log(x[1]), log(x[2]), log(x[3]), r[0], r[1], r[2], r[3]);
+	else if (type == "s")
+	  ri = interpolate_cubic((xi*xi), (x[0]*x[0]), (x[1]*x[1]), (x[2]*x[2]), (x[3]*x[3]), r[0], r[1], r[2], r[3]);
+	else if (type == "ie" || type == "ei")
+	  ri = interpolate_cubic(log(1.0/xi), log(1.0/x[0]), log(1.0/x[1]), log(1.0/x[2]), log(1.0/x[3]), r[0], r[1], r[2], r[3]);
+	else if (type == "is" || type == "si")
+	  ri = interpolate_cubic(1.0/(xi*xi), 1.0/(x[0]*x[0]), 1.0/(x[1]*x[1]), 1.0/(x[2]*x[2]), 1.0/(x[3]*x[3]), r[0], r[1], r[2], r[3]);
+	else if (type == "es" || "se")
+	  ri = interpolate_cubic(log(xi*xi), log(x[0]*x[0]), log(x[1]*x[1]), log(x[2]*x[2]), log(x[3]*x[3]), r[0], r[1], r[2], r[3]);
+	else if (type == "ies" || type == "ise" || type == "esi" || type == "eis" || type == "sie" || type == "sei")
+	  ri = interpolate_cubic(log(1.0/(xi*xi)), log(1.0/(x[0]*x[0])), log(1.0/(x[1]*x[1])), log(1.0/(x[2]*x[2])), log(1.0/(x[3]*x[3])), r[0], r[1], r[2], r[3]);
+	else
+	  ri = interpolate_cubic(xi, x[0], x[1], x[2], x[3], r[0], r[1], r[2], r[3]);
+  }
   else
     THROW("INTERPOLATION WRONG ORDER");
   return ri;

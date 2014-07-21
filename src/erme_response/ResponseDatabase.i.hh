@@ -88,29 +88,29 @@ inline void ResponseDatabase::get(std::string     nodename,
               AsString(rf.responses[kidx[0]]->size()));
       for (int i = 0; i < nk; ++i)
         rval[i] = rf.responses[kidx[i]]->boundary_response(o, in);
-      response->boundary_response(o, in) = interpolate(keff, kval, rval);
+      response->boundary_response(o, in) = interpolate(keff, kval, rval, d_interpolation_type);
     }
     for (int o = 0; o < response->number_surfaces(); ++o)
     {
       for (int i = 0; i < nk; ++i)
         rval[i] = rf.responses[kidx[i]]->leakage_response(o, in);
-      response->leakage_response(o, in) = interpolate(keff, kval, rval);
+      response->leakage_response(o, in) = interpolate(keff, kval, rval, d_interpolation_type);
     }
     for (int o = 0; o < response->number_pins(); ++o)
       {
         for (int i = 0; i < nk; ++i)
           rval[i] = rf.responses[kidx[i]]->pin_power(o, in);
-        response->pin_power(o, in) = interpolate(keff, kval, rval);
+        response->pin_power(o, in) = interpolate(keff, kval, rval, d_interpolation_type);
       }
     for (int i = 0; i < nk; ++i)
       rval[i] = rf.responses[kidx[i]]->fission_response(in);
-    response->fission_response(in) = interpolate(keff, kval, rval);
+    response->fission_response(in) = interpolate(keff, kval, rval, d_interpolation_type);
     for (int i = 0; i < nk; ++i)
       rval[i] = rf.responses[kidx[i]]->absorption_response(in);
-    response->absorption_response(in) = interpolate(keff, kval, rval);
+    response->absorption_response(in) = interpolate(keff, kval, rval, d_interpolation_type);
     for (int i = 0; i < nk; ++i)
 	  rval[i] = rf.responses[kidx[i]]->nodal_power(in);
-	response->nodal_power(in) = interpolate(keff, kval, rval);
+	response->nodal_power(in) = interpolate(keff, kval, rval, d_interpolation_type);
   }
   else
   {
