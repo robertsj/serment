@@ -16,10 +16,11 @@ ResponseDatabase::SP_rfdb
 ResponseDatabase::d_instance = ResponseDatabase::SP_rfdb(NULL);
 
 //----------------------------------------------------------------------------//
-ResponseDatabase::ResponseDatabase(std::string filename, size_t order)
+ResponseDatabase::ResponseDatabase(std::string filename, size_t order, std::string type)
   : d_filename(filename)
   , d_open(false)
   , d_interpolation_order(order)
+  , d_interpolation_type(type)
 {
   bool db = false;
 
@@ -325,13 +326,13 @@ ResponseDatabase::~ResponseDatabase()
 
 //----------------------------------------------------------------------------//
 ResponseDatabase::SP_rfdb
-ResponseDatabase::Create(std::string filename, size_t order)
+ResponseDatabase::Create(std::string filename, size_t order, std::string type)
 {
   //Preconditions
   Require(filename != "");
 
   // Create the instance if not done already
-  d_instance = new ResponseDatabase(filename, order);
+  d_instance = new ResponseDatabase(filename, order, type);
 
   // Postconditions
   Ensure(d_instance);

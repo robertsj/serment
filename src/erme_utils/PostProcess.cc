@@ -105,7 +105,6 @@ PostProcess::vec2_dbl PostProcess::pin_power(const double norm)
   vec2_dbl power(N);
   double power_sum = 0.0;
 
-
   for (int gn = 0; gn < d_nodes->number_global_nodes(); ++gn)
   {
     power[gn].resize(d_nodes->node(gn)->number_pins(), 0.0);

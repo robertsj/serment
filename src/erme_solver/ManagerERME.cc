@@ -89,6 +89,7 @@ void ManagerERME::build_erme(SP_nodelist nodes)
   // Check if this is a database problem
   std::string dbname = "";
   size_t dborder     = 1;
+  std::string dbtype = "i";
   if (Comm::rank() == 0)
   {
     if (d_db->check("response_db_name"))
@@ -98,6 +99,10 @@ void ManagerERME::build_erme(SP_nodelist nodes)
     if (d_db->check("response_db_order"))
     {
       dborder = d_db->get<int>("response_db_order");
+    }
+    if (d_db->check("response_db_interpolation_type"))
+    {
+      dbtype = d_db->get<std::string>("response_db_interpolation_type");
     }
   }
 
@@ -112,7 +117,7 @@ void ManagerERME::build_erme(SP_nodelist nodes)
   // Create server
   if (Comm::rank() == 0) cout << "****** BUILDING SERVER" << endl;
   d_server = new erme_response::
-    ResponseServer(d_nodes, d_indexer, dbname, dborder);
+    ResponseServer(d_nodes, d_indexer, dbname, dborder, dbtype);
 
   // Create state
   if (Comm::rank() == 0) cout << "****** BUILDING STATE" << endl;

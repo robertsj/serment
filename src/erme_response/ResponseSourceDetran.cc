@@ -196,6 +196,10 @@ void ResponseSourceDetran<B>::construct_basis()
         }
         basis_s_p.lower_bound = 0.0;
         basis_s_p.upper_bound = w[dim];
+        if (d_db->check("basis_s_w"))
+        {
+          basis_s_p.w = d_db->get<vec_dbl>("basis_s_w");
+        }
 
         d_basis_s[s][dim01] = OrthogonalBasis::Create(basis_s_type, basis_s_p);
       }

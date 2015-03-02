@@ -27,7 +27,8 @@ using std::endl;
 ResponseServer::ResponseServer(SP_nodelist  nodes,
                                SP_indexer   indexer,
                                std::string  dbname,
-                               size_t       dborder)
+                               size_t       dborder,
+                               std::string  dbtype)
   : d_nodes(nodes)
   , d_indexer(indexer)
   , d_keff(-1.0)
@@ -47,7 +48,7 @@ ResponseServer::ResponseServer(SP_nodelist  nodes,
   // Build the response database if requested
   if (dbname != "")
   {
-    d_rfdb = ResponseDatabase::Create(dbname, dborder);
+    d_rfdb = ResponseDatabase::Create(dbname, dborder, dbtype);
   }
 
   /*

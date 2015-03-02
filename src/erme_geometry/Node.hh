@@ -146,6 +146,8 @@ public:
   size_t number_surfaces() const;
   /// Number nodal pins
   size_t number_pins() const;
+  /// Set number of pins
+  void set_number_pins(const size_t n);
   /// Nodal name
   std::string name() const;
   /// Spatial order for a surface and possible dimension
